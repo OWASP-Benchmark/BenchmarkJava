@@ -1,2 +1,4 @@
 # webgoat-benchmark
 The OWASP WebGoat Benchmark is a Java test suite designed to verify the speed and accuracy of vulnerability detection tools. The initial version is intended to support Static Analysis Security Testing Tools (SAST) and Interactive Analysis Security Testing Tools (IAST). A future release will support Dynamic Analysis Security Testing Tools (DAST), like OWASP ZAP. The goal is that this test application is fully runnable and all the vulnerabilities are actually exploitable so its a fair test for any kind of vulnerability detection tool.
+
+The project documentation is all on the OWASP site at the <a href="https://www.owasp.org/index.php/Benchmark">OWASP WebGoat Benchmark Edition</a> project pages. Please refer to that site for all the project details.

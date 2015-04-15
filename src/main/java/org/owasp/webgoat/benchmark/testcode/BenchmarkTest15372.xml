@@ -1,0 +1,6 @@
+<test-metadata>
+  <category>crypto</category>
+  <test-number>15372</test-number>
+  <vulnerability>true</vulnerability>
+  <cwe>327</cwe>
+</test-metadata>

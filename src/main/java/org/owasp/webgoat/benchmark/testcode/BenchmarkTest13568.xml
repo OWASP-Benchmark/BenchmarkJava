@@ -1,0 +1,6 @@
+<test-metadata>
+  <category>ldapi</category>
+  <test-number>13568</test-number>
+  <vulnerability>false</vulnerability>
+  <cwe>90</cwe>
+</test-metadata>

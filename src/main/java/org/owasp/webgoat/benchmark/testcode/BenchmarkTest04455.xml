@@ -1,0 +1,6 @@
+<test-metadata>
+  <category>weakrand</category>
+  <test-number>04455</test-number>
+  <vulnerability>true</vulnerability>
+  <cwe>330</cwe>
+</test-metadata>

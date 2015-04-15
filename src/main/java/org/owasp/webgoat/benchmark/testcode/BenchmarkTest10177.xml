@@ -1,0 +1,6 @@
+<test-metadata>
+  <category>trustbound</category>
+  <test-number>10177</test-number>
+  <vulnerability>true</vulnerability>
+  <cwe>501</cwe>
+</test-metadata>

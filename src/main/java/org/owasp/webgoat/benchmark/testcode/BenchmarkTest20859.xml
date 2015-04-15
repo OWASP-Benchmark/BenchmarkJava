@@ -1,0 +1,6 @@
+<test-metadata>
+  <category>sqli</category>
+  <test-number>20859</test-number>
+  <vulnerability>false</vulnerability>
+  <cwe>89</cwe>
+</test-metadata>

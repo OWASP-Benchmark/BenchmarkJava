@@ -1,0 +1,54 @@
+package org.owasp.webgoat.benchmark.testcode;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/BenchmarkTest10072")
+public class BenchmarkTest10072 extends HttpServlet {
+	
+	private static final long serialVersionUID = 1L;
+	
+	@Override
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doPost(request, response);
+	}
+
+	@Override
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	
+		String param = request.getParameter("foo");
+
+		String bar = new Test().doSomething(param);
+		
+		response.addHeader("SomeHeader", bar);
+	}  // end doPost
+
+    private class Test {
+
+        public String doSomething(String param) throws ServletException, IOException {
+
+		// Chain a bunch of propagators in sequence
+		String a17815 = param; //assign
+		StringBuilder b17815 = new StringBuilder(a17815);  // stick in stringbuilder
+		b17815.append(" SafeStuff"); // append some safe content
+		b17815.replace(b17815.length()-"Chars".length(),b17815.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map17815 = new java.util.HashMap<String,Object>();
+		map17815.put("key17815", b17815.toString()); // put in a collection
+		String c17815 = (String)map17815.get("key17815"); // get it back out
+		String d17815 = c17815.substring(0,c17815.length()-1); // extract most of it
+		String e17815 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d17815.getBytes() ) )); // B64 encode and decode it
+		String f17815 = e17815.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f17815); // reflection
+
+            return bar;
+        }
+    } // end innerclass Test
+
+} // end DataflowThruInnerClass

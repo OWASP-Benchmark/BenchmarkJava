@@ -1,0 +1,73 @@
+package org.owasp.webgoat.benchmark.testcode;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/BenchmarkTest07212")
+public class BenchmarkTest07212 extends HttpServlet {
+	
+	private static final long serialVersionUID = 1L;
+	
+	@Override
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doPost(request, response);
+	}
+
+	@Override
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	
+		javax.servlet.http.Cookie[] cookies = request.getCookies();
+		
+		String param = null;
+		boolean foundit = false;
+		if (cookies != null) {
+			for (javax.servlet.http.Cookie cookie : cookies) {
+				if (cookie.getName().equals("foo")) {
+					param = cookie.getValue();
+					foundit = true;
+				}
+			}
+			if (!foundit) {
+				// no cookie found in collection
+				param = "";
+			}
+		} else {
+			// no cookies
+			param = "";
+		}
+
+		String bar = new Test().doSomething(param);
+		
+		new java.io.File(new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir),bar);
+	}  // end doPost
+
+    private class Test {
+
+        public String doSomething(String param) throws ServletException, IOException {
+
+		// Chain a bunch of propagators in sequence
+		String a62281 = param; //assign
+		StringBuilder b62281 = new StringBuilder(a62281);  // stick in stringbuilder
+		b62281.append(" SafeStuff"); // append some safe content
+		b62281.replace(b62281.length()-"Chars".length(),b62281.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map62281 = new java.util.HashMap<String,Object>();
+		map62281.put("key62281", b62281.toString()); // put in a collection
+		String c62281 = (String)map62281.get("key62281"); // get it back out
+		String d62281 = c62281.substring(0,c62281.length()-1); // extract most of it
+		String e62281 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d62281.getBytes() ) )); // B64 encode and decode it
+		String f62281 = e62281.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String g62281 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g62281); // reflection
+
+            return bar;
+        }
+    } // end innerclass Test
+
+} // end DataflowThruInnerClass

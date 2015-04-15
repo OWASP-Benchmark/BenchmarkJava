@@ -1,0 +1,50 @@
+package org.owasp.webgoat.benchmark.testcode;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/BenchmarkTest15123")
+public class BenchmarkTest15123 extends HttpServlet {
+	
+	private static final long serialVersionUID = 1L;
+	
+	@Override
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doPost(request, response);
+	}
+
+	@Override
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	
+		String param = request.getHeader("foo");
+
+		String bar = doSomething(param);
+		
+		response.addHeader(bar, "SomeValue");
+	}  // end doPost
+	
+	private static String doSomething(String param) throws ServletException, IOException {
+
+		// Chain a bunch of propagators in sequence
+		String a95048 = param; //assign
+		StringBuilder b95048 = new StringBuilder(a95048);  // stick in stringbuilder
+		b95048.append(" SafeStuff"); // append some safe content
+		b95048.replace(b95048.length()-"Chars".length(),b95048.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map95048 = new java.util.HashMap<String,Object>();
+		map95048.put("key95048", b95048.toString()); // put in a collection
+		String c95048 = (String)map95048.get("key95048"); // get it back out
+		String d95048 = c95048.substring(0,c95048.length()-1); // extract most of it
+		String e95048 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d95048.getBytes() ) )); // B64 encode and decode it
+		String f95048 = e95048.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f95048); // reflection
+	
+		return bar;	
+	}
+}

@@ -1,0 +1,6 @@
+<test-metadata>
+  <category>securecookie</category>
+  <test-number>19485</test-number>
+  <vulnerability>true</vulnerability>
+  <cwe>614</cwe>
+</test-metadata>

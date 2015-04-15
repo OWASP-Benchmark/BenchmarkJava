@@ -1,0 +1,6 @@
+<test-metadata>
+  <category>xss</category>
+  <test-number>16835</test-number>
+  <vulnerability>true</vulnerability>
+  <cwe>79</cwe>
+</test-metadata>

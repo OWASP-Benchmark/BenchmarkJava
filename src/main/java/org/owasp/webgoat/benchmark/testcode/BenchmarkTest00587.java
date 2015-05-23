@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -42,14 +60,14 @@ public class BenchmarkTest00587 extends HttpServlet {
 		}
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map86701 = new java.util.HashMap<String,Object>();
-		map86701.put("keyA-86701", "a Value"); // put some stuff in the collection
-		map86701.put("keyB-86701", param.toString()); // put it in a collection
-		map86701.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map86701.get("keyB-86701"); // get it back out
+		String bar = param;
+		if (param.length() > 1) {
+		    StringBuilder sbxyz3033 = new StringBuilder(param);
+		    bar = sbxyz3033.replace(param.length()-"Z".length(), param.length(),"Z").toString();
+		}
 		
 		
-		response.getWriter().println(bar.toCharArray());
+		Object[] obj = { "a", bar};
+		response.getWriter().println(obj);
 	}
 }

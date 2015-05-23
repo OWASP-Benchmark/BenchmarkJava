@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -30,25 +48,25 @@ public class BenchmarkTest12395 extends HttpServlet {
 		String bar = new Test().doSomething(param);
 		
 		try {
-			java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA1");
-		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing hash - TestCase");
+			javax.naming.directory.InitialDirContext idc = org.owasp.webgoat.benchmark.helpers.Utils.getInitialDirContext();
+			Object[] filterArgs = {"a","b"};
+			idc.search("name", bar, filterArgs, new javax.naming.directory.SearchControls());
+		} catch (javax.naming.NamingException e) {
 			throw new ServletException(e);
 		}
-		
-		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String) executed");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map72247 = new java.util.HashMap<String,Object>();
-		map72247.put("keyA-72247", "a Value"); // put some stuff in the collection
-		map72247.put("keyB-72247", param.toString()); // put it in a collection
-		map72247.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map72247.get("keyB-72247"); // get it back out
+		String bar;
+		
+		// Simple ? condition that assigns constant to bar on true condition
+		int i = 106;
+		
+		bar = (7*18) + i > 200 ? "This_should_always_happen" : param;
+		
 
             return bar;
         }

@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,25 +47,17 @@ public class BenchmarkTest03663 extends HttpServlet {
 		
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a92485 = param; //assign
-		StringBuilder b92485 = new StringBuilder(a92485);  // stick in stringbuilder
-		b92485.append(" SafeStuff"); // append some safe content
-		b92485.replace(b92485.length()-"Chars".length(),b92485.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map92485 = new java.util.HashMap<String,Object>();
-		map92485.put("key92485", b92485.toString()); // put in a collection
-		String c92485 = (String)map92485.get("key92485"); // get it back out
-		String d92485 = c92485.substring(0,c92485.length()-1); // extract most of it
-		String e92485 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d92485.getBytes() ) )); // B64 encode and decode it
-		String f92485 = e92485.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g92485 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g92485); // reflection
+		String bar;
+		
+		// Simple ? condition that assigns constant to bar on true condition
+		int i = 106;
+		
+		bar = (7*18) + i > 200 ? "This_should_always_happen" : param;
 		
 		
-		java.lang.Math.random();
 		
-		response.getWriter().println("Weak Randomness Test java.lang.Math.random() executed");
+		Object[] obj = { "a", bar };
+		
+		response.getWriter().format(java.util.Locale.US,"notfoo",obj);
 	}
 }

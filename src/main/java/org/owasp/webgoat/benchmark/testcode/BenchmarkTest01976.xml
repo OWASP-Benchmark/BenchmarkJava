@@ -1,4 +1,5 @@
 <test-metadata>
+  <wbe-version>1.1</wbe-version>
   <category>securecookie</category>
   <test-number>01976</test-number>
   <vulnerability>false</vulnerability>

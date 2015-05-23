@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,15 +46,26 @@ public class BenchmarkTest01989 extends HttpServlet {
 		}
 		
 		
-		StringBuilder sbxyz30193 = new StringBuilder(param);
-		String bar = sbxyz30193.append("_SafeStuff").toString();
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map34165 = new java.util.HashMap<String,Object>();
+		map34165.put("keyA-34165", "a_Value"); // put some stuff in the collection
+		map34165.put("keyB-34165", param.toString()); // put it in a collection
+		map34165.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map34165.get("keyB-34165"); // get it back out
+		bar = (String)map34165.get("keyA-34165"); // get safe value back out
 		
 		
-		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie",bar);
-		
-		cookie.setHttpOnly(true);
-		cookie.setSecure(true);
-		
-		response.addCookie(cookie);
+		String cmd = org.owasp.webgoat.benchmark.helpers.Utils.getOSCommandString("echo");
+        
+		String[] argsEnv = { bar };
+		Runtime r = Runtime.getRuntime();
+
+		try {
+			Process p = r.exec(cmd, argsEnv);
+			org.owasp.webgoat.benchmark.helpers.Utils.printOSCommandResults(p);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - TestCase");
+            throw new ServletException(e);
+		}
 	}
 }

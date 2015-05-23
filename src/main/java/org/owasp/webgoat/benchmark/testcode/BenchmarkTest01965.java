@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,20 +46,11 @@ public class BenchmarkTest01965 extends HttpServlet {
 		}
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a85011 = param; //assign
-		StringBuilder b85011 = new StringBuilder(a85011);  // stick in stringbuilder
-		b85011.append(" SafeStuff"); // append some safe content
-		b85011.replace(b85011.length()-"Chars".length(),b85011.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map85011 = new java.util.HashMap<String,Object>();
-		map85011.put("key85011", b85011.toString()); // put in a collection
-		String c85011 = (String)map85011.get("key85011"); // get it back out
-		String d85011 = c85011.substring(0,c85011.length()-1); // extract most of it
-		String e85011 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d85011.getBytes() ) )); // B64 encode and decode it
-		String f85011 = e85011.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f85011); // reflection
+		String bar = param;
+		if (param.length() > 1) {
+		    StringBuilder sbxyz80327 = new StringBuilder(param);
+		    bar = sbxyz80327.replace(param.length()-"Z".length(), param.length(),"Z").toString();
+		}
 		
 		
 		long l = new java.util.Random().nextLong();

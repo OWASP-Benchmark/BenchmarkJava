@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,24 +46,17 @@ public class BenchmarkTest02564 extends HttpServlet {
 		}
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a71171 = param; //assign
-		StringBuilder b71171 = new StringBuilder(a71171);  // stick in stringbuilder
-		b71171.append(" SafeStuff"); // append some safe content
-		b71171.replace(b71171.length()-"Chars".length(),b71171.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map71171 = new java.util.HashMap<String,Object>();
-		map71171.put("key71171", b71171.toString()); // put in a collection
-		String c71171 = (String)map71171.get("key71171"); // get it back out
-		String d71171 = c71171.substring(0,c71171.length()-1); // extract most of it
-		String e71171 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d71171.getBytes() ) )); // B64 encode and decode it
-		String f71171 = e71171.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f71171); // reflection
+		String bar;
+		
+		// Simple ? condition that assigns constant to bar on true condition
+		int i = 106;
+		
+		bar = (7*18) + i > 200 ? "This_should_always_happen" : param;
 		
 		
-		double rand = new java.util.Random().nextDouble();
 		
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextDouble() executed");
+		float rand = new java.util.Random().nextFloat();
+		
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextFloat() executed");
 	}
 }

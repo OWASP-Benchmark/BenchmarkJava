@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -21,41 +39,37 @@ public class BenchmarkTest11594 extends HttpServlet {
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	
-		org.owasp.webgoat.benchmark.helpers.SeparateClassRequest scr = new org.owasp.webgoat.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheParameter("foo");
+		String param = "";
+		java.util.Enumeration<String> names = request.getParameterNames();
+		if (names.hasMoreElements()) {
+			param = names.nextElement(); // just grab first element
+		}
 
 		String bar = new Test().doSomething(param);
 		
+		javax.xml.xpath.XPathFactory xpf = javax.xml.xpath.XPathFactory.newInstance();
+		javax.xml.xpath.XPath xp = xpf.newXPath();
 		try {
-			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("DES/CBC/PKCS5Padding");
-		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
-			//throw new ServletException(e); - default provider (SUN) does not have any cipher instances
-		} catch (javax.crypto.NoSuchPaddingException e) {
-			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
-			//throw new ServletException(e); - default provider (SUN) does not have any cipher instances
+			xp.compile(bar);
+		} catch (javax.xml.xpath.XPathExpressionException e) {
+			// OK to swallow
+			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
 		}
-		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String) executed");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a72338 = param; //assign
-		StringBuilder b72338 = new StringBuilder(a72338);  // stick in stringbuilder
-		b72338.append(" SafeStuff"); // append some safe content
-		b72338.replace(b72338.length()-"Chars".length(),b72338.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map72338 = new java.util.HashMap<String,Object>();
-		map72338.put("key72338", b72338.toString()); // put in a collection
-		String c72338 = (String)map72338.get("key72338"); // get it back out
-		String d72338 = c72338.substring(0,c72338.length()-1); // extract most of it
-		String e72338 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d72338.getBytes() ) )); // B64 encode and decode it
-		String f72338 = e72338.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f72338); // reflection
+		java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+		valuesList.add("safe");
+		valuesList.add( param );
+		valuesList.add( "moresafe" );
+		
+		valuesList.remove(0); // remove the 1st safe value
+		
+		String bar = valuesList.get(1); // get the last 'safe' value
+		
 
             return bar;
         }

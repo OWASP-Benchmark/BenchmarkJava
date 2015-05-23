@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,33 +43,40 @@ public class BenchmarkTest12903 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		new java.io.File(bar, "/Test.txt");
+		try {
+			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("RSA/ECB/PKCS1Padding", "SunJCE");
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.lang.String) Test Case");
+			throw new ServletException(e);
+		} catch (java.security.NoSuchProviderException e) {
+			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.lang.String) Test Case");
+			throw new ServletException(e);
+		} catch (javax.crypto.NoSuchPaddingException e) {
+			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.lang.String) Test Case");
+			throw new ServletException(e);
+		}
+
+		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String,java.lang.String) executed");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		String guess = "ABC";
-		char switchTarget = guess.charAt(2);
-		
-		// Simple case statement that assigns param to bar on conditions 'A' or 'C'
-		switch (switchTarget) {
-		  case 'A':
-		        bar = param;
-		        break;
-		  case 'B': 
-		        bar = "bobs_your_uncle";
-		        break;
-		  case 'C':
-		  case 'D':        
-		        bar = param;
-		        break;
-		  default:
-		        bar = "bobs_your_uncle";
-		        break;
-		}
+		// Chain a bunch of propagators in sequence
+		String a16804 = param; //assign
+		StringBuilder b16804 = new StringBuilder(a16804);  // stick in stringbuilder
+		b16804.append(" SafeStuff"); // append some safe content
+		b16804.replace(b16804.length()-"Chars".length(),b16804.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map16804 = new java.util.HashMap<String,Object>();
+		map16804.put("key16804", b16804.toString()); // put in a collection
+		String c16804 = (String)map16804.get("key16804"); // get it back out
+		String d16804 = c16804.substring(0,c16804.length()-1); // extract most of it
+		String e16804 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d16804.getBytes() ) )); // B64 encode and decode it
+		String f16804 = e16804.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f16804); // reflection
 
             return bar;
         }

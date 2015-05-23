@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,27 +47,21 @@ public class BenchmarkTest03599 extends HttpServlet {
 		
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a82403 = param; //assign
-		StringBuilder b82403 = new StringBuilder(a82403);  // stick in stringbuilder
-		b82403.append(" SafeStuff"); // append some safe content
-		b82403.replace(b82403.length()-"Chars".length(),b82403.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map82403 = new java.util.HashMap<String,Object>();
-		map82403.put("key82403", b82403.toString()); // put in a collection
-		String c82403 = (String)map82403.get("key82403"); // get it back out
-		String d82403 = c82403.substring(0,c82403.length()-1); // extract most of it
-		String e82403 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d82403.getBytes() ) )); // B64 encode and decode it
-		String f82403 = e82403.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f82403); // reflection
+		String bar;
+		
+		// Simple ? condition that assigns param to bar on false condition
+		int i = 106;
+		
+		bar = (7*42) - i > 200 ? "This should never happen" : param;
+		
 		
 		
 		try {
-			java.io.FileInputStream fis = new java.io.FileInputStream(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar);
-		} catch (Exception e) {
-			// OK to swallow any exception
-			System.out.println("File exception caught and swallowed: " + e.getMessage());
+			javax.naming.directory.InitialDirContext idc = org.owasp.webgoat.benchmark.helpers.Utils.getInitialDirContext();
+			Object[] filterArgs = {"a","b"};
+			idc.search("name", bar, filterArgs, new javax.naming.directory.SearchControls());
+		} catch (javax.naming.NamingException e) {
+			throw new ServletException(e);
 		}
 	}
 }

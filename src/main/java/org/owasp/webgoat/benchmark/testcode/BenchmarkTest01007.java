@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -24,22 +42,15 @@ public class BenchmarkTest01007 extends HttpServlet {
 		String param = request.getHeader("foo");
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a38186 = param; //assign
-		StringBuilder b38186 = new StringBuilder(a38186);  // stick in stringbuilder
-		b38186.append(" SafeStuff"); // append some safe content
-		b38186.replace(b38186.length()-"Chars".length(),b38186.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map38186 = new java.util.HashMap<String,Object>();
-		map38186.put("key38186", b38186.toString()); // put in a collection
-		String c38186 = (String)map38186.get("key38186"); // get it back out
-		String d38186 = c38186.substring(0,c38186.length()-1); // extract most of it
-		String e38186 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d38186.getBytes() ) )); // B64 encode and decode it
-		String f38186 = e38186.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f38186); // reflection
+		String bar;
+		
+		// Simple ? condition that assigns constant to bar on true condition
+		int i = 106;
+		
+		bar = (7*18) + i > 200 ? "This_should_always_happen" : param;
 		
 		
-		new java.io.File(new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir),bar);
+		
+		new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir, bar);
 	}
 }

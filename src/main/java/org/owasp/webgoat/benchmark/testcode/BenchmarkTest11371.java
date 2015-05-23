@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,7 +47,6 @@ public class BenchmarkTest11371 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-	
 		String a1 = "";
 		String a2 = "";
 		String osName = System.getProperty("os.name");
@@ -40,15 +57,18 @@ public class BenchmarkTest11371 extends HttpServlet {
         	a1 = "sh";
         	a2 = "-c";
         }
-        String[] args = {a1, a2, "echo", bar};
+        String[] args = {a1, a2, "echo"};
+        
+        String[] argsEnv = { bar };
         
 		Runtime r = Runtime.getRuntime();
 
 		try {
-			Process p = r.exec(args);
+			Process p = r.exec(args, argsEnv, new java.io.File(System.getProperty("user.dir")));
 			org.owasp.webgoat.benchmark.helpers.Utils.printOSCommandResults(p);
 		} catch (IOException e) {
 			System.out.println("Problem executing cmdi - TestCase");
+            throw new ServletException(e);
 		}
 	}  // end doPost
 
@@ -56,21 +76,13 @@ public class BenchmarkTest11371 extends HttpServlet {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a47067 = param; //assign
-		StringBuilder b47067 = new StringBuilder(a47067);  // stick in stringbuilder
-		b47067.append(" SafeStuff"); // append some safe content
-		b47067.replace(b47067.length()-"Chars".length(),b47067.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map47067 = new java.util.HashMap<String,Object>();
-		map47067.put("key47067", b47067.toString()); // put in a collection
-		String c47067 = (String)map47067.get("key47067"); // get it back out
-		String d47067 = c47067.substring(0,c47067.length()-1); // extract most of it
-		String e47067 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d47067.getBytes() ) )); // B64 encode and decode it
-		String f47067 = e47067.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g47067 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g47067); // reflection
+		String bar;
+		
+		// Simple ? condition that assigns constant to bar on true condition
+		int i = 106;
+		
+		bar = (7*18) + i > 200 ? "This_should_always_happen" : param;
+		
 
             return bar;
         }

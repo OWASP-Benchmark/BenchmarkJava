@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,16 +43,9 @@ public class BenchmarkTest04866 extends HttpServlet {
 		String param = scr.getTheParameter("foo");
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map20754 = new java.util.HashMap<String,Object>();
-		map20754.put("keyA-20754", "a Value"); // put some stuff in the collection
-		map20754.put("keyB-20754", param.toString()); // put it in a collection
-		map20754.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map20754.get("keyB-20754"); // get it back out
+		String bar = org.springframework.web.util.HtmlUtils.htmlEscape(param);
 		
 		
-		java.lang.Math.random();
-		
-		response.getWriter().println("Weak Randomness Test java.lang.Math.random() executed");
+		java.io.FileOutputStream fos = new java.io.FileOutputStream(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar);
 	}
 }

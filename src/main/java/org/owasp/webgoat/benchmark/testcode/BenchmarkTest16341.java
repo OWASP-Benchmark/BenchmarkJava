@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,20 +47,15 @@ public class BenchmarkTest16341 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		long l = new java.util.Random().nextLong();
+		int randNumber = new java.util.Random().nextInt(99);
 		
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextLong() executed");
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextInt(int) executed");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map21010 = new java.util.HashMap<String,Object>();
-		map21010.put("keyA-21010", "a_Value"); // put some stuff in the collection
-		map21010.put("keyB-21010", param.toString()); // put it in a collection
-		map21010.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map21010.get("keyB-21010"); // get it back out
-		bar = (String)map21010.get("keyA-21010"); // get safe value back out
+		StringBuilder sbxyz6743 = new StringBuilder(param);
+		String bar = sbxyz6743.append("_SafeStuff").toString();
 	
 		return bar;	
 	}

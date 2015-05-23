@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -21,29 +39,33 @@ public class BenchmarkTest16639 extends HttpServlet {
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	
-		String param = request.getParameter("foo");
+		String param = "";
+		java.util.Enumeration<String> headers = request.getHeaders("foo");
+		if (headers.hasMoreElements()) {
+			param = headers.nextElement(); // just grab first element
+		}
 
 		String bar = doSomething(param);
 		
-		new java.io.File(new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir),bar);
+		javax.xml.xpath.XPathFactory xpf = javax.xml.xpath.XPathFactory.newInstance();
+		javax.xml.xpath.XPath xp = xpf.newXPath();
+		try {
+			xp.compile(bar);
+		} catch (javax.xml.xpath.XPathExpressionException e) {
+			// OK to swallow
+			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
+		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a19801 = param; //assign
-		StringBuilder b19801 = new StringBuilder(a19801);  // stick in stringbuilder
-		b19801.append(" SafeStuff"); // append some safe content
-		b19801.replace(b19801.length()-"Chars".length(),b19801.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map19801 = new java.util.HashMap<String,Object>();
-		map19801.put("key19801", b19801.toString()); // put in a collection
-		String c19801 = (String)map19801.get("key19801"); // get it back out
-		String d19801 = c19801.substring(0,c19801.length()-1); // extract most of it
-		String e19801 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d19801.getBytes() ) )); // B64 encode and decode it
-		String f19801 = e19801.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f19801); // reflection
+		String bar;
+		
+		// Simple if statement that assigns constant to bar on true condition
+		int i = 86;
+		if ( (7*42) - i > 200 )
+		   bar = "This_should_always_happen"; 
+		else bar = param;
 	
 		return bar;	
 	}

@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,36 +46,20 @@ public class BenchmarkTest02701 extends HttpServlet {
 		}
 		
 		
-		String bar;
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map93711 = new java.util.HashMap<String,Object>();
+		map93711.put("keyA-93711", "a Value"); // put some stuff in the collection
+		map93711.put("keyB-93711", param.toString()); // put it in a collection
+		map93711.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map93711.get("keyB-93711"); // get it back out
 		
-		// Simple ? condition that assigns param to bar on false condition
-		int i = 106;
 		
-		bar = (7*42) - i > 200 ? "This should never happen" : param;
-		
-		
-		
-		String a1 = "";
-		String a2 = "";
-		String osName = System.getProperty("os.name");
-        if (osName.indexOf("Windows") != -1) {
-        	a1 = "cmd.exe";
-        	a2 = "/c";
-        } else {
-        	a1 = "sh";
-        	a2 = "-c";
-        }
-        String[] args = {a1, a2, "echo", bar};
-        
-        String[] argsEnv = { "foo=bar" };
-        
-		Runtime r = Runtime.getRuntime();
-
 		try {
-			Process p = r.exec(args, argsEnv, new java.io.File(System.getProperty("user.dir")));
-			org.owasp.webgoat.benchmark.helpers.Utils.printOSCommandResults(p);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - TestCase");
-		}
+			int r = java.security.SecureRandom.getInstance("SHA1PRNG").nextInt();
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing SecureRandom.nextInt() - TestCase");
+			throw new ServletException(e);
+	    }
+		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextInt() executed");
 	}
 }

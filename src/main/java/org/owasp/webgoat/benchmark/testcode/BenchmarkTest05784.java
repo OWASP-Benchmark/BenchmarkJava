@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,23 +47,26 @@ public class BenchmarkTest05784 extends HttpServlet {
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map96373 = new java.util.HashMap<String,Object>();
-		map96373.put("keyA-96373", "a Value"); // put some stuff in the collection
-		map96373.put("keyB-96373", param.toString()); // put it in a collection
-		map96373.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map96373.get("keyB-96373"); // get it back out
+		java.util.HashMap<String,Object> map45956 = new java.util.HashMap<String,Object>();
+		map45956.put("keyA-45956", "a_Value"); // put some stuff in the collection
+		map45956.put("keyB-45956", param.toString()); // put it in a collection
+		map45956.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map45956.get("keyB-45956"); // get it back out
+		bar = (String)map45956.get("keyA-45956"); // get safe value back out
 		
 		
-		String cmd = org.owasp.webgoat.benchmark.helpers.Utils.getOSCommandString("echo");
-        
-		String[] argsEnv = { bar };
-		Runtime r = Runtime.getRuntime();
-
 		try {
-			Process p = r.exec(cmd, argsEnv);
-			org.owasp.webgoat.benchmark.helpers.Utils.printOSCommandResults(p);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - TestCase");
-		}
+			java.util.Random numGen = java.security.SecureRandom.getInstance("SHA1PRNG");
+        	double rand = getNextNumber(numGen);
+			
+	    } catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing SecureRandom.nextDouble() - TestCase");
+			throw new ServletException(e);
+	    }
+		
+		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextDouble() executed");
+	}
+		double getNextNumber(java.util.Random generator) {
+			return generator.nextDouble();
 	}
 }

@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,19 +43,28 @@ public class BenchmarkTest09857 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		Object[] obj = { "a", bar };
-		
-		response.getWriter().format(java.util.Locale.US,"notfoo",obj);
+		java.io.FileOutputStream fos = new java.io.FileOutputStream(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar);
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = param;
-		if (param.length() > 1) {
-		    bar = param.substring(0,param.length()-1);
-		}
+		// Chain a bunch of propagators in sequence
+		String a76255 = param; //assign
+		StringBuilder b76255 = new StringBuilder(a76255);  // stick in stringbuilder
+		b76255.append(" SafeStuff"); // append some safe content
+		b76255.replace(b76255.length()-"Chars".length(),b76255.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map76255 = new java.util.HashMap<String,Object>();
+		map76255.put("key76255", b76255.toString()); // put in a collection
+		String c76255 = (String)map76255.get("key76255"); // get it back out
+		String d76255 = c76255.substring(0,c76255.length()-1); // extract most of it
+		String e76255 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d76255.getBytes() ) )); // B64 encode and decode it
+		String f76255 = e76255.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String g76255 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g76255); // reflection
 
             return bar;
         }

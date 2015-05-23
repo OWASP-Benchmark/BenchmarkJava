@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -24,20 +42,33 @@ public class BenchmarkTest06064 extends HttpServlet {
 		String param = request.getQueryString();
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map2614 = new java.util.HashMap<String,Object>();
-		map2614.put("keyA-2614", "a_Value"); // put some stuff in the collection
-		map2614.put("keyB-2614", param.toString()); // put it in a collection
-		map2614.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map2614.get("keyB-2614"); // get it back out
-		bar = (String)map2614.get("keyA-2614"); // get safe value back out
+		// Chain a bunch of propagators in sequence
+		String a90203 = param; //assign
+		StringBuilder b90203 = new StringBuilder(a90203);  // stick in stringbuilder
+		b90203.append(" SafeStuff"); // append some safe content
+		b90203.replace(b90203.length()-"Chars".length(),b90203.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map90203 = new java.util.HashMap<String,Object>();
+		map90203.put("key90203", b90203.toString()); // put in a collection
+		String c90203 = (String)map90203.get("key90203"); // get it back out
+		String d90203 = c90203.substring(0,c90203.length()-1); // extract most of it
+		String e90203 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d90203.getBytes() ) )); // B64 encode and decode it
+		String f90203 = e90203.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f90203); // reflection
 		
 		
-		try {
-			java.io.FileInputStream fis = new java.io.FileInputStream(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar);
-		} catch (Exception e) {
-			// OK to swallow any exception
-			System.out.println("File exception caught and swallowed: " + e.getMessage());
-		}
+		// Create the file first so the test won't throw an exception if it doesn't exist.
+		// Note: Don't actually do this because this method signature could cause a tool to find THIS file constructor 
+		// as a vuln, rather than the File signature we are trying to actually test.
+		// If necessary, just run the benchmark twice. The 1st run should create all the necessary files.
+		//new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar).createNewFile();
+		
+
+
+        java.io.FileInputStream fileInputStream = new java.io.FileInputStream(
+        		org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar);
+        java.io.FileDescriptor fd = fileInputStream.getFD();
+        java.io.FileOutputStream anotOutputStream = new java.io.FileOutputStream(fd);
 	}
 }

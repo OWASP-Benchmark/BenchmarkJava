@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -43,9 +61,17 @@ public class BenchmarkTest07409 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		Object[] obj = { bar, "b"};
-		
-		response.getWriter().printf("notfoo",obj);
+		try {
+			java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA-512", "SUN");
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.lang.String)");
+            throw new ServletException(e);
+		} catch (java.security.NoSuchProviderException e) {
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.lang.String)");
+            throw new ServletException(e);
+		}
+
+		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.lang.String) executed");
 	}  // end doPost
 
     private class Test {
@@ -53,20 +79,20 @@ public class BenchmarkTest07409 extends HttpServlet {
         public String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a73905 = param; //assign
-		StringBuilder b73905 = new StringBuilder(a73905);  // stick in stringbuilder
-		b73905.append(" SafeStuff"); // append some safe content
-		b73905.replace(b73905.length()-"Chars".length(),b73905.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map73905 = new java.util.HashMap<String,Object>();
-		map73905.put("key73905", b73905.toString()); // put in a collection
-		String c73905 = (String)map73905.get("key73905"); // get it back out
-		String d73905 = c73905.substring(0,c73905.length()-1); // extract most of it
-		String e73905 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d73905.getBytes() ) )); // B64 encode and decode it
-		String f73905 = e73905.split(" ")[0]; // split it on a space
+		String a84641 = param; //assign
+		StringBuilder b84641 = new StringBuilder(a84641);  // stick in stringbuilder
+		b84641.append(" SafeStuff"); // append some safe content
+		b84641.replace(b84641.length()-"Chars".length(),b84641.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map84641 = new java.util.HashMap<String,Object>();
+		map84641.put("key84641", b84641.toString()); // put in a collection
+		String c84641 = (String)map84641.get("key84641"); // get it back out
+		String d84641 = c84641.substring(0,c84641.length()-1); // extract most of it
+		String e84641 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d84641.getBytes() ) )); // B64 encode and decode it
+		String f84641 = e84641.split(" ")[0]; // split it on a space
 		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g73905 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g73905); // reflection
+		String g84641 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g84641); // reflection
 
             return bar;
         }

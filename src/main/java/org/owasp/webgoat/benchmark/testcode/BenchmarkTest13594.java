@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -26,22 +44,28 @@ public class BenchmarkTest13594 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		Object[] obj = { "a", bar };
-		
-		response.getWriter().format(java.util.Locale.US,"notfoo",obj);
+		try {
+			java.io.FileInputStream fis = new java.io.FileInputStream(new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar));
+		} catch (Exception e) {
+			// OK to swallow any exception
+            // TODO: Fix this.
+			System.out.println("File exception caught and swallowed: " + e.getMessage());
+		}
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map92732 = new java.util.HashMap<String,Object>();
-		map92732.put("keyA-92732", "a_Value"); // put some stuff in the collection
-		map92732.put("keyB-92732", param.toString()); // put it in a collection
-		map92732.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map92732.get("keyB-92732"); // get it back out
-		bar = (String)map92732.get("keyA-92732"); // get safe value back out
+		java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+		valuesList.add("safe");
+		valuesList.add( param );
+		valuesList.add( "moresafe" );
+		
+		valuesList.remove(0); // remove the 1st safe value
+		
+		String bar = valuesList.get(1); // get the last 'safe' value
+		
 
             return bar;
         }

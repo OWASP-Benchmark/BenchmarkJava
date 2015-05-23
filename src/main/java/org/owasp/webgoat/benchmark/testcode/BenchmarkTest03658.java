@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,20 +47,30 @@ public class BenchmarkTest03658 extends HttpServlet {
 		
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map22976 = new java.util.HashMap<String,Object>();
-		map22976.put("keyA-22976", "a_Value"); // put some stuff in the collection
-		map22976.put("keyB-22976", param.toString()); // put it in a collection
-		map22976.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map22976.get("keyB-22976"); // get it back out
-		bar = (String)map22976.get("keyA-22976"); // get safe value back out
+		// Chain a bunch of propagators in sequence
+		String a48973 = param; //assign
+		StringBuilder b48973 = new StringBuilder(a48973);  // stick in stringbuilder
+		b48973.append(" SafeStuff"); // append some safe content
+		b48973.replace(b48973.length()-"Chars".length(),b48973.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map48973 = new java.util.HashMap<String,Object>();
+		map48973.put("key48973", b48973.toString()); // put in a collection
+		String c48973 = (String)map48973.get("key48973"); // get it back out
+		String d48973 = c48973.substring(0,c48973.length()-1); // extract most of it
+		String e48973 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d48973.getBytes() ) )); // B64 encode and decode it
+		String f48973 = e48973.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String g48973 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g48973); // reflection
 		
 		
 		try {
-			javax.naming.directory.InitialDirContext idc = org.owasp.webgoat.benchmark.helpers.Utils.getInitialDirContext();
-			idc.search("name", bar, new javax.naming.directory.SearchControls());
-		} catch (javax.naming.NamingException e) {
+			java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing hash - TestCase");
 			throw new ServletException(e);
 		}
+		
+		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String) executed");
 	}
 }

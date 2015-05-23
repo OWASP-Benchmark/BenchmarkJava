@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,12 +46,23 @@ public class BenchmarkTest02489 extends HttpServlet {
 		}
 		
 		
-		StringBuilder sbxyz97776 = new StringBuilder(param);
-		String bar = sbxyz97776.append("_SafeStuff").toString();
+		// Chain a bunch of propagators in sequence
+		String a38304 = param; //assign
+		StringBuilder b38304 = new StringBuilder(a38304);  // stick in stringbuilder
+		b38304.append(" SafeStuff"); // append some safe content
+		b38304.replace(b38304.length()-"Chars".length(),b38304.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map38304 = new java.util.HashMap<String,Object>();
+		map38304.put("key38304", b38304.toString()); // put in a collection
+		String c38304 = (String)map38304.get("key38304"); // get it back out
+		String d38304 = c38304.substring(0,c38304.length()-1); // extract most of it
+		String e38304 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d38304.getBytes() ) )); // B64 encode and decode it
+		String f38304 = e38304.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f38304); // reflection
 		
 		
-		Object[] obj = { "a", "b"};
-		
-		response.getWriter().printf(bar,obj);
+		Object[] obj = { "a", bar};
+		response.getWriter().println(obj);
 	}
 }

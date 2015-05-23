@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -21,37 +39,38 @@ public class BenchmarkTest19135 extends HttpServlet {
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	
-		org.owasp.webgoat.benchmark.helpers.SeparateClassRequest scr = new org.owasp.webgoat.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheParameter("foo");
+		String[] values = request.getParameterValues("foo");
+		String param;
+		if (values.length != 0)
+		  param = request.getParameterValues("foo")[0];
+		else param = null;
 
 		String bar = doSomething(param);
 		
-		javax.xml.xpath.XPathFactory xpf = javax.xml.xpath.XPathFactory.newInstance();
-		javax.xml.xpath.XPath xp = xpf.newXPath();
 		try {
-			xp.evaluate(bar, "SpecifiedContext");
-		} catch (javax.xml.xpath.XPathExpressionException|java.lang.NullPointerException e) {
-			// OK to swallow
-			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
+		    java.util.Properties wbeprops = new java.util.Properties();
+		    wbeprops.load(this.getClass().getClassLoader().getResourceAsStream("wbe.properties"));
+			String algorithm = wbeprops.getProperty("cryptoAlg2", "AES/ECB/PKCS5Padding");
+			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance(algorithm);
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
+			throw new ServletException(e);
+		} catch (javax.crypto.NoSuchPaddingException e) {
+			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
+			throw new ServletException(e);
 		}
+		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String) executed");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a37321 = param; //assign
-		StringBuilder b37321 = new StringBuilder(a37321);  // stick in stringbuilder
-		b37321.append(" SafeStuff"); // append some safe content
-		b37321.replace(b37321.length()-"Chars".length(),b37321.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map37321 = new java.util.HashMap<String,Object>();
-		map37321.put("key37321", b37321.toString()); // put in a collection
-		String c37321 = (String)map37321.get("key37321"); // get it back out
-		String d37321 = c37321.substring(0,c37321.length()-1); // extract most of it
-		String e37321 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d37321.getBytes() ) )); // B64 encode and decode it
-		String f37321 = e37321.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f37321); // reflection
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map53666 = new java.util.HashMap<String,Object>();
+		map53666.put("keyA-53666", "a_Value"); // put some stuff in the collection
+		map53666.put("keyB-53666", param.toString()); // put it in a collection
+		map53666.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map53666.get("keyB-53666"); // get it back out
+		bar = (String)map53666.get("keyA-53666"); // get safe value back out
 	
 		return bar;	
 	}

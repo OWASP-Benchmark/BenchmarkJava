@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -43,35 +61,37 @@ public class BenchmarkTest14618 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		String sql = "SELECT * from USERS where USERNAME=? and PASSWORD='"+ bar +"'";
-				
 		try {
-			java.sql.Connection connection = org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlConnection();
-			java.sql.PreparedStatement statement = connection.prepareStatement( sql, 
-			    java.sql.Statement.RETURN_GENERATED_KEYS );
-			    statement.setString(1, "foo");
-			statement.execute();
-		} catch (java.sql.SQLException e) {
+			float rand = java.security.SecureRandom.getInstance("SHA1PRNG").nextFloat();
+	    } catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing SecureRandom.nextFloat() - TestCase");
 			throw new ServletException(e);
-		}
+	    }		
+		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextFloat() executed");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a15835 = param; //assign
-		StringBuilder b15835 = new StringBuilder(a15835);  // stick in stringbuilder
-		b15835.append(" SafeStuff"); // append some safe content
-		b15835.replace(b15835.length()-"Chars".length(),b15835.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map15835 = new java.util.HashMap<String,Object>();
-		map15835.put("key15835", b15835.toString()); // put in a collection
-		String c15835 = (String)map15835.get("key15835"); // get it back out
-		String d15835 = c15835.substring(0,c15835.length()-1); // extract most of it
-		String e15835 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d15835.getBytes() ) )); // B64 encode and decode it
-		String f15835 = e15835.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f15835); // reflection
+		String bar;
+		String guess = "ABC";
+		char switchTarget = guess.charAt(1); // condition 'B', which is safe
+		
+		// Simple case statement that assigns param to bar on conditions 'A' or 'C'
+		switch (switchTarget) {
+		  case 'A':
+		        bar = param;
+		        break;
+		  case 'B': 
+		        bar = "bob";
+		        break;
+		  case 'C':
+		  case 'D':        
+		        bar = param;
+		        break;
+		  default:
+		        bar = "bob's your uncle";
+		        break;
+		}
 	
 		return bar;	
 	}

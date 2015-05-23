@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,34 +47,31 @@ public class BenchmarkTest16071 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		// FILE URIs are tricky because they are different between Mac and Windows because of lack of standardization.
-		// Mac requires an extra slash for some reason.
-		String startURIslashes = "";
-        if (System.getProperty("os.name").indexOf("Windows") != -1)
-	        if (System.getProperty("os.name").indexOf("Windows") != -1)
-	        	startURIslashes = "/";
-	        else startURIslashes = "//";
-
-		try {
-			java.net.URI fileURI = new java.net.URI("file", null, startURIslashes 
-				+ org.owasp.webgoat.benchmark.helpers.Utils.testfileDir.replace('\\', java.io.File.separatorChar).replace(' ', '_') + bar, null, null);
-			new java.io.File(fileURI);
-		} catch (java.net.URISyntaxException e) {
-			throw new ServletException(e);
-		}
+		java.io.File file = new java.io.File(bar);
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		java.util.List<String> valuesList = new java.util.ArrayList<String>( );
-		valuesList.add("safe");
-		valuesList.add( param );
-		valuesList.add( "moresafe" );
+		String bar;
+		String guess = "ABC";
+		char switchTarget = guess.charAt(1); // condition 'B', which is safe
 		
-		valuesList.remove(0); // remove the 1st safe value
-		
-		String bar = valuesList.get(0); // get the param value
-		
+		// Simple case statement that assigns param to bar on conditions 'A' or 'C'
+		switch (switchTarget) {
+		  case 'A':
+		        bar = param;
+		        break;
+		  case 'B': 
+		        bar = "bob";
+		        break;
+		  case 'C':
+		  case 'D':        
+		        bar = param;
+		        break;
+		  default:
+		        bar = "bob's your uncle";
+		        break;
+		}
 	
 		return bar;	
 	}

@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,17 +43,15 @@ public class BenchmarkTest03202 extends HttpServlet {
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map44676 = new java.util.HashMap<String,Object>();
-		map44676.put("keyA-44676", "a_Value"); // put some stuff in the collection
-		map44676.put("keyB-44676", param.toString()); // put it in a collection
-		map44676.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map44676.get("keyB-44676"); // get it back out
-		bar = (String)map44676.get("keyA-44676"); // get safe value back out
+		java.util.HashMap<String,Object> map22815 = new java.util.HashMap<String,Object>();
+		map22815.put("keyA-22815", "a Value"); // put some stuff in the collection
+		map22815.put("keyB-22815", param.toString()); // put it in a collection
+		map22815.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map22815.get("keyB-22815"); // get it back out
 		
 		
-		byte[] bytes = new byte[10];
-		new java.util.Random().nextBytes(bytes);
+		float rand = new java.util.Random().nextFloat();
 		
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextBytes() executed");
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextFloat() executed");
 	}
 }

@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -24,25 +42,15 @@ public class BenchmarkTest01199 extends HttpServlet {
 		String param = request.getHeader("foo");
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a50520 = param; //assign
-		StringBuilder b50520 = new StringBuilder(a50520);  // stick in stringbuilder
-		b50520.append(" SafeStuff"); // append some safe content
-		b50520.replace(b50520.length()-"Chars".length(),b50520.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map50520 = new java.util.HashMap<String,Object>();
-		map50520.put("key50520", b50520.toString()); // put in a collection
-		String c50520 = (String)map50520.get("key50520"); // get it back out
-		String d50520 = c50520.substring(0,c50520.length()-1); // extract most of it
-		String e50520 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d50520.getBytes() ) )); // B64 encode and decode it
-		String f50520 = e50520.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g50520 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g50520); // reflection
+		String bar;
+		
+		// Simple ? condition that assigns constant to bar on true condition
+		int i = 106;
+		
+		bar = (7*18) + i > 200 ? "This_should_always_happen" : param;
 		
 		
-		Object[] obj = { "a", "b"};
 		
-		response.getWriter().printf(bar,obj);
+		response.getWriter().println(bar.toCharArray());
 	}
 }

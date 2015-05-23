@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -30,34 +48,31 @@ public class BenchmarkTest10599 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		Object[] obj = { "a", bar};
-		response.getWriter().println(obj);
+		int length = 1;
+		if (bar != null) {
+			length = bar.length();
+			response.getWriter().write(bar, 0, length - 1);
+		}
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		String guess = "ABC";
-		char switchTarget = guess.charAt(2);
-		
-		// Simple case statement that assigns param to bar on conditions 'A' or 'C'
-		switch (switchTarget) {
-		  case 'A':
-		        bar = param;
-		        break;
-		  case 'B': 
-		        bar = "bobs_your_uncle";
-		        break;
-		  case 'C':
-		  case 'D':        
-		        bar = param;
-		        break;
-		  default:
-		        bar = "bobs_your_uncle";
-		        break;
-		}
+		// Chain a bunch of propagators in sequence
+		String a34291 = param; //assign
+		StringBuilder b34291 = new StringBuilder(a34291);  // stick in stringbuilder
+		b34291.append(" SafeStuff"); // append some safe content
+		b34291.replace(b34291.length()-"Chars".length(),b34291.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map34291 = new java.util.HashMap<String,Object>();
+		map34291.put("key34291", b34291.toString()); // put in a collection
+		String c34291 = (String)map34291.get("key34291"); // get it back out
+		String d34291 = c34291.substring(0,c34291.length()-1); // extract most of it
+		String e34291 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d34291.getBytes() ) )); // B64 encode and decode it
+		String f34291 = e34291.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f34291); // reflection
 
             return bar;
         }

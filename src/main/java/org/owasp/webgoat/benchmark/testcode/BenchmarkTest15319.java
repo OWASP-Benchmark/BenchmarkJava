@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,11 +43,11 @@ public class BenchmarkTest15319 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		String sql = "UPDATE USERS SET PASSWORD='" + bar + "' WHERE USERNAME='foo'";
+		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
 				
 		try {
-			java.sql.Statement statement = org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			int count = statement.executeUpdate( sql, java.sql.Statement.RETURN_GENERATED_KEYS );
+			java.sql.Statement statement =  org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			statement.execute( sql, java.sql.Statement.RETURN_GENERATED_KEYS );
 		} catch (java.sql.SQLException e) {
 			throw new ServletException(e);
 		}
@@ -37,13 +55,20 @@ public class BenchmarkTest15319 extends HttpServlet {
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		
-		// Simple ? condition that assigns constant to bar on true condition
-		int i = 106;
-		
-		bar = (7*18) + i > 200 ? "This_should_always_happen" : param;
-		
+		// Chain a bunch of propagators in sequence
+		String a56829 = param; //assign
+		StringBuilder b56829 = new StringBuilder(a56829);  // stick in stringbuilder
+		b56829.append(" SafeStuff"); // append some safe content
+		b56829.replace(b56829.length()-"Chars".length(),b56829.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map56829 = new java.util.HashMap<String,Object>();
+		map56829.put("key56829", b56829.toString()); // put in a collection
+		String c56829 = (String)map56829.get("key56829"); // get it back out
+		String d56829 = c56829.substring(0,c56829.length()-1); // extract most of it
+		String e56829 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d56829.getBytes() ) )); // B64 encode and decode it
+		String f56829 = e56829.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f56829); // reflection
 	
 		return bar;	
 	}

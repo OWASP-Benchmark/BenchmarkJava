@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -30,7 +48,7 @@ public class BenchmarkTest19077 extends HttpServlet {
 				
 		try {
 			java.sql.Statement statement =  org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			statement.execute( sql, java.sql.Statement.RETURN_GENERATED_KEYS );
+			statement.execute( sql, new String[] { "username", "password" } );
 		} catch (java.sql.SQLException e) {
 			throw new ServletException(e);
 		}
@@ -38,20 +56,13 @@ public class BenchmarkTest19077 extends HttpServlet {
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a98196 = param; //assign
-		StringBuilder b98196 = new StringBuilder(a98196);  // stick in stringbuilder
-		b98196.append(" SafeStuff"); // append some safe content
-		b98196.replace(b98196.length()-"Chars".length(),b98196.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map98196 = new java.util.HashMap<String,Object>();
-		map98196.put("key98196", b98196.toString()); // put in a collection
-		String c98196 = (String)map98196.get("key98196"); // get it back out
-		String d98196 = c98196.substring(0,c98196.length()-1); // extract most of it
-		String e98196 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d98196.getBytes() ) )); // B64 encode and decode it
-		String f98196 = e98196.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f98196); // reflection
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map35460 = new java.util.HashMap<String,Object>();
+		map35460.put("keyA-35460", "a_Value"); // put some stuff in the collection
+		map35460.put("keyB-35460", param.toString()); // put it in a collection
+		map35460.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map35460.get("keyB-35460"); // get it back out
+		bar = (String)map35460.get("keyA-35460"); // get safe value back out
 	
 		return bar;	
 	}

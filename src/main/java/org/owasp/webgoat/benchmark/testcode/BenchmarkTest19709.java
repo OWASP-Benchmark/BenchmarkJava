@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -32,8 +50,8 @@ public class BenchmarkTest19709 extends HttpServlet {
 		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
 				
 		try {
-			java.sql.Statement statement = org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			java.sql.ResultSet rs = statement.executeQuery( sql );
+			java.sql.Statement statement =  org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			statement.execute( sql, java.sql.Statement.RETURN_GENERATED_KEYS );
 		} catch (java.sql.SQLException e) {
 			throw new ServletException(e);
 		}
@@ -41,13 +59,8 @@ public class BenchmarkTest19709 extends HttpServlet {
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map31831 = new java.util.HashMap<String,Object>();
-		map31831.put("keyA-31831", "a_Value"); // put some stuff in the collection
-		map31831.put("keyB-31831", param.toString()); // put it in a collection
-		map31831.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map31831.get("keyB-31831"); // get it back out
-		bar = (String)map31831.get("keyA-31831"); // get safe value back out
+		String bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
 	
 		return bar;	
 	}

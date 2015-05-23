@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,23 +46,10 @@ public class BenchmarkTest01869 extends HttpServlet {
 		}
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a52587 = param; //assign
-		StringBuilder b52587 = new StringBuilder(a52587);  // stick in stringbuilder
-		b52587.append(" SafeStuff"); // append some safe content
-		b52587.replace(b52587.length()-"Chars".length(),b52587.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map52587 = new java.util.HashMap<String,Object>();
-		map52587.put("key52587", b52587.toString()); // put in a collection
-		String c52587 = (String)map52587.get("key52587"); // get it back out
-		String d52587 = c52587.substring(0,c52587.length()-1); // extract most of it
-		String e52587 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d52587.getBytes() ) )); // B64 encode and decode it
-		String f52587 = e52587.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g52587 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g52587); // reflection
+		String bar = org.apache.commons.lang.StringEscapeUtils.escapeHtml(param);
 		
 		
-		response.getWriter().write(bar.toCharArray());
+		Object[] obj = { "a", bar};
+		response.getWriter().println(obj);
 	}
 }

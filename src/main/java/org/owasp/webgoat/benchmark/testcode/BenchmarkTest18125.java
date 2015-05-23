@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,17 +47,20 @@ public class BenchmarkTest18125 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		int length = 1;
-		if (bar != null) {
-			length = bar.length();
-			response.getWriter().write(bar.toCharArray(),0,length - 1);
-		}
+		Object[] obj = { "a", bar};
+		
+		response.getWriter().printf(java.util.Locale.US,"notfoo",obj);
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(param);
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map13249 = new java.util.HashMap<String,Object>();
+		map13249.put("keyA-13249", "a_Value"); // put some stuff in the collection
+		map13249.put("keyB-13249", param.toString()); // put it in a collection
+		map13249.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map13249.get("keyB-13249"); // get it back out
+		bar = (String)map13249.get("keyA-13249"); // get safe value back out
 	
 		return bar;	
 	}

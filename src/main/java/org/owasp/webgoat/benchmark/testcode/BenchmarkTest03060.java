@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -24,16 +42,35 @@ public class BenchmarkTest03060 extends HttpServlet {
 		String param = request.getParameter("foo");
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map49686 = new java.util.HashMap<String,Object>();
-		map49686.put("keyA-49686", "a Value"); // put some stuff in the collection
-		map49686.put("keyB-49686", param.toString()); // put it in a collection
-		map49686.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map49686.get("keyB-49686"); // get it back out
+		String bar;
+		String guess = "ABC";
+		char switchTarget = guess.charAt(2);
+		
+		// Simple case statement that assigns param to bar on conditions 'A' or 'C'
+		switch (switchTarget) {
+		  case 'A':
+		        bar = param;
+		        break;
+		  case 'B': 
+		        bar = "bobs_your_uncle";
+		        break;
+		  case 'C':
+		  case 'D':        
+		        bar = param;
+		        break;
+		  default:
+		        bar = "bobs_your_uncle";
+		        break;
+		}
 		
 		
-		Object[] obj = { "a", "b" };
+		try {
+			java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing hash - TestCase");
+			throw new ServletException(e);
+		}
 		
-		response.getWriter().format(bar,obj);
+		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String) executed");
 	}
 }

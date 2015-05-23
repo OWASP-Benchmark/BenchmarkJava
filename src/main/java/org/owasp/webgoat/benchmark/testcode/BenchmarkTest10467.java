@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -30,24 +48,38 @@ public class BenchmarkTest10467 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		try {	
-			java.nio.file.Path path = java.nio.file.Paths.get(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar);
-			java.io.InputStream is = java.nio.file.Files.newInputStream(path, java.nio.file.StandardOpenOption.READ);
-		} catch (Exception e) {
-			// OK to swallow any exception for now
-			System.out.println("File exception caught and swallowed: " + e.getMessage());
+		try {
+		    java.util.Properties wbeprops = new java.util.Properties();
+		    wbeprops.load(this.getClass().getClassLoader().getResourceAsStream("wbe.properties"));
+			String algorithm = wbeprops.getProperty("hashAlg1", "SHA512");
+			java.security.MessageDigest md = java.security.MessageDigest.getInstance(algorithm);
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing hash - TestCase");
+			throw new ServletException(e);
 		}
+		
+		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String) executed");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = param;
-		if (param.length() > 1) {
-		    StringBuilder sbxyz25027 = new StringBuilder(param);
-		    bar = sbxyz25027.replace(param.length()-"Z".length(), param.length(),"Z").toString();
-		}
+		// Chain a bunch of propagators in sequence
+		String a38685 = param; //assign
+		StringBuilder b38685 = new StringBuilder(a38685);  // stick in stringbuilder
+		b38685.append(" SafeStuff"); // append some safe content
+		b38685.replace(b38685.length()-"Chars".length(),b38685.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map38685 = new java.util.HashMap<String,Object>();
+		map38685.put("key38685", b38685.toString()); // put in a collection
+		String c38685 = (String)map38685.get("key38685"); // get it back out
+		String d38685 = c38685.substring(0,c38685.length()-1); // extract most of it
+		String e38685 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d38685.getBytes() ) )); // B64 encode and decode it
+		String f38685 = e38685.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String g38685 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g38685); // reflection
 
             return bar;
         }

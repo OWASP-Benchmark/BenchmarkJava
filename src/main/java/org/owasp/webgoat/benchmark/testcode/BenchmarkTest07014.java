@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -26,41 +44,38 @@ public class BenchmarkTest07014 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a66989 = param; //assign
-		StringBuilder b66989 = new StringBuilder(a66989);  // stick in stringbuilder
-		b66989.append(" SafeStuff"); // append some safe content
-		b66989.replace(b66989.length()-"Chars".length(),b66989.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map66989 = new java.util.HashMap<String,Object>();
-		map66989.put("key66989", b66989.toString()); // put in a collection
-		String c66989 = (String)map66989.get("key66989"); // get it back out
-		String d66989 = c66989.substring(0,c66989.length()-1); // extract most of it
-		String e66989 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d66989.getBytes() ) )); // B64 encode and decode it
-		String f66989 = e66989.split(" ")[0]; // split it on a space
+		String a43068 = param; //assign
+		StringBuilder b43068 = new StringBuilder(a43068);  // stick in stringbuilder
+		b43068.append(" SafeStuff"); // append some safe content
+		b43068.replace(b43068.length()-"Chars".length(),b43068.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map43068 = new java.util.HashMap<String,Object>();
+		map43068.put("key43068", b43068.toString()); // put in a collection
+		String c43068 = (String)map43068.get("key43068"); // get it back out
+		String d43068 = c43068.substring(0,c43068.length()-1); // extract most of it
+		String e43068 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d43068.getBytes() ) )); // B64 encode and decode it
+		String f43068 = e43068.split(" ")[0]; // split it on a space
 		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f66989); // reflection
+		String bar = thing.doSomething(f43068); // reflection
 		
 		
-	
-		String a1 = "";
-		String a2 = "";
-		String osName = System.getProperty("os.name");
-        if (osName.indexOf("Windows") != -1) {
-        	a1 = "cmd.exe";
-        	a2 = "/c";
-        } else {
-        	a1 = "sh";
-        	a2 = "-c";
-        }
-        String[] args = {a1, a2, "echo", bar};
-        
-		Runtime r = Runtime.getRuntime();
-
-		try {
-			Process p = r.exec(args);
-			org.owasp.webgoat.benchmark.helpers.Utils.printOSCommandResults(p);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - TestCase");
-		}
+	    try {
+		    java.util.Random numGen = java.security.SecureRandom.getInstance("SHA1PRNG");
+		
+		    // Get 40 random bytes
+		    byte[] randomBytes = new byte[40];
+		    getNextNumber(numGen, randomBytes);
+			response.getWriter().println("Random bytes are: " + new String(randomBytes));
+				    
+	    } catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing SecureRandom.nextBytes() - TestCase");
+			throw new ServletException(e);
+	    } finally {
+			response.getWriter().println("Randomness Test java.security.SecureRandom.nextBytes(byte[]) executed");	    
+	    }
+	}
+	    	
+	void getNextNumber(java.util.Random generator, byte[] barray) {
+		generator.nextBytes(barray);
 	}
 }

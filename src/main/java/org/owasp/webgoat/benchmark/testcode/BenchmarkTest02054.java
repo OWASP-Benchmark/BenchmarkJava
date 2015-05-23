@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,43 +46,41 @@ public class BenchmarkTest02054 extends HttpServlet {
 		}
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a63919 = param; //assign
-		StringBuilder b63919 = new StringBuilder(a63919);  // stick in stringbuilder
-		b63919.append(" SafeStuff"); // append some safe content
-		b63919.replace(b63919.length()-"Chars".length(),b63919.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map63919 = new java.util.HashMap<String,Object>();
-		map63919.put("key63919", b63919.toString()); // put in a collection
-		String c63919 = (String)map63919.get("key63919"); // get it back out
-		String d63919 = c63919.substring(0,c63919.length()-1); // extract most of it
-		String e63919 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d63919.getBytes() ) )); // B64 encode and decode it
-		String f63919 = e63919.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f63919); // reflection
+		String bar;
+		String guess = "ABC";
+		char switchTarget = guess.charAt(2);
 		
-		
-		String a1 = "";
-		String a2 = "";
-		String osName = System.getProperty("os.name");
-        if (osName.indexOf("Windows") != -1) {
-        	a1 = "cmd.exe";
-        	a2 = "/c";
-        } else {
-        	a1 = "sh";
-        	a2 = "-c";
-        }
-        String[] args = {a1, a2, "echo"};
-        
-        String[] argsEnv = { bar };
-        
-		Runtime r = Runtime.getRuntime();
-
-		try {
-			Process p = r.exec(args, argsEnv);
-			org.owasp.webgoat.benchmark.helpers.Utils.printOSCommandResults(p);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - TestCase");
+		// Simple case statement that assigns param to bar on conditions 'A' or 'C'
+		switch (switchTarget) {
+		  case 'A':
+		        bar = param;
+		        break;
+		  case 'B': 
+		        bar = "bobs_your_uncle";
+		        break;
+		  case 'C':
+		  case 'D':        
+		        bar = param;
+		        break;
+		  default:
+		        bar = "bobs_your_uncle";
+		        break;
 		}
+		
+		
+	    try {
+		    java.security.SecureRandom secureRandomGenerator = java.security.SecureRandom.getInstance("SHA1PRNG");
+		
+		    // Get 40 random bytes
+		    byte[] randomBytes = new byte[40];
+		    secureRandomGenerator.nextBytes(randomBytes);
+			response.getWriter().println("Random bytes are: " + new String(randomBytes));
+				    
+	    } catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing SecureRandom.nextBytes() - TestCase");
+			throw new ServletException(e);
+	    } finally {
+			response.getWriter().println("Randomness Test java.security.SecureRandom.nextBytes(byte[]) executed");	    
+	    }
 	}
 }

@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,26 +43,38 @@ public class BenchmarkTest16661 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		java.io.File file = new java.io.File(bar);
+		try {
+		    java.util.Properties wbeprops = new java.util.Properties();
+		    wbeprops.load(this.getClass().getClassLoader().getResourceAsStream("wbe.properties"));
+			String algorithm = wbeprops.getProperty("cryptoAlg1", "DESede/ECB/PKCS5Padding");
+			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance(algorithm);
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
+			throw new ServletException(e);
+		} catch (javax.crypto.NoSuchPaddingException e) {
+			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
+			throw new ServletException(e);
+		}
+		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String) executed");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a86112 = param; //assign
-		StringBuilder b86112 = new StringBuilder(a86112);  // stick in stringbuilder
-		b86112.append(" SafeStuff"); // append some safe content
-		b86112.replace(b86112.length()-"Chars".length(),b86112.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map86112 = new java.util.HashMap<String,Object>();
-		map86112.put("key86112", b86112.toString()); // put in a collection
-		String c86112 = (String)map86112.get("key86112"); // get it back out
-		String d86112 = c86112.substring(0,c86112.length()-1); // extract most of it
-		String e86112 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d86112.getBytes() ) )); // B64 encode and decode it
-		String f86112 = e86112.split(" ")[0]; // split it on a space
+		String a76082 = param; //assign
+		StringBuilder b76082 = new StringBuilder(a76082);  // stick in stringbuilder
+		b76082.append(" SafeStuff"); // append some safe content
+		b76082.replace(b76082.length()-"Chars".length(),b76082.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map76082 = new java.util.HashMap<String,Object>();
+		map76082.put("key76082", b76082.toString()); // put in a collection
+		String c76082 = (String)map76082.get("key76082"); // get it back out
+		String d76082 = c76082.substring(0,c76082.length()-1); // extract most of it
+		String e76082 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d76082.getBytes() ) )); // B64 encode and decode it
+		String f76082 = e76082.split(" ")[0]; // split it on a space
 		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g86112 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g86112); // reflection
+		String g76082 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g76082); // reflection
 	
 		return bar;	
 	}

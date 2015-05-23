@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,13 +46,11 @@ public class BenchmarkTest01922 extends HttpServlet {
 		}
 		
 		
-		StringBuilder sbxyz56434 = new StringBuilder(param);
-		String bar = sbxyz56434.append("_SafeStuff").toString();
+		String bar = param;
 		
 		
-		byte[] bytes = new byte[10];
-		new java.util.Random().nextBytes(bytes);
+		boolean randNumber = new java.util.Random().nextBoolean();
 		
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextBytes() executed");
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextBoolean() executed");
 	}
 }

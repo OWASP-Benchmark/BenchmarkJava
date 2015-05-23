@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,33 +46,25 @@ public class BenchmarkTest05503 extends HttpServlet {
 		else param = null;
 		
 		
-		String bar;
-		String guess = "ABC";
-		char switchTarget = guess.charAt(2);
-		
-		// Simple case statement that assigns param to bar on conditions 'A' or 'C'
-		switch (switchTarget) {
-		  case 'A':
-		        bar = param;
-		        break;
-		  case 'B': 
-		        bar = "bobs_your_uncle";
-		        break;
-		  case 'C':
-		  case 'D':        
-		        bar = param;
-		        break;
-		  default:
-		        bar = "bobs_your_uncle";
-		        break;
-		}
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map33172 = new java.util.HashMap<String,Object>();
+		map33172.put("keyA-33172", "a_Value"); // put some stuff in the collection
+		map33172.put("keyB-33172", param.toString()); // put it in a collection
+		map33172.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map33172.get("keyB-33172"); // get it back out
+		bar = (String)map33172.get("keyA-33172"); // get safe value back out
 		
 		
 		try {
-			javax.naming.directory.InitialDirContext idc = org.owasp.webgoat.benchmark.helpers.Utils.getInitialDirContext();
-			idc.search("name", bar, new javax.naming.directory.SearchControls());
-		} catch (javax.naming.NamingException e) {
+		    java.util.Properties wbeprops = new java.util.Properties();
+		    wbeprops.load(this.getClass().getClassLoader().getResourceAsStream("wbe.properties"));
+			String algorithm = wbeprops.getProperty("hashAlg2", "SHA5");
+			java.security.MessageDigest md = java.security.MessageDigest.getInstance(algorithm);
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing hash - TestCase");
 			throw new ServletException(e);
 		}
+		
+		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String) executed");
 	}
 }

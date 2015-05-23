@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,7 +47,20 @@ public class BenchmarkTest12296 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		java.io.File file = new java.io.File(bar);
+		try {
+			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("DES/CBC/PKCS5Padding", "SunJCE");
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.lang.String) Test Case");
+			throw new ServletException(e);
+		} catch (java.security.NoSuchProviderException e) {
+			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.lang.String) Test Case");
+			throw new ServletException(e);
+		} catch (javax.crypto.NoSuchPaddingException e) {
+			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.lang.String) Test Case");
+			throw new ServletException(e);
+		}
+
+		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String,java.lang.String) executed");
 	}  // end doPost
 
     private class Test {
@@ -37,19 +68,20 @@ public class BenchmarkTest12296 extends HttpServlet {
         public String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a44158 = param; //assign
-		StringBuilder b44158 = new StringBuilder(a44158);  // stick in stringbuilder
-		b44158.append(" SafeStuff"); // append some safe content
-		b44158.replace(b44158.length()-"Chars".length(),b44158.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map44158 = new java.util.HashMap<String,Object>();
-		map44158.put("key44158", b44158.toString()); // put in a collection
-		String c44158 = (String)map44158.get("key44158"); // get it back out
-		String d44158 = c44158.substring(0,c44158.length()-1); // extract most of it
-		String e44158 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d44158.getBytes() ) )); // B64 encode and decode it
-		String f44158 = e44158.split(" ")[0]; // split it on a space
+		String a28163 = param; //assign
+		StringBuilder b28163 = new StringBuilder(a28163);  // stick in stringbuilder
+		b28163.append(" SafeStuff"); // append some safe content
+		b28163.replace(b28163.length()-"Chars".length(),b28163.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map28163 = new java.util.HashMap<String,Object>();
+		map28163.put("key28163", b28163.toString()); // put in a collection
+		String c28163 = (String)map28163.get("key28163"); // get it back out
+		String d28163 = c28163.substring(0,c28163.length()-1); // extract most of it
+		String e28163 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d28163.getBytes() ) )); // B64 encode and decode it
+		String f28163 = e28163.split(" ")[0]; // split it on a space
 		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f44158); // reflection
+		String g28163 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g28163); // reflection
 
             return bar;
         }

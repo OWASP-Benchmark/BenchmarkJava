@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,18 +43,7 @@ public class BenchmarkTest12939 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		// Create the file first so the test won't throw an exception if it doesn't exist.
-		// Note: Don't actually do this because this method signature could cause a tool to find THIS file constructor 
-		// as a vuln, rather than the File signature we are trying to actually test.
-		// If necessary, just run the benchmark twice. The 1st run should create all the necessary files.
-		//new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar).createNewFile();
-		
-
-
-        java.io.FileInputStream fileInputStream = new java.io.FileInputStream(
-        		org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar);
-        java.io.FileDescriptor fd = fileInputStream.getFD();
-        java.io.FileOutputStream anotOutputStream = new java.io.FileOutputStream(fd);
+		java.io.File file = new java.io.File(bar);
 	}  // end doPost
 
     private class Test {
@@ -44,19 +51,19 @@ public class BenchmarkTest12939 extends HttpServlet {
         public String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a46769 = param; //assign
-		StringBuilder b46769 = new StringBuilder(a46769);  // stick in stringbuilder
-		b46769.append(" SafeStuff"); // append some safe content
-		b46769.replace(b46769.length()-"Chars".length(),b46769.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map46769 = new java.util.HashMap<String,Object>();
-		map46769.put("key46769", b46769.toString()); // put in a collection
-		String c46769 = (String)map46769.get("key46769"); // get it back out
-		String d46769 = c46769.substring(0,c46769.length()-1); // extract most of it
-		String e46769 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d46769.getBytes() ) )); // B64 encode and decode it
-		String f46769 = e46769.split(" ")[0]; // split it on a space
+		String a83395 = param; //assign
+		StringBuilder b83395 = new StringBuilder(a83395);  // stick in stringbuilder
+		b83395.append(" SafeStuff"); // append some safe content
+		b83395.replace(b83395.length()-"Chars".length(),b83395.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map83395 = new java.util.HashMap<String,Object>();
+		map83395.put("key83395", b83395.toString()); // put in a collection
+		String c83395 = (String)map83395.get("key83395"); // get it back out
+		String d83395 = c83395.substring(0,c83395.length()-1); // extract most of it
+		String e83395 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d83395.getBytes() ) )); // B64 encode and decode it
+		String f83395 = e83395.split(" ")[0]; // split it on a space
 		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f46769); // reflection
+		String bar = thing.doSomething(f83395); // reflection
 
             return bar;
         }

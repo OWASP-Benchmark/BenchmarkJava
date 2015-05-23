@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,11 +46,21 @@ public class BenchmarkTest01681 extends HttpServlet {
 		}
 		
 		
-		String bar = param;
-		if (param.length() > 1) {
-		    StringBuilder sbxyz6180 = new StringBuilder(param);
-		    bar = sbxyz6180.replace(param.length()-"Z".length(), param.length(),"Z").toString();
-		}
+		// Chain a bunch of propagators in sequence
+		String a11768 = param; //assign
+		StringBuilder b11768 = new StringBuilder(a11768);  // stick in stringbuilder
+		b11768.append(" SafeStuff"); // append some safe content
+		b11768.replace(b11768.length()-"Chars".length(),b11768.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map11768 = new java.util.HashMap<String,Object>();
+		map11768.put("key11768", b11768.toString()); // put in a collection
+		String c11768 = (String)map11768.get("key11768"); // get it back out
+		String d11768 = c11768.substring(0,c11768.length()-1); // extract most of it
+		String e11768 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d11768.getBytes() ) )); // B64 encode and decode it
+		String f11768 = e11768.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String g11768 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g11768); // reflection
 		
 		
 		// FILE URIs are tricky because they are different between Mac and Windows because of lack of standardization.

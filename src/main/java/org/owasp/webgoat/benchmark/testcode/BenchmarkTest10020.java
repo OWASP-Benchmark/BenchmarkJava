@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,20 +43,42 @@ public class BenchmarkTest10020 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		double rand = new java.util.Random().nextDouble();
+		java.util.List<String> argList = new java.util.ArrayList<String>();
 		
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextDouble() executed");
+		String osName = System.getProperty("os.name");
+        if (osName.indexOf("Windows") != -1) {
+        	argList.add("cmd.exe");
+        	argList.add("/c");
+        } else {
+        	argList.add("sh");
+        	argList.add("-c");
+        }
+        argList.add("echo");
+        argList.add(bar);
+
+		ProcessBuilder pb = new ProcessBuilder();
+
+		pb.command(argList);
+		
+		try {
+			Process p = pb.start();
+			org.owasp.webgoat.benchmark.helpers.Utils.printOSCommandResults(p);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - java.lang.ProcessBuilder(java.util.List) Test Case");
+            throw new ServletException(e);
+		}
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = param;
-		if (param.length() > 1) {
-		    StringBuilder sbxyz10525 = new StringBuilder(param);
-		    bar = sbxyz10525.replace(param.length()-"Z".length(), param.length(),"Z").toString();
-		}
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map70315 = new java.util.HashMap<String,Object>();
+		map70315.put("keyA-70315", "a Value"); // put some stuff in the collection
+		map70315.put("keyB-70315", param.toString()); // put it in a collection
+		map70315.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map70315.get("keyB-70315"); // get it back out
 
             return bar;
         }

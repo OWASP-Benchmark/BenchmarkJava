@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,24 +47,40 @@ public class BenchmarkTest05511 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a52905 = param; //assign
-		StringBuilder b52905 = new StringBuilder(a52905);  // stick in stringbuilder
-		b52905.append(" SafeStuff"); // append some safe content
-		b52905.replace(b52905.length()-"Chars".length(),b52905.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map52905 = new java.util.HashMap<String,Object>();
-		map52905.put("key52905", b52905.toString()); // put in a collection
-		String c52905 = (String)map52905.get("key52905"); // get it back out
-		String d52905 = c52905.substring(0,c52905.length()-1); // extract most of it
-		String e52905 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d52905.getBytes() ) )); // B64 encode and decode it
-		String f52905 = e52905.split(" ")[0]; // split it on a space
+		String a5692 = param; //assign
+		StringBuilder b5692 = new StringBuilder(a5692);  // stick in stringbuilder
+		b5692.append(" SafeStuff"); // append some safe content
+		b5692.replace(b5692.length()-"Chars".length(),b5692.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map5692 = new java.util.HashMap<String,Object>();
+		map5692.put("key5692", b5692.toString()); // put in a collection
+		String c5692 = (String)map5692.get("key5692"); // get it back out
+		String d5692 = c5692.substring(0,c5692.length()-1); // extract most of it
+		String e5692 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d5692.getBytes() ) )); // B64 encode and decode it
+		String f5692 = e5692.split(" ")[0]; // split it on a space
 		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g52905 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g52905); // reflection
+		String g5692 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g5692); // reflection
 		
 		
-		java.lang.Math.random();
-		
-		response.getWriter().println("Weak Randomness Test java.lang.Math.random() executed");
+		java.security.Provider[] provider = java.security.Security.getProviders();
+		java.security.MessageDigest md;
+
+		try {
+			if (provider.length > 1) {
+
+				md = java.security.MessageDigest.getInstance("SHA1", provider[0]);
+			} else {
+				md = java.security.MessageDigest.getInstance("SHA1", "SUN");
+			}
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider)");
+            throw new ServletException(e);
+		} catch (java.security.NoSuchProviderException e) {
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider)");
+            throw new ServletException(e);
+		}
+
+		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider) executed");
 	}
 }

@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,20 +46,33 @@ public class BenchmarkTest05451 extends HttpServlet {
 		else param = null;
 		
 		
-		String bar;
+		// Chain a bunch of propagators in sequence
+		String a95262 = param; //assign
+		StringBuilder b95262 = new StringBuilder(a95262);  // stick in stringbuilder
+		b95262.append(" SafeStuff"); // append some safe content
+		b95262.replace(b95262.length()-"Chars".length(),b95262.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map95262 = new java.util.HashMap<String,Object>();
+		map95262.put("key95262", b95262.toString()); // put in a collection
+		String c95262 = (String)map95262.get("key95262"); // get it back out
+		String d95262 = c95262.substring(0,c95262.length()-1); // extract most of it
+		String e95262 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d95262.getBytes() ) )); // B64 encode and decode it
+		String f95262 = e95262.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f95262); // reflection
 		
-		// Simple ? condition that assigns constant to bar on true condition
-		int i = 106;
 		
-		bar = (7*18) + i > 200 ? "This_should_always_happen" : param;
+		// Create the file first so the test won't throw an exception if it doesn't exist.
+		// Note: Don't actually do this because this method signature could cause a tool to find THIS file constructor 
+		// as a vuln, rather than the File signature we are trying to actually test.
+		// If necessary, just run the benchmark twice. The 1st run should create all the necessary files.
+		//new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar).createNewFile();
 		
-		
-		
-		try {
-			java.io.FileInputStream fis = new java.io.FileInputStream(new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar));
-		} catch (Exception e) {
-			// OK to swallow any exception
-			System.out.println("File exception caught and swallowed: " + e.getMessage());
-		}
+
+
+        java.io.FileInputStream fileInputStream = new java.io.FileInputStream(
+        		org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar);
+        java.io.FileDescriptor fd = fileInputStream.getFD();
+        java.io.FileOutputStream anotOutputStream = new java.io.FileOutputStream(fd);
 	}
 }

@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,31 +43,20 @@ public class BenchmarkTest16726 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		try {	
-			java.nio.file.Path path = java.nio.file.Paths.get(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar);
-			java.io.InputStream is = java.nio.file.Files.newInputStream(path, java.nio.file.StandardOpenOption.READ);
-		} catch (Exception e) {
-			// OK to swallow any exception for now
-			System.out.println("File exception caught and swallowed: " + e.getMessage());
-		}
+		new java.io.File(bar, "/Test.txt");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a49470 = param; //assign
-		StringBuilder b49470 = new StringBuilder(a49470);  // stick in stringbuilder
-		b49470.append(" SafeStuff"); // append some safe content
-		b49470.replace(b49470.length()-"Chars".length(),b49470.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map49470 = new java.util.HashMap<String,Object>();
-		map49470.put("key49470", b49470.toString()); // put in a collection
-		String c49470 = (String)map49470.get("key49470"); // get it back out
-		String d49470 = c49470.substring(0,c49470.length()-1); // extract most of it
-		String e49470 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d49470.getBytes() ) )); // B64 encode and decode it
-		String f49470 = e49470.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f49470); // reflection
+		java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+		valuesList.add("safe");
+		valuesList.add( param );
+		valuesList.add( "moresafe" );
+		
+		valuesList.remove(0); // remove the 1st safe value
+		
+		String bar = valuesList.get(1); // get the last 'safe' value
+		
 	
 		return bar;	
 	}

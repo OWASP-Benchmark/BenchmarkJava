@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -24,22 +42,12 @@ public class BenchmarkTest03083 extends HttpServlet {
 		String param = request.getParameter("foo");
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a5913 = param; //assign
-		StringBuilder b5913 = new StringBuilder(a5913);  // stick in stringbuilder
-		b5913.append(" SafeStuff"); // append some safe content
-		b5913.replace(b5913.length()-"Chars".length(),b5913.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map5913 = new java.util.HashMap<String,Object>();
-		map5913.put("key5913", b5913.toString()); // put in a collection
-		String c5913 = (String)map5913.get("key5913"); // get it back out
-		String d5913 = c5913.substring(0,c5913.length()-1); // extract most of it
-		String e5913 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d5913.getBytes() ) )); // B64 encode and decode it
-		String f5913 = e5913.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f5913); // reflection
+		StringBuilder sbxyz57810 = new StringBuilder(param);
+		String bar = sbxyz57810.append("_SafeStuff").toString();
 		
 		
-		response.getWriter().print(bar);
+		Object[] obj = { "a", "b" };
+		
+		response.getWriter().format(bar,obj);
 	}
 }

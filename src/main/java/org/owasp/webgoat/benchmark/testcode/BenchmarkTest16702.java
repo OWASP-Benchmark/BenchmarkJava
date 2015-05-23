@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,26 +43,25 @@ public class BenchmarkTest16702 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		java.io.FileOutputStream fos = new java.io.FileOutputStream(new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar),false);
+		new java.io.File(new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir),bar);
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a19119 = param; //assign
-		StringBuilder b19119 = new StringBuilder(a19119);  // stick in stringbuilder
-		b19119.append(" SafeStuff"); // append some safe content
-		b19119.replace(b19119.length()-"Chars".length(),b19119.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map19119 = new java.util.HashMap<String,Object>();
-		map19119.put("key19119", b19119.toString()); // put in a collection
-		String c19119 = (String)map19119.get("key19119"); // get it back out
-		String d19119 = c19119.substring(0,c19119.length()-1); // extract most of it
-		String e19119 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d19119.getBytes() ) )); // B64 encode and decode it
-		String f19119 = e19119.split(" ")[0]; // split it on a space
+		String a43752 = param; //assign
+		StringBuilder b43752 = new StringBuilder(a43752);  // stick in stringbuilder
+		b43752.append(" SafeStuff"); // append some safe content
+		b43752.replace(b43752.length()-"Chars".length(),b43752.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map43752 = new java.util.HashMap<String,Object>();
+		map43752.put("key43752", b43752.toString()); // put in a collection
+		String c43752 = (String)map43752.get("key43752"); // get it back out
+		String d43752 = c43752.substring(0,c43752.length()-1); // extract most of it
+		String e43752 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d43752.getBytes() ) )); // B64 encode and decode it
+		String f43752 = e43752.split(" ")[0]; // split it on a space
 		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g19119 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g19119); // reflection
+		String bar = thing.doSomething(f43752); // reflection
 	
 		return bar;	
 	}

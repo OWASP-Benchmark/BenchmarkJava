@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -30,20 +48,12 @@ public class BenchmarkTest10400 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		// FILE URIs are tricky because they are different between Mac and Windows because of lack of standardization.
-		// Mac requires an extra slash for some reason.
-		String startURIslashes = "";
-        if (System.getProperty("os.name").indexOf("Windows") != -1)
-	        if (System.getProperty("os.name").indexOf("Windows") != -1)
-	        	startURIslashes = "/";
-	        else startURIslashes = "//";
-
 		try {
-			java.net.URI fileURI = new java.net.URI("file:" + startURIslashes 
-				+ org.owasp.webgoat.benchmark.helpers.Utils.testfileDir.replace('\\', '/').replace(' ', '_') + bar);
-			new java.io.File(fileURI);
-		} catch (java.net.URISyntaxException e) {
-			throw new ServletException(e);
+			java.io.FileInputStream fis = new java.io.FileInputStream(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar);
+		} catch (Exception e) {
+			// OK to swallow any exception
+            // TODO: Fix this.
+			System.out.println("File exception caught and swallowed: " + e.getMessage());
 		}
 	}  // end doPost
 
@@ -51,20 +61,13 @@ public class BenchmarkTest10400 extends HttpServlet {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a2472 = param; //assign
-		StringBuilder b2472 = new StringBuilder(a2472);  // stick in stringbuilder
-		b2472.append(" SafeStuff"); // append some safe content
-		b2472.replace(b2472.length()-"Chars".length(),b2472.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map2472 = new java.util.HashMap<String,Object>();
-		map2472.put("key2472", b2472.toString()); // put in a collection
-		String c2472 = (String)map2472.get("key2472"); // get it back out
-		String d2472 = c2472.substring(0,c2472.length()-1); // extract most of it
-		String e2472 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d2472.getBytes() ) )); // B64 encode and decode it
-		String f2472 = e2472.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f2472); // reflection
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map54251 = new java.util.HashMap<String,Object>();
+		map54251.put("keyA-54251", "a_Value"); // put some stuff in the collection
+		map54251.put("keyB-54251", param.toString()); // put it in a collection
+		map54251.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map54251.get("keyB-54251"); // get it back out
+		bar = (String)map54251.get("keyA-54251"); // get safe value back out
 
             return bar;
         }

@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -26,37 +44,33 @@ public class BenchmarkTest20644 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		java.util.List<String> argList = new java.util.ArrayList<String>();
+		Object[] obj = { "a", "b"};
 		
-		String osName = System.getProperty("os.name");
-        if (osName.indexOf("Windows") != -1) {
-        	argList.add("cmd.exe");
-        	argList.add("/c");
-        } else {
-        	argList.add("sh");
-        	argList.add("-c");
-        }
-        argList.add("echo");
-        argList.add(bar);
-
-		ProcessBuilder pb = new ProcessBuilder(argList);
-
-		try {
-			Process p = pb.start();
-			org.owasp.webgoat.benchmark.helpers.Utils.printOSCommandResults(p);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - java.lang.ProcessBuilder(java.util.List) Test Case");
-		}
+		response.getWriter().printf(bar,obj);
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map94955 = new java.util.HashMap<String,Object>();
-		map94955.put("keyA-94955", "a Value"); // put some stuff in the collection
-		map94955.put("keyB-94955", param.toString()); // put it in a collection
-		map94955.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map94955.get("keyB-94955"); // get it back out
+		String bar;
+		String guess = "ABC";
+		char switchTarget = guess.charAt(2);
+		
+		// Simple case statement that assigns param to bar on conditions 'A' or 'C'
+		switch (switchTarget) {
+		  case 'A':
+		        bar = param;
+		        break;
+		  case 'B': 
+		        bar = "bobs_your_uncle";
+		        break;
+		  case 'C':
+		  case 'D':        
+		        bar = param;
+		        break;
+		  default:
+		        bar = "bobs_your_uncle";
+		        break;
+		}
 	
 		return bar;	
 	}

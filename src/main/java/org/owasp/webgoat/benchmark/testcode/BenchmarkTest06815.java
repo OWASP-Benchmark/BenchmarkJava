@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,25 +43,11 @@ public class BenchmarkTest06815 extends HttpServlet {
 		String param = scr.getTheValue("foo");
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a91839 = param; //assign
-		StringBuilder b91839 = new StringBuilder(a91839);  // stick in stringbuilder
-		b91839.append(" SafeStuff"); // append some safe content
-		b91839.replace(b91839.length()-"Chars".length(),b91839.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map91839 = new java.util.HashMap<String,Object>();
-		map91839.put("key91839", b91839.toString()); // put in a collection
-		String c91839 = (String)map91839.get("key91839"); // get it back out
-		String d91839 = c91839.substring(0,c91839.length()-1); // extract most of it
-		String e91839 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d91839.getBytes() ) )); // B64 encode and decode it
-		String f91839 = e91839.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g91839 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g91839); // reflection
+		String bar = org.springframework.web.util.HtmlUtils.htmlEscape(param);
 		
 		
 		Object[] obj = { "a", "b"};
 		
-		response.getWriter().printf(bar,obj);
+		response.getWriter().printf(java.util.Locale.US,bar,obj);
 	}
 }

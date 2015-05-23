@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,15 +46,19 @@ public class BenchmarkTest02192 extends HttpServlet {
 		}
 		
 		
-		String bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map44247 = new java.util.HashMap<String,Object>();
+		map44247.put("keyA-44247", "a Value"); // put some stuff in the collection
+		map44247.put("keyB-44247", param.toString()); // put it in a collection
+		map44247.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map44247.get("keyB-44247"); // get it back out
 		
 		
 		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
 				
 		try {
-			java.sql.Statement statement =  org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			statement.execute( sql, java.sql.Statement.RETURN_GENERATED_KEYS );
+			java.sql.Statement statement = org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			java.sql.ResultSet rs = statement.executeQuery( sql );
 		} catch (java.sql.SQLException e) {
 			throw new ServletException(e);
 		}

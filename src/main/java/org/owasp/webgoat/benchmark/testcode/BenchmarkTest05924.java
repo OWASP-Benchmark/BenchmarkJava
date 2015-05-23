@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,19 +46,14 @@ public class BenchmarkTest05924 extends HttpServlet {
 		else param = null;
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map71116 = new java.util.HashMap<String,Object>();
-		map71116.put("keyA-71116", "a Value"); // put some stuff in the collection
-		map71116.put("keyB-71116", param.toString()); // put it in a collection
-		map71116.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map71116.get("keyB-71116"); // get it back out
+		String bar = param;
 		
 		
-		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
+		String sql = "UPDATE USERS SET PASSWORD='" + bar + "' WHERE USERNAME='foo'";
 				
 		try {
-			java.sql.Statement statement =  org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			statement.execute( sql, new int[] { 1, 2 } );
+			java.sql.Statement statement = org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			int count = statement.executeUpdate( sql, java.sql.Statement.RETURN_GENERATED_KEYS );
 		} catch (java.sql.SQLException e) {
 			throw new ServletException(e);
 		}

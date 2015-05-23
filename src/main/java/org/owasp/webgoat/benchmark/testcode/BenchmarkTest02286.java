@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,24 +46,22 @@ public class BenchmarkTest02286 extends HttpServlet {
 		}
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map81776 = new java.util.HashMap<String,Object>();
-		map81776.put("keyA-81776", "a_Value"); // put some stuff in the collection
-		map81776.put("keyB-81776", param.toString()); // put it in a collection
-		map81776.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map81776.get("keyB-81776"); // get it back out
-		bar = (String)map81776.get("keyA-81776"); // get safe value back out
+		// Chain a bunch of propagators in sequence
+		String a15095 = param; //assign
+		StringBuilder b15095 = new StringBuilder(a15095);  // stick in stringbuilder
+		b15095.append(" SafeStuff"); // append some safe content
+		b15095.replace(b15095.length()-"Chars".length(),b15095.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map15095 = new java.util.HashMap<String,Object>();
+		map15095.put("key15095", b15095.toString()); // put in a collection
+		String c15095 = (String)map15095.get("key15095"); // get it back out
+		String d15095 = c15095.substring(0,c15095.length()-1); // extract most of it
+		String e15095 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d15095.getBytes() ) )); // B64 encode and decode it
+		String f15095 = e15095.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f15095); // reflection
 		
 		
-		try {
-			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("DES/CBC/PKCS5Padding");
-		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
-			//throw new ServletException(e); - default provider (SUN) does not have any cipher instances
-		} catch (javax.crypto.NoSuchPaddingException e) {
-			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
-			//throw new ServletException(e); - default provider (SUN) does not have any cipher instances
-		}
-		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String) executed");
+		new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir, bar);
 	}
 }

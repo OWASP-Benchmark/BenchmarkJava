@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,18 +47,43 @@ public class BenchmarkTest19589 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		// javax.servlet.http.HttpSession.putValue(java.lang.String^,java.lang.Object)
-		request.getSession().putValue( bar, "foo");
+	    try {
+		    java.util.Random numGen = java.security.SecureRandom.getInstance("SHA1PRNG");
+		
+		    // Get 40 random bytes
+		    byte[] randomBytes = new byte[40];
+		    getNextNumber(numGen, randomBytes);
+			response.getWriter().println("Random bytes are: " + new String(randomBytes));
+				    
+	    } catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing SecureRandom.nextBytes() - TestCase");
+			throw new ServletException(e);
+	    } finally {
+			response.getWriter().println("Randomness Test java.security.SecureRandom.nextBytes(byte[]) executed");	    
+	    }
+	}
+	    	
+	void getNextNumber(java.util.Random generator, byte[] barray) {
+		generator.nextBytes(barray);
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map21622 = new java.util.HashMap<String,Object>();
-		map21622.put("keyA-21622", "a Value"); // put some stuff in the collection
-		map21622.put("keyB-21622", param.toString()); // put it in a collection
-		map21622.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map21622.get("keyB-21622"); // get it back out
+		// Chain a bunch of propagators in sequence
+		String a19481 = param; //assign
+		StringBuilder b19481 = new StringBuilder(a19481);  // stick in stringbuilder
+		b19481.append(" SafeStuff"); // append some safe content
+		b19481.replace(b19481.length()-"Chars".length(),b19481.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map19481 = new java.util.HashMap<String,Object>();
+		map19481.put("key19481", b19481.toString()); // put in a collection
+		String c19481 = (String)map19481.get("key19481"); // get it back out
+		String d19481 = c19481.substring(0,c19481.length()-1); // extract most of it
+		String e19481 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d19481.getBytes() ) )); // B64 encode and decode it
+		String f19481 = e19481.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String g19481 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g19481); // reflection
 	
 		return bar;	
 	}

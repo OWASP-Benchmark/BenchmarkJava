@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -36,13 +54,20 @@ public class BenchmarkTest15726 extends HttpServlet {
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map72342 = new java.util.HashMap<String,Object>();
-		map72342.put("keyA-72342", "a_Value"); // put some stuff in the collection
-		map72342.put("keyB-72342", param.toString()); // put it in a collection
-		map72342.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map72342.get("keyB-72342"); // get it back out
-		bar = (String)map72342.get("keyA-72342"); // get safe value back out
+		// Chain a bunch of propagators in sequence
+		String a42301 = param; //assign
+		StringBuilder b42301 = new StringBuilder(a42301);  // stick in stringbuilder
+		b42301.append(" SafeStuff"); // append some safe content
+		b42301.replace(b42301.length()-"Chars".length(),b42301.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map42301 = new java.util.HashMap<String,Object>();
+		map42301.put("key42301", b42301.toString()); // put in a collection
+		String c42301 = (String)map42301.get("key42301"); // get it back out
+		String d42301 = c42301.substring(0,c42301.length()-1); // extract most of it
+		String e42301 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d42301.getBytes() ) )); // B64 encode and decode it
+		String f42301 = e42301.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f42301); // reflection
 	
 		return bar;	
 	}

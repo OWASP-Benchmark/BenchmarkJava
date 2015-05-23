@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,11 +46,40 @@ public class BenchmarkTest05509 extends HttpServlet {
 		else param = null;
 		
 		
-		String bar = param;
+		// Chain a bunch of propagators in sequence
+		String a69665 = param; //assign
+		StringBuilder b69665 = new StringBuilder(a69665);  // stick in stringbuilder
+		b69665.append(" SafeStuff"); // append some safe content
+		b69665.replace(b69665.length()-"Chars".length(),b69665.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map69665 = new java.util.HashMap<String,Object>();
+		map69665.put("key69665", b69665.toString()); // put in a collection
+		String c69665 = (String)map69665.get("key69665"); // get it back out
+		String d69665 = c69665.substring(0,c69665.length()-1); // extract most of it
+		String e69665 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d69665.getBytes() ) )); // B64 encode and decode it
+		String f69665 = e69665.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f69665); // reflection
 		
 		
-		java.lang.Math.random();
-		
-		response.getWriter().println("Weak Randomness Test java.lang.Math.random() executed");
+		java.security.Provider[] provider = java.security.Security.getProviders();
+		java.security.MessageDigest md;
+
+		try {
+			if (provider.length > 1) {
+
+				md = java.security.MessageDigest.getInstance("SHA1", provider[0]);
+			} else {
+				md = java.security.MessageDigest.getInstance("SHA1", "SUN");
+			}
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider)");
+            throw new ServletException(e);
+		} catch (java.security.NoSuchProviderException e) {
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider)");
+            throw new ServletException(e);
+		}
+
+		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider) executed");
 	}
 }

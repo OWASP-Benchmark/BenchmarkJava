@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,20 +43,30 @@ public class BenchmarkTest12901 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		new java.io.File(bar, "/Test.txt");
+		java.security.Provider[] provider = java.security.Security.getProviders();
+		javax.crypto.Cipher c;
+
+		try {
+			if (provider.length > 1) {
+				c = javax.crypto.Cipher.getInstance("DES/CBC/PKCS5PADDING", java.security.Security.getProvider("SunJCE"));
+			} else {
+				c = javax.crypto.Cipher.getInstance("DES/CBC/PKCS5PADDING", java.security.Security.getProvider("SunJCE"));
+			}
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
+			throw new ServletException(e);
+		} catch (javax.crypto.NoSuchPaddingException e) {
+			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
+			throw new ServletException(e);
+		}
+		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) executed");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map73180 = new java.util.HashMap<String,Object>();
-		map73180.put("keyA-73180", "a_Value"); // put some stuff in the collection
-		map73180.put("keyB-73180", param.toString()); // put it in a collection
-		map73180.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map73180.get("keyB-73180"); // get it back out
-		bar = (String)map73180.get("keyA-73180"); // get safe value back out
+		String bar = org.springframework.web.util.HtmlUtils.htmlEscape(param);
 
             return bar;
         }

@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,23 +46,17 @@ public class BenchmarkTest04359 extends HttpServlet {
 		}
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a99032 = param; //assign
-		StringBuilder b99032 = new StringBuilder(a99032);  // stick in stringbuilder
-		b99032.append(" SafeStuff"); // append some safe content
-		b99032.replace(b99032.length()-"Chars".length(),b99032.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map99032 = new java.util.HashMap<String,Object>();
-		map99032.put("key99032", b99032.toString()); // put in a collection
-		String c99032 = (String)map99032.get("key99032"); // get it back out
-		String d99032 = c99032.substring(0,c99032.length()-1); // extract most of it
-		String e99032 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d99032.getBytes() ) )); // B64 encode and decode it
-		String f99032 = e99032.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g99032 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g99032); // reflection
+		String bar;
+		
+		// Simple if statement that assigns param to bar on true condition
+		int i = 196;
+		if ( (500/42) + i > 200 )
+		   bar = param;
+		else bar = "This should never happen"; 
 		
 		
-		response.getWriter().println(bar.toCharArray());
+		Object[] obj = { "a", bar};
+		
+		response.getWriter().printf(java.util.Locale.US,"notfoo",obj);
 	}
 }

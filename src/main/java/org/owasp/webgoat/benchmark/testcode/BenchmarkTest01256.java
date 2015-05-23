@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -24,8 +42,20 @@ public class BenchmarkTest01256 extends HttpServlet {
 		String param = request.getHeader("foo");
 		
 		
-		String bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
+		// Chain a bunch of propagators in sequence
+		String a92965 = param; //assign
+		StringBuilder b92965 = new StringBuilder(a92965);  // stick in stringbuilder
+		b92965.append(" SafeStuff"); // append some safe content
+		b92965.replace(b92965.length()-"Chars".length(),b92965.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map92965 = new java.util.HashMap<String,Object>();
+		map92965.put("key92965", b92965.toString()); // put in a collection
+		String c92965 = (String)map92965.get("key92965"); // get it back out
+		String d92965 = c92965.substring(0,c92965.length()-1); // extract most of it
+		String e92965 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d92965.getBytes() ) )); // B64 encode and decode it
+		String f92965 = e92965.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f92965); // reflection
 		
 		
 		java.util.List<String> argList = new java.util.ArrayList<String>();
@@ -48,6 +78,7 @@ public class BenchmarkTest01256 extends HttpServlet {
 			org.owasp.webgoat.benchmark.helpers.Utils.printOSCommandResults(p);
 		} catch (IOException e) {
 			System.out.println("Problem executing cmdi - java.lang.ProcessBuilder(java.util.List) Test Case");
+            throw new ServletException(e);
 		}
 	}
 }

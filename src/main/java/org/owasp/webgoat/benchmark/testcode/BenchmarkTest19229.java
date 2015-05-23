@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,36 +47,24 @@ public class BenchmarkTest19229 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		// Create the file first so the test won't throw an exception if it doesn't exist.
-		// Note: Don't actually do this because this method signature could cause a tool to find THIS file constructor 
-		// as a vuln, rather than the File signature we are trying to actually test.
-		// If necessary, just run the benchmark twice. The 1st run should create all the necessary files.
-		//new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar).createNewFile();
-		
-
-
-        java.io.FileInputStream fileInputStream = new java.io.FileInputStream(
-        		org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar);
-        java.io.FileDescriptor fd = fileInputStream.getFD();
-        java.io.FileOutputStream anotOutputStream = new java.io.FileOutputStream(fd);
+		try {
+			java.io.FileInputStream fis = new java.io.FileInputStream(new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar));
+		} catch (Exception e) {
+			// OK to swallow any exception
+            // TODO: Fix this.
+			System.out.println("File exception caught and swallowed: " + e.getMessage());
+		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a46526 = param; //assign
-		StringBuilder b46526 = new StringBuilder(a46526);  // stick in stringbuilder
-		b46526.append(" SafeStuff"); // append some safe content
-		b46526.replace(b46526.length()-"Chars".length(),b46526.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map46526 = new java.util.HashMap<String,Object>();
-		map46526.put("key46526", b46526.toString()); // put in a collection
-		String c46526 = (String)map46526.get("key46526"); // get it back out
-		String d46526 = c46526.substring(0,c46526.length()-1); // extract most of it
-		String e46526 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d46526.getBytes() ) )); // B64 encode and decode it
-		String f46526 = e46526.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f46526); // reflection
+		String bar;
+		
+		// Simple ? condition that assigns param to bar on false condition
+		int i = 106;
+		
+		bar = (7*42) - i > 200 ? "This should never happen" : param;
+		
 	
 		return bar;	
 	}

@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -26,20 +44,36 @@ public class BenchmarkTest20562 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		Object[] obj = { "a", bar};
+		try {
+		    java.util.Properties wbeprops = new java.util.Properties();
+		    wbeprops.load(this.getClass().getClassLoader().getResourceAsStream("wbe.properties"));
+			String algorithm = wbeprops.getProperty("hashAlg2", "SHA5");
+			java.security.MessageDigest md = java.security.MessageDigest.getInstance(algorithm);
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing hash - TestCase");
+			throw new ServletException(e);
+		}
 		
-		response.getWriter().printf(java.util.Locale.US,"notfoo",obj);
+		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String) executed");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		
-		// Simple if statement that assigns param to bar on true condition
-		int i = 196;
-		if ( (500/42) + i > 200 )
-		   bar = param;
-		else bar = "This should never happen"; 
+		// Chain a bunch of propagators in sequence
+		String a17083 = param; //assign
+		StringBuilder b17083 = new StringBuilder(a17083);  // stick in stringbuilder
+		b17083.append(" SafeStuff"); // append some safe content
+		b17083.replace(b17083.length()-"Chars".length(),b17083.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map17083 = new java.util.HashMap<String,Object>();
+		map17083.put("key17083", b17083.toString()); // put in a collection
+		String c17083 = (String)map17083.get("key17083"); // get it back out
+		String d17083 = c17083.substring(0,c17083.length()-1); // extract most of it
+		String e17083 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d17083.getBytes() ) )); // B64 encode and decode it
+		String f17083 = e17083.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String g17083 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g17083); // reflection
 	
 		return bar;	
 	}

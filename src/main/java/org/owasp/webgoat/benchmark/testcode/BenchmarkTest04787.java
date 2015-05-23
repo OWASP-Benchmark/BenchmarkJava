@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,29 +43,15 @@ public class BenchmarkTest04787 extends HttpServlet {
 		String param = scr.getTheParameter("foo");
 		
 		
-		String bar;
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map12463 = new java.util.HashMap<String,Object>();
+		map12463.put("keyA-12463", "a_Value"); // put some stuff in the collection
+		map12463.put("keyB-12463", param.toString()); // put it in a collection
+		map12463.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map12463.get("keyB-12463"); // get it back out
+		bar = (String)map12463.get("keyA-12463"); // get safe value back out
 		
-		// Simple ? condition that assigns param to bar on false condition
-		int i = 106;
 		
-		bar = (7*42) - i > 200 ? "This should never happen" : param;
-		
-		
-		
-		// FILE URIs are tricky because they are different between Mac and Windows because of lack of standardization.
-		// Mac requires an extra slash for some reason.
-		String startURIslashes = "";
-        if (System.getProperty("os.name").indexOf("Windows") != -1)
-	        if (System.getProperty("os.name").indexOf("Windows") != -1)
-	        	startURIslashes = "/";
-	        else startURIslashes = "//";
-
-		try {
-			java.net.URI fileURI = new java.net.URI("file", null, startURIslashes 
-				+ org.owasp.webgoat.benchmark.helpers.Utils.testfileDir.replace('\\', java.io.File.separatorChar).replace(' ', '_') + bar, null, null);
-			new java.io.File(fileURI);
-		} catch (java.net.URISyntaxException e) {
-			throw new ServletException(e);
-		}
+		new java.io.File(new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir),bar);
 	}
 }

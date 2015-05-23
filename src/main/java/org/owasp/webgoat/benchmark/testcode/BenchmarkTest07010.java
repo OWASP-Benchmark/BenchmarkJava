@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,36 +43,38 @@ public class BenchmarkTest07010 extends HttpServlet {
 		String param = scr.getTheValue("foo");
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map22805 = new java.util.HashMap<String,Object>();
-		map22805.put("keyA-22805", "a_Value"); // put some stuff in the collection
-		map22805.put("keyB-22805", param.toString()); // put it in a collection
-		map22805.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map22805.get("keyB-22805"); // get it back out
-		bar = (String)map22805.get("keyA-22805"); // get safe value back out
+		String bar;
+		String guess = "ABC";
+		char switchTarget = guess.charAt(1); // condition 'B', which is safe
 		
-		
-		String a1 = "";
-		String a2 = "";
-		String osName = System.getProperty("os.name");
-        if (osName.indexOf("Windows") != -1) {
-        	a1 = "cmd.exe";
-        	a2 = "/c";
-        } else {
-        	a1 = "sh";
-        	a2 = "-c";
-        }
-        String[] args = {a1, a2, "echo"};
-        
-        String[] argsEnv = { bar };
-        
-		Runtime r = Runtime.getRuntime();
-
-		try {
-			Process p = r.exec(args, argsEnv);
-			org.owasp.webgoat.benchmark.helpers.Utils.printOSCommandResults(p);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - TestCase");
+		// Simple case statement that assigns param to bar on conditions 'A' or 'C'
+		switch (switchTarget) {
+		  case 'A':
+		        bar = param;
+		        break;
+		  case 'B': 
+		        bar = "bob";
+		        break;
+		  case 'C':
+		  case 'D':        
+		        bar = param;
+		        break;
+		  default:
+		        bar = "bob's your uncle";
+		        break;
 		}
+		
+		
+        try {
+	    	java.util.Random numGen = java.security.SecureRandom.getInstance("SHA1PRNG");
+        	boolean randNumber = numGen.nextBoolean();
+        } catch (java.security.NoSuchAlgorithmException e) {
+            System.out.println("Problem executing SecureRandom.nextBoolean() - TestCase");
+            throw new ServletException(e);
+        }
+
+        response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextBoolean() executed");
+
+	
 	}
 }

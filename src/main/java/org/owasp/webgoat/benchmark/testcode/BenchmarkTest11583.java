@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -21,52 +39,34 @@ public class BenchmarkTest11583 extends HttpServlet {
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	
-		org.owasp.webgoat.benchmark.helpers.SeparateClassRequest scr = new org.owasp.webgoat.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheParameter("foo");
+		String param = "";
+		java.util.Enumeration<String> names = request.getParameterNames();
+		if (names.hasMoreElements()) {
+			param = names.nextElement(); // just grab first element
+		}
 
 		String bar = new Test().doSomething(param);
 		
-		java.security.Provider[] provider = java.security.Security.getProviders();
-		javax.crypto.Cipher c;
-
+		String sql = "UPDATE USERS SET PASSWORD='" + bar + "' WHERE USERNAME='foo'";
+				
 		try {
-			if (provider.length > 1) {
-				c = javax.crypto.Cipher.getInstance("DES/CBC/PKCS5PADDING", java.security.Security.getProvider("SunJCE"));
-			} else {
-				c = javax.crypto.Cipher.getInstance("DES/CBC/PKCS5PADDING", java.security.Security.getProvider("SunJCE"));
-			}
-		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			// throw new ServletException(e);
-		/*} catch (java.security.NoSuchProviderException e) {
-			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			// throw new ServletException(e); ok for now to swallow this */
-		} catch (javax.crypto.NoSuchPaddingException e) {
-			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			// throw new ServletException(e);
+			java.sql.Statement statement = org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			int count = statement.executeUpdate( sql, new String[] {"user","password"} );
+		} catch (java.sql.SQLException e) {
+			throw new ServletException(e);
 		}
-		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) executed");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a63583 = param; //assign
-		StringBuilder b63583 = new StringBuilder(a63583);  // stick in stringbuilder
-		b63583.append(" SafeStuff"); // append some safe content
-		b63583.replace(b63583.length()-"Chars".length(),b63583.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map63583 = new java.util.HashMap<String,Object>();
-		map63583.put("key63583", b63583.toString()); // put in a collection
-		String c63583 = (String)map63583.get("key63583"); // get it back out
-		String d63583 = c63583.substring(0,c63583.length()-1); // extract most of it
-		String e63583 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d63583.getBytes() ) )); // B64 encode and decode it
-		String f63583 = e63583.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g63583 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g63583); // reflection
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map5377 = new java.util.HashMap<String,Object>();
+		map5377.put("keyA-5377", "a Value"); // put some stuff in the collection
+		map5377.put("keyB-5377", param.toString()); // put it in a collection
+		map5377.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map5377.get("keyB-5377"); // get it back out
 
             return bar;
         }

@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -24,15 +42,11 @@ public class BenchmarkTest03211 extends HttpServlet {
 		String param = request.getParameter("foo");
 		
 		
-		String bar = param;
-		if (param.length() > 1) {
-		    StringBuilder sbxyz26415 = new StringBuilder(param);
-		    bar = sbxyz26415.replace(param.length()-"Z".length(), param.length(),"Z").toString();
-		}
+		String bar = org.springframework.web.util.HtmlUtils.htmlEscape(param);
 		
 		
-		double rand = new java.util.Random().nextDouble();
+		double stuff = new java.util.Random().nextGaussian();
 		
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextDouble() executed");
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextGaussian() executed");
 	}
 }

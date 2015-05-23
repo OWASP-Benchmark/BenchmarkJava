@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,24 +43,13 @@ public class BenchmarkTest05052 extends HttpServlet {
 		String param = scr.getTheParameter("foo");
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a35716 = param; //assign
-		StringBuilder b35716 = new StringBuilder(a35716);  // stick in stringbuilder
-		b35716.append(" SafeStuff"); // append some safe content
-		b35716.replace(b35716.length()-"Chars".length(),b35716.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map35716 = new java.util.HashMap<String,Object>();
-		map35716.put("key35716", b35716.toString()); // put in a collection
-		String c35716 = (String)map35716.get("key35716"); // get it back out
-		String d35716 = c35716.substring(0,c35716.length()-1); // extract most of it
-		String e35716 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d35716.getBytes() ) )); // B64 encode and decode it
-		String f35716 = e35716.split(" ")[0]; // split it on a space
 		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f35716); // reflection
+		String bar = thing.doSomething(param);
 		
 		
-		boolean randNumber = new java.util.Random().nextBoolean();
+		byte[] bytes = new byte[10];
+		new java.util.Random().nextBytes(bytes);
 		
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextBoolean() executed");
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextBytes() executed");
 	}
 }

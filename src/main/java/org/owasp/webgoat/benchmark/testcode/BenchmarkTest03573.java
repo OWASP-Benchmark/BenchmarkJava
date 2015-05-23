@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -30,27 +48,25 @@ public class BenchmarkTest03573 extends HttpServlet {
 		
 		
 		String bar;
-		String guess = "ABC";
-		char switchTarget = guess.charAt(1); // condition 'B', whish is safe
 		
-		// Simple case statement that assigns param to bar on conditions 'A' or 'C'
-		switch (switchTarget) {
-		  case 'A':
-		        bar = param;
-		        break;
-		  case 'B': 
-		        bar = "bob";
-		        break;
-		  case 'C':
-		  case 'D':        
-		        bar = param;
-		        break;
-		  default:
-		        bar = "bob's your uncle";
-		        break;
-		}
+		// Simple if statement that assigns constant to bar on true condition
+		int i = 86;
+		if ( (7*42) - i > 200 )
+		   bar = "This_should_always_happen"; 
+		else bar = param;
 		
 		
-		new java.io.File(bar, "/Test.txt");
+		// Create the file first so the test won't throw an exception if it doesn't exist.
+		// Note: Don't actually do this because this method signature could cause a tool to find THIS file constructor 
+		// as a vuln, rather than the File signature we are trying to actually test.
+		// If necessary, just run the benchmark twice. The 1st run should create all the necessary files.
+		//new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar).createNewFile();
+		
+
+
+        java.io.FileInputStream fileInputStream = new java.io.FileInputStream(
+        		org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar);
+        java.io.FileDescriptor fd = fileInputStream.getFD();
+        java.io.FileOutputStream anotOutputStream = new java.io.FileOutputStream(fd);
 	}
 }

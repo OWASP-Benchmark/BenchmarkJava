@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,36 +46,27 @@ public class BenchmarkTest01887 extends HttpServlet {
 		}
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map18719 = new java.util.HashMap<String,Object>();
-		map18719.put("keyA-18719", "a Value"); // put some stuff in the collection
-		map18719.put("keyB-18719", param.toString()); // put it in a collection
-		map18719.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map18719.get("keyB-18719"); // get it back out
+		// Chain a bunch of propagators in sequence
+		String a88612 = param; //assign
+		StringBuilder b88612 = new StringBuilder(a88612);  // stick in stringbuilder
+		b88612.append(" SafeStuff"); // append some safe content
+		b88612.replace(b88612.length()-"Chars".length(),b88612.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map88612 = new java.util.HashMap<String,Object>();
+		map88612.put("key88612", b88612.toString()); // put in a collection
+		String c88612 = (String)map88612.get("key88612"); // get it back out
+		String d88612 = c88612.substring(0,c88612.length()-1); // extract most of it
+		String e88612 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d88612.getBytes() ) )); // B64 encode and decode it
+		String f88612 = e88612.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String g88612 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g88612); // reflection
 		
 		
-		java.util.List<String> argList = new java.util.ArrayList<String>();
-		
-		String osName = System.getProperty("os.name");
-        if (osName.indexOf("Windows") != -1) {
-        	argList.add("cmd.exe");
-        	argList.add("/c");
-        } else {
-        	argList.add("sh");
-        	argList.add("-c");
-        }
-        argList.add("echo");
-        argList.add(bar);
-
-		ProcessBuilder pb = new ProcessBuilder();
-
-		pb.command(argList);
-		
-		try {
-			Process p = pb.start();
-			org.owasp.webgoat.benchmark.helpers.Utils.printOSCommandResults(p);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - java.lang.ProcessBuilder(java.util.List) Test Case");
+		int length = 1;
+		if (bar != null) {
+			length = bar.length();
+			response.getWriter().write(bar, 0, length - 1);
 		}
 	}
 }

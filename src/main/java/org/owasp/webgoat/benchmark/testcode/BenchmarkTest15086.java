@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,19 +43,15 @@ public class BenchmarkTest15086 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		int r = new java.util.Random().nextInt();
+		float rand = new java.util.Random().nextFloat();
 		
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextInt() executed");
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextFloat() executed");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map60557 = new java.util.HashMap<String,Object>();
-		map60557.put("keyA-60557", "a Value"); // put some stuff in the collection
-		map60557.put("keyB-60557", param.toString()); // put it in a collection
-		map60557.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map60557.get("keyB-60557"); // get it back out
+		String bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
 	
 		return bar;	
 	}

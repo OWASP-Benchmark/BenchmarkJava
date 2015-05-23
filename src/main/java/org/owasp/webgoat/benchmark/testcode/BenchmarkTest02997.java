@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -24,8 +42,21 @@ public class BenchmarkTest02997 extends HttpServlet {
 		String param = request.getParameter("foo");
 		
 		
+		// Chain a bunch of propagators in sequence
+		String a84330 = param; //assign
+		StringBuilder b84330 = new StringBuilder(a84330);  // stick in stringbuilder
+		b84330.append(" SafeStuff"); // append some safe content
+		b84330.replace(b84330.length()-"Chars".length(),b84330.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map84330 = new java.util.HashMap<String,Object>();
+		map84330.put("key84330", b84330.toString()); // put in a collection
+		String c84330 = (String)map84330.get("key84330"); // get it back out
+		String d84330 = c84330.substring(0,c84330.length()-1); // extract most of it
+		String e84330 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d84330.getBytes() ) )); // B64 encode and decode it
+		String f84330 = e84330.split(" ")[0]; // split it on a space
 		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(param);
+		String g84330 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g84330); // reflection
 		
 		
 		try {	
@@ -33,6 +64,7 @@ public class BenchmarkTest02997 extends HttpServlet {
 			java.io.InputStream is = java.nio.file.Files.newInputStream(path, java.nio.file.StandardOpenOption.READ);
 		} catch (Exception e) {
 			// OK to swallow any exception for now
+            // TODO: Fix this, if possible.
 			System.out.println("File exception caught and swallowed: " + e.getMessage());
 		}
 	}

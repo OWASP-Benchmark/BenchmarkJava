@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,28 +46,14 @@ public class BenchmarkTest05915 extends HttpServlet {
 		else param = null;
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a5946 = param; //assign
-		StringBuilder b5946 = new StringBuilder(a5946);  // stick in stringbuilder
-		b5946.append(" SafeStuff"); // append some safe content
-		b5946.replace(b5946.length()-"Chars".length(),b5946.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map5946 = new java.util.HashMap<String,Object>();
-		map5946.put("key5946", b5946.toString()); // put in a collection
-		String c5946 = (String)map5946.get("key5946"); // get it back out
-		String d5946 = c5946.substring(0,c5946.length()-1); // extract most of it
-		String e5946 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d5946.getBytes() ) )); // B64 encode and decode it
-		String f5946 = e5946.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f5946); // reflection
+		String bar = org.owasp.esapi.ESAPI.encoder().encodeForHTML(param);
 		
 		
 		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
 				
 		try {
-			java.sql.Statement statement = org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			statement.addBatch( sql );
-			int[] counts = statement.executeBatch();
+			java.sql.Statement statement =  org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			statement.execute( sql );
 		} catch (java.sql.SQLException e) {
 			throw new ServletException(e);
 		}

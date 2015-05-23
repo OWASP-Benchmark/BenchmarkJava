@@ -1,6 +1,7 @@
 <test-metadata>
-  <category>pathtraver</category>
+  <wbe-version>1.1</wbe-version>
+  <category>weakrand</category>
   <test-number>03614</test-number>
   <vulnerability>true</vulnerability>
-  <cwe>22</cwe>
+  <cwe>330</cwe>
 </test-metadata>

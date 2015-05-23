@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,37 +47,35 @@ public class BenchmarkTest15676 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		String a1 = "";
-		String a2 = "";
+		java.util.List<String> argList = new java.util.ArrayList<String>();
+		
 		String osName = System.getProperty("os.name");
         if (osName.indexOf("Windows") != -1) {
-        	a1 = "cmd.exe";
-        	a2 = "/c";
+        	argList.add("cmd.exe");
+        	argList.add("/c");
         } else {
-        	a1 = "sh";
-        	a2 = "-c";
+        	argList.add("sh");
+        	argList.add("-c");
         }
-        String[] args = {a1, a2, "echo", bar};
+        argList.add("echo");
+        argList.add(bar);
 
-		ProcessBuilder pb = new ProcessBuilder(args);
+		ProcessBuilder pb = new ProcessBuilder();
+
+		pb.command(argList);
 		
 		try {
 			Process p = pb.start();
 			org.owasp.webgoat.benchmark.helpers.Utils.printOSCommandResults(p);
 		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - java.lang.ProcessBuilder(java.lang.String[]) Test Case");
+			System.out.println("Problem executing cmdi - java.lang.ProcessBuilder(java.util.List) Test Case");
+            throw new ServletException(e);
 		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		
-		// Simple ? condition that assigns param to bar on false condition
-		int i = 106;
-		
-		bar = (7*42) - i > 200 ? "This should never happen" : param;
-		
+		String bar = org.owasp.esapi.ESAPI.encoder().encodeForHTML(param);
 	
 		return bar;	
 	}

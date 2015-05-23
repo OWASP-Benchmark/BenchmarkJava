@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,26 +43,20 @@ public class BenchmarkTest06648 extends HttpServlet {
 		String param = scr.getTheValue("foo");
 		
 		
-		String bar;
-		String guess = "ABC";
-		char switchTarget = guess.charAt(1); // condition 'B', whish is safe
-		
-		// Simple case statement that assigns param to bar on conditions 'A' or 'C'
-		switch (switchTarget) {
-		  case 'A':
-		        bar = param;
-		        break;
-		  case 'B': 
-		        bar = "bob";
-		        break;
-		  case 'C':
-		  case 'D':        
-		        bar = param;
-		        break;
-		  default:
-		        bar = "bob's your uncle";
-		        break;
-		}
+		// Chain a bunch of propagators in sequence
+		String a83543 = param; //assign
+		StringBuilder b83543 = new StringBuilder(a83543);  // stick in stringbuilder
+		b83543.append(" SafeStuff"); // append some safe content
+		b83543.replace(b83543.length()-"Chars".length(),b83543.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map83543 = new java.util.HashMap<String,Object>();
+		map83543.put("key83543", b83543.toString()); // put in a collection
+		String c83543 = (String)map83543.get("key83543"); // get it back out
+		String d83543 = c83543.substring(0,c83543.length()-1); // extract most of it
+		String e83543 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d83543.getBytes() ) )); // B64 encode and decode it
+		String f83543 = e83543.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f83543); // reflection
 		
 		
 		java.io.File file = new java.io.File(bar);

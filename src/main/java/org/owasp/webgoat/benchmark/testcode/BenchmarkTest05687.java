@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,24 +46,13 @@ public class BenchmarkTest05687 extends HttpServlet {
 		else param = null;
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a68697 = param; //assign
-		StringBuilder b68697 = new StringBuilder(a68697);  // stick in stringbuilder
-		b68697.append(" SafeStuff"); // append some safe content
-		b68697.replace(b68697.length()-"Chars".length(),b68697.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map68697 = new java.util.HashMap<String,Object>();
-		map68697.put("key68697", b68697.toString()); // put in a collection
-		String c68697 = (String)map68697.get("key68697"); // get it back out
-		String d68697 = c68697.substring(0,c68697.length()-1); // extract most of it
-		String e68697 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d68697.getBytes() ) )); // B64 encode and decode it
-		String f68697 = e68697.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f68697); // reflection
+		String bar = org.apache.commons.lang.StringEscapeUtils.escapeHtml(param);
 		
 		
-		float rand = new java.util.Random().nextFloat();
+		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie","SomeValue");
 		
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextFloat() executed");
+		cookie.setSecure(true);
+		
+		response.addCookie(cookie);
 	}
 }

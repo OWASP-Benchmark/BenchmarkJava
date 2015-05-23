@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,16 +43,25 @@ public class BenchmarkTest16707 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		java.io.FileOutputStream fos = new java.io.FileOutputStream(new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar));
+		new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir, bar);
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = param;
-		if (param.length() > 1) {
-		    StringBuilder sbxyz38878 = new StringBuilder(param);
-		    bar = sbxyz38878.replace(param.length()-"Z".length(), param.length(),"Z").toString();
-		}
+		// Chain a bunch of propagators in sequence
+		String a99900 = param; //assign
+		StringBuilder b99900 = new StringBuilder(a99900);  // stick in stringbuilder
+		b99900.append(" SafeStuff"); // append some safe content
+		b99900.replace(b99900.length()-"Chars".length(),b99900.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map99900 = new java.util.HashMap<String,Object>();
+		map99900.put("key99900", b99900.toString()); // put in a collection
+		String c99900 = (String)map99900.get("key99900"); // get it back out
+		String d99900 = c99900.substring(0,c99900.length()-1); // extract most of it
+		String e99900 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d99900.getBytes() ) )); // B64 encode and decode it
+		String f99900 = e99900.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f99900); // reflection
 	
 		return bar;	
 	}

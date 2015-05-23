@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -30,44 +48,30 @@ public class BenchmarkTest10493 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		java.security.Provider[] provider = java.security.Security.getProviders();
-		java.security.MessageDigest md;
-
 		try {
-			if (provider.length > 1) {
-
-				md = java.security.MessageDigest.getInstance("SHA1", provider[0]);
-			} else {
-				md = java.security.MessageDigest.getInstance("SHA1", "Sun");
-			}
+			java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA-512", "SUN");
 		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider)");
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.lang.String)");
+            throw new ServletException(e);
 		} catch (java.security.NoSuchProviderException e) {
-			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider)");
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.lang.String)");
+            throw new ServletException(e);
 		}
 
-		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider) executed");
+		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.lang.String) executed");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a11944 = param; //assign
-		StringBuilder b11944 = new StringBuilder(a11944);  // stick in stringbuilder
-		b11944.append(" SafeStuff"); // append some safe content
-		b11944.replace(b11944.length()-"Chars".length(),b11944.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map11944 = new java.util.HashMap<String,Object>();
-		map11944.put("key11944", b11944.toString()); // put in a collection
-		String c11944 = (String)map11944.get("key11944"); // get it back out
-		String d11944 = c11944.substring(0,c11944.length()-1); // extract most of it
-		String e11944 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d11944.getBytes() ) )); // B64 encode and decode it
-		String f11944 = e11944.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g11944 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g11944); // reflection
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map19227 = new java.util.HashMap<String,Object>();
+		map19227.put("keyA-19227", "a_Value"); // put some stuff in the collection
+		map19227.put("keyB-19227", param.toString()); // put it in a collection
+		map19227.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map19227.get("keyB-19227"); // get it back out
+		bar = (String)map19227.get("keyA-19227"); // get safe value back out
 
             return bar;
         }

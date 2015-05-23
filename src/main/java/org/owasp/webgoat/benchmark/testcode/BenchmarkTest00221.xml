@@ -1,6 +1,7 @@
 <test-metadata>
-  <category>cmdi</category>
+  <wbe-version>1.1</wbe-version>
+  <category>pathtraver</category>
   <test-number>00221</test-number>
   <vulnerability>true</vulnerability>
-  <cwe>78</cwe>
+  <cwe>22</cwe>
 </test-metadata>

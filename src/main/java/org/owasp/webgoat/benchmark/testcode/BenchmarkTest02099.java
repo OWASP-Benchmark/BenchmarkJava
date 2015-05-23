@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,24 +46,15 @@ public class BenchmarkTest02099 extends HttpServlet {
 		}
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a60715 = param; //assign
-		StringBuilder b60715 = new StringBuilder(a60715);  // stick in stringbuilder
-		b60715.append(" SafeStuff"); // append some safe content
-		b60715.replace(b60715.length()-"Chars".length(),b60715.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map60715 = new java.util.HashMap<String,Object>();
-		map60715.put("key60715", b60715.toString()); // put in a collection
-		String c60715 = (String)map60715.get("key60715"); // get it back out
-		String d60715 = c60715.substring(0,c60715.length()-1); // extract most of it
-		String e60715 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d60715.getBytes() ) )); // B64 encode and decode it
-		String f60715 = e60715.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g60715 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g60715); // reflection
+		String bar = org.springframework.web.util.HtmlUtils.htmlEscape(param);
 		
 		
-		// javax.servlet.http.HttpSession.putValue(java.lang.String,java.lang.Object^)
-		request.getSession().putValue( "foo", bar);
+		try {
+			long l = java.security.SecureRandom.getInstance("SHA1PRNG").nextLong();
+	    } catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing SecureRandom.nextLong() - TestCase");
+			throw new ServletException(e);
+	    }		
+		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextLong() executed");
 	}
 }

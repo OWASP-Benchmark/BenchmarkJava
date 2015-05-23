@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,19 +46,44 @@ public class BenchmarkTest05735 extends HttpServlet {
 		else param = null;
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map32738 = new java.util.HashMap<String,Object>();
-		map32738.put("keyA-32738", "a Value"); // put some stuff in the collection
-		map32738.put("keyB-32738", param.toString()); // put it in a collection
-		map32738.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map32738.get("keyB-32738"); // get it back out
+		// Chain a bunch of propagators in sequence
+		String a47366 = param; //assign
+		StringBuilder b47366 = new StringBuilder(a47366);  // stick in stringbuilder
+		b47366.append(" SafeStuff"); // append some safe content
+		b47366.replace(b47366.length()-"Chars".length(),b47366.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map47366 = new java.util.HashMap<String,Object>();
+		map47366.put("key47366", b47366.toString()); // put in a collection
+		String c47366 = (String)map47366.get("key47366"); // get it back out
+		String d47366 = c47366.substring(0,c47366.length()-1); // extract most of it
+		String e47366 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d47366.getBytes() ) )); // B64 encode and decode it
+		String f47366 = e47366.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f47366); // reflection
 		
 		
-		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie",bar);
-		
-		cookie.setHttpOnly(true);
-		cookie.setSecure(true);
-		
-		response.addCookie(cookie);
+		String a1 = "";
+		String a2 = "";
+		String osName = System.getProperty("os.name");
+        if (osName.indexOf("Windows") != -1) {
+        	a1 = "cmd.exe";
+        	a2 = "/c";
+        } else {
+        	a1 = "sh";
+        	a2 = "-c";
+        }
+        String[] args = {a1, a2, "echo", bar};
+        
+        String[] argsEnv = { "foo=bar" };
+        
+		Runtime r = Runtime.getRuntime();
+
+		try {
+			Process p = r.exec(args, argsEnv, new java.io.File(System.getProperty("user.dir")));
+			org.owasp.webgoat.benchmark.helpers.Utils.printOSCommandResults(p);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - TestCase");
+            throw new ServletException(e);
+		}
 	}
 }

@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -30,38 +48,26 @@ public class BenchmarkTest10809 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		String cmd = org.owasp.webgoat.benchmark.helpers.Utils.getOSCommandString("echo") + bar;
-        
-		String[] argsEnv = { "Foo=bar" };
-		Runtime r = Runtime.getRuntime();
-
 		try {
-			Process p = r.exec(cmd, argsEnv, new java.io.File(System.getProperty("user.dir")));
-			org.owasp.webgoat.benchmark.helpers.Utils.printOSCommandResults(p);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - TestCase");
-		}
+			int r = java.security.SecureRandom.getInstance("SHA1PRNG").nextInt();
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing SecureRandom.nextInt() - TestCase");
+			throw new ServletException(e);
+	    }
+		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextInt() executed");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a80428 = param; //assign
-		StringBuilder b80428 = new StringBuilder(a80428);  // stick in stringbuilder
-		b80428.append(" SafeStuff"); // append some safe content
-		b80428.replace(b80428.length()-"Chars".length(),b80428.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map80428 = new java.util.HashMap<String,Object>();
-		map80428.put("key80428", b80428.toString()); // put in a collection
-		String c80428 = (String)map80428.get("key80428"); // get it back out
-		String d80428 = c80428.substring(0,c80428.length()-1); // extract most of it
-		String e80428 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d80428.getBytes() ) )); // B64 encode and decode it
-		String f80428 = e80428.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g80428 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g80428); // reflection
+		String bar;
+		
+		// Simple if statement that assigns constant to bar on true condition
+		int i = 86;
+		if ( (7*42) - i > 200 )
+		   bar = "This_should_always_happen"; 
+		else bar = param;
 
             return bar;
         }

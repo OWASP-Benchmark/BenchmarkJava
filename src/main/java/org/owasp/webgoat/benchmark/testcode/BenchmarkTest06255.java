@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -24,15 +42,17 @@ public class BenchmarkTest06255 extends HttpServlet {
 		String param = request.getQueryString();
 		
 		
-		String bar;
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map25472 = new java.util.HashMap<String,Object>();
+		map25472.put("keyA-25472", "a Value"); // put some stuff in the collection
+		map25472.put("keyB-25472", param.toString()); // put it in a collection
+		map25472.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map25472.get("keyB-25472"); // get it back out
 		
-		// Simple ? condition that assigns param to bar on false condition
-		int i = 106;
 		
-		bar = (7*42) - i > 200 ? "This should never happen" : param;
+		byte[] bytes = new byte[10];
+		new java.util.Random().nextBytes(bytes);
 		
-		
-		
-		response.getWriter().write(bar);
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextBytes() executed");
 	}
 }

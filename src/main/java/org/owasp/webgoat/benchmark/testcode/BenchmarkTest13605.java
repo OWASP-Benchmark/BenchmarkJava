@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -26,9 +44,13 @@ public class BenchmarkTest13605 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		Object[] obj = { "a", "b" };
-		
-		response.getWriter().format(java.util.Locale.US,bar,obj);
+		try {
+			java.io.FileInputStream fis = new java.io.FileInputStream(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar);
+		} catch (Exception e) {
+			// OK to swallow any exception
+            // TODO: Fix this.
+			System.out.println("File exception caught and swallowed: " + e.getMessage());
+		}
 	}  // end doPost
 
     private class Test {
@@ -37,11 +59,11 @@ public class BenchmarkTest13605 extends HttpServlet {
 
 		String bar;
 		
-		// Simple if statement that assigns param to bar on true condition
-		int i = 196;
-		if ( (500/42) + i > 200 )
-		   bar = param;
-		else bar = "This should never happen"; 
+		// Simple ? condition that assigns constant to bar on true condition
+		int i = 106;
+		
+		bar = (7*18) + i > 200 ? "This_should_always_happen" : param;
+		
 
             return bar;
         }

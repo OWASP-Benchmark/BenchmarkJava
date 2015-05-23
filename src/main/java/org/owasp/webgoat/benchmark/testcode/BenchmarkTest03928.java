@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -30,31 +48,34 @@ public class BenchmarkTest03928 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a83961 = param; //assign
-		StringBuilder b83961 = new StringBuilder(a83961);  // stick in stringbuilder
-		b83961.append(" SafeStuff"); // append some safe content
-		b83961.replace(b83961.length()-"Chars".length(),b83961.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map83961 = new java.util.HashMap<String,Object>();
-		map83961.put("key83961", b83961.toString()); // put in a collection
-		String c83961 = (String)map83961.get("key83961"); // get it back out
-		String d83961 = c83961.substring(0,c83961.length()-1); // extract most of it
-		String e83961 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d83961.getBytes() ) )); // B64 encode and decode it
-		String f83961 = e83961.split(" ")[0]; // split it on a space
+		String a3761 = param; //assign
+		StringBuilder b3761 = new StringBuilder(a3761);  // stick in stringbuilder
+		b3761.append(" SafeStuff"); // append some safe content
+		b3761.replace(b3761.length()-"Chars".length(),b3761.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map3761 = new java.util.HashMap<String,Object>();
+		map3761.put("key3761", b3761.toString()); // put in a collection
+		String c3761 = (String)map3761.get("key3761"); // get it back out
+		String d3761 = c3761.substring(0,c3761.length()-1); // extract most of it
+		String e3761 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d3761.getBytes() ) )); // B64 encode and decode it
+		String f3761 = e3761.split(" ")[0]; // split it on a space
 		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g83961 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g83961); // reflection
+		String bar = thing.doSomething(f3761); // reflection
 		
 		
-		String cmd = org.owasp.webgoat.benchmark.helpers.Utils.getOSCommandString("echo");
-        
-		Runtime r = Runtime.getRuntime();
+        try {
+	    	java.util.Random numGen = java.security.SecureRandom.getInstance("SHA1PRNG");
+        	boolean randNumber = getNextNumber(numGen);
+        } catch (java.security.NoSuchAlgorithmException e) {
+            System.out.println("Problem executing SecureRandom.nextBoolean() - TestCase");
+            throw new ServletException(e);
+        }
 
-		try {
-			Process p = r.exec(cmd + bar);
-			org.owasp.webgoat.benchmark.helpers.Utils.printOSCommandResults(p);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - TestCase");
-		}
+        response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextBoolean() executed");
+	}
+	
+	boolean getNextNumber(java.util.Random generator) {
+		return generator.nextBoolean();
+	
 	}
 }

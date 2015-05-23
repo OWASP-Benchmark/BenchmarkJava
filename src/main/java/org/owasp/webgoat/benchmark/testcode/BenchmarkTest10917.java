@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -34,7 +52,7 @@ public class BenchmarkTest10917 extends HttpServlet {
 				
 		try {
 			java.sql.Statement statement =  org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			statement.execute( sql, new int[] { 1, 2 } );
+			statement.execute( sql, new String[] { "username", "password" } );
 		} catch (java.sql.SQLException e) {
 			throw new ServletException(e);
 		}
@@ -44,21 +62,13 @@ public class BenchmarkTest10917 extends HttpServlet {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a59995 = param; //assign
-		StringBuilder b59995 = new StringBuilder(a59995);  // stick in stringbuilder
-		b59995.append(" SafeStuff"); // append some safe content
-		b59995.replace(b59995.length()-"Chars".length(),b59995.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map59995 = new java.util.HashMap<String,Object>();
-		map59995.put("key59995", b59995.toString()); // put in a collection
-		String c59995 = (String)map59995.get("key59995"); // get it back out
-		String d59995 = c59995.substring(0,c59995.length()-1); // extract most of it
-		String e59995 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d59995.getBytes() ) )); // B64 encode and decode it
-		String f59995 = e59995.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g59995 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g59995); // reflection
+		String bar;
+		
+		// Simple if statement that assigns constant to bar on true condition
+		int i = 86;
+		if ( (7*42) - i > 200 )
+		   bar = "This_should_always_happen"; 
+		else bar = param;
 
             return bar;
         }

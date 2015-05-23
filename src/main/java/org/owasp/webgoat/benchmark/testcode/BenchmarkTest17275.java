@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -30,26 +48,35 @@ public class BenchmarkTest17275 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir, bar);
+		try {
+			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("DESEDE/ECB/PKCS5Padding");
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
+			throw new ServletException(e);
+		} catch (javax.crypto.NoSuchPaddingException e) {
+			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
+			throw new ServletException(e);
+		}
+		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String) executed");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a76839 = param; //assign
-		StringBuilder b76839 = new StringBuilder(a76839);  // stick in stringbuilder
-		b76839.append(" SafeStuff"); // append some safe content
-		b76839.replace(b76839.length()-"Chars".length(),b76839.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map76839 = new java.util.HashMap<String,Object>();
-		map76839.put("key76839", b76839.toString()); // put in a collection
-		String c76839 = (String)map76839.get("key76839"); // get it back out
-		String d76839 = c76839.substring(0,c76839.length()-1); // extract most of it
-		String e76839 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d76839.getBytes() ) )); // B64 encode and decode it
-		String f76839 = e76839.split(" ")[0]; // split it on a space
+		String a47573 = param; //assign
+		StringBuilder b47573 = new StringBuilder(a47573);  // stick in stringbuilder
+		b47573.append(" SafeStuff"); // append some safe content
+		b47573.replace(b47573.length()-"Chars".length(),b47573.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map47573 = new java.util.HashMap<String,Object>();
+		map47573.put("key47573", b47573.toString()); // put in a collection
+		String c47573 = (String)map47573.get("key47573"); // get it back out
+		String d47573 = c47573.substring(0,c47573.length()-1); // extract most of it
+		String e47573 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d47573.getBytes() ) )); // B64 encode and decode it
+		String f47573 = e47573.split(" ")[0]; // split it on a space
 		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g76839 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g76839); // reflection
+		String g47573 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g47573); // reflection
 	
 		return bar;	
 	}

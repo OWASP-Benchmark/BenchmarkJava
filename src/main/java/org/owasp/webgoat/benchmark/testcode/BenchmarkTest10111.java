@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,16 +43,27 @@ public class BenchmarkTest10111 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		String cmd = org.owasp.webgoat.benchmark.helpers.Utils.getOSCommandString("echo");
+	
+		String a1 = "";
+		String a2 = "";
+		String osName = System.getProperty("os.name");
+        if (osName.indexOf("Windows") != -1) {
+        	a1 = "cmd.exe";
+        	a2 = "/c";
+        } else {
+        	a1 = "sh";
+        	a2 = "-c";
+        }
+        String[] args = {a1, a2, "echo", bar};
         
-		String[] argsEnv = { bar };
 		Runtime r = Runtime.getRuntime();
 
 		try {
-			Process p = r.exec(cmd, argsEnv);
+			Process p = r.exec(args);
 			org.owasp.webgoat.benchmark.helpers.Utils.printOSCommandResults(p);
 		} catch (IOException e) {
 			System.out.println("Problem executing cmdi - TestCase");
+            throw new ServletException(e);
 		}
 	}  // end doPost
 
@@ -42,12 +71,20 @@ public class BenchmarkTest10111 extends HttpServlet {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map20230 = new java.util.HashMap<String,Object>();
-		map20230.put("keyA-20230", "a Value"); // put some stuff in the collection
-		map20230.put("keyB-20230", param.toString()); // put it in a collection
-		map20230.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map20230.get("keyB-20230"); // get it back out
+		// Chain a bunch of propagators in sequence
+		String a24565 = param; //assign
+		StringBuilder b24565 = new StringBuilder(a24565);  // stick in stringbuilder
+		b24565.append(" SafeStuff"); // append some safe content
+		b24565.replace(b24565.length()-"Chars".length(),b24565.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map24565 = new java.util.HashMap<String,Object>();
+		map24565.put("key24565", b24565.toString()); // put in a collection
+		String c24565 = (String)map24565.get("key24565"); // get it back out
+		String d24565 = c24565.substring(0,c24565.length()-1); // extract most of it
+		String e24565 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d24565.getBytes() ) )); // B64 encode and decode it
+		String f24565 = e24565.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f24565); // reflection
 
             return bar;
         }

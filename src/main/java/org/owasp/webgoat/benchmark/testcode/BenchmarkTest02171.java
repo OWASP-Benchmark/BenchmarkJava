@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,30 +46,19 @@ public class BenchmarkTest02171 extends HttpServlet {
 		}
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a68876 = param; //assign
-		StringBuilder b68876 = new StringBuilder(a68876);  // stick in stringbuilder
-		b68876.append(" SafeStuff"); // append some safe content
-		b68876.replace(b68876.length()-"Chars".length(),b68876.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map68876 = new java.util.HashMap<String,Object>();
-		map68876.put("key68876", b68876.toString()); // put in a collection
-		String c68876 = (String)map68876.get("key68876"); // get it back out
-		String d68876 = c68876.substring(0,c68876.length()-1); // extract most of it
-		String e68876 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d68876.getBytes() ) )); // B64 encode and decode it
-		String f68876 = e68876.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g68876 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g68876); // reflection
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map57163 = new java.util.HashMap<String,Object>();
+		map57163.put("keyA-57163", "a Value"); // put some stuff in the collection
+		map57163.put("keyB-57163", param.toString()); // put it in a collection
+		map57163.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map57163.get("keyB-57163"); // get it back out
 		
 		
-		String sql = "SELECT * from USERS where USERNAME=? and PASSWORD='"+ bar +"'";
+		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
 				
 		try {
-			java.sql.Connection connection = org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlConnection();
-			java.sql.PreparedStatement statement = connection.prepareStatement( sql, new int[] { 1, 2 } );
-			statement.setString(1, "foo");
-			statement.execute();
+			java.sql.Statement statement =  org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			statement.execute( sql, java.sql.Statement.RETURN_GENERATED_KEYS );
 		} catch (java.sql.SQLException e) {
 			throw new ServletException(e);
 		}

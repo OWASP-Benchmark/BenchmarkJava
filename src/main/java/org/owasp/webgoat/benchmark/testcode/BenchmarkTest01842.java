@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,24 +46,11 @@ public class BenchmarkTest01842 extends HttpServlet {
 		}
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a9083 = param; //assign
-		StringBuilder b9083 = new StringBuilder(a9083);  // stick in stringbuilder
-		b9083.append(" SafeStuff"); // append some safe content
-		b9083.replace(b9083.length()-"Chars".length(),b9083.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map9083 = new java.util.HashMap<String,Object>();
-		map9083.put("key9083", b9083.toString()); // put in a collection
-		String c9083 = (String)map9083.get("key9083"); // get it back out
-		String d9083 = c9083.substring(0,c9083.length()-1); // extract most of it
-		String e9083 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d9083.getBytes() ) )); // B64 encode and decode it
-		String f9083 = e9083.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f9083); // reflection
+		String bar = org.springframework.web.util.HtmlUtils.htmlEscape(param);
 		
 		
-		Object[] obj = { "a", "b"};
+		Object[] obj = { "a", bar};
 		
-		response.getWriter().printf(bar,obj);
+		response.getWriter().printf(java.util.Locale.US,"notfoo",obj);
 	}
 }

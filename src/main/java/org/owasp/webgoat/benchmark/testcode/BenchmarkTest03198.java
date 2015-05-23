@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -24,25 +42,19 @@ public class BenchmarkTest03198 extends HttpServlet {
 		String param = request.getParameter("foo");
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a93341 = param; //assign
-		StringBuilder b93341 = new StringBuilder(a93341);  // stick in stringbuilder
-		b93341.append(" SafeStuff"); // append some safe content
-		b93341.replace(b93341.length()-"Chars".length(),b93341.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map93341 = new java.util.HashMap<String,Object>();
-		map93341.put("key93341", b93341.toString()); // put in a collection
-		String c93341 = (String)map93341.get("key93341"); // get it back out
-		String d93341 = c93341.substring(0,c93341.length()-1); // extract most of it
-		String e93341 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d93341.getBytes() ) )); // B64 encode and decode it
-		String f93341 = e93341.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g93341 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g93341); // reflection
+		java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+		valuesList.add("safe");
+		valuesList.add( param );
+		valuesList.add( "moresafe" );
+		
+		valuesList.remove(0); // remove the 1st safe value
+		
+		String bar = valuesList.get(1); // get the last 'safe' value
 		
 		
-		boolean randNumber = new java.util.Random().nextBoolean();
 		
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextBoolean() executed");
+		double rand = new java.util.Random().nextDouble();
+		
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextDouble() executed");
 	}
 }

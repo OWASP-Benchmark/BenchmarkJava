@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -24,28 +42,12 @@ public class BenchmarkTest02995 extends HttpServlet {
 		String param = request.getParameter("foo");
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a44407 = param; //assign
-		StringBuilder b44407 = new StringBuilder(a44407);  // stick in stringbuilder
-		b44407.append(" SafeStuff"); // append some safe content
-		b44407.replace(b44407.length()-"Chars".length(),b44407.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map44407 = new java.util.HashMap<String,Object>();
-		map44407.put("key44407", b44407.toString()); // put in a collection
-		String c44407 = (String)map44407.get("key44407"); // get it back out
-		String d44407 = c44407.substring(0,c44407.length()-1); // extract most of it
-		String e44407 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d44407.getBytes() ) )); // B64 encode and decode it
-		String f44407 = e44407.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f44407); // reflection
-		
-		
-		try {	
-			java.nio.file.Path path = java.nio.file.Paths.get(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar);
-			java.io.InputStream is = java.nio.file.Files.newInputStream(path, java.nio.file.StandardOpenOption.READ);
-		} catch (Exception e) {
-			// OK to swallow any exception for now
-			System.out.println("File exception caught and swallowed: " + e.getMessage());
+		String bar = param;
+		if (param.length() > 1) {
+		    bar = param.substring(0,param.length()-1);
 		}
+		
+		
+		java.io.FileOutputStream fos = new java.io.FileOutputStream(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar);
 	}
 }

@@ -1,6 +1,7 @@
 <test-metadata>
-  <category>trustbound</category>
+  <wbe-version>1.1</wbe-version>
+  <category>weakrand</category>
   <test-number>12089</test-number>
-  <vulnerability>true</vulnerability>
-  <cwe>501</cwe>
+  <vulnerability>false</vulnerability>
+  <cwe>330</cwe>
 </test-metadata>

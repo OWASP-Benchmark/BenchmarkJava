@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,26 +47,19 @@ public class BenchmarkTest16475 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		// javax.servlet.http.HttpSession.setAttribute(java.lang.String,java.lang.Object^)
-		request.getSession().setAttribute( "foo", bar);
+		try {
+			float rand = java.security.SecureRandom.getInstance("SHA1PRNG").nextFloat();
+	    } catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing SecureRandom.nextFloat() - TestCase");
+			throw new ServletException(e);
+	    }		
+		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextFloat() executed");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a48125 = param; //assign
-		StringBuilder b48125 = new StringBuilder(a48125);  // stick in stringbuilder
-		b48125.append(" SafeStuff"); // append some safe content
-		b48125.replace(b48125.length()-"Chars".length(),b48125.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map48125 = new java.util.HashMap<String,Object>();
-		map48125.put("key48125", b48125.toString()); // put in a collection
-		String c48125 = (String)map48125.get("key48125"); // get it back out
-		String d48125 = c48125.substring(0,c48125.length()-1); // extract most of it
-		String e48125 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d48125.getBytes() ) )); // B64 encode and decode it
-		String f48125 = e48125.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f48125); // reflection
+		String bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
 	
 		return bar;	
 	}

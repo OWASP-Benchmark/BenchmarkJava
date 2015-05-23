@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,26 +47,19 @@ public class BenchmarkTest10977 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		java.security.Provider[] provider = java.security.Security.getProviders();
-		javax.crypto.Cipher c;
-
 		try {
-			if (provider.length > 1) {
-				c = javax.crypto.Cipher.getInstance("DES/CBC/PKCS5PADDING", java.security.Security.getProvider("SunJCE"));
-			} else {
-				c = javax.crypto.Cipher.getInstance("DES/CBC/PKCS5PADDING", java.security.Security.getProvider("SunJCE"));
-			}
+		    java.util.Properties wbeprops = new java.util.Properties();
+		    wbeprops.load(this.getClass().getClassLoader().getResourceAsStream("wbe.properties"));
+			String algorithm = wbeprops.getProperty("cryptoAlg2", "AES/ECB/PKCS5Padding");
+			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance(algorithm);
 		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			// throw new ServletException(e);
-		/*} catch (java.security.NoSuchProviderException e) {
-			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			// throw new ServletException(e); ok for now to swallow this */
+			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
+			throw new ServletException(e);
 		} catch (javax.crypto.NoSuchPaddingException e) {
-			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			// throw new ServletException(e);
+			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
+			throw new ServletException(e);
 		}
-		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) executed");
+		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String) executed");
 	}  // end doPost
 
     private class Test {
@@ -56,11 +67,12 @@ public class BenchmarkTest10977 extends HttpServlet {
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map2083 = new java.util.HashMap<String,Object>();
-		map2083.put("keyA-2083", "a Value"); // put some stuff in the collection
-		map2083.put("keyB-2083", param.toString()); // put it in a collection
-		map2083.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map2083.get("keyB-2083"); // get it back out
+		java.util.HashMap<String,Object> map56511 = new java.util.HashMap<String,Object>();
+		map56511.put("keyA-56511", "a_Value"); // put some stuff in the collection
+		map56511.put("keyB-56511", param.toString()); // put it in a collection
+		map56511.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map56511.get("keyB-56511"); // get it back out
+		bar = (String)map56511.get("keyA-56511"); // get safe value back out
 
             return bar;
         }

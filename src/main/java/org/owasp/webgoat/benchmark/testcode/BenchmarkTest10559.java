@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -39,20 +57,8 @@ public class BenchmarkTest10559 extends HttpServlet {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a82050 = param; //assign
-		StringBuilder b82050 = new StringBuilder(a82050);  // stick in stringbuilder
-		b82050.append(" SafeStuff"); // append some safe content
-		b82050.replace(b82050.length()-"Chars".length(),b82050.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map82050 = new java.util.HashMap<String,Object>();
-		map82050.put("key82050", b82050.toString()); // put in a collection
-		String c82050 = (String)map82050.get("key82050"); // get it back out
-		String d82050 = c82050.substring(0,c82050.length()-1); // extract most of it
-		String e82050 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d82050.getBytes() ) )); // B64 encode and decode it
-		String f82050 = e82050.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f82050); // reflection
+		StringBuilder sbxyz42996 = new StringBuilder(param);
+		String bar = sbxyz42996.append("_SafeStuff").toString();
 
             return bar;
         }

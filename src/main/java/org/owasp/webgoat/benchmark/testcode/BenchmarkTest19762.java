@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -21,48 +39,40 @@ public class BenchmarkTest19762 extends HttpServlet {
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	
-		String param = request.getQueryString();
+		String[] values = request.getParameterValues("foo");
+		String param;
+		if (values.length != 0)
+		  param = request.getParameterValues("foo")[0];
+		else param = null;
 
 		String bar = doSomething(param);
 		
+		javax.xml.xpath.XPathFactory xpf = javax.xml.xpath.XPathFactory.newInstance();
+		javax.xml.xpath.XPath xp = xpf.newXPath();
 		try {
-			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("DES/CBC/PKCS5Padding", "SunJCE");
-		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.lang.String) Test Case");
-			throw new ServletException(e);
-		} catch (java.security.NoSuchProviderException e) {
-			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.lang.String) Test Case");
-			// throw new ServletException(e); - for now, it's ok if this provider not on the platform
-		} catch (javax.crypto.NoSuchPaddingException e) {
-			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.lang.String) Test Case");
-			throw new ServletException(e);
+			xp.compile(bar);
+		} catch (javax.xml.xpath.XPathExpressionException e) {
+			// OK to swallow
+			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
 		}
-
-		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String,java.lang.String) executed");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		String guess = "ABC";
-		char switchTarget = guess.charAt(2);
-		
-		// Simple case statement that assigns param to bar on conditions 'A' or 'C'
-		switch (switchTarget) {
-		  case 'A':
-		        bar = param;
-		        break;
-		  case 'B': 
-		        bar = "bobs_your_uncle";
-		        break;
-		  case 'C':
-		  case 'D':        
-		        bar = param;
-		        break;
-		  default:
-		        bar = "bobs_your_uncle";
-		        break;
-		}
+		// Chain a bunch of propagators in sequence
+		String a53976 = param; //assign
+		StringBuilder b53976 = new StringBuilder(a53976);  // stick in stringbuilder
+		b53976.append(" SafeStuff"); // append some safe content
+		b53976.replace(b53976.length()-"Chars".length(),b53976.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map53976 = new java.util.HashMap<String,Object>();
+		map53976.put("key53976", b53976.toString()); // put in a collection
+		String c53976 = (String)map53976.get("key53976"); // get it back out
+		String d53976 = c53976.substring(0,c53976.length()-1); // extract most of it
+		String e53976 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d53976.getBytes() ) )); // B64 encode and decode it
+		String f53976 = e53976.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f53976); // reflection
 	
 		return bar;	
 	}

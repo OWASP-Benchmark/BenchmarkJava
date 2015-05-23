@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,23 +43,21 @@ public class BenchmarkTest07043 extends HttpServlet {
 		String param = scr.getTheValue("foo");
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a26378 = param; //assign
-		StringBuilder b26378 = new StringBuilder(a26378);  // stick in stringbuilder
-		b26378.append(" SafeStuff"); // append some safe content
-		b26378.replace(b26378.length()-"Chars".length(),b26378.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map26378 = new java.util.HashMap<String,Object>();
-		map26378.put("key26378", b26378.toString()); // put in a collection
-		String c26378 = (String)map26378.get("key26378"); // get it back out
-		String d26378 = c26378.substring(0,c26378.length()-1); // extract most of it
-		String e26378 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d26378.getBytes() ) )); // B64 encode and decode it
-		String f26378 = e26378.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f26378); // reflection
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map24460 = new java.util.HashMap<String,Object>();
+		map24460.put("keyA-24460", "a_Value"); // put some stuff in the collection
+		map24460.put("keyB-24460", param.toString()); // put it in a collection
+		map24460.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map24460.get("keyB-24460"); // get it back out
+		bar = (String)map24460.get("keyA-24460"); // get safe value back out
 		
 		
-		// javax.servlet.http.HttpSession.putValue(java.lang.String^,java.lang.Object)
-		request.getSession().putValue( bar, "foo");
+		try {
+			double stuff = java.security.SecureRandom.getInstance("SHA1PRNG").nextGaussian();
+	    } catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing SecureRandom.nextGaussian() - TestCase");
+			throw new ServletException(e);
+	    }		
+		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextGaussian() executed");
 	}
 }

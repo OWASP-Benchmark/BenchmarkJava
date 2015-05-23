@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,11 +43,17 @@ public class BenchmarkTest05071 extends HttpServlet {
 		String param = scr.getTheParameter("foo");
 		
 		
-		String bar = param.split(" ")[0]; 
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map69488 = new java.util.HashMap<String,Object>();
+		map69488.put("keyA-69488", "a_Value"); // put some stuff in the collection
+		map69488.put("keyB-69488", param.toString()); // put it in a collection
+		map69488.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map69488.get("keyB-69488"); // get it back out
+		bar = (String)map69488.get("keyA-69488"); // get safe value back out
 		
 		
-		double rand = new java.util.Random().nextDouble();
+		double stuff = new java.util.Random().nextGaussian();
 		
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextDouble() executed");
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextGaussian() executed");
 	}
 }

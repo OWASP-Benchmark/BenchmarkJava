@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,14 +46,17 @@ public class BenchmarkTest05555 extends HttpServlet {
 		else param = null;
 		
 		
-		String bar = param;
-		if (param.length() > 1) {
-		    bar = param.substring(0,param.length()-1);
-		}
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map1276 = new java.util.HashMap<String,Object>();
+		map1276.put("keyA-1276", "a_Value"); // put some stuff in the collection
+		map1276.put("keyB-1276", param.toString()); // put it in a collection
+		map1276.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map1276.get("keyB-1276"); // get it back out
+		bar = (String)map1276.get("keyA-1276"); // get safe value back out
 		
 		
-		Object[] obj = { "a", "b" };
+		Object[] obj = { "a", bar};
 		
-		response.getWriter().format(bar,obj);
+		response.getWriter().printf(java.util.Locale.US,"notfoo",obj);
 	}
 }

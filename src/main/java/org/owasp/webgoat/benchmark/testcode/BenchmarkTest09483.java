@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,7 +47,17 @@ public class BenchmarkTest09483 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		response.setHeader(bar, "SomeValue");
+		String cmd = org.owasp.webgoat.benchmark.helpers.Utils.getOSCommandString("echo");
+        
+		Runtime r = Runtime.getRuntime();
+
+		try {
+			Process p = r.exec(cmd + bar);
+			org.owasp.webgoat.benchmark.helpers.Utils.printOSCommandResults(p);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - TestCase");
+            throw new ServletException(e);
+		}
 	}  // end doPost
 
     private class Test {
@@ -37,12 +65,12 @@ public class BenchmarkTest09483 extends HttpServlet {
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map16280 = new java.util.HashMap<String,Object>();
-		map16280.put("keyA-16280", "a_Value"); // put some stuff in the collection
-		map16280.put("keyB-16280", param.toString()); // put it in a collection
-		map16280.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map16280.get("keyB-16280"); // get it back out
-		bar = (String)map16280.get("keyA-16280"); // get safe value back out
+		java.util.HashMap<String,Object> map71032 = new java.util.HashMap<String,Object>();
+		map71032.put("keyA-71032", "a_Value"); // put some stuff in the collection
+		map71032.put("keyB-71032", param.toString()); // put it in a collection
+		map71032.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map71032.get("keyB-71032"); // get it back out
+		bar = (String)map71032.get("keyA-71032"); // get safe value back out
 
             return bar;
         }

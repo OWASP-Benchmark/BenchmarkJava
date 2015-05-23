@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -24,13 +42,36 @@ public class BenchmarkTest06035 extends HttpServlet {
 		String param = request.getQueryString();
 		
 		
-		String bar = param;
-		if (param.length() > 1) {
-		    StringBuilder sbxyz30465 = new StringBuilder(param);
-		    bar = sbxyz30465.replace(param.length()-"Z".length(), param.length(),"Z").toString();
+		// Chain a bunch of propagators in sequence
+		String a44392 = param; //assign
+		StringBuilder b44392 = new StringBuilder(a44392);  // stick in stringbuilder
+		b44392.append(" SafeStuff"); // append some safe content
+		b44392.replace(b44392.length()-"Chars".length(),b44392.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map44392 = new java.util.HashMap<String,Object>();
+		map44392.put("key44392", b44392.toString()); // put in a collection
+		String c44392 = (String)map44392.get("key44392"); // get it back out
+		String d44392 = c44392.substring(0,c44392.length()-1); // extract most of it
+		String e44392 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d44392.getBytes() ) )); // B64 encode and decode it
+		String f44392 = e44392.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f44392); // reflection
+		
+		
+		// FILE URIs are tricky because they are different between Mac and Windows because of lack of standardization.
+		// Mac requires an extra slash for some reason.
+		String startURIslashes = "";
+        if (System.getProperty("os.name").indexOf("Windows") != -1)
+	        if (System.getProperty("os.name").indexOf("Windows") != -1)
+	        	startURIslashes = "/";
+	        else startURIslashes = "//";
+
+		try {
+			java.net.URI fileURI = new java.net.URI("file", null, startURIslashes 
+				+ org.owasp.webgoat.benchmark.helpers.Utils.testfileDir.replace('\\', java.io.File.separatorChar).replace(' ', '_') + bar, null, null);
+			new java.io.File(fileURI);
+		} catch (java.net.URISyntaxException e) {
+			throw new ServletException(e);
 		}
-		
-		
-		new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir, bar);
 	}
 }

@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -24,29 +42,20 @@ public class BenchmarkTest06581 extends HttpServlet {
 		String param = request.getQueryString();
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a86735 = param; //assign
-		StringBuilder b86735 = new StringBuilder(a86735);  // stick in stringbuilder
-		b86735.append(" SafeStuff"); // append some safe content
-		b86735.replace(b86735.length()-"Chars".length(),b86735.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map86735 = new java.util.HashMap<String,Object>();
-		map86735.put("key86735", b86735.toString()); // put in a collection
-		String c86735 = (String)map86735.get("key86735"); // get it back out
-		String d86735 = c86735.substring(0,c86735.length()-1); // extract most of it
-		String e86735 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d86735.getBytes() ) )); // B64 encode and decode it
-		String f86735 = e86735.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f86735); // reflection
+		String bar = param;
+		if (param.length() > 1) {
+		    StringBuilder sbxyz49778 = new StringBuilder(param);
+		    bar = sbxyz49778.replace(param.length()-"Z".length(), param.length(),"Z").toString();
+		}
 		
 		
-		String sql = "UPDATE USERS SET PASSWORD='" + bar + "' WHERE USERNAME='foo'";
-				
+		javax.xml.xpath.XPathFactory xpf = javax.xml.xpath.XPathFactory.newInstance();
+		javax.xml.xpath.XPath xp = xpf.newXPath();
 		try {
-			java.sql.Statement statement = org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			int count = statement.executeUpdate( sql, new int[] {1,2} );
-		} catch (java.sql.SQLException e) {
-			throw new ServletException(e);
+			xp.evaluate(bar, "SpecifiedContext");
+		} catch (javax.xml.xpath.XPathExpressionException|java.lang.NullPointerException e) {
+			// OK to swallow
+			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
 		}
 	}
 }

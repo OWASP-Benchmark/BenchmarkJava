@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -43,16 +61,14 @@ public class BenchmarkTest07668 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		String sql = "{call verifyUserPassword('foo','"+bar+"')}";
-				
 		try {
-			java.sql.Connection connection = org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlConnection();
-			java.sql.CallableStatement statement = connection.prepareCall( sql, java.sql.ResultSet.TYPE_FORWARD_ONLY, 
-							java.sql.ResultSet.CONCUR_READ_ONLY, java.sql.ResultSet.CLOSE_CURSORS_AT_COMMIT );
-			statement.execute();
-		} catch (java.sql.SQLException e) {
+			double rand = java.security.SecureRandom.getInstance("SHA1PRNG").nextDouble();
+	    } catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing SecureRandom.nextDouble() - TestCase");
 			throw new ServletException(e);
-		}
+	    }
+		
+		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextDouble() executed");
 	}  // end doPost
 
     private class Test {
@@ -60,12 +76,12 @@ public class BenchmarkTest07668 extends HttpServlet {
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map37713 = new java.util.HashMap<String,Object>();
-		map37713.put("keyA-37713", "a_Value"); // put some stuff in the collection
-		map37713.put("keyB-37713", param.toString()); // put it in a collection
-		map37713.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map37713.get("keyB-37713"); // get it back out
-		bar = (String)map37713.get("keyA-37713"); // get safe value back out
+		java.util.HashMap<String,Object> map65154 = new java.util.HashMap<String,Object>();
+		map65154.put("keyA-65154", "a_Value"); // put some stuff in the collection
+		map65154.put("keyB-65154", param.toString()); // put it in a collection
+		map65154.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map65154.get("keyB-65154"); // get it back out
+		bar = (String)map65154.get("keyA-65154"); // get safe value back out
 
             return bar;
         }

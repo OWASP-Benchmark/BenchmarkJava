@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,25 +43,20 @@ public class BenchmarkTest16805 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		response.getWriter().print(bar.toCharArray());
+		try {
+			java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA-256");
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing hash - TestCase");
+			throw new ServletException(e);
+		}
+		
+		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String) executed");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a40610 = param; //assign
-		StringBuilder b40610 = new StringBuilder(a40610);  // stick in stringbuilder
-		b40610.append(" SafeStuff"); // append some safe content
-		b40610.replace(b40610.length()-"Chars".length(),b40610.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map40610 = new java.util.HashMap<String,Object>();
-		map40610.put("key40610", b40610.toString()); // put in a collection
-		String c40610 = (String)map40610.get("key40610"); // get it back out
-		String d40610 = c40610.substring(0,c40610.length()-1); // extract most of it
-		String e40610 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d40610.getBytes() ) )); // B64 encode and decode it
-		String f40610 = e40610.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f40610); // reflection
+		StringBuilder sbxyz85618 = new StringBuilder(param);
+		String bar = sbxyz85618.append("_SafeStuff").toString();
 	
 		return bar;	
 	}

@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,26 +47,21 @@ public class BenchmarkTest04201 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a40553 = param; //assign
-		StringBuilder b40553 = new StringBuilder(a40553);  // stick in stringbuilder
-		b40553.append(" SafeStuff"); // append some safe content
-		b40553.replace(b40553.length()-"Chars".length(),b40553.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map40553 = new java.util.HashMap<String,Object>();
-		map40553.put("key40553", b40553.toString()); // put in a collection
-		String c40553 = (String)map40553.get("key40553"); // get it back out
-		String d40553 = c40553.substring(0,c40553.length()-1); // extract most of it
-		String e40553 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d40553.getBytes() ) )); // B64 encode and decode it
-		String f40553 = e40553.split(" ")[0]; // split it on a space
+		String a74911 = param; //assign
+		StringBuilder b74911 = new StringBuilder(a74911);  // stick in stringbuilder
+		b74911.append(" SafeStuff"); // append some safe content
+		b74911.replace(b74911.length()-"Chars".length(),b74911.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map74911 = new java.util.HashMap<String,Object>();
+		map74911.put("key74911", b74911.toString()); // put in a collection
+		String c74911 = (String)map74911.get("key74911"); // get it back out
+		String d74911 = c74911.substring(0,c74911.length()-1); // extract most of it
+		String e74911 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d74911.getBytes() ) )); // B64 encode and decode it
+		String f74911 = e74911.split(" ")[0]; // split it on a space
 		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f40553); // reflection
+		String bar = thing.doSomething(f74911); // reflection
 		
 		
-		try {
-			java.io.FileInputStream fis = new java.io.FileInputStream(new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar));
-		} catch (Exception e) {
-			// OK to swallow any exception
-			System.out.println("File exception caught and swallowed: " + e.getMessage());
-		}
+		new java.io.File(bar, "/Test.txt");
 	}
 }

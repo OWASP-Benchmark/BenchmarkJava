@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,7 +47,16 @@ public class BenchmarkTest12301 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		new java.io.File(bar, "/Test.txt");
+		try {
+			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("DES/CBC/PKCS5Padding");
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
+			throw new ServletException(e);
+		} catch (javax.crypto.NoSuchPaddingException e) {
+			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
+			throw new ServletException(e);
+		}
+		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String) executed");
 	}  // end doPost
 
     private class Test {
@@ -37,12 +64,12 @@ public class BenchmarkTest12301 extends HttpServlet {
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map84362 = new java.util.HashMap<String,Object>();
-		map84362.put("keyA-84362", "a_Value"); // put some stuff in the collection
-		map84362.put("keyB-84362", param.toString()); // put it in a collection
-		map84362.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map84362.get("keyB-84362"); // get it back out
-		bar = (String)map84362.get("keyA-84362"); // get safe value back out
+		java.util.HashMap<String,Object> map73367 = new java.util.HashMap<String,Object>();
+		map73367.put("keyA-73367", "a_Value"); // put some stuff in the collection
+		map73367.put("keyB-73367", param.toString()); // put it in a collection
+		map73367.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map73367.get("keyB-73367"); // get it back out
+		bar = (String)map73367.get("keyA-73367"); // get safe value back out
 
             return bar;
         }

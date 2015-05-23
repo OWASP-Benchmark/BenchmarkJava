@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,13 +43,12 @@ public class BenchmarkTest06697 extends HttpServlet {
 		String param = scr.getTheValue("foo");
 		
 		
-		String bar;
-		
-		// Simple ? condition that assigns param to bar on false condition
-		int i = 106;
-		
-		bar = (7*42) - i > 200 ? "This should never happen" : param;
-		
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map51748 = new java.util.HashMap<String,Object>();
+		map51748.put("keyA-51748", "a Value"); // put some stuff in the collection
+		map51748.put("keyB-51748", param.toString()); // put it in a collection
+		map51748.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map51748.get("keyB-51748"); // get it back out
 		
 		
 		// Create the file first so the test won't throw an exception if it doesn't exist.

@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,23 +46,15 @@ public class BenchmarkTest02098 extends HttpServlet {
 		}
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a59712 = param; //assign
-		StringBuilder b59712 = new StringBuilder(a59712);  // stick in stringbuilder
-		b59712.append(" SafeStuff"); // append some safe content
-		b59712.replace(b59712.length()-"Chars".length(),b59712.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map59712 = new java.util.HashMap<String,Object>();
-		map59712.put("key59712", b59712.toString()); // put in a collection
-		String c59712 = (String)map59712.get("key59712"); // get it back out
-		String d59712 = c59712.substring(0,c59712.length()-1); // extract most of it
-		String e59712 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d59712.getBytes() ) )); // B64 encode and decode it
-		String f59712 = e59712.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f59712); // reflection
+		String bar = param.split(" ")[0]; 
 		
 		
-		// javax.servlet.http.HttpSession.putValue(java.lang.String,java.lang.Object^)
-		request.getSession().putValue( "foo", bar);
+		try {
+			long l = java.security.SecureRandom.getInstance("SHA1PRNG").nextLong();
+	    } catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing SecureRandom.nextLong() - TestCase");
+			throw new ServletException(e);
+	    }		
+		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextLong() executed");
 	}
 }

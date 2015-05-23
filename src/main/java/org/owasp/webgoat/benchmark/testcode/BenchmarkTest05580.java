@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,15 +47,14 @@ public class BenchmarkTest05580 extends HttpServlet {
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map5197 = new java.util.HashMap<String,Object>();
-		map5197.put("keyA-5197", "a Value"); // put some stuff in the collection
-		map5197.put("keyB-5197", param.toString()); // put it in a collection
-		map5197.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map5197.get("keyB-5197"); // get it back out
+		java.util.HashMap<String,Object> map63040 = new java.util.HashMap<String,Object>();
+		map63040.put("keyA-63040", "a Value"); // put some stuff in the collection
+		map63040.put("keyB-63040", param.toString()); // put it in a collection
+		map63040.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map63040.get("keyB-63040"); // get it back out
 		
 		
-		Object[] obj = { "a", "b"};
-		
-		response.getWriter().printf(java.util.Locale.US,bar,obj);
+		Object[] obj = { "a", bar};
+		response.getWriter().println(obj);
 	}
 }

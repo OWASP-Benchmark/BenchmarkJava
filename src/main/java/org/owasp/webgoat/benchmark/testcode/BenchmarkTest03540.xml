@@ -1,6 +1,7 @@
 <test-metadata>
-  <category>ldapi</category>
+  <wbe-version>1.1</wbe-version>
+  <category>pathtraver</category>
   <test-number>03540</test-number>
   <vulnerability>false</vulnerability>
-  <cwe>90</cwe>
+  <cwe>22</cwe>
 </test-metadata>

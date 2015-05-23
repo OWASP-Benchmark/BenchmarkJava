@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -26,10 +44,11 @@ public class BenchmarkTest09779 extends HttpServlet {
 		String bar = new Test().doSomething(param);
 		
 		try {
-			java.io.FileInputStream fis = new java.io.FileInputStream(new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar));
-		} catch (Exception e) {
-			// OK to swallow any exception
-			System.out.println("File exception caught and swallowed: " + e.getMessage());
+			javax.naming.directory.DirContext dc = org.owasp.webgoat.benchmark.helpers.Utils.getDirContext();
+			Object[] filterArgs = {"a","b"};
+			dc.search("name", bar, filterArgs, new javax.naming.directory.SearchControls());
+		} catch (javax.naming.NamingException e) {
+			throw new ServletException(e);
 		}
 	}  // end doPost
 
@@ -37,13 +56,20 @@ public class BenchmarkTest09779 extends HttpServlet {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map43557 = new java.util.HashMap<String,Object>();
-		map43557.put("keyA-43557", "a_Value"); // put some stuff in the collection
-		map43557.put("keyB-43557", param.toString()); // put it in a collection
-		map43557.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map43557.get("keyB-43557"); // get it back out
-		bar = (String)map43557.get("keyA-43557"); // get safe value back out
+		// Chain a bunch of propagators in sequence
+		String a71018 = param; //assign
+		StringBuilder b71018 = new StringBuilder(a71018);  // stick in stringbuilder
+		b71018.append(" SafeStuff"); // append some safe content
+		b71018.replace(b71018.length()-"Chars".length(),b71018.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map71018 = new java.util.HashMap<String,Object>();
+		map71018.put("key71018", b71018.toString()); // put in a collection
+		String c71018 = (String)map71018.get("key71018"); // get it back out
+		String d71018 = c71018.substring(0,c71018.length()-1); // extract most of it
+		String e71018 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d71018.getBytes() ) )); // B64 encode and decode it
+		String f71018 = e71018.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f71018); // reflection
 
             return bar;
         }

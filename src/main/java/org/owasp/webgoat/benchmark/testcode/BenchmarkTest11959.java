@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -26,18 +44,29 @@ public class BenchmarkTest11959 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie","SomeValue");
+		int r = new java.util.Random().nextInt();
 		
-		cookie.setSecure(false);
-		
-		response.addCookie(cookie);
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextInt() executed");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = param.split(" ")[0]; 
+		// Chain a bunch of propagators in sequence
+		String a1250 = param; //assign
+		StringBuilder b1250 = new StringBuilder(a1250);  // stick in stringbuilder
+		b1250.append(" SafeStuff"); // append some safe content
+		b1250.replace(b1250.length()-"Chars".length(),b1250.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map1250 = new java.util.HashMap<String,Object>();
+		map1250.put("key1250", b1250.toString()); // put in a collection
+		String c1250 = (String)map1250.get("key1250"); // get it back out
+		String d1250 = c1250.substring(0,c1250.length()-1); // extract most of it
+		String e1250 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d1250.getBytes() ) )); // B64 encode and decode it
+		String f1250 = e1250.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f1250); // reflection
 
             return bar;
         }

@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,24 +46,15 @@ public class BenchmarkTest04254 extends HttpServlet {
 		}
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a44724 = param; //assign
-		StringBuilder b44724 = new StringBuilder(a44724);  // stick in stringbuilder
-		b44724.append(" SafeStuff"); // append some safe content
-		b44724.replace(b44724.length()-"Chars".length(),b44724.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map44724 = new java.util.HashMap<String,Object>();
-		map44724.put("key44724", b44724.toString()); // put in a collection
-		String c44724 = (String)map44724.get("key44724"); // get it back out
-		String d44724 = c44724.substring(0,c44724.length()-1); // extract most of it
-		String e44724 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d44724.getBytes() ) )); // B64 encode and decode it
-		String f44724 = e44724.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f44724); // reflection
+		String bar;
+		
+		// Simple ? condition that assigns param to bar on false condition
+		int i = 106;
+		
+		bar = (7*42) - i > 200 ? "This should never happen" : param;
 		
 		
-		java.lang.Math.random();
 		
-		response.getWriter().println("Weak Randomness Test java.lang.Math.random() executed");
+		java.io.FileOutputStream fos = new java.io.FileOutputStream(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar);
 	}
 }

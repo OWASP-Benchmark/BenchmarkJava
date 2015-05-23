@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,10 +43,24 @@ public class BenchmarkTest04983 extends HttpServlet {
 		String param = scr.getTheParameter("foo");
 		
 		
-		String bar = param;
+		// Chain a bunch of propagators in sequence
+		String a73601 = param; //assign
+		StringBuilder b73601 = new StringBuilder(a73601);  // stick in stringbuilder
+		b73601.append(" SafeStuff"); // append some safe content
+		b73601.replace(b73601.length()-"Chars".length(),b73601.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map73601 = new java.util.HashMap<String,Object>();
+		map73601.put("key73601", b73601.toString()); // put in a collection
+		String c73601 = (String)map73601.get("key73601"); // get it back out
+		String d73601 = c73601.substring(0,c73601.length()-1); // extract most of it
+		String e73601 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d73601.getBytes() ) )); // B64 encode and decode it
+		String f73601 = e73601.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f73601); // reflection
 		
 		
-		Object[] obj = { "a", bar};
-		response.getWriter().println(obj);
+		Object[] obj = { "a", "b"};
+		
+		response.getWriter().printf(bar,obj);
 	}
 }

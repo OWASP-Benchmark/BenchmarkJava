@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -60,10 +78,11 @@ public class BenchmarkTest07618 extends HttpServlet {
 		Runtime r = Runtime.getRuntime();
 
 		try {
-			Process p = r.exec(args, argsEnv, new java.io.File(System.getProperty("user.dir")));
+			Process p = r.exec(args, argsEnv);
 			org.owasp.webgoat.benchmark.helpers.Utils.printOSCommandResults(p);
 		} catch (IOException e) {
 			System.out.println("Problem executing cmdi - TestCase");
+            throw new ServletException(e);
 		}
 	}  // end doPost
 
@@ -71,20 +90,8 @@ public class BenchmarkTest07618 extends HttpServlet {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a80442 = param; //assign
-		StringBuilder b80442 = new StringBuilder(a80442);  // stick in stringbuilder
-		b80442.append(" SafeStuff"); // append some safe content
-		b80442.replace(b80442.length()-"Chars".length(),b80442.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map80442 = new java.util.HashMap<String,Object>();
-		map80442.put("key80442", b80442.toString()); // put in a collection
-		String c80442 = (String)map80442.get("key80442"); // get it back out
-		String d80442 = c80442.substring(0,c80442.length()-1); // extract most of it
-		String e80442 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d80442.getBytes() ) )); // B64 encode and decode it
-		String f80442 = e80442.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f80442); // reflection
+		String bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
 
             return bar;
         }

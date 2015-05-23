@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,23 +47,23 @@ public class BenchmarkTest04029 extends HttpServlet {
 		
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map32652 = new java.util.HashMap<String,Object>();
-		map32652.put("keyA-32652", "a_Value"); // put some stuff in the collection
-		map32652.put("keyB-32652", param.toString()); // put it in a collection
-		map32652.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map32652.get("keyB-32652"); // get it back out
-		bar = (String)map32652.get("keyA-32652"); // get safe value back out
+		java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+		valuesList.add("safe");
+		valuesList.add( param );
+		valuesList.add( "moresafe" );
+		
+		valuesList.remove(0); // remove the 1st safe value
+		
+		String bar = valuesList.get(1); // get the last 'safe' value
 		
 		
-		String sql = "SELECT * from USERS where USERNAME=? and PASSWORD='"+ bar +"'";
+		
+		String sql = "{call verifyUserPassword('foo','"+bar+"')}";
 				
 		try {
 			java.sql.Connection connection = org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlConnection();
-			java.sql.PreparedStatement statement = connection.prepareStatement( sql,
-				java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY );
-				statement.setString(1, "foo");
-			statement.execute();
+			java.sql.CallableStatement statement = connection.prepareCall( sql );
+		    statement.execute();
 		} catch (java.sql.SQLException e) {
 			throw new ServletException(e);
 		}

@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,13 +47,12 @@ public class BenchmarkTest18401 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		String sql = "SELECT * from USERS where USERNAME=? and PASSWORD='"+ bar +"'";
+		String sql = "{call verifyUserPassword('foo','"+bar+"')}";
 				
 		try {
 			java.sql.Connection connection = org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlConnection();
-			java.sql.PreparedStatement statement = connection.prepareStatement( sql,
-				java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY );
-				statement.setString(1, "foo");
+			java.sql.CallableStatement statement = connection.prepareCall( sql, java.sql.ResultSet.TYPE_FORWARD_ONLY, 
+							java.sql.ResultSet.CONCUR_READ_ONLY, java.sql.ResultSet.CLOSE_CURSORS_AT_COMMIT );
 			statement.execute();
 		} catch (java.sql.SQLException e) {
 			throw new ServletException(e);
@@ -44,12 +61,21 @@ public class BenchmarkTest18401 extends HttpServlet {
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map90133 = new java.util.HashMap<String,Object>();
-		map90133.put("keyA-90133", "a Value"); // put some stuff in the collection
-		map90133.put("keyB-90133", param.toString()); // put it in a collection
-		map90133.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map90133.get("keyB-90133"); // get it back out
+		// Chain a bunch of propagators in sequence
+		String a19926 = param; //assign
+		StringBuilder b19926 = new StringBuilder(a19926);  // stick in stringbuilder
+		b19926.append(" SafeStuff"); // append some safe content
+		b19926.replace(b19926.length()-"Chars".length(),b19926.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map19926 = new java.util.HashMap<String,Object>();
+		map19926.put("key19926", b19926.toString()); // put in a collection
+		String c19926 = (String)map19926.get("key19926"); // get it back out
+		String d19926 = c19926.substring(0,c19926.length()-1); // extract most of it
+		String e19926 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d19926.getBytes() ) )); // B64 encode and decode it
+		String f19926 = e19926.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String g19926 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g19926); // reflection
 	
 		return bar;	
 	}

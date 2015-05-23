@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,17 +46,17 @@ public class BenchmarkTest04435 extends HttpServlet {
 		}
 		
 		
-		String bar;
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map79653 = new java.util.HashMap<String,Object>();
+		map79653.put("keyA-79653", "a Value"); // put some stuff in the collection
+		map79653.put("keyB-79653", param.toString()); // put it in a collection
+		map79653.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map79653.get("keyB-79653"); // get it back out
 		
-		// Simple if statement that assigns param to bar on true condition
-		int i = 196;
-		if ( (500/42) + i > 200 )
-		   bar = param;
-		else bar = "This should never happen"; 
 		
+		byte[] bytes = new byte[10];
+		new java.util.Random().nextBytes(bytes);
 		
-		double stuff = new java.util.Random().nextGaussian();
-		
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextGaussian() executed");
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextBytes() executed");
 	}
 }

@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -30,22 +48,19 @@ public class BenchmarkTest17507 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		int length = 1;
-		if (bar != null) {
-			length = bar.length();
-			response.getWriter().write(bar, 0, length - 1);
-		}
+		Object[] obj = { "a", "b"};
+		
+		response.getWriter().printf(java.util.Locale.US,bar,obj);
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map44972 = new java.util.HashMap<String,Object>();
-		map44972.put("keyA-44972", "a_Value"); // put some stuff in the collection
-		map44972.put("keyB-44972", param.toString()); // put it in a collection
-		map44972.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map44972.get("keyB-44972"); // get it back out
-		bar = (String)map44972.get("keyA-44972"); // get safe value back out
+		java.util.HashMap<String,Object> map47483 = new java.util.HashMap<String,Object>();
+		map47483.put("keyA-47483", "a Value"); // put some stuff in the collection
+		map47483.put("keyB-47483", param.toString()); // put it in a collection
+		map47483.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map47483.get("keyB-47483"); // get it back out
 	
 		return bar;	
 	}

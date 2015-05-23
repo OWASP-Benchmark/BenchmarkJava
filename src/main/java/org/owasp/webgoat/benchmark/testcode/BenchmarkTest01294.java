@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -24,21 +42,13 @@ public class BenchmarkTest01294 extends HttpServlet {
 		String param = request.getHeader("foo");
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a80917 = param; //assign
-		StringBuilder b80917 = new StringBuilder(a80917);  // stick in stringbuilder
-		b80917.append(" SafeStuff"); // append some safe content
-		b80917.replace(b80917.length()-"Chars".length(),b80917.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map80917 = new java.util.HashMap<String,Object>();
-		map80917.put("key80917", b80917.toString()); // put in a collection
-		String c80917 = (String)map80917.get("key80917"); // get it back out
-		String d80917 = c80917.substring(0,c80917.length()-1); // extract most of it
-		String e80917 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d80917.getBytes() ) )); // B64 encode and decode it
-		String f80917 = e80917.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g80917 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g80917); // reflection
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map89171 = new java.util.HashMap<String,Object>();
+		map89171.put("keyA-89171", "a_Value"); // put some stuff in the collection
+		map89171.put("keyB-89171", param.toString()); // put it in a collection
+		map89171.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map89171.get("keyB-89171"); // get it back out
+		bar = (String)map89171.get("keyA-89171"); // get safe value back out
 		
 		
 		float rand = new java.util.Random().nextFloat();

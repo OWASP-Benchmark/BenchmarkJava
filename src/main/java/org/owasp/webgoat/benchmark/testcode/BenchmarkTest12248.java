@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -26,13 +44,13 @@ public class BenchmarkTest12248 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		javax.xml.xpath.XPathFactory xpf = javax.xml.xpath.XPathFactory.newInstance();
-		javax.xml.xpath.XPath xp = xpf.newXPath();
+		String sql = "UPDATE USERS SET PASSWORD='" + bar + "' WHERE USERNAME='foo'";
+				
 		try {
-			xp.evaluate(bar, "SpecifiedContext");
-		} catch (javax.xml.xpath.XPathExpressionException|java.lang.NullPointerException e) {
-			// OK to swallow
-			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
+			java.sql.Statement statement = org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			int count = statement.executeUpdate( sql );
+		} catch (java.sql.SQLException e) {
+			throw new ServletException(e);
 		}
 	}  // end doPost
 
@@ -40,13 +58,20 @@ public class BenchmarkTest12248 extends HttpServlet {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map45739 = new java.util.HashMap<String,Object>();
-		map45739.put("keyA-45739", "a_Value"); // put some stuff in the collection
-		map45739.put("keyB-45739", param.toString()); // put it in a collection
-		map45739.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map45739.get("keyB-45739"); // get it back out
-		bar = (String)map45739.get("keyA-45739"); // get safe value back out
+		// Chain a bunch of propagators in sequence
+		String a71446 = param; //assign
+		StringBuilder b71446 = new StringBuilder(a71446);  // stick in stringbuilder
+		b71446.append(" SafeStuff"); // append some safe content
+		b71446.replace(b71446.length()-"Chars".length(),b71446.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map71446 = new java.util.HashMap<String,Object>();
+		map71446.put("key71446", b71446.toString()); // put in a collection
+		String c71446 = (String)map71446.get("key71446"); // get it back out
+		String d71446 = c71446.substring(0,c71446.length()-1); // extract most of it
+		String e71446 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d71446.getBytes() ) )); // B64 encode and decode it
+		String f71446 = e71446.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f71446); // reflection
 
             return bar;
         }

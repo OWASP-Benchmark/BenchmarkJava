@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -43,19 +61,30 @@ public class BenchmarkTest07380 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		Object[] obj = { "a", bar};
-		response.getWriter().print(obj);
+		java.lang.Math.random();
+		
+		response.getWriter().println("Weak Randomness Test java.lang.Math.random() executed");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = param;
-		if (param.length() > 1) {
-		    StringBuilder sbxyz54334 = new StringBuilder(param);
-		    bar = sbxyz54334.replace(param.length()-"Z".length(), param.length(),"Z").toString();
-		}
+		// Chain a bunch of propagators in sequence
+		String a53333 = param; //assign
+		StringBuilder b53333 = new StringBuilder(a53333);  // stick in stringbuilder
+		b53333.append(" SafeStuff"); // append some safe content
+		b53333.replace(b53333.length()-"Chars".length(),b53333.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map53333 = new java.util.HashMap<String,Object>();
+		map53333.put("key53333", b53333.toString()); // put in a collection
+		String c53333 = (String)map53333.get("key53333"); // get it back out
+		String d53333 = c53333.substring(0,c53333.length()-1); // extract most of it
+		String e53333 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d53333.getBytes() ) )); // B64 encode and decode it
+		String f53333 = e53333.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String g53333 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g53333); // reflection
 
             return bar;
         }

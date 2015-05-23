@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,24 +43,24 @@ public class BenchmarkTest17130 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		String sql = "SELECT * from USERS where USERNAME=? and PASSWORD='"+ bar +"'";
-				
 		try {
-			java.sql.Connection connection = org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlConnection();
-			java.sql.PreparedStatement statement = connection.prepareStatement( sql,
-				java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY, 
-				java.sql.ResultSet.CLOSE_CURSORS_AT_COMMIT );
-				statement.setString(1, "foo");
-			statement.execute();
-		} catch (java.sql.SQLException e) {
+			int randNumber = java.security.SecureRandom.getInstance("SHA1PRNG").nextInt(99);
+	    } catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing SecureRandom.nextInt(int) - TestCase");
 			throw new ServletException(e);
-		}
+	    }		
+		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextInt(int) executed");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(param);
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map66832 = new java.util.HashMap<String,Object>();
+		map66832.put("keyA-66832", "a_Value"); // put some stuff in the collection
+		map66832.put("keyB-66832", param.toString()); // put it in a collection
+		map66832.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map66832.get("keyB-66832"); // get it back out
+		bar = (String)map66832.get("keyA-66832"); // get safe value back out
 	
 		return bar;	
 	}

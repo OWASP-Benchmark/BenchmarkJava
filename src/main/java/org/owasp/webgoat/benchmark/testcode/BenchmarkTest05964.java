@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -21,28 +39,29 @@ public class BenchmarkTest05964 extends HttpServlet {
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	
-		String[] values = request.getParameterValues("foo");
-		String param;
-		if (values.length != 0)
-		  param = request.getParameterValues("foo")[0];
-		else param = null;
+		String param = request.getQueryString();
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map78709 = new java.util.HashMap<String,Object>();
-		map78709.put("keyA-78709", "a Value"); // put some stuff in the collection
-		map78709.put("keyB-78709", param.toString()); // put it in a collection
-		map78709.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map78709.get("keyB-78709"); // get it back out
+		java.util.HashMap<String,Object> map60851 = new java.util.HashMap<String,Object>();
+		map60851.put("keyA-60851", "a Value"); // put some stuff in the collection
+		map60851.put("keyB-60851", param.toString()); // put it in a collection
+		map60851.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map60851.get("keyB-60851"); // get it back out
 		
 		
-		String sql = "UPDATE USERS SET PASSWORD='" + bar + "' WHERE USERNAME='foo'";
-				
 		try {
-			java.sql.Statement statement = org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			int count = statement.executeUpdate( sql, new String[] {"user","password"} );
-		} catch (java.sql.SQLException e) {
+		    java.util.Properties wbeprops = new java.util.Properties();
+		    wbeprops.load(this.getClass().getClassLoader().getResourceAsStream("wbe.properties"));
+			String algorithm = wbeprops.getProperty("cryptoAlg1", "DESede/ECB/PKCS5Padding");
+			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance(algorithm);
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
+			throw new ServletException(e);
+		} catch (javax.crypto.NoSuchPaddingException e) {
+			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
 			throw new ServletException(e);
 		}
+		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String) executed");
 	}
 }

@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,17 +43,24 @@ public class BenchmarkTest13135 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		double rand = new java.util.Random().nextDouble();
-		
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextDouble() executed");
+		int length = 1;
+		if (bar != null) {
+			length = bar.length();
+			response.getWriter().write(bar.toCharArray(),0,length - 1);
+		}
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map15461 = new java.util.HashMap<String,Object>();
+		map15461.put("keyA-15461", "a_Value"); // put some stuff in the collection
+		map15461.put("keyB-15461", param.toString()); // put it in a collection
+		map15461.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map15461.get("keyB-15461"); // get it back out
+		bar = (String)map15461.get("keyA-15461"); // get safe value back out
 
             return bar;
         }

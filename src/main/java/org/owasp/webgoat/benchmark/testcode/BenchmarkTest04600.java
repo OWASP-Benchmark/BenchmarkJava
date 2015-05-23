@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,21 +46,23 @@ public class BenchmarkTest04600 extends HttpServlet {
 		}
 		
 		
-		String bar = param;
-		if (param.length() > 1) {
-		    StringBuilder sbxyz77188 = new StringBuilder(param);
-		    bar = sbxyz77188.replace(param.length()-"Z".length(), param.length(),"Z").toString();
-		}
+		// Chain a bunch of propagators in sequence
+		String a21269 = param; //assign
+		StringBuilder b21269 = new StringBuilder(a21269);  // stick in stringbuilder
+		b21269.append(" SafeStuff"); // append some safe content
+		b21269.replace(b21269.length()-"Chars".length(),b21269.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map21269 = new java.util.HashMap<String,Object>();
+		map21269.put("key21269", b21269.toString()); // put in a collection
+		String c21269 = (String)map21269.get("key21269"); // get it back out
+		String d21269 = c21269.substring(0,c21269.length()-1); // extract most of it
+		String e21269 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d21269.getBytes() ) )); // B64 encode and decode it
+		String f21269 = e21269.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f21269); // reflection
 		
 		
-		String sql = "{call verifyUserPassword('foo','"+bar+"')}";
-				
-		try {
-			java.sql.Connection connection = org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlConnection();
-			java.sql.CallableStatement statement = connection.prepareCall( sql );
-		    statement.execute();
-		} catch (java.sql.SQLException e) {
-			throw new ServletException(e);
-		}
+		// javax.servlet.http.HttpSession.putValue(java.lang.String,java.lang.Object^)
+		request.getSession().putValue( "foo", bar);
 	}
 }

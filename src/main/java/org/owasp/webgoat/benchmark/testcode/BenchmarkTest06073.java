@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -24,17 +42,22 @@ public class BenchmarkTest06073 extends HttpServlet {
 		String param = request.getQueryString();
 		
 		
-		java.util.List<String> valuesList = new java.util.ArrayList<String>( );
-		valuesList.add("safe");
-		valuesList.add( param );
-		valuesList.add( "moresafe" );
+		// Chain a bunch of propagators in sequence
+		String a87754 = param; //assign
+		StringBuilder b87754 = new StringBuilder(a87754);  // stick in stringbuilder
+		b87754.append(" SafeStuff"); // append some safe content
+		b87754.replace(b87754.length()-"Chars".length(),b87754.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map87754 = new java.util.HashMap<String,Object>();
+		map87754.put("key87754", b87754.toString()); // put in a collection
+		String c87754 = (String)map87754.get("key87754"); // get it back out
+		String d87754 = c87754.substring(0,c87754.length()-1); // extract most of it
+		String e87754 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d87754.getBytes() ) )); // B64 encode and decode it
+		String f87754 = e87754.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f87754); // reflection
 		
-		valuesList.remove(0); // remove the 1st safe value
 		
-		String bar = valuesList.get(0); // get the param value
-		
-		
-		
-		java.io.FileOutputStream fos = new java.io.FileOutputStream(new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar));
+		java.io.FileOutputStream fos = new java.io.FileOutputStream(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar);
 	}
 }

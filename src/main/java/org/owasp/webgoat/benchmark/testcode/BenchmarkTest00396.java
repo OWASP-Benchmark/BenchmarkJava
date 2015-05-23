@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -42,9 +60,23 @@ public class BenchmarkTest00396 extends HttpServlet {
 		}
 		
 		
-		String bar = param.split(" ")[0]; 
+		// Chain a bunch of propagators in sequence
+		String a11198 = param; //assign
+		StringBuilder b11198 = new StringBuilder(a11198);  // stick in stringbuilder
+		b11198.append(" SafeStuff"); // append some safe content
+		b11198.replace(b11198.length()-"Chars".length(),b11198.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map11198 = new java.util.HashMap<String,Object>();
+		map11198.put("key11198", b11198.toString()); // put in a collection
+		String c11198 = (String)map11198.get("key11198"); // get it back out
+		String d11198 = c11198.substring(0,c11198.length()-1); // extract most of it
+		String e11198 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d11198.getBytes() ) )); // B64 encode and decode it
+		String f11198 = e11198.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String g11198 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g11198); // reflection
 		
 		
-		java.io.File file = new java.io.File(bar);
+		new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir, bar);
 	}
 }

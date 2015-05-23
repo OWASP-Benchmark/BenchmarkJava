@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -21,35 +39,37 @@ public class BenchmarkTest04737 extends HttpServlet {
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	
-		org.owasp.webgoat.benchmark.helpers.SeparateClassRequest scr = new org.owasp.webgoat.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheParameter("foo");
+		String param = "";
+		java.util.Enumeration<String> names = request.getParameterNames();
+		if (names.hasMoreElements()) {
+			param = names.nextElement(); // just grab first element
+		}
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a64190 = param; //assign
-		StringBuilder b64190 = new StringBuilder(a64190);  // stick in stringbuilder
-		b64190.append(" SafeStuff"); // append some safe content
-		b64190.replace(b64190.length()-"Chars".length(),b64190.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map64190 = new java.util.HashMap<String,Object>();
-		map64190.put("key64190", b64190.toString()); // put in a collection
-		String c64190 = (String)map64190.get("key64190"); // get it back out
-		String d64190 = c64190.substring(0,c64190.length()-1); // extract most of it
-		String e64190 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d64190.getBytes() ) )); // B64 encode and decode it
-		String f64190 = e64190.split(" ")[0]; // split it on a space
+		String a92830 = param; //assign
+		StringBuilder b92830 = new StringBuilder(a92830);  // stick in stringbuilder
+		b92830.append(" SafeStuff"); // append some safe content
+		b92830.replace(b92830.length()-"Chars".length(),b92830.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map92830 = new java.util.HashMap<String,Object>();
+		map92830.put("key92830", b92830.toString()); // put in a collection
+		String c92830 = (String)map92830.get("key92830"); // get it back out
+		String d92830 = c92830.substring(0,c92830.length()-1); // extract most of it
+		String e92830 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d92830.getBytes() ) )); // B64 encode and decode it
+		String f92830 = e92830.split(" ")[0]; // split it on a space
 		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f64190); // reflection
+		String g92830 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g92830); // reflection
 		
 		
+		javax.xml.xpath.XPathFactory xpf = javax.xml.xpath.XPathFactory.newInstance();
+		javax.xml.xpath.XPath xp = xpf.newXPath();
 		try {
-			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("DES/CBC/PKCS5Padding");
-		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
-			//throw new ServletException(e); - default provider (SUN) does not have any cipher instances
-		} catch (javax.crypto.NoSuchPaddingException e) {
-			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
-			//throw new ServletException(e); - default provider (SUN) does not have any cipher instances
+			xp.evaluate(bar, "SpecifiedContext");
+		} catch (javax.xml.xpath.XPathExpressionException|java.lang.NullPointerException e) {
+			// OK to swallow
+			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
 		}
-		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String) executed");
 	}
 }

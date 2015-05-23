@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -24,7 +42,13 @@ public class BenchmarkTest01520 extends HttpServlet {
 		String param = request.getHeader("foo");
 		
 		
-		String bar = param.split(" ")[0]; 
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map14193 = new java.util.HashMap<String,Object>();
+		map14193.put("keyA-14193", "a_Value"); // put some stuff in the collection
+		map14193.put("keyB-14193", param.toString()); // put it in a collection
+		map14193.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map14193.get("keyB-14193"); // get it back out
+		bar = (String)map14193.get("keyA-14193"); // get safe value back out
 		
 		
 		String sql = "SELECT * from USERS where USERNAME=? and PASSWORD='"+ bar +"'";

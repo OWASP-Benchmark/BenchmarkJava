@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,30 +47,17 @@ public class BenchmarkTest03830 extends HttpServlet {
 		
 		
 		
-		String bar;
-		String guess = "ABC";
-		char switchTarget = guess.charAt(1); // condition 'B', whish is safe
-		
-		// Simple case statement that assigns param to bar on conditions 'A' or 'C'
-		switch (switchTarget) {
-		  case 'A':
-		        bar = param;
-		        break;
-		  case 'B': 
-		        bar = "bob";
-		        break;
-		  case 'C':
-		  case 'D':        
-		        bar = param;
-		        break;
-		  default:
-		        bar = "bob's your uncle";
-		        break;
-		}
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map75616 = new java.util.HashMap<String,Object>();
+		map75616.put("keyA-75616", "a_Value"); // put some stuff in the collection
+		map75616.put("keyB-75616", param.toString()); // put it in a collection
+		map75616.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map75616.get("keyB-75616"); // get it back out
+		bar = (String)map75616.get("keyA-75616"); // get safe value back out
 		
 		
-		double rand = new java.util.Random().nextDouble();
+		int randNumber = new java.util.Random().nextInt(99);
 		
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextDouble() executed");
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextInt(int) executed");
 	}
 }

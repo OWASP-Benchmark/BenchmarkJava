@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -30,7 +48,10 @@ public class BenchmarkTest11127 extends HttpServlet {
 		String bar = new Test().doSomething(param);
 		
 		try {
-			java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA1");
+		    java.util.Properties wbeprops = new java.util.Properties();
+		    wbeprops.load(this.getClass().getClassLoader().getResourceAsStream("wbe.properties"));
+			String algorithm = wbeprops.getProperty("hashAlg2", "SHA5");
+			java.security.MessageDigest md = java.security.MessageDigest.getInstance(algorithm);
 		} catch (java.security.NoSuchAlgorithmException e) {
 			System.out.println("Problem executing hash - TestCase");
 			throw new ServletException(e);
@@ -43,10 +64,13 @@ public class BenchmarkTest11127 extends HttpServlet {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = param;
-		if (param.length() > 1) {
-		    bar = param.substring(0,param.length()-1);
-		}
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map63811 = new java.util.HashMap<String,Object>();
+		map63811.put("keyA-63811", "a_Value"); // put some stuff in the collection
+		map63811.put("keyB-63811", param.toString()); // put it in a collection
+		map63811.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map63811.get("keyB-63811"); // get it back out
+		bar = (String)map63811.get("keyA-63811"); // get safe value back out
 
             return bar;
         }

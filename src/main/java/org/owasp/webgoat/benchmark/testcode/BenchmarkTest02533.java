@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,21 +46,7 @@ public class BenchmarkTest02533 extends HttpServlet {
 		}
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a40183 = param; //assign
-		StringBuilder b40183 = new StringBuilder(a40183);  // stick in stringbuilder
-		b40183.append(" SafeStuff"); // append some safe content
-		b40183.replace(b40183.length()-"Chars".length(),b40183.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map40183 = new java.util.HashMap<String,Object>();
-		map40183.put("key40183", b40183.toString()); // put in a collection
-		String c40183 = (String)map40183.get("key40183"); // get it back out
-		String d40183 = c40183.substring(0,c40183.length()-1); // extract most of it
-		String e40183 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d40183.getBytes() ) )); // B64 encode and decode it
-		String f40183 = e40183.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g40183 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g40183); // reflection
+		String bar = org.owasp.esapi.ESAPI.encoder().encodeForHTML(param);
 		
 		
 		java.util.List<String> argList = new java.util.ArrayList<String>();
@@ -58,15 +62,14 @@ public class BenchmarkTest02533 extends HttpServlet {
         argList.add("echo");
         argList.add(bar);
 
-		ProcessBuilder pb = new ProcessBuilder();
+		ProcessBuilder pb = new ProcessBuilder(argList);
 
-		pb.command(argList);
-		
 		try {
 			Process p = pb.start();
 			org.owasp.webgoat.benchmark.helpers.Utils.printOSCommandResults(p);
 		} catch (IOException e) {
 			System.out.println("Problem executing cmdi - java.lang.ProcessBuilder(java.util.List) Test Case");
+            throw new ServletException(e);
 		}
 	}
 }

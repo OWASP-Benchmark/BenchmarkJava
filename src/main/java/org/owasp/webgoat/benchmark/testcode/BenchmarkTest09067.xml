@@ -1,6 +1,7 @@
 <test-metadata>
-  <category>xpathi</category>
+  <wbe-version>1.1</wbe-version>
+  <category>sqli</category>
   <test-number>09067</test-number>
   <vulnerability>true</vulnerability>
-  <cwe>643</cwe>
+  <cwe>89</cwe>
 </test-metadata>

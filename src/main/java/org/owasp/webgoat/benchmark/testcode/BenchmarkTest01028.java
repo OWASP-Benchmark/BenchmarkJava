@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -24,20 +42,26 @@ public class BenchmarkTest01028 extends HttpServlet {
 		String param = request.getHeader("foo");
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a48582 = param; //assign
-		StringBuilder b48582 = new StringBuilder(a48582);  // stick in stringbuilder
-		b48582.append(" SafeStuff"); // append some safe content
-		b48582.replace(b48582.length()-"Chars".length(),b48582.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map48582 = new java.util.HashMap<String,Object>();
-		map48582.put("key48582", b48582.toString()); // put in a collection
-		String c48582 = (String)map48582.get("key48582"); // get it back out
-		String d48582 = c48582.substring(0,c48582.length()-1); // extract most of it
-		String e48582 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d48582.getBytes() ) )); // B64 encode and decode it
-		String f48582 = e48582.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f48582); // reflection
+		String bar;
+		String guess = "ABC";
+		char switchTarget = guess.charAt(1); // condition 'B', which is safe
+		
+		// Simple case statement that assigns param to bar on conditions 'A' or 'C'
+		switch (switchTarget) {
+		  case 'A':
+		        bar = param;
+		        break;
+		  case 'B': 
+		        bar = "bob";
+		        break;
+		  case 'C':
+		  case 'D':        
+		        bar = param;
+		        break;
+		  default:
+		        bar = "bob's your uncle";
+		        break;
+		}
 		
 		
 		// FILE URIs are tricky because they are different between Mac and Windows because of lack of standardization.
@@ -49,8 +73,8 @@ public class BenchmarkTest01028 extends HttpServlet {
 	        else startURIslashes = "//";
 
 		try {
-			java.net.URI fileURI = new java.net.URI("file:" + startURIslashes 
-				+ org.owasp.webgoat.benchmark.helpers.Utils.testfileDir.replace('\\', '/').replace(' ', '_') + bar);
+			java.net.URI fileURI = new java.net.URI("file", null, startURIslashes 
+				+ org.owasp.webgoat.benchmark.helpers.Utils.testfileDir.replace('\\', java.io.File.separatorChar).replace(' ', '_') + bar, null, null);
 			new java.io.File(fileURI);
 		} catch (java.net.URISyntaxException e) {
 			throw new ServletException(e);

@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -26,20 +44,20 @@ public class BenchmarkTest07090 extends HttpServlet {
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map16676 = new java.util.HashMap<String,Object>();
-		map16676.put("keyA-16676", "a_Value"); // put some stuff in the collection
-		map16676.put("keyB-16676", param.toString()); // put it in a collection
-		map16676.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map16676.get("keyB-16676"); // get it back out
-		bar = (String)map16676.get("keyA-16676"); // get safe value back out
+		java.util.HashMap<String,Object> map98770 = new java.util.HashMap<String,Object>();
+		map98770.put("keyA-98770", "a_Value"); // put some stuff in the collection
+		map98770.put("keyB-98770", param.toString()); // put it in a collection
+		map98770.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map98770.get("keyB-98770"); // get it back out
+		bar = (String)map98770.get("keyA-98770"); // get safe value back out
 		
 		
-		String sql = "SELECT * from USERS where USERNAME=? and PASSWORD='"+ bar +"'";
+		String sql = "{call verifyUserPassword('foo','"+bar+"')}";
 				
 		try {
 			java.sql.Connection connection = org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlConnection();
-			java.sql.PreparedStatement statement = connection.prepareStatement( sql, new int[] { 1, 2 } );
-			statement.setString(1, "foo");
+			java.sql.CallableStatement statement = connection.prepareCall( sql, java.sql.ResultSet.TYPE_FORWARD_ONLY, 
+							java.sql.ResultSet.CONCUR_READ_ONLY );
 			statement.execute();
 		} catch (java.sql.SQLException e) {
 			throw new ServletException(e);

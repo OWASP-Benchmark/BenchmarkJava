@@ -1,6 +1,7 @@
 <test-metadata>
-  <category>ldapi</category>
+  <wbe-version>1.1</wbe-version>
+  <category>crypto</category>
   <test-number>07826</test-number>
-  <vulnerability>true</vulnerability>
-  <cwe>90</cwe>
+  <vulnerability>false</vulnerability>
+  <cwe>327</cwe>
 </test-metadata>

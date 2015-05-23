@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,24 +43,30 @@ public class BenchmarkTest05067 extends HttpServlet {
 		String param = scr.getTheParameter("foo");
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a73742 = param; //assign
-		StringBuilder b73742 = new StringBuilder(a73742);  // stick in stringbuilder
-		b73742.append(" SafeStuff"); // append some safe content
-		b73742.replace(b73742.length()-"Chars".length(),b73742.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map73742 = new java.util.HashMap<String,Object>();
-		map73742.put("key73742", b73742.toString()); // put in a collection
-		String c73742 = (String)map73742.get("key73742"); // get it back out
-		String d73742 = c73742.substring(0,c73742.length()-1); // extract most of it
-		String e73742 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d73742.getBytes() ) )); // B64 encode and decode it
-		String f73742 = e73742.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f73742); // reflection
+		String bar;
+		String guess = "ABC";
+		char switchTarget = guess.charAt(2);
+		
+		// Simple case statement that assigns param to bar on conditions 'A' or 'C'
+		switch (switchTarget) {
+		  case 'A':
+		        bar = param;
+		        break;
+		  case 'B': 
+		        bar = "bobs_your_uncle";
+		        break;
+		  case 'C':
+		  case 'D':        
+		        bar = param;
+		        break;
+		  default:
+		        bar = "bobs_your_uncle";
+		        break;
+		}
 		
 		
-		double rand = new java.util.Random().nextDouble();
+		float rand = new java.util.Random().nextFloat();
 		
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextDouble() executed");
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextFloat() executed");
 	}
 }

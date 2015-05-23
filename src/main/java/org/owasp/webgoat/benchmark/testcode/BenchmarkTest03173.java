@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -24,38 +42,36 @@ public class BenchmarkTest03173 extends HttpServlet {
 		String param = request.getParameter("foo");
 		
 		
-		java.util.List<String> valuesList = new java.util.ArrayList<String>( );
-		valuesList.add("safe");
-		valuesList.add( param );
-		valuesList.add( "moresafe" );
+		String bar;
 		
-		valuesList.remove(0); // remove the 1st safe value
-		
-		String bar = valuesList.get(1); // get the last 'safe' value
-		
+		// Simple if statement that assigns constant to bar on true condition
+		int i = 86;
+		if ( (7*42) - i > 200 )
+		   bar = "This_should_always_happen"; 
+		else bar = param;
 		
 		
-		String a1 = "";
-		String a2 = "";
+		java.util.List<String> argList = new java.util.ArrayList<String>();
+		
 		String osName = System.getProperty("os.name");
         if (osName.indexOf("Windows") != -1) {
-        	a1 = "cmd.exe";
-        	a2 = "/c";
+        	argList.add("cmd.exe");
+        	argList.add("/c");
         } else {
-        	a1 = "sh";
-        	a2 = "-c";
+        	argList.add("sh");
+        	argList.add("-c");
         }
-        String[] args = {a1, a2, "echo", bar};
+        argList.add("echo");
+        argList.add(bar);
 
-		ProcessBuilder pb = new ProcessBuilder();
+		ProcessBuilder pb = new ProcessBuilder(argList);
 
-		pb.command(args);
-		
 		try {
 			Process p = pb.start();
 			org.owasp.webgoat.benchmark.helpers.Utils.printOSCommandResults(p);
 		} catch (IOException e) {
 			System.out.println("Problem executing cmdi - java.lang.ProcessBuilder(java.util.List) Test Case");
+            throw new ServletException(e);
 		}
 	}
 }

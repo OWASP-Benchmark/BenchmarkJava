@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -24,34 +42,11 @@ public class BenchmarkTest06277 extends HttpServlet {
 		String param = request.getQueryString();
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map24746 = new java.util.HashMap<String,Object>();
-		map24746.put("keyA-24746", "a Value"); // put some stuff in the collection
-		map24746.put("keyB-24746", param.toString()); // put it in a collection
-		map24746.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map24746.get("keyB-24746"); // get it back out
+		String bar = org.owasp.esapi.ESAPI.encoder().encodeForHTML(param);
 		
 		
-		java.util.List<String> argList = new java.util.ArrayList<String>();
+		int randNumber = new java.util.Random().nextInt(99);
 		
-		String osName = System.getProperty("os.name");
-        if (osName.indexOf("Windows") != -1) {
-        	argList.add("cmd.exe");
-        	argList.add("/c");
-        } else {
-        	argList.add("sh");
-        	argList.add("-c");
-        }
-        argList.add("echo");
-        argList.add(bar);
-
-		ProcessBuilder pb = new ProcessBuilder(argList);
-
-		try {
-			Process p = pb.start();
-			org.owasp.webgoat.benchmark.helpers.Utils.printOSCommandResults(p);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - java.lang.ProcessBuilder(java.util.List) Test Case");
-		}
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextInt(int) executed");
 	}
 }

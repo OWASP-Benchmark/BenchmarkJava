@@ -1,6 +1,7 @@
 <test-metadata>
-  <category>cmdi</category>
+  <wbe-version>1.1</wbe-version>
+  <category>weakrand</category>
   <test-number>06276</test-number>
   <vulnerability>true</vulnerability>
-  <cwe>78</cwe>
+  <cwe>330</cwe>
 </test-metadata>

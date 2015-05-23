@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -21,39 +39,29 @@ public class BenchmarkTest04731 extends HttpServlet {
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	
-		org.owasp.webgoat.benchmark.helpers.SeparateClassRequest scr = new org.owasp.webgoat.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheParameter("foo");
-		
-		
-		// Chain a bunch of propagators in sequence
-		String a60184 = param; //assign
-		StringBuilder b60184 = new StringBuilder(a60184);  // stick in stringbuilder
-		b60184.append(" SafeStuff"); // append some safe content
-		b60184.replace(b60184.length()-"Chars".length(),b60184.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map60184 = new java.util.HashMap<String,Object>();
-		map60184.put("key60184", b60184.toString()); // put in a collection
-		String c60184 = (String)map60184.get("key60184"); // get it back out
-		String d60184 = c60184.substring(0,c60184.length()-1); // extract most of it
-		String e60184 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d60184.getBytes() ) )); // B64 encode and decode it
-		String f60184 = e60184.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f60184); // reflection
-		
-		
-		try {
-			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("DES/CBC/PKCS5Padding", "SunJCE");
-		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.lang.String) Test Case");
-			throw new ServletException(e);
-		} catch (java.security.NoSuchProviderException e) {
-			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.lang.String) Test Case");
-			// throw new ServletException(e); - for now, it's ok if this provider not on the platform
-		} catch (javax.crypto.NoSuchPaddingException e) {
-			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.lang.String) Test Case");
-			throw new ServletException(e);
+		String param = "";
+		java.util.Enumeration<String> names = request.getParameterNames();
+		if (names.hasMoreElements()) {
+			param = names.nextElement(); // just grab first element
 		}
-
-		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String,java.lang.String) executed");
+		
+		
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map3954 = new java.util.HashMap<String,Object>();
+		map3954.put("keyA-3954", "a_Value"); // put some stuff in the collection
+		map3954.put("keyB-3954", param.toString()); // put it in a collection
+		map3954.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map3954.get("keyB-3954"); // get it back out
+		bar = (String)map3954.get("keyA-3954"); // get safe value back out
+		
+		
+		javax.xml.xpath.XPathFactory xpf = javax.xml.xpath.XPathFactory.newInstance();
+		javax.xml.xpath.XPath xp = xpf.newXPath();
+		try {
+			xp.compile(bar);
+		} catch (javax.xml.xpath.XPathExpressionException e) {
+			// OK to swallow
+			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
+		}
 	}
 }

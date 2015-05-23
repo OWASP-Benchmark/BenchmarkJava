@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,7 +47,9 @@ public class BenchmarkTest11319 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		response.addHeader(bar, "SomeValue");
+		int r = new java.util.Random().nextInt();
+		
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextInt() executed");
 	}  // end doPost
 
     private class Test {
@@ -37,19 +57,19 @@ public class BenchmarkTest11319 extends HttpServlet {
         public String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a3906 = param; //assign
-		StringBuilder b3906 = new StringBuilder(a3906);  // stick in stringbuilder
-		b3906.append(" SafeStuff"); // append some safe content
-		b3906.replace(b3906.length()-"Chars".length(),b3906.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map3906 = new java.util.HashMap<String,Object>();
-		map3906.put("key3906", b3906.toString()); // put in a collection
-		String c3906 = (String)map3906.get("key3906"); // get it back out
-		String d3906 = c3906.substring(0,c3906.length()-1); // extract most of it
-		String e3906 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d3906.getBytes() ) )); // B64 encode and decode it
-		String f3906 = e3906.split(" ")[0]; // split it on a space
+		String a10549 = param; //assign
+		StringBuilder b10549 = new StringBuilder(a10549);  // stick in stringbuilder
+		b10549.append(" SafeStuff"); // append some safe content
+		b10549.replace(b10549.length()-"Chars".length(),b10549.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map10549 = new java.util.HashMap<String,Object>();
+		map10549.put("key10549", b10549.toString()); // put in a collection
+		String c10549 = (String)map10549.get("key10549"); // get it back out
+		String d10549 = c10549.substring(0,c10549.length()-1); // extract most of it
+		String e10549 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d10549.getBytes() ) )); // B64 encode and decode it
+		String f10549 = e10549.split(" ")[0]; // split it on a space
 		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f3906); // reflection
+		String bar = thing.doSomething(f10549); // reflection
 
             return bar;
         }

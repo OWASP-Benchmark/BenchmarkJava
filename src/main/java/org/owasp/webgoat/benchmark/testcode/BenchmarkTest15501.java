@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,23 +47,26 @@ public class BenchmarkTest15501 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		try {
-			javax.naming.directory.InitialDirContext idc = org.owasp.webgoat.benchmark.helpers.Utils.getInitialDirContext();
-			Object[] filterArgs = {"a","b"};
-			idc.search("name", bar, filterArgs, new javax.naming.directory.SearchControls());
-		} catch (javax.naming.NamingException e) {
-			throw new ServletException(e);
-		}
+		java.io.FileOutputStream fos = new java.io.FileOutputStream(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar, false);
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map59068 = new java.util.HashMap<String,Object>();
-		map59068.put("keyA-59068", "a Value"); // put some stuff in the collection
-		map59068.put("keyB-59068", param.toString()); // put it in a collection
-		map59068.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map59068.get("keyB-59068"); // get it back out
+		// Chain a bunch of propagators in sequence
+		String a10772 = param; //assign
+		StringBuilder b10772 = new StringBuilder(a10772);  // stick in stringbuilder
+		b10772.append(" SafeStuff"); // append some safe content
+		b10772.replace(b10772.length()-"Chars".length(),b10772.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map10772 = new java.util.HashMap<String,Object>();
+		map10772.put("key10772", b10772.toString()); // put in a collection
+		String c10772 = (String)map10772.get("key10772"); // get it back out
+		String d10772 = c10772.substring(0,c10772.length()-1); // extract most of it
+		String e10772 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d10772.getBytes() ) )); // B64 encode and decode it
+		String f10772 = e10772.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String g10772 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g10772); // reflection
 	
 		return bar;	
 	}

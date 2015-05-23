@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,15 +43,31 @@ public class BenchmarkTest10079 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		response.addHeader(bar, "SomeValue");
+		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie","SomeValue");
+		
+		cookie.setSecure(false);
+		
+		response.addCookie(cookie);
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
+		// Chain a bunch of propagators in sequence
+		String a97847 = param; //assign
+		StringBuilder b97847 = new StringBuilder(a97847);  // stick in stringbuilder
+		b97847.append(" SafeStuff"); // append some safe content
+		b97847.replace(b97847.length()-"Chars".length(),b97847.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map97847 = new java.util.HashMap<String,Object>();
+		map97847.put("key97847", b97847.toString()); // put in a collection
+		String c97847 = (String)map97847.get("key97847"); // get it back out
+		String d97847 = c97847.substring(0,c97847.length()-1); // extract most of it
+		String e97847 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d97847.getBytes() ) )); // B64 encode and decode it
+		String f97847 = e97847.split(" ")[0]; // split it on a space
 		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(param);
+		String bar = thing.doSomething(f97847); // reflection
 
             return bar;
         }

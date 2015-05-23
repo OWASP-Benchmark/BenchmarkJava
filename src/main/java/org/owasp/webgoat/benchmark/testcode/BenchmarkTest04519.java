@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,8 +46,20 @@ public class BenchmarkTest04519 extends HttpServlet {
 		}
 		
 		
+		// Chain a bunch of propagators in sequence
+		String a43424 = param; //assign
+		StringBuilder b43424 = new StringBuilder(a43424);  // stick in stringbuilder
+		b43424.append(" SafeStuff"); // append some safe content
+		b43424.replace(b43424.length()-"Chars".length(),b43424.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map43424 = new java.util.HashMap<String,Object>();
+		map43424.put("key43424", b43424.toString()); // put in a collection
+		String c43424 = (String)map43424.get("key43424"); // get it back out
+		String d43424 = c43424.substring(0,c43424.length()-1); // extract most of it
+		String e43424 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d43424.getBytes() ) )); // B64 encode and decode it
+		String f43424 = e43424.split(" ")[0]; // split it on a space
 		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(param);
+		String bar = thing.doSomething(f43424); // reflection
 		
 		
 		String a1 = "";
@@ -53,6 +83,7 @@ public class BenchmarkTest04519 extends HttpServlet {
 			org.owasp.webgoat.benchmark.helpers.Utils.printOSCommandResults(p);
 		} catch (IOException e) {
 			System.out.println("Problem executing cmdi - TestCase");
+            throw new ServletException(e);
 		}
 	}
 }

@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -24,17 +42,23 @@ public class BenchmarkTest06166 extends HttpServlet {
 		String param = request.getQueryString();
 		
 		
-		String bar;
+		// Chain a bunch of propagators in sequence
+		String a84961 = param; //assign
+		StringBuilder b84961 = new StringBuilder(a84961);  // stick in stringbuilder
+		b84961.append(" SafeStuff"); // append some safe content
+		b84961.replace(b84961.length()-"Chars".length(),b84961.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map84961 = new java.util.HashMap<String,Object>();
+		map84961.put("key84961", b84961.toString()); // put in a collection
+		String c84961 = (String)map84961.get("key84961"); // get it back out
+		String d84961 = c84961.substring(0,c84961.length()-1); // extract most of it
+		String e84961 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d84961.getBytes() ) )); // B64 encode and decode it
+		String f84961 = e84961.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String g84961 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g84961); // reflection
 		
-		// Simple if statement that assigns constant to bar on true condition
-		int i = 86;
-		if ( (7*42) - i > 200 )
-		   bar = "This_should_always_happen"; 
-		else bar = param;
 		
-		
-		Object[] obj = { "a", bar };
-		
-		response.getWriter().format("notfoo",obj);
+		response.getWriter().print(bar);
 	}
 }

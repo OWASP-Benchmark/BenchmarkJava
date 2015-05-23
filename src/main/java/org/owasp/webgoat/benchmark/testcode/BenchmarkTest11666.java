@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -26,27 +44,25 @@ public class BenchmarkTest11666 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		java.io.FileOutputStream fos = new java.io.FileOutputStream(new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar));
+		try {
+			javax.naming.directory.DirContext dc = org.owasp.webgoat.benchmark.helpers.Utils.getDirContext();
+			dc.search("name", bar, new javax.naming.directory.SearchControls());
+		} catch (javax.naming.NamingException e) {
+			throw new ServletException(e);
+		}
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a11279 = param; //assign
-		StringBuilder b11279 = new StringBuilder(a11279);  // stick in stringbuilder
-		b11279.append(" SafeStuff"); // append some safe content
-		b11279.replace(b11279.length()-"Chars".length(),b11279.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map11279 = new java.util.HashMap<String,Object>();
-		map11279.put("key11279", b11279.toString()); // put in a collection
-		String c11279 = (String)map11279.get("key11279"); // get it back out
-		String d11279 = c11279.substring(0,c11279.length()-1); // extract most of it
-		String e11279 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d11279.getBytes() ) )); // B64 encode and decode it
-		String f11279 = e11279.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f11279); // reflection
+		String bar;
+		
+		// Simple if statement that assigns param to bar on true condition
+		int i = 196;
+		if ( (500/42) + i > 200 )
+		   bar = param;
+		else bar = "This should never happen"; 
 
             return bar;
         }

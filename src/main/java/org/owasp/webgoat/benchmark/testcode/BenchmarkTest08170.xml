@@ -1,6 +1,7 @@
 <test-metadata>
-  <category>securecookie</category>
+  <wbe-version>1.1</wbe-version>
+  <category>weakrand</category>
   <test-number>08170</test-number>
   <vulnerability>true</vulnerability>
-  <cwe>614</cwe>
+  <cwe>330</cwe>
 </test-metadata>

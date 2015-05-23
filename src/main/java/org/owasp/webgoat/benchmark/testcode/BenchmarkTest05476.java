@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,33 +46,15 @@ public class BenchmarkTest05476 extends HttpServlet {
 		else param = null;
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a80926 = param; //assign
-		StringBuilder b80926 = new StringBuilder(a80926);  // stick in stringbuilder
-		b80926.append(" SafeStuff"); // append some safe content
-		b80926.replace(b80926.length()-"Chars".length(),b80926.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map80926 = new java.util.HashMap<String,Object>();
-		map80926.put("key80926", b80926.toString()); // put in a collection
-		String c80926 = (String)map80926.get("key80926"); // get it back out
-		String d80926 = c80926.substring(0,c80926.length()-1); // extract most of it
-		String e80926 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d80926.getBytes() ) )); // B64 encode and decode it
-		String f80926 = e80926.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f80926); // reflection
+		String bar = param.split(" ")[0]; 
 		
 		
-		// Create the file first so the test won't throw an exception if it doesn't exist.
-		// Note: Don't actually do this because this method signature could cause a tool to find THIS file constructor 
-		// as a vuln, rather than the File signature we are trying to actually test.
-		// If necessary, just run the benchmark twice. The 1st run should create all the necessary files.
-		//new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar).createNewFile();
-		
-
-
-        java.io.FileInputStream fileInputStream = new java.io.FileInputStream(
-        		org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar);
-        java.io.FileDescriptor fd = fileInputStream.getFD();
-        java.io.FileOutputStream anotOutputStream = new java.io.FileOutputStream(fd);
+		try {
+			javax.naming.directory.InitialDirContext idc = org.owasp.webgoat.benchmark.helpers.Utils.getInitialDirContext();
+			Object[] filterArgs = {"a","b"};
+			idc.search("name", bar, filterArgs, new javax.naming.directory.SearchControls());
+		} catch (javax.naming.NamingException e) {
+			throw new ServletException(e);
+		}
 	}
 }

@@ -1,6 +1,7 @@
 <test-metadata>
-  <category>cmdi</category>
+  <wbe-version>1.1</wbe-version>
+  <category>trustbound</category>
   <test-number>03353</test-number>
   <vulnerability>true</vulnerability>
-  <cwe>78</cwe>
+  <cwe>501</cwe>
 </test-metadata>

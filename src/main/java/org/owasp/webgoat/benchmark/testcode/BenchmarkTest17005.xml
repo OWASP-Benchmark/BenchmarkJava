@@ -1,6 +1,7 @@
 <test-metadata>
-  <category>headeri</category>
+  <wbe-version>1.1</wbe-version>
+  <category>xss</category>
   <test-number>17005</test-number>
-  <vulnerability>false</vulnerability>
-  <cwe>113</cwe>
+  <vulnerability>true</vulnerability>
+  <cwe>79</cwe>
 </test-metadata>

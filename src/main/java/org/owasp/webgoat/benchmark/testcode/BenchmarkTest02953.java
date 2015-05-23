@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -24,27 +42,29 @@ public class BenchmarkTest02953 extends HttpServlet {
 		String param = request.getParameter("foo");
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a34351 = param; //assign
-		StringBuilder b34351 = new StringBuilder(a34351);  // stick in stringbuilder
-		b34351.append(" SafeStuff"); // append some safe content
-		b34351.replace(b34351.length()-"Chars".length(),b34351.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map34351 = new java.util.HashMap<String,Object>();
-		map34351.put("key34351", b34351.toString()); // put in a collection
-		String c34351 = (String)map34351.get("key34351"); // get it back out
-		String d34351 = c34351.substring(0,c34351.length()-1); // extract most of it
-		String e34351 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d34351.getBytes() ) )); // B64 encode and decode it
-		String f34351 = e34351.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f34351); // reflection
+		String bar;
+		
+		// Simple if statement that assigns constant to bar on true condition
+		int i = 86;
+		if ( (7*42) - i > 200 )
+		   bar = "This_should_always_happen"; 
+		else bar = param;
 		
 		
+		// FILE URIs are tricky because they are different between Mac and Windows because of lack of standardization.
+		// Mac requires an extra slash for some reason.
+		String startURIslashes = "";
+        if (System.getProperty("os.name").indexOf("Windows") != -1)
+	        if (System.getProperty("os.name").indexOf("Windows") != -1)
+	        	startURIslashes = "/";
+	        else startURIslashes = "//";
+
 		try {
-			java.io.FileInputStream fis = new java.io.FileInputStream(new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar));
-		} catch (Exception e) {
-			// OK to swallow any exception
-			System.out.println("File exception caught and swallowed: " + e.getMessage());
+			java.net.URI fileURI = new java.net.URI("file", null, startURIslashes 
+				+ org.owasp.webgoat.benchmark.helpers.Utils.testfileDir.replace('\\', java.io.File.separatorChar).replace(' ', '_') + bar, null, null);
+			new java.io.File(fileURI);
+		} catch (java.net.URISyntaxException e) {
+			throw new ServletException(e);
 		}
 	}
 }

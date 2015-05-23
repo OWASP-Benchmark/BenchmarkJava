@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,20 +47,19 @@ public class BenchmarkTest18390 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		String sql = "{call verifyUserPassword('foo','"+bar+"')}";
-				
-		try {
-			java.sql.Connection connection = org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlConnection();
-			java.sql.CallableStatement statement = connection.prepareCall( sql );
-		    statement.execute();
-		} catch (java.sql.SQLException e) {
-			throw new ServletException(e);
-		}
+		// javax.servlet.http.HttpSession.setAttribute(java.lang.String,java.lang.Object^)
+		request.getSession().setAttribute( "foo", bar);
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = param;
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map16127 = new java.util.HashMap<String,Object>();
+		map16127.put("keyA-16127", "a_Value"); // put some stuff in the collection
+		map16127.put("keyB-16127", param.toString()); // put it in a collection
+		map16127.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map16127.get("keyB-16127"); // get it back out
+		bar = (String)map16127.get("keyA-16127"); // get safe value back out
 	
 		return bar;	
 	}

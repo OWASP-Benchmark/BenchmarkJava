@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,28 +47,35 @@ public class BenchmarkTest16178 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		Object[] obj = { "a", bar };
-		
-		response.getWriter().format("notfoo",obj);
+		try {
+			java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA-512", "SUN");
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.lang.String)");
+            throw new ServletException(e);
+		} catch (java.security.NoSuchProviderException e) {
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.lang.String)");
+            throw new ServletException(e);
+		}
+
+		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.lang.String) executed");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a70244 = param; //assign
-		StringBuilder b70244 = new StringBuilder(a70244);  // stick in stringbuilder
-		b70244.append(" SafeStuff"); // append some safe content
-		b70244.replace(b70244.length()-"Chars".length(),b70244.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map70244 = new java.util.HashMap<String,Object>();
-		map70244.put("key70244", b70244.toString()); // put in a collection
-		String c70244 = (String)map70244.get("key70244"); // get it back out
-		String d70244 = c70244.substring(0,c70244.length()-1); // extract most of it
-		String e70244 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d70244.getBytes() ) )); // B64 encode and decode it
-		String f70244 = e70244.split(" ")[0]; // split it on a space
+		String a48705 = param; //assign
+		StringBuilder b48705 = new StringBuilder(a48705);  // stick in stringbuilder
+		b48705.append(" SafeStuff"); // append some safe content
+		b48705.replace(b48705.length()-"Chars".length(),b48705.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map48705 = new java.util.HashMap<String,Object>();
+		map48705.put("key48705", b48705.toString()); // put in a collection
+		String c48705 = (String)map48705.get("key48705"); // get it back out
+		String d48705 = c48705.substring(0,c48705.length()-1); // extract most of it
+		String e48705 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d48705.getBytes() ) )); // B64 encode and decode it
+		String f48705 = e48705.split(" ")[0]; // split it on a space
 		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g70244 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g70244); // reflection
+		String bar = thing.doSomething(f48705); // reflection
 	
 		return bar;	
 	}

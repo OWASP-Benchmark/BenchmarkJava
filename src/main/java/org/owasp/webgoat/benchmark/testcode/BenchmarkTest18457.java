@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -33,7 +51,7 @@ public class BenchmarkTest18457 extends HttpServlet {
 				
 		try {
 			java.sql.Statement statement =  org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			statement.execute( sql, new String[] { "username", "password" } );
+			statement.execute( sql, new int[] { 1, 2 } );
 		} catch (java.sql.SQLException e) {
 			throw new ServletException(e);
 		}
@@ -41,20 +59,15 @@ public class BenchmarkTest18457 extends HttpServlet {
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a32989 = param; //assign
-		StringBuilder b32989 = new StringBuilder(a32989);  // stick in stringbuilder
-		b32989.append(" SafeStuff"); // append some safe content
-		b32989.replace(b32989.length()-"Chars".length(),b32989.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map32989 = new java.util.HashMap<String,Object>();
-		map32989.put("key32989", b32989.toString()); // put in a collection
-		String c32989 = (String)map32989.get("key32989"); // get it back out
-		String d32989 = c32989.substring(0,c32989.length()-1); // extract most of it
-		String e32989 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d32989.getBytes() ) )); // B64 encode and decode it
-		String f32989 = e32989.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f32989); // reflection
+		java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+		valuesList.add("safe");
+		valuesList.add( param );
+		valuesList.add( "moresafe" );
+		
+		valuesList.remove(0); // remove the 1st safe value
+		
+		String bar = valuesList.get(0); // get the param value
+		
 	
 		return bar;	
 	}

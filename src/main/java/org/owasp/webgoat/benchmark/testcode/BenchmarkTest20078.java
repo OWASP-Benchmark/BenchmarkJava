@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,27 +43,12 @@ public class BenchmarkTest20078 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		long l = new java.util.Random().nextLong();
-		
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextLong() executed");
+		response.getWriter().write(bar);
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a51096 = param; //assign
-		StringBuilder b51096 = new StringBuilder(a51096);  // stick in stringbuilder
-		b51096.append(" SafeStuff"); // append some safe content
-		b51096.replace(b51096.length()-"Chars".length(),b51096.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map51096 = new java.util.HashMap<String,Object>();
-		map51096.put("key51096", b51096.toString()); // put in a collection
-		String c51096 = (String)map51096.get("key51096"); // get it back out
-		String d51096 = c51096.substring(0,c51096.length()-1); // extract most of it
-		String e51096 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d51096.getBytes() ) )); // B64 encode and decode it
-		String f51096 = e51096.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f51096); // reflection
+		String bar = param.split(" ")[0]; 
 	
 		return bar;	
 	}

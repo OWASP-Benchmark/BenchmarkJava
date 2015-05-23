@@ -1,6 +1,7 @@
 <test-metadata>
-  <category>pathtraver</category>
+  <wbe-version>1.1</wbe-version>
+  <category>xpathi</category>
   <test-number>14773</test-number>
   <vulnerability>true</vulnerability>
-  <cwe>22</cwe>
+  <cwe>643</cwe>
 </test-metadata>

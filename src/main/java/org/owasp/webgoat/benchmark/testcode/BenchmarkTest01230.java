@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,21 +43,25 @@ public class BenchmarkTest01230 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a4766 = param; //assign
-		StringBuilder b4766 = new StringBuilder(a4766);  // stick in stringbuilder
-		b4766.append(" SafeStuff"); // append some safe content
-		b4766.replace(b4766.length()-"Chars".length(),b4766.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map4766 = new java.util.HashMap<String,Object>();
-		map4766.put("key4766", b4766.toString()); // put in a collection
-		String c4766 = (String)map4766.get("key4766"); // get it back out
-		String d4766 = c4766.substring(0,c4766.length()-1); // extract most of it
-		String e4766 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d4766.getBytes() ) )); // B64 encode and decode it
-		String f4766 = e4766.split(" ")[0]; // split it on a space
+		String a51015 = param; //assign
+		StringBuilder b51015 = new StringBuilder(a51015);  // stick in stringbuilder
+		b51015.append(" SafeStuff"); // append some safe content
+		b51015.replace(b51015.length()-"Chars".length(),b51015.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map51015 = new java.util.HashMap<String,Object>();
+		map51015.put("key51015", b51015.toString()); // put in a collection
+		String c51015 = (String)map51015.get("key51015"); // get it back out
+		String d51015 = c51015.substring(0,c51015.length()-1); // extract most of it
+		String e51015 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d51015.getBytes() ) )); // B64 encode and decode it
+		String f51015 = e51015.split(" ")[0]; // split it on a space
 		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f4766); // reflection
+		String bar = thing.doSomething(f51015); // reflection
 		
 		
-		response.getWriter().write(bar.toCharArray());
+		int length = 1;
+		if (bar != null) {
+			length = bar.length();
+			response.getWriter().write(bar, 0, length - 1);
+		}
 	}
 }

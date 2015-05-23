@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -21,33 +39,39 @@ public class BenchmarkTest06593 extends HttpServlet {
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	
-		String param = request.getQueryString();
+		org.owasp.webgoat.benchmark.helpers.SeparateClassRequest scr = new org.owasp.webgoat.benchmark.helpers.SeparateClassRequest( request );
+		String param = scr.getTheValue("foo");
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a80166 = param; //assign
-		StringBuilder b80166 = new StringBuilder(a80166);  // stick in stringbuilder
-		b80166.append(" SafeStuff"); // append some safe content
-		b80166.replace(b80166.length()-"Chars".length(),b80166.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map80166 = new java.util.HashMap<String,Object>();
-		map80166.put("key80166", b80166.toString()); // put in a collection
-		String c80166 = (String)map80166.get("key80166"); // get it back out
-		String d80166 = c80166.substring(0,c80166.length()-1); // extract most of it
-		String e80166 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d80166.getBytes() ) )); // B64 encode and decode it
-		String f80166 = e80166.split(" ")[0]; // split it on a space
+		String a60903 = param; //assign
+		StringBuilder b60903 = new StringBuilder(a60903);  // stick in stringbuilder
+		b60903.append(" SafeStuff"); // append some safe content
+		b60903.replace(b60903.length()-"Chars".length(),b60903.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map60903 = new java.util.HashMap<String,Object>();
+		map60903.put("key60903", b60903.toString()); // put in a collection
+		String c60903 = (String)map60903.get("key60903"); // get it back out
+		String d60903 = c60903.substring(0,c60903.length()-1); // extract most of it
+		String e60903 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d60903.getBytes() ) )); // B64 encode and decode it
+		String f60903 = e60903.split(" ")[0]; // split it on a space
 		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g80166 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g80166); // reflection
+		String g60903 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g60903); // reflection
 		
 		
-		String sql = "UPDATE USERS SET PASSWORD='" + bar + "' WHERE USERNAME='foo'";
-				
 		try {
-			java.sql.Statement statement = org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			int count = statement.executeUpdate( sql );
-		} catch (java.sql.SQLException e) {
+		    java.util.Properties wbeprops = new java.util.Properties();
+		    wbeprops.load(this.getClass().getClassLoader().getResourceAsStream("wbe.properties"));
+			String algorithm = wbeprops.getProperty("cryptoAlg1", "DESede/ECB/PKCS5Padding");
+			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance(algorithm);
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
+			throw new ServletException(e);
+		} catch (javax.crypto.NoSuchPaddingException e) {
+			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
 			throw new ServletException(e);
 		}
+		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String) executed");
 	}
 }

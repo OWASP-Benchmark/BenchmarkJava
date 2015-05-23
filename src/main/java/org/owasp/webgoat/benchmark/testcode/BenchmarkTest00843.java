@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -42,21 +60,13 @@ public class BenchmarkTest00843 extends HttpServlet {
 		}
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a26868 = param; //assign
-		StringBuilder b26868 = new StringBuilder(a26868);  // stick in stringbuilder
-		b26868.append(" SafeStuff"); // append some safe content
-		b26868.replace(b26868.length()-"Chars".length(),b26868.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map26868 = new java.util.HashMap<String,Object>();
-		map26868.put("key26868", b26868.toString()); // put in a collection
-		String c26868 = (String)map26868.get("key26868"); // get it back out
-		String d26868 = c26868.substring(0,c26868.length()-1); // extract most of it
-		String e26868 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d26868.getBytes() ) )); // B64 encode and decode it
-		String f26868 = e26868.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g26868 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g26868); // reflection
+		String bar;
+		
+		// Simple ? condition that assigns constant to bar on true condition
+		int i = 106;
+		
+		bar = (7*18) + i > 200 ? "This_should_always_happen" : param;
+		
 		
 		
 		String sql = "{call verifyUserPassword('foo','"+bar+"')}";

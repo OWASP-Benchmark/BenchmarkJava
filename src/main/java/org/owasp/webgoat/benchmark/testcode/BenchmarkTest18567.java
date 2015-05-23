@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -26,25 +44,31 @@ public class BenchmarkTest18567 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		java.io.File file = new java.io.File(bar);
+		new java.io.File(bar, "/Test.txt");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a30800 = param; //assign
-		StringBuilder b30800 = new StringBuilder(a30800);  // stick in stringbuilder
-		b30800.append(" SafeStuff"); // append some safe content
-		b30800.replace(b30800.length()-"Chars".length(),b30800.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map30800 = new java.util.HashMap<String,Object>();
-		map30800.put("key30800", b30800.toString()); // put in a collection
-		String c30800 = (String)map30800.get("key30800"); // get it back out
-		String d30800 = c30800.substring(0,c30800.length()-1); // extract most of it
-		String e30800 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d30800.getBytes() ) )); // B64 encode and decode it
-		String f30800 = e30800.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f30800); // reflection
+		String bar;
+		String guess = "ABC";
+		char switchTarget = guess.charAt(2);
+		
+		// Simple case statement that assigns param to bar on conditions 'A' or 'C'
+		switch (switchTarget) {
+		  case 'A':
+		        bar = param;
+		        break;
+		  case 'B': 
+		        bar = "bobs_your_uncle";
+		        break;
+		  case 'C':
+		  case 'D':        
+		        bar = param;
+		        break;
+		  default:
+		        bar = "bobs_your_uncle";
+		        break;
+		}
 	
 		return bar;	
 	}

@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -26,11 +44,13 @@ public class BenchmarkTest20958 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		String sql = "UPDATE USERS SET PASSWORD='" + bar + "' WHERE USERNAME='foo'";
+		String sql = "SELECT * from USERS where USERNAME=? and PASSWORD='"+ bar +"'";
 				
 		try {
-			java.sql.Statement statement = org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			int count = statement.executeUpdate( sql, new int[] {1,2} );
+			java.sql.Connection connection = org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlConnection();
+			java.sql.PreparedStatement statement = connection.prepareStatement( sql );
+			statement.setString(1, "foo");
+			statement.execute();
 		} catch (java.sql.SQLException e) {
 			throw new ServletException(e);
 		}
@@ -38,21 +58,13 @@ public class BenchmarkTest20958 extends HttpServlet {
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a9634 = param; //assign
-		StringBuilder b9634 = new StringBuilder(a9634);  // stick in stringbuilder
-		b9634.append(" SafeStuff"); // append some safe content
-		b9634.replace(b9634.length()-"Chars".length(),b9634.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map9634 = new java.util.HashMap<String,Object>();
-		map9634.put("key9634", b9634.toString()); // put in a collection
-		String c9634 = (String)map9634.get("key9634"); // get it back out
-		String d9634 = c9634.substring(0,c9634.length()-1); // extract most of it
-		String e9634 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d9634.getBytes() ) )); // B64 encode and decode it
-		String f9634 = e9634.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g9634 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g9634); // reflection
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map66890 = new java.util.HashMap<String,Object>();
+		map66890.put("keyA-66890", "a_Value"); // put some stuff in the collection
+		map66890.put("keyB-66890", param.toString()); // put it in a collection
+		map66890.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map66890.get("keyB-66890"); // get it back out
+		bar = (String)map66890.get("keyA-66890"); // get safe value back out
 	
 		return bar;	
 	}

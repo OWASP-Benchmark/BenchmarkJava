@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,19 +47,11 @@ public class BenchmarkTest12307 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		// FILE URIs are tricky because they are different between Mac and Windows because of lack of standardization.
-		// Mac requires an extra slash for some reason.
-		String startURIslashes = "";
-        if (System.getProperty("os.name").indexOf("Windows") != -1)
-	        if (System.getProperty("os.name").indexOf("Windows") != -1)
-	        	startURIslashes = "/";
-	        else startURIslashes = "//";
-
 		try {
-			java.net.URI fileURI = new java.net.URI("file", null, startURIslashes 
-				+ org.owasp.webgoat.benchmark.helpers.Utils.testfileDir.replace('\\', java.io.File.separatorChar).replace(' ', '_') + bar, null, null);
-			new java.io.File(fileURI);
-		} catch (java.net.URISyntaxException e) {
+			javax.naming.directory.DirContext dc = org.owasp.webgoat.benchmark.helpers.Utils.getDirContext();
+			Object[] filterArgs = {"a","b"};
+			dc.search("name", bar, filterArgs, new javax.naming.directory.SearchControls());
+		} catch (javax.naming.NamingException e) {
 			throw new ServletException(e);
 		}
 	}  // end doPost
@@ -51,19 +61,20 @@ public class BenchmarkTest12307 extends HttpServlet {
         public String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a31287 = param; //assign
-		StringBuilder b31287 = new StringBuilder(a31287);  // stick in stringbuilder
-		b31287.append(" SafeStuff"); // append some safe content
-		b31287.replace(b31287.length()-"Chars".length(),b31287.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map31287 = new java.util.HashMap<String,Object>();
-		map31287.put("key31287", b31287.toString()); // put in a collection
-		String c31287 = (String)map31287.get("key31287"); // get it back out
-		String d31287 = c31287.substring(0,c31287.length()-1); // extract most of it
-		String e31287 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d31287.getBytes() ) )); // B64 encode and decode it
-		String f31287 = e31287.split(" ")[0]; // split it on a space
+		String a20652 = param; //assign
+		StringBuilder b20652 = new StringBuilder(a20652);  // stick in stringbuilder
+		b20652.append(" SafeStuff"); // append some safe content
+		b20652.replace(b20652.length()-"Chars".length(),b20652.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map20652 = new java.util.HashMap<String,Object>();
+		map20652.put("key20652", b20652.toString()); // put in a collection
+		String c20652 = (String)map20652.get("key20652"); // get it back out
+		String d20652 = c20652.substring(0,c20652.length()-1); // extract most of it
+		String e20652 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d20652.getBytes() ) )); // B64 encode and decode it
+		String f20652 = e20652.split(" ")[0]; // split it on a space
 		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f31287); // reflection
+		String g20652 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g20652); // reflection
 
             return bar;
         }

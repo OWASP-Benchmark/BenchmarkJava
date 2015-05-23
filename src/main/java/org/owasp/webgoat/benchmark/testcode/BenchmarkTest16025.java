@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -33,17 +51,30 @@ public class BenchmarkTest16025 extends HttpServlet {
 			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("DES/CBC/PKCS5Padding");
 		} catch (java.security.NoSuchAlgorithmException e) {
 			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
-			//throw new ServletException(e); - default provider (SUN) does not have any cipher instances
+			throw new ServletException(e);
 		} catch (javax.crypto.NoSuchPaddingException e) {
 			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
-			//throw new ServletException(e); - default provider (SUN) does not have any cipher instances
+			throw new ServletException(e);
 		}
 		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String) executed");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = param;
+		// Chain a bunch of propagators in sequence
+		String a97390 = param; //assign
+		StringBuilder b97390 = new StringBuilder(a97390);  // stick in stringbuilder
+		b97390.append(" SafeStuff"); // append some safe content
+		b97390.replace(b97390.length()-"Chars".length(),b97390.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map97390 = new java.util.HashMap<String,Object>();
+		map97390.put("key97390", b97390.toString()); // put in a collection
+		String c97390 = (String)map97390.get("key97390"); // get it back out
+		String d97390 = c97390.substring(0,c97390.length()-1); // extract most of it
+		String e97390 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d97390.getBytes() ) )); // B64 encode and decode it
+		String f97390 = e97390.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f97390); // reflection
 	
 		return bar;	
 	}

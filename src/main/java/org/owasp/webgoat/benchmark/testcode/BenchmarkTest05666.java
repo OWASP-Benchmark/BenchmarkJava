@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,24 +46,16 @@ public class BenchmarkTest05666 extends HttpServlet {
 		else param = null;
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a40494 = param; //assign
-		StringBuilder b40494 = new StringBuilder(a40494);  // stick in stringbuilder
-		b40494.append(" SafeStuff"); // append some safe content
-		b40494.replace(b40494.length()-"Chars".length(),b40494.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map40494 = new java.util.HashMap<String,Object>();
-		map40494.put("key40494", b40494.toString()); // put in a collection
-		String c40494 = (String)map40494.get("key40494"); // get it back out
-		String d40494 = c40494.substring(0,c40494.length()-1); // extract most of it
-		String e40494 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d40494.getBytes() ) )); // B64 encode and decode it
-		String f40494 = e40494.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f40494); // reflection
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map17017 = new java.util.HashMap<String,Object>();
+		map17017.put("keyA-17017", "a Value"); // put some stuff in the collection
+		map17017.put("keyB-17017", param.toString()); // put it in a collection
+		map17017.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map17017.get("keyB-17017"); // get it back out
 		
 		
-		boolean randNumber = new java.util.Random().nextBoolean();
+		int r = new java.util.Random().nextInt();
 		
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextBoolean() executed");
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextInt() executed");
 	}
 }

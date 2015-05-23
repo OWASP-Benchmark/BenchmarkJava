@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -24,18 +42,25 @@ public class BenchmarkTest01322 extends HttpServlet {
 		String param = request.getHeader("foo");
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map86619 = new java.util.HashMap<String,Object>();
-		map86619.put("keyA-86619", "a_Value"); // put some stuff in the collection
-		map86619.put("keyB-86619", param.toString()); // put it in a collection
-		map86619.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map86619.get("keyB-86619"); // get it back out
-		bar = (String)map86619.get("keyA-86619"); // get safe value back out
+		// Chain a bunch of propagators in sequence
+		String a64808 = param; //assign
+		StringBuilder b64808 = new StringBuilder(a64808);  // stick in stringbuilder
+		b64808.append(" SafeStuff"); // append some safe content
+		b64808.replace(b64808.length()-"Chars".length(),b64808.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map64808 = new java.util.HashMap<String,Object>();
+		map64808.put("key64808", b64808.toString()); // put in a collection
+		String c64808 = (String)map64808.get("key64808"); // get it back out
+		String d64808 = c64808.substring(0,c64808.length()-1); // extract most of it
+		String e64808 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d64808.getBytes() ) )); // B64 encode and decode it
+		String f64808 = e64808.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f64808); // reflection
 		
 		
 		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie","SomeValue");
 		
-		cookie.setSecure(false);
+		cookie.setSecure(true);
 		
 		response.addCookie(cookie);
 	}

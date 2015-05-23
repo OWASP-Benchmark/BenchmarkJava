@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,11 +46,24 @@ public class BenchmarkTest04441 extends HttpServlet {
 		}
 		
 		
-		String bar = org.apache.commons.lang.StringEscapeUtils.escapeHtml(param);
+		// Chain a bunch of propagators in sequence
+		String a11114 = param; //assign
+		StringBuilder b11114 = new StringBuilder(a11114);  // stick in stringbuilder
+		b11114.append(" SafeStuff"); // append some safe content
+		b11114.replace(b11114.length()-"Chars".length(),b11114.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map11114 = new java.util.HashMap<String,Object>();
+		map11114.put("key11114", b11114.toString()); // put in a collection
+		String c11114 = (String)map11114.get("key11114"); // get it back out
+		String d11114 = c11114.substring(0,c11114.length()-1); // extract most of it
+		String e11114 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d11114.getBytes() ) )); // B64 encode and decode it
+		String f11114 = e11114.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f11114); // reflection
 		
 		
-		int randNumber = new java.util.Random().nextInt(99);
+		double rand = new java.util.Random().nextDouble();
 		
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextInt(int) executed");
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextDouble() executed");
 	}
 }

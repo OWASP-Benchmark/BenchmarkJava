@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,16 +46,19 @@ public class BenchmarkTest02422 extends HttpServlet {
 		}
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map63474 = new java.util.HashMap<String,Object>();
-		map63474.put("keyA-63474", "a Value"); // put some stuff in the collection
-		map63474.put("keyB-63474", param.toString()); // put it in a collection
-		map63474.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map63474.get("keyB-63474"); // get it back out
+		java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+		valuesList.add("safe");
+		valuesList.add( param );
+		valuesList.add( "moresafe" );
+		
+		valuesList.remove(0); // remove the 1st safe value
+		
+		String bar = valuesList.get(0); // get the param value
 		
 		
-		Object[] obj = { "a", bar };
 		
-		response.getWriter().format(java.util.Locale.US,"notfoo",obj);
+		Object[] obj = { "a", "b" };
+		
+		response.getWriter().format(java.util.Locale.US,bar,obj);
 	}
 }

@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,21 +47,7 @@ public class BenchmarkTest08520 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		// FILE URIs are tricky because they are different between Mac and Windows because of lack of standardization.
-		// Mac requires an extra slash for some reason.
-		String startURIslashes = "";
-        if (System.getProperty("os.name").indexOf("Windows") != -1)
-	        if (System.getProperty("os.name").indexOf("Windows") != -1)
-	        	startURIslashes = "/";
-	        else startURIslashes = "//";
-
-		try {
-			java.net.URI fileURI = new java.net.URI("file", null, startURIslashes 
-				+ org.owasp.webgoat.benchmark.helpers.Utils.testfileDir.replace('\\', java.io.File.separatorChar).replace(' ', '_') + bar, null, null);
-			new java.io.File(fileURI);
-		} catch (java.net.URISyntaxException e) {
-			throw new ServletException(e);
-		}
+		new java.io.File(new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir),bar);
 	}  // end doPost
 
     private class Test {
@@ -51,20 +55,19 @@ public class BenchmarkTest08520 extends HttpServlet {
         public String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a69263 = param; //assign
-		StringBuilder b69263 = new StringBuilder(a69263);  // stick in stringbuilder
-		b69263.append(" SafeStuff"); // append some safe content
-		b69263.replace(b69263.length()-"Chars".length(),b69263.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map69263 = new java.util.HashMap<String,Object>();
-		map69263.put("key69263", b69263.toString()); // put in a collection
-		String c69263 = (String)map69263.get("key69263"); // get it back out
-		String d69263 = c69263.substring(0,c69263.length()-1); // extract most of it
-		String e69263 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d69263.getBytes() ) )); // B64 encode and decode it
-		String f69263 = e69263.split(" ")[0]; // split it on a space
+		String a92291 = param; //assign
+		StringBuilder b92291 = new StringBuilder(a92291);  // stick in stringbuilder
+		b92291.append(" SafeStuff"); // append some safe content
+		b92291.replace(b92291.length()-"Chars".length(),b92291.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map92291 = new java.util.HashMap<String,Object>();
+		map92291.put("key92291", b92291.toString()); // put in a collection
+		String c92291 = (String)map92291.get("key92291"); // get it back out
+		String d92291 = c92291.substring(0,c92291.length()-1); // extract most of it
+		String e92291 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d92291.getBytes() ) )); // B64 encode and decode it
+		String f92291 = e92291.split(" ")[0]; // split it on a space
 		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g69263 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g69263); // reflection
+		String bar = thing.doSomething(f92291); // reflection
 
             return bar;
         }

@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -26,17 +44,50 @@ public class BenchmarkTest11908 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		byte[] bytes = new byte[10];
-		new java.util.Random().nextBytes(bytes);
+		java.util.List<String> argList = new java.util.ArrayList<String>();
 		
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextBytes() executed");
+		String osName = System.getProperty("os.name");
+        if (osName.indexOf("Windows") != -1) {
+        	argList.add("cmd.exe");
+        	argList.add("/c");
+        } else {
+        	argList.add("sh");
+        	argList.add("-c");
+        }
+        argList.add("echo");
+        argList.add(bar);
+
+		ProcessBuilder pb = new ProcessBuilder();
+
+		pb.command(argList);
+		
+		try {
+			Process p = pb.start();
+			org.owasp.webgoat.benchmark.helpers.Utils.printOSCommandResults(p);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - java.lang.ProcessBuilder(java.util.List) Test Case");
+            throw new ServletException(e);
+		}
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = org.apache.commons.lang.StringEscapeUtils.escapeHtml(param);
+		// Chain a bunch of propagators in sequence
+		String a40855 = param; //assign
+		StringBuilder b40855 = new StringBuilder(a40855);  // stick in stringbuilder
+		b40855.append(" SafeStuff"); // append some safe content
+		b40855.replace(b40855.length()-"Chars".length(),b40855.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map40855 = new java.util.HashMap<String,Object>();
+		map40855.put("key40855", b40855.toString()); // put in a collection
+		String c40855 = (String)map40855.get("key40855"); // get it back out
+		String d40855 = c40855.substring(0,c40855.length()-1); // extract most of it
+		String e40855 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d40855.getBytes() ) )); // B64 encode and decode it
+		String f40855 = e40855.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f40855); // reflection
 
             return bar;
         }

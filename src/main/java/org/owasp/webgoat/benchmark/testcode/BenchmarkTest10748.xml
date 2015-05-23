@@ -1,6 +1,7 @@
 <test-metadata>
-  <category>headeri</category>
+  <wbe-version>1.1</wbe-version>
+  <category>cmdi</category>
   <test-number>10748</test-number>
-  <vulnerability>false</vulnerability>
-  <cwe>113</cwe>
+  <vulnerability>true</vulnerability>
+  <cwe>78</cwe>
 </test-metadata>

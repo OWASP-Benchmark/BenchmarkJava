@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,28 +47,10 @@ public class BenchmarkTest09369 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		java.util.List<String> argList = new java.util.ArrayList<String>();
-		
-		String osName = System.getProperty("os.name");
-        if (osName.indexOf("Windows") != -1) {
-        	argList.add("cmd.exe");
-        	argList.add("/c");
-        } else {
-        	argList.add("sh");
-        	argList.add("-c");
-        }
-        argList.add("echo");
-        argList.add(bar);
-
-		ProcessBuilder pb = new ProcessBuilder();
-
-		pb.command(argList);
-		
-		try {
-			Process p = pb.start();
-			org.owasp.webgoat.benchmark.helpers.Utils.printOSCommandResults(p);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - java.lang.ProcessBuilder(java.util.List) Test Case");
+		int length = 1;
+		if (bar != null) {
+			length = bar.length();
+			response.getWriter().write(bar.toCharArray(),0,length - 1);
 		}
 	}  // end doPost
 
@@ -58,20 +58,11 @@ public class BenchmarkTest09369 extends HttpServlet {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a98823 = param; //assign
-		StringBuilder b98823 = new StringBuilder(a98823);  // stick in stringbuilder
-		b98823.append(" SafeStuff"); // append some safe content
-		b98823.replace(b98823.length()-"Chars".length(),b98823.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map98823 = new java.util.HashMap<String,Object>();
-		map98823.put("key98823", b98823.toString()); // put in a collection
-		String c98823 = (String)map98823.get("key98823"); // get it back out
-		String d98823 = c98823.substring(0,c98823.length()-1); // extract most of it
-		String e98823 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d98823.getBytes() ) )); // B64 encode and decode it
-		String f98823 = e98823.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f98823); // reflection
+		String bar = param;
+		if (param.length() > 1) {
+		    StringBuilder sbxyz36217 = new StringBuilder(param);
+		    bar = sbxyz36217.replace(param.length()-"Z".length(), param.length(),"Z").toString();
+		}
 
             return bar;
         }

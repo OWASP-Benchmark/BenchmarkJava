@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,30 +47,11 @@ public class BenchmarkTest03685 extends HttpServlet {
 		
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a15381 = param; //assign
-		StringBuilder b15381 = new StringBuilder(a15381);  // stick in stringbuilder
-		b15381.append(" SafeStuff"); // append some safe content
-		b15381.replace(b15381.length()-"Chars".length(),b15381.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map15381 = new java.util.HashMap<String,Object>();
-		map15381.put("key15381", b15381.toString()); // put in a collection
-		String c15381 = (String)map15381.get("key15381"); // get it back out
-		String d15381 = c15381.substring(0,c15381.length()-1); // extract most of it
-		String e15381 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d15381.getBytes() ) )); // B64 encode and decode it
-		String f15381 = e15381.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g15381 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g15381); // reflection
+		String bar = param.split(" ")[0]; 
 		
 		
-		try {
-			java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA1");
-		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing hash - TestCase");
-			throw new ServletException(e);
-		}
+		Object[] obj = { "a", "b" };
 		
-		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String) executed");
+		response.getWriter().format(bar,obj);
 	}
 }

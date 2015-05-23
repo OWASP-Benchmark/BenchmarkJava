@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,17 +43,29 @@ public class BenchmarkTest17014 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		response.setHeader(bar, "SomeValue");
+		String cmd = org.owasp.webgoat.benchmark.helpers.Utils.getOSCommandString("echo");
+        
+		String[] argsEnv = { bar };
+		Runtime r = Runtime.getRuntime();
+
+		try {
+			Process p = r.exec(cmd, argsEnv, new java.io.File(System.getProperty("user.dir")));
+			org.owasp.webgoat.benchmark.helpers.Utils.printOSCommandResults(p);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - TestCase");
+            throw new ServletException(e);
+		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map3216 = new java.util.HashMap<String,Object>();
-		map3216.put("keyA-3216", "a Value"); // put some stuff in the collection
-		map3216.put("keyB-3216", param.toString()); // put it in a collection
-		map3216.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map3216.get("keyB-3216"); // get it back out
+		java.util.HashMap<String,Object> map34533 = new java.util.HashMap<String,Object>();
+		map34533.put("keyA-34533", "a_Value"); // put some stuff in the collection
+		map34533.put("keyB-34533", param.toString()); // put it in a collection
+		map34533.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map34533.get("keyB-34533"); // get it back out
+		bar = (String)map34533.get("keyA-34533"); // get safe value back out
 	
 		return bar;	
 	}

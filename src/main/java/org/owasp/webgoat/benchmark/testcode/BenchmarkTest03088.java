@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -24,11 +42,22 @@ public class BenchmarkTest03088 extends HttpServlet {
 		String param = request.getParameter("foo");
 		
 		
-		String bar = param;
+		// Chain a bunch of propagators in sequence
+		String a38631 = param; //assign
+		StringBuilder b38631 = new StringBuilder(a38631);  // stick in stringbuilder
+		b38631.append(" SafeStuff"); // append some safe content
+		b38631.replace(b38631.length()-"Chars".length(),b38631.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map38631 = new java.util.HashMap<String,Object>();
+		map38631.put("key38631", b38631.toString()); // put in a collection
+		String c38631 = (String)map38631.get("key38631"); // get it back out
+		String d38631 = c38631.substring(0,c38631.length()-1); // extract most of it
+		String e38631 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d38631.getBytes() ) )); // B64 encode and decode it
+		String f38631 = e38631.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f38631); // reflection
 		
 		
-		Object[] obj = { "a", bar};
-		
-		response.getWriter().printf(java.util.Locale.US,"notfoo",obj);
+		response.getWriter().print(bar.toCharArray());
 	}
 }

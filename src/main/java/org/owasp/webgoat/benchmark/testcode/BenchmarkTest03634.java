@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -30,22 +48,39 @@ public class BenchmarkTest03634 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a64549 = param; //assign
-		StringBuilder b64549 = new StringBuilder(a64549);  // stick in stringbuilder
-		b64549.append(" SafeStuff"); // append some safe content
-		b64549.replace(b64549.length()-"Chars".length(),b64549.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map64549 = new java.util.HashMap<String,Object>();
-		map64549.put("key64549", b64549.toString()); // put in a collection
-		String c64549 = (String)map64549.get("key64549"); // get it back out
-		String d64549 = c64549.substring(0,c64549.length()-1); // extract most of it
-		String e64549 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d64549.getBytes() ) )); // B64 encode and decode it
-		String f64549 = e64549.split(" ")[0]; // split it on a space
+		String a74905 = param; //assign
+		StringBuilder b74905 = new StringBuilder(a74905);  // stick in stringbuilder
+		b74905.append(" SafeStuff"); // append some safe content
+		b74905.replace(b74905.length()-"Chars".length(),b74905.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map74905 = new java.util.HashMap<String,Object>();
+		map74905.put("key74905", b74905.toString()); // put in a collection
+		String c74905 = (String)map74905.get("key74905"); // get it back out
+		String d74905 = c74905.substring(0,c74905.length()-1); // extract most of it
+		String e74905 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d74905.getBytes() ) )); // B64 encode and decode it
+		String f74905 = e74905.split(" ")[0]; // split it on a space
 		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g64549 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g64549); // reflection
+		String bar = thing.doSomething(f74905); // reflection
 		
 		
-		java.io.FileOutputStream fos = new java.io.FileOutputStream(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar);
+		java.security.Provider[] provider = java.security.Security.getProviders();
+		java.security.MessageDigest md;
+
+		try {
+			if (provider.length > 1) {
+
+				md = java.security.MessageDigest.getInstance("sha-384", provider[0]);
+			} else {
+				md = java.security.MessageDigest.getInstance("sha-384","SUN");
+			}
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider)");
+            throw new ServletException(e);
+		} catch (java.security.NoSuchProviderException e) {
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider)");
+            throw new ServletException(e);
+		}
+
+		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider) executed");
 	}
 }

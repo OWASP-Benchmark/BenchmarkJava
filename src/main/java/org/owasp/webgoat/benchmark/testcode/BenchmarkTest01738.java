@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,13 +46,20 @@ public class BenchmarkTest01738 extends HttpServlet {
 		}
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map84641 = new java.util.HashMap<String,Object>();
-		map84641.put("keyA-84641", "a_Value"); // put some stuff in the collection
-		map84641.put("keyB-84641", param.toString()); // put it in a collection
-		map84641.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map84641.get("keyB-84641"); // get it back out
-		bar = (String)map84641.get("keyA-84641"); // get safe value back out
+		// Chain a bunch of propagators in sequence
+		String a99683 = param; //assign
+		StringBuilder b99683 = new StringBuilder(a99683);  // stick in stringbuilder
+		b99683.append(" SafeStuff"); // append some safe content
+		b99683.replace(b99683.length()-"Chars".length(),b99683.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map99683 = new java.util.HashMap<String,Object>();
+		map99683.put("key99683", b99683.toString()); // put in a collection
+		String c99683 = (String)map99683.get("key99683"); // get it back out
+		String d99683 = c99683.substring(0,c99683.length()-1); // extract most of it
+		String e99683 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d99683.getBytes() ) )); // B64 encode and decode it
+		String f99683 = e99683.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f99683); // reflection
 		
 		
 		try {

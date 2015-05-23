@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -24,13 +42,21 @@ public class BenchmarkTest00980 extends HttpServlet {
 		String param = request.getHeader("foo");
 		
 		
-		String bar;
-		
-		// Simple ? condition that assigns param to bar on false condition
-		int i = 106;
-		
-		bar = (7*42) - i > 200 ? "This should never happen" : param;
-		
+		// Chain a bunch of propagators in sequence
+		String a41159 = param; //assign
+		StringBuilder b41159 = new StringBuilder(a41159);  // stick in stringbuilder
+		b41159.append(" SafeStuff"); // append some safe content
+		b41159.replace(b41159.length()-"Chars".length(),b41159.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map41159 = new java.util.HashMap<String,Object>();
+		map41159.put("key41159", b41159.toString()); // put in a collection
+		String c41159 = (String)map41159.get("key41159"); // get it back out
+		String d41159 = c41159.substring(0,c41159.length()-1); // extract most of it
+		String e41159 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d41159.getBytes() ) )); // B64 encode and decode it
+		String f41159 = e41159.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String g41159 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g41159); // reflection
 		
 		
 		try {
@@ -40,7 +66,7 @@ public class BenchmarkTest00980 extends HttpServlet {
 			throw new ServletException(e);
 		} catch (java.security.NoSuchProviderException e) {
 			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.lang.String) Test Case");
-			// throw new ServletException(e); - for now, it's ok if this provider not on the platform
+			throw new ServletException(e);
 		} catch (javax.crypto.NoSuchPaddingException e) {
 			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.lang.String) Test Case");
 			throw new ServletException(e);

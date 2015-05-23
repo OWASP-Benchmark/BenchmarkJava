@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,25 +43,20 @@ public class BenchmarkTest04921 extends HttpServlet {
 		String param = scr.getTheParameter("foo");
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a618 = param; //assign
-		StringBuilder b618 = new StringBuilder(a618);  // stick in stringbuilder
-		b618.append(" SafeStuff"); // append some safe content
-		b618.replace(b618.length()-"Chars".length(),b618.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map618 = new java.util.HashMap<String,Object>();
-		map618.put("key618", b618.toString()); // put in a collection
-		String c618 = (String)map618.get("key618"); // get it back out
-		String d618 = c618.substring(0,c618.length()-1); // extract most of it
-		String e618 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d618.getBytes() ) )); // B64 encode and decode it
-		String f618 = e618.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g618 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g618); // reflection
+		StringBuilder sbxyz19915 = new StringBuilder(param);
+		String bar = sbxyz19915.append("_SafeStuff").toString();
 		
 		
-		Object[] obj = { "a", "b" };
-		
-		response.getWriter().format(bar,obj);
+		try {
+			java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA1", "SUN");
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.lang.String)");
+			throw new ServletException(e);			
+		} catch (java.security.NoSuchProviderException e) {
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.lang.String)");
+			throw new ServletException(e);
+		}
+
+		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.lang.String) executed");
 	}
 }

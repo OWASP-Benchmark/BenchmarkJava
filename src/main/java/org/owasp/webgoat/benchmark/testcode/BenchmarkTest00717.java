@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -42,27 +60,35 @@ public class BenchmarkTest00717 extends HttpServlet {
 		}
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a11172 = param; //assign
-		StringBuilder b11172 = new StringBuilder(a11172);  // stick in stringbuilder
-		b11172.append(" SafeStuff"); // append some safe content
-		b11172.replace(b11172.length()-"Chars".length(),b11172.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map11172 = new java.util.HashMap<String,Object>();
-		map11172.put("key11172", b11172.toString()); // put in a collection
-		String c11172 = (String)map11172.get("key11172"); // get it back out
-		String d11172 = c11172.substring(0,c11172.length()-1); // extract most of it
-		String e11172 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d11172.getBytes() ) )); // B64 encode and decode it
-		String f11172 = e11172.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g11172 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g11172); // reflection
+		String bar = param;
+		if (param.length() > 1) {
+		    StringBuilder sbxyz74009 = new StringBuilder(param);
+		    bar = sbxyz74009.replace(param.length()-"Z".length(), param.length(),"Z").toString();
+		}
 		
 		
-		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie","SomeValue");
-		
-		cookie.setSecure(true);
-		
-		response.addCookie(cookie);
+		String a1 = "";
+		String a2 = "";
+		String osName = System.getProperty("os.name");
+        if (osName.indexOf("Windows") != -1) {
+        	a1 = "cmd.exe";
+        	a2 = "/c";
+        } else {
+        	a1 = "sh";
+        	a2 = "-c";
+        }
+        String[] args = {a1, a2, "echo"};
+        
+        String[] argsEnv = { bar };
+        
+		Runtime r = Runtime.getRuntime();
+
+		try {
+			Process p = r.exec(args, argsEnv);
+			org.owasp.webgoat.benchmark.helpers.Utils.printOSCommandResults(p);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - TestCase");
+            throw new ServletException(e);
+		}
 	}
 }

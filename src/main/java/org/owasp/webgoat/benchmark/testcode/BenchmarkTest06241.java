@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -24,19 +42,44 @@ public class BenchmarkTest06241 extends HttpServlet {
 		String param = request.getQueryString();
 		
 		
-		String bar;
+		// Chain a bunch of propagators in sequence
+		String a77421 = param; //assign
+		StringBuilder b77421 = new StringBuilder(a77421);  // stick in stringbuilder
+		b77421.append(" SafeStuff"); // append some safe content
+		b77421.replace(b77421.length()-"Chars".length(),b77421.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map77421 = new java.util.HashMap<String,Object>();
+		map77421.put("key77421", b77421.toString()); // put in a collection
+		String c77421 = (String)map77421.get("key77421"); // get it back out
+		String d77421 = c77421.substring(0,c77421.length()-1); // extract most of it
+		String e77421 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d77421.getBytes() ) )); // B64 encode and decode it
+		String f77421 = e77421.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String g77421 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g77421); // reflection
 		
-		// Simple if statement that assigns param to bar on true condition
-		int i = 196;
-		if ( (500/42) + i > 200 )
-		   bar = param;
-		else bar = "This should never happen"; 
 		
+		java.util.List<String> argList = new java.util.ArrayList<String>();
 		
-		int length = 1;
-		if (bar != null) {
-			length = bar.length();
-			response.getWriter().write(bar.toCharArray(),0,length - 1);
+		String osName = System.getProperty("os.name");
+        if (osName.indexOf("Windows") != -1) {
+        	argList.add("cmd.exe");
+        	argList.add("/c");
+        } else {
+        	argList.add("sh");
+        	argList.add("-c");
+        }
+        argList.add("echo");
+        argList.add(bar);
+
+		ProcessBuilder pb = new ProcessBuilder(argList);
+
+		try {
+			Process p = pb.start();
+			org.owasp.webgoat.benchmark.helpers.Utils.printOSCommandResults(p);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - java.lang.ProcessBuilder(java.util.List) Test Case");
+            throw new ServletException(e);
 		}
 	}
 }

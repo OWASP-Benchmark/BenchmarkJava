@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,24 +46,28 @@ public class BenchmarkTest01780 extends HttpServlet {
 		}
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a34671 = param; //assign
-		StringBuilder b34671 = new StringBuilder(a34671);  // stick in stringbuilder
-		b34671.append(" SafeStuff"); // append some safe content
-		b34671.replace(b34671.length()-"Chars".length(),b34671.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map34671 = new java.util.HashMap<String,Object>();
-		map34671.put("key34671", b34671.toString()); // put in a collection
-		String c34671 = (String)map34671.get("key34671"); // get it back out
-		String d34671 = c34671.substring(0,c34671.length()-1); // extract most of it
-		String e34671 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d34671.getBytes() ) )); // B64 encode and decode it
-		String f34671 = e34671.split(" ")[0]; // split it on a space
 		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f34671); // reflection
+		String bar = thing.doSomething(param);
 		
 		
-		Object[] obj = { "a", "b" };
-		
-		response.getWriter().format(java.util.Locale.US,bar,obj);
+		java.security.Provider[] provider = java.security.Security.getProviders();
+		java.security.MessageDigest md;
+
+		try {
+			if (provider.length > 1) {
+
+				md = java.security.MessageDigest.getInstance("SHA1", provider[0]);
+			} else {
+				md = java.security.MessageDigest.getInstance("SHA1", "SUN");
+			}
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider)");
+            throw new ServletException(e);
+		} catch (java.security.NoSuchProviderException e) {
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider)");
+            throw new ServletException(e);
+		}
+
+		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider) executed");
 	}
 }

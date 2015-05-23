@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -21,30 +39,55 @@ public class BenchmarkTest14747 extends HttpServlet {
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	
-		String param = request.getHeader("foo");
+		javax.servlet.http.Cookie[] cookies = request.getCookies();
+		
+		String param = null;
+		boolean foundit = false;
+		if (cookies != null) {
+			for (javax.servlet.http.Cookie cookie : cookies) {
+				if (cookie.getName().equals("foo")) {
+					param = cookie.getValue();
+					foundit = true;
+				}
+			}
+			if (!foundit) {
+				// no cookie found in collection
+				param = "";
+			}
+		} else {
+			// no cookies
+			param = "";
+		}
 
 		String bar = doSomething(param);
 		
+		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
+				
 		try {
-			javax.naming.directory.DirContext dc = org.owasp.webgoat.benchmark.helpers.Utils.getDirContext();
-			Object[] filterArgs = {"a","b"};
-			dc.search("name", bar, filterArgs, new javax.naming.directory.SearchControls());
-		} catch (javax.naming.NamingException e) {
+			java.sql.Statement statement =  org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			statement.execute( sql );
+		} catch (java.sql.SQLException e) {
 			throw new ServletException(e);
 		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		java.util.List<String> valuesList = new java.util.ArrayList<String>( );
-		valuesList.add("safe");
-		valuesList.add( param );
-		valuesList.add( "moresafe" );
-		
-		valuesList.remove(0); // remove the 1st safe value
-		
-		String bar = valuesList.get(1); // get the last 'safe' value
-		
+		// Chain a bunch of propagators in sequence
+		String a5236 = param; //assign
+		StringBuilder b5236 = new StringBuilder(a5236);  // stick in stringbuilder
+		b5236.append(" SafeStuff"); // append some safe content
+		b5236.replace(b5236.length()-"Chars".length(),b5236.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map5236 = new java.util.HashMap<String,Object>();
+		map5236.put("key5236", b5236.toString()); // put in a collection
+		String c5236 = (String)map5236.get("key5236"); // get it back out
+		String d5236 = c5236.substring(0,c5236.length()-1); // extract most of it
+		String e5236 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d5236.getBytes() ) )); // B64 encode and decode it
+		String f5236 = e5236.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String g5236 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g5236); // reflection
 	
 		return bar;	
 	}

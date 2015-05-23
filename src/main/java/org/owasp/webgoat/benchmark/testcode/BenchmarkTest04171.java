@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,22 +46,18 @@ public class BenchmarkTest04171 extends HttpServlet {
 		}
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a72193 = param; //assign
-		StringBuilder b72193 = new StringBuilder(a72193);  // stick in stringbuilder
-		b72193.append(" SafeStuff"); // append some safe content
-		b72193.replace(b72193.length()-"Chars".length(),b72193.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map72193 = new java.util.HashMap<String,Object>();
-		map72193.put("key72193", b72193.toString()); // put in a collection
-		String c72193 = (String)map72193.get("key72193"); // get it back out
-		String d72193 = c72193.substring(0,c72193.length()-1); // extract most of it
-		String e72193 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d72193.getBytes() ) )); // B64 encode and decode it
-		String f72193 = e72193.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f72193); // reflection
+		String bar = org.springframework.web.util.HtmlUtils.htmlEscape(param);
 		
 		
-		java.io.File file = new java.io.File(bar);
+		try {
+			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("DES/CBC/PKCS5Padding");
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
+			throw new ServletException(e);
+		} catch (javax.crypto.NoSuchPaddingException e) {
+			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
+			throw new ServletException(e);
+		}
+		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String) executed");
 	}
 }

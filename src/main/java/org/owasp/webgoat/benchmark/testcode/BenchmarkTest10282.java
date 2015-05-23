@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,11 +43,11 @@ public class BenchmarkTest10282 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
+		String sql = "UPDATE USERS SET PASSWORD='" + bar + "' WHERE USERNAME='foo'";
 				
 		try {
-			java.sql.Statement statement =  org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			statement.execute( sql, new String[] { "username", "password" } );
+			java.sql.Statement statement = org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			int count = statement.executeUpdate( sql, java.sql.Statement.RETURN_GENERATED_KEYS );
 		} catch (java.sql.SQLException e) {
 			throw new ServletException(e);
 		}
@@ -40,12 +58,11 @@ public class BenchmarkTest10282 extends HttpServlet {
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map14663 = new java.util.HashMap<String,Object>();
-		map14663.put("keyA-14663", "a_Value"); // put some stuff in the collection
-		map14663.put("keyB-14663", param.toString()); // put it in a collection
-		map14663.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map14663.get("keyB-14663"); // get it back out
-		bar = (String)map14663.get("keyA-14663"); // get safe value back out
+		java.util.HashMap<String,Object> map92007 = new java.util.HashMap<String,Object>();
+		map92007.put("keyA-92007", "a Value"); // put some stuff in the collection
+		map92007.put("keyB-92007", param.toString()); // put it in a collection
+		map92007.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map92007.get("keyB-92007"); // get it back out
 
             return bar;
         }

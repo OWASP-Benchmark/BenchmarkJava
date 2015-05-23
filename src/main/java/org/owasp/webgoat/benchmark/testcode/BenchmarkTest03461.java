@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -24,20 +42,27 @@ public class BenchmarkTest03461 extends HttpServlet {
 		String param = request.getParameter("foo");
 		
 		
-		String bar;
+		// Chain a bunch of propagators in sequence
+		String a69055 = param; //assign
+		StringBuilder b69055 = new StringBuilder(a69055);  // stick in stringbuilder
+		b69055.append(" SafeStuff"); // append some safe content
+		b69055.replace(b69055.length()-"Chars".length(),b69055.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map69055 = new java.util.HashMap<String,Object>();
+		map69055.put("key69055", b69055.toString()); // put in a collection
+		String c69055 = (String)map69055.get("key69055"); // get it back out
+		String d69055 = c69055.substring(0,c69055.length()-1); // extract most of it
+		String e69055 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d69055.getBytes() ) )); // B64 encode and decode it
+		String f69055 = e69055.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f69055); // reflection
 		
-		// Simple ? condition that assigns constant to bar on true condition
-		int i = 106;
 		
-		bar = (7*18) + i > 200 ? "This_should_always_happen" : param;
-		
-		
-		
-		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
+		String sql = "UPDATE USERS SET PASSWORD='" + bar + "' WHERE USERNAME='foo'";
 				
 		try {
-			java.sql.Statement statement =  org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			statement.execute( sql );
+			java.sql.Statement statement = org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			int count = statement.executeUpdate( sql, new int[] {1,2} );
 		} catch (java.sql.SQLException e) {
 			throw new ServletException(e);
 		}

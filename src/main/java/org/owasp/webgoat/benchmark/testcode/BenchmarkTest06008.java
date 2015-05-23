@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -24,31 +42,13 @@ public class BenchmarkTest06008 extends HttpServlet {
 		String param = request.getQueryString();
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a28001 = param; //assign
-		StringBuilder b28001 = new StringBuilder(a28001);  // stick in stringbuilder
-		b28001.append(" SafeStuff"); // append some safe content
-		b28001.replace(b28001.length()-"Chars".length(),b28001.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map28001 = new java.util.HashMap<String,Object>();
-		map28001.put("key28001", b28001.toString()); // put in a collection
-		String c28001 = (String)map28001.get("key28001"); // get it back out
-		String d28001 = c28001.substring(0,c28001.length()-1); // extract most of it
-		String e28001 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d28001.getBytes() ) )); // B64 encode and decode it
-		String f28001 = e28001.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f28001); // reflection
-		
-		
-		try {
-			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("DES/CBC/PKCS5Padding");
-		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
-			//throw new ServletException(e); - default provider (SUN) does not have any cipher instances
-		} catch (javax.crypto.NoSuchPaddingException e) {
-			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
-			//throw new ServletException(e); - default provider (SUN) does not have any cipher instances
+		String bar = param;
+		if (param.length() > 1) {
+		    StringBuilder sbxyz31483 = new StringBuilder(param);
+		    bar = sbxyz31483.replace(param.length()-"Z".length(), param.length(),"Z").toString();
 		}
-		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String) executed");
+		
+		
+		new java.io.File(new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir),bar);
 	}
 }

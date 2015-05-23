@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -24,29 +42,25 @@ public class BenchmarkTest06285 extends HttpServlet {
 		String param = request.getQueryString();
 		
 		
-		String bar = org.apache.commons.lang.StringEscapeUtils.escapeHtml(param);
+		// Chain a bunch of propagators in sequence
+		String a12744 = param; //assign
+		StringBuilder b12744 = new StringBuilder(a12744);  // stick in stringbuilder
+		b12744.append(" SafeStuff"); // append some safe content
+		b12744.replace(b12744.length()-"Chars".length(),b12744.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map12744 = new java.util.HashMap<String,Object>();
+		map12744.put("key12744", b12744.toString()); // put in a collection
+		String c12744 = (String)map12744.get("key12744"); // get it back out
+		String d12744 = c12744.substring(0,c12744.length()-1); // extract most of it
+		String e12744 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d12744.getBytes() ) )); // B64 encode and decode it
+		String f12744 = e12744.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String g12744 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g12744); // reflection
 		
 		
-		java.util.List<String> argList = new java.util.ArrayList<String>();
+		int r = new java.util.Random().nextInt();
 		
-		String osName = System.getProperty("os.name");
-        if (osName.indexOf("Windows") != -1) {
-        	argList.add("cmd.exe");
-        	argList.add("/c");
-        } else {
-        	argList.add("sh");
-        	argList.add("-c");
-        }
-        argList.add("echo");
-        argList.add(bar);
-
-		ProcessBuilder pb = new ProcessBuilder(argList);
-
-		try {
-			Process p = pb.start();
-			org.owasp.webgoat.benchmark.helpers.Utils.printOSCommandResults(p);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - java.lang.ProcessBuilder(java.util.List) Test Case");
-		}
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextInt() executed");
 	}
 }

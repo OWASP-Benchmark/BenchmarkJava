@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -26,15 +44,16 @@ public class BenchmarkTest05066 extends HttpServlet {
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map66795 = new java.util.HashMap<String,Object>();
-		map66795.put("keyA-66795", "a Value"); // put some stuff in the collection
-		map66795.put("keyB-66795", param.toString()); // put it in a collection
-		map66795.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map66795.get("keyB-66795"); // get it back out
+		java.util.HashMap<String,Object> map54773 = new java.util.HashMap<String,Object>();
+		map54773.put("keyA-54773", "a_Value"); // put some stuff in the collection
+		map54773.put("keyB-54773", param.toString()); // put it in a collection
+		map54773.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map54773.get("keyB-54773"); // get it back out
+		bar = (String)map54773.get("keyA-54773"); // get safe value back out
 		
 		
-		double rand = new java.util.Random().nextDouble();
+		float rand = new java.util.Random().nextFloat();
 		
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextDouble() executed");
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextFloat() executed");
 	}
 }

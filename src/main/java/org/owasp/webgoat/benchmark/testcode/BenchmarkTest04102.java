@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -30,18 +48,18 @@ public class BenchmarkTest04102 extends HttpServlet {
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map4201 = new java.util.HashMap<String,Object>();
-		map4201.put("keyA-4201", "a Value"); // put some stuff in the collection
-		map4201.put("keyB-4201", param.toString()); // put it in a collection
-		map4201.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map4201.get("keyB-4201"); // get it back out
+		java.util.HashMap<String,Object> map62764 = new java.util.HashMap<String,Object>();
+		map62764.put("keyA-62764", "a Value"); // put some stuff in the collection
+		map62764.put("keyB-62764", param.toString()); // put it in a collection
+		map62764.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map62764.get("keyB-62764"); // get it back out
 		
 		
 		String sql = "UPDATE USERS SET PASSWORD='" + bar + "' WHERE USERNAME='foo'";
 				
 		try {
 			java.sql.Statement statement = org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			int count = statement.executeUpdate( sql, new String[] {"user","password"} );
+			int count = statement.executeUpdate( sql, java.sql.Statement.RETURN_GENERATED_KEYS );
 		} catch (java.sql.SQLException e) {
 			throw new ServletException(e);
 		}

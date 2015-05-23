@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -30,21 +48,20 @@ public class BenchmarkTest04116 extends HttpServlet {
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map68516 = new java.util.HashMap<String,Object>();
-		map68516.put("keyA-68516", "a_Value"); // put some stuff in the collection
-		map68516.put("keyB-68516", param.toString()); // put it in a collection
-		map68516.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map68516.get("keyB-68516"); // get it back out
-		bar = (String)map68516.get("keyA-68516"); // get safe value back out
+		java.util.HashMap<String,Object> map6747 = new java.util.HashMap<String,Object>();
+		map6747.put("keyA-6747", "a Value"); // put some stuff in the collection
+		map6747.put("keyB-6747", param.toString()); // put it in a collection
+		map6747.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map6747.get("keyB-6747"); // get it back out
 		
 		
-		javax.xml.xpath.XPathFactory xpf = javax.xml.xpath.XPathFactory.newInstance();
-		javax.xml.xpath.XPath xp = xpf.newXPath();
+		String sql = "UPDATE USERS SET PASSWORD='" + bar + "' WHERE USERNAME='foo'";
+				
 		try {
-			xp.compile(bar);
-		} catch (javax.xml.xpath.XPathExpressionException e) {
-			// OK to swallow
-			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
+			java.sql.Statement statement = org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			int count = statement.executeUpdate( sql, new String[] {"user","password"} );
+		} catch (java.sql.SQLException e) {
+			throw new ServletException(e);
 		}
 	}
 }

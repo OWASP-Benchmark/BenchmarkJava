@@ -1,6 +1,7 @@
 <test-metadata>
-  <category>headeri</category>
+  <wbe-version>1.1</wbe-version>
+  <category>securecookie</category>
   <test-number>12626</test-number>
   <vulnerability>false</vulnerability>
-  <cwe>113</cwe>
+  <cwe>614</cwe>
 </test-metadata>

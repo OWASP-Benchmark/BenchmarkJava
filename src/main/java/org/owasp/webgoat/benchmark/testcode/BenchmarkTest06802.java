@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,25 +43,17 @@ public class BenchmarkTest06802 extends HttpServlet {
 		String param = scr.getTheValue("foo");
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a70398 = param; //assign
-		StringBuilder b70398 = new StringBuilder(a70398);  // stick in stringbuilder
-		b70398.append(" SafeStuff"); // append some safe content
-		b70398.replace(b70398.length()-"Chars".length(),b70398.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map70398 = new java.util.HashMap<String,Object>();
-		map70398.put("key70398", b70398.toString()); // put in a collection
-		String c70398 = (String)map70398.get("key70398"); // get it back out
-		String d70398 = c70398.substring(0,c70398.length()-1); // extract most of it
-		String e70398 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d70398.getBytes() ) )); // B64 encode and decode it
-		String f70398 = e70398.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g70398 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g70398); // reflection
+		java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+		valuesList.add("safe");
+		valuesList.add( param );
+		valuesList.add( "moresafe" );
+		
+		valuesList.remove(0); // remove the 1st safe value
+		
+		String bar = valuesList.get(1); // get the last 'safe' value
 		
 		
-		Object[] obj = { "a", "b"};
 		
-		response.getWriter().printf(java.util.Locale.US,bar,obj);
+		response.getWriter().print(bar);
 	}
 }

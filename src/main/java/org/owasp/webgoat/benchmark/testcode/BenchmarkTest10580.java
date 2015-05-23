@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -30,9 +48,7 @@ public class BenchmarkTest10580 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		Object[] obj = { "a", "b"};
-		
-		response.getWriter().printf(bar,obj);
+		response.getWriter().println(bar.toCharArray());
 	}  // end doPost
 
     private class Test {
@@ -40,12 +56,12 @@ public class BenchmarkTest10580 extends HttpServlet {
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map4993 = new java.util.HashMap<String,Object>();
-		map4993.put("keyA-4993", "a_Value"); // put some stuff in the collection
-		map4993.put("keyB-4993", param.toString()); // put it in a collection
-		map4993.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map4993.get("keyB-4993"); // get it back out
-		bar = (String)map4993.get("keyA-4993"); // get safe value back out
+		java.util.HashMap<String,Object> map29241 = new java.util.HashMap<String,Object>();
+		map29241.put("keyA-29241", "a_Value"); // put some stuff in the collection
+		map29241.put("keyB-29241", param.toString()); // put it in a collection
+		map29241.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map29241.get("keyB-29241"); // get it back out
+		bar = (String)map29241.get("keyA-29241"); // get safe value back out
 
             return bar;
         }

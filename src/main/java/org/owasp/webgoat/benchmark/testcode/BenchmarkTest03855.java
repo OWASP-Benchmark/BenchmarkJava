@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,17 +47,18 @@ public class BenchmarkTest03855 extends HttpServlet {
 		
 		
 		
-		String bar;
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map82559 = new java.util.HashMap<String,Object>();
+		map82559.put("keyA-82559", "a Value"); // put some stuff in the collection
+		map82559.put("keyB-82559", param.toString()); // put it in a collection
+		map82559.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map82559.get("keyB-82559"); // get it back out
 		
-		// Simple if statement that assigns constant to bar on true condition
-		int i = 86;
-		if ( (7*42) - i > 200 )
-		   bar = "This_should_always_happen"; 
-		else bar = param;
 		
+		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie","SomeValue");
 		
-		int r = new java.util.Random().nextInt();
+		cookie.setSecure(true);
 		
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextInt() executed");
+		response.addCookie(cookie);
 	}
 }

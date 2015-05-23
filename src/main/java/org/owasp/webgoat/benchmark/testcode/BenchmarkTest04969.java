@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,14 +43,23 @@ public class BenchmarkTest04969 extends HttpServlet {
 		String param = scr.getTheParameter("foo");
 		
 		
-		String bar = param;
-		if (param.length() > 1) {
-		    bar = param.substring(0,param.length()-1);
-		}
+		// Chain a bunch of propagators in sequence
+		String a1107 = param; //assign
+		StringBuilder b1107 = new StringBuilder(a1107);  // stick in stringbuilder
+		b1107.append(" SafeStuff"); // append some safe content
+		b1107.replace(b1107.length()-"Chars".length(),b1107.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map1107 = new java.util.HashMap<String,Object>();
+		map1107.put("key1107", b1107.toString()); // put in a collection
+		String c1107 = (String)map1107.get("key1107"); // get it back out
+		String d1107 = c1107.substring(0,c1107.length()-1); // extract most of it
+		String e1107 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d1107.getBytes() ) )); // B64 encode and decode it
+		String f1107 = e1107.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String g1107 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g1107); // reflection
 		
 		
-		Object[] obj = { bar, "b"};
-		
-		response.getWriter().printf("notfoo",obj);
+		response.getWriter().print(bar);
 	}
 }

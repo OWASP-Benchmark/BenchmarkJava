@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,7 +47,7 @@ public class BenchmarkTest10254 extends HttpServlet {
 				
 		try {
 			java.sql.Connection connection = org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlConnection();
-			java.sql.PreparedStatement statement = connection.prepareStatement( sql );
+			java.sql.PreparedStatement statement = connection.prepareStatement( sql, new String[] {"Column1","Column2"} );
 			statement.setString(1, "foo");
 			statement.execute();
 		} catch (java.sql.SQLException e) {
@@ -41,13 +59,21 @@ public class BenchmarkTest10254 extends HttpServlet {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		
-		// Simple ? condition that assigns param to bar on false condition
-		int i = 106;
-		
-		bar = (7*42) - i > 200 ? "This should never happen" : param;
-		
+		// Chain a bunch of propagators in sequence
+		String a57233 = param; //assign
+		StringBuilder b57233 = new StringBuilder(a57233);  // stick in stringbuilder
+		b57233.append(" SafeStuff"); // append some safe content
+		b57233.replace(b57233.length()-"Chars".length(),b57233.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map57233 = new java.util.HashMap<String,Object>();
+		map57233.put("key57233", b57233.toString()); // put in a collection
+		String c57233 = (String)map57233.get("key57233"); // get it back out
+		String d57233 = c57233.substring(0,c57233.length()-1); // extract most of it
+		String e57233 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d57233.getBytes() ) )); // B64 encode and decode it
+		String f57233 = e57233.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String g57233 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g57233); // reflection
 
             return bar;
         }

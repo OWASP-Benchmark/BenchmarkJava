@@ -1,6 +1,7 @@
 <test-metadata>
-  <category>sqli</category>
+  <wbe-version>1.1</wbe-version>
+  <category>trustbound</category>
   <test-number>15250</test-number>
   <vulnerability>false</vulnerability>
-  <cwe>89</cwe>
+  <cwe>501</cwe>
 </test-metadata>

@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,24 +46,15 @@ public class BenchmarkTest02436 extends HttpServlet {
 		}
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a53852 = param; //assign
-		StringBuilder b53852 = new StringBuilder(a53852);  // stick in stringbuilder
-		b53852.append(" SafeStuff"); // append some safe content
-		b53852.replace(b53852.length()-"Chars".length(),b53852.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map53852 = new java.util.HashMap<String,Object>();
-		map53852.put("key53852", b53852.toString()); // put in a collection
-		String c53852 = (String)map53852.get("key53852"); // get it back out
-		String d53852 = c53852.substring(0,c53852.length()-1); // extract most of it
-		String e53852 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d53852.getBytes() ) )); // B64 encode and decode it
-		String f53852 = e53852.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f53852); // reflection
+		String bar = param;
+		if (param.length() > 1) {
+		    StringBuilder sbxyz36595 = new StringBuilder(param);
+		    bar = sbxyz36595.replace(param.length()-"Z".length(), param.length(),"Z").toString();
+		}
 		
 		
-		Object[] obj = { "a", bar };
+		Object[] obj = { "a", "b" };
 		
-		response.getWriter().format("notfoo",obj);
+		response.getWriter().format(bar,obj);
 	}
 }

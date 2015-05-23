@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -30,10 +48,29 @@ public class BenchmarkTest10612 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		int length = 1;
-		if (bar != null) {
-			length = bar.length();
-			response.getWriter().write(bar.toCharArray(),0,length - 1);
+		java.util.List<String> argList = new java.util.ArrayList<String>();
+		
+		String osName = System.getProperty("os.name");
+        if (osName.indexOf("Windows") != -1) {
+        	argList.add("cmd.exe");
+        	argList.add("/c");
+        } else {
+        	argList.add("sh");
+        	argList.add("-c");
+        }
+        argList.add("echo");
+        argList.add(bar);
+
+		ProcessBuilder pb = new ProcessBuilder();
+
+		pb.command(argList);
+		
+		try {
+			Process p = pb.start();
+			org.owasp.webgoat.benchmark.helpers.Utils.printOSCommandResults(p);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - java.lang.ProcessBuilder(java.util.List) Test Case");
+            throw new ServletException(e);
 		}
 	}  // end doPost
 
@@ -41,21 +78,12 @@ public class BenchmarkTest10612 extends HttpServlet {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a26477 = param; //assign
-		StringBuilder b26477 = new StringBuilder(a26477);  // stick in stringbuilder
-		b26477.append(" SafeStuff"); // append some safe content
-		b26477.replace(b26477.length()-"Chars".length(),b26477.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map26477 = new java.util.HashMap<String,Object>();
-		map26477.put("key26477", b26477.toString()); // put in a collection
-		String c26477 = (String)map26477.get("key26477"); // get it back out
-		String d26477 = c26477.substring(0,c26477.length()-1); // extract most of it
-		String e26477 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d26477.getBytes() ) )); // B64 encode and decode it
-		String f26477 = e26477.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g26477 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g26477); // reflection
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map24093 = new java.util.HashMap<String,Object>();
+		map24093.put("keyA-24093", "a Value"); // put some stuff in the collection
+		map24093.put("keyB-24093", param.toString()); // put it in a collection
+		map24093.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map24093.get("keyB-24093"); // get it back out
 
             return bar;
         }

@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -26,26 +44,34 @@ public class BenchmarkTest04749 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a61429 = param; //assign
-		StringBuilder b61429 = new StringBuilder(a61429);  // stick in stringbuilder
-		b61429.append(" SafeStuff"); // append some safe content
-		b61429.replace(b61429.length()-"Chars".length(),b61429.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map61429 = new java.util.HashMap<String,Object>();
-		map61429.put("key61429", b61429.toString()); // put in a collection
-		String c61429 = (String)map61429.get("key61429"); // get it back out
-		String d61429 = c61429.substring(0,c61429.length()-1); // extract most of it
-		String e61429 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d61429.getBytes() ) )); // B64 encode and decode it
-		String f61429 = e61429.split(" ")[0]; // split it on a space
+		String a34981 = param; //assign
+		StringBuilder b34981 = new StringBuilder(a34981);  // stick in stringbuilder
+		b34981.append(" SafeStuff"); // append some safe content
+		b34981.replace(b34981.length()-"Chars".length(),b34981.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map34981 = new java.util.HashMap<String,Object>();
+		map34981.put("key34981", b34981.toString()); // put in a collection
+		String c34981 = (String)map34981.get("key34981"); // get it back out
+		String d34981 = c34981.substring(0,c34981.length()-1); // extract most of it
+		String e34981 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d34981.getBytes() ) )); // B64 encode and decode it
+		String f34981 = e34981.split(" ")[0]; // split it on a space
 		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f61429); // reflection
+		String g34981 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g34981); // reflection
 		
 		
 		try {
-			javax.naming.directory.DirContext dc = org.owasp.webgoat.benchmark.helpers.Utils.getDirContext();
-			dc.search("name", bar, new javax.naming.directory.SearchControls());
-		} catch (javax.naming.NamingException e) {
+		    java.util.Properties wbeprops = new java.util.Properties();
+		    wbeprops.load(this.getClass().getClassLoader().getResourceAsStream("wbe.properties"));
+			String algorithm = wbeprops.getProperty("cryptoAlg1", "DESede/ECB/PKCS5Padding");
+			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance(algorithm);
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
+			throw new ServletException(e);
+		} catch (javax.crypto.NoSuchPaddingException e) {
+			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
 			throw new ServletException(e);
 		}
+		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String) executed");
 	}
 }

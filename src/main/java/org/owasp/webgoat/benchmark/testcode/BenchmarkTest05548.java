@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,17 +46,10 @@ public class BenchmarkTest05548 extends HttpServlet {
 		else param = null;
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map49414 = new java.util.HashMap<String,Object>();
-		map49414.put("keyA-49414", "a_Value"); // put some stuff in the collection
-		map49414.put("keyB-49414", param.toString()); // put it in a collection
-		map49414.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map49414.get("keyB-49414"); // get it back out
-		bar = (String)map49414.get("keyA-49414"); // get safe value back out
+		String bar = org.apache.commons.lang.StringEscapeUtils.escapeHtml(param);
 		
 		
-		Object[] obj = { "a", bar };
-		
-		response.getWriter().format("notfoo",obj);
+		Object[] obj = { "a", bar};
+		response.getWriter().print(obj);
 	}
 }

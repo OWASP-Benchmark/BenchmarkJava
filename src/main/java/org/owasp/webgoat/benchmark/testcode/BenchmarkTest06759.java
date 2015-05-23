@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,24 +43,27 @@ public class BenchmarkTest06759 extends HttpServlet {
 		String param = scr.getTheValue("foo");
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a48464 = param; //assign
-		StringBuilder b48464 = new StringBuilder(a48464);  // stick in stringbuilder
-		b48464.append(" SafeStuff"); // append some safe content
-		b48464.replace(b48464.length()-"Chars".length(),b48464.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map48464 = new java.util.HashMap<String,Object>();
-		map48464.put("key48464", b48464.toString()); // put in a collection
-		String c48464 = (String)map48464.get("key48464"); // get it back out
-		String d48464 = c48464.substring(0,c48464.length()-1); // extract most of it
-		String e48464 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d48464.getBytes() ) )); // B64 encode and decode it
-		String f48464 = e48464.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f48464); // reflection
+		java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+		valuesList.add("safe");
+		valuesList.add( param );
+		valuesList.add( "moresafe" );
+		
+		valuesList.remove(0); // remove the 1st safe value
+		
+		String bar = valuesList.get(1); // get the last 'safe' value
 		
 		
-		Object[] obj = { "a", "b" };
 		
-		response.getWriter().format(java.util.Locale.US,bar,obj);
+		try {
+			java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA1", "SUN");
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.lang.String)");
+			throw new ServletException(e);			
+		} catch (java.security.NoSuchProviderException e) {
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.lang.String)");
+			throw new ServletException(e);
+		}
+
+		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.lang.String) executed");
 	}
 }

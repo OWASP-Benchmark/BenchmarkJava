@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,30 +46,24 @@ public class BenchmarkTest04141 extends HttpServlet {
 		}
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a90970 = param; //assign
-		StringBuilder b90970 = new StringBuilder(a90970);  // stick in stringbuilder
-		b90970.append(" SafeStuff"); // append some safe content
-		b90970.replace(b90970.length()-"Chars".length(),b90970.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map90970 = new java.util.HashMap<String,Object>();
-		map90970.put("key90970", b90970.toString()); // put in a collection
-		String c90970 = (String)map90970.get("key90970"); // get it back out
-		String d90970 = c90970.substring(0,c90970.length()-1); // extract most of it
-		String e90970 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d90970.getBytes() ) )); // B64 encode and decode it
-		String f90970 = e90970.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f90970); // reflection
+		String bar = param;
+		if (param.length() > 1) {
+		    StringBuilder sbxyz771 = new StringBuilder(param);
+		    bar = sbxyz771.replace(param.length()-"Z".length(), param.length(),"Z").toString();
+		}
 		
 		
 		try {
-			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("DES/CBC/PKCS5Padding");
+		    java.util.Properties wbeprops = new java.util.Properties();
+		    wbeprops.load(this.getClass().getClassLoader().getResourceAsStream("wbe.properties"));
+			String algorithm = wbeprops.getProperty("cryptoAlg1", "DESede/ECB/PKCS5Padding");
+			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance(algorithm);
 		} catch (java.security.NoSuchAlgorithmException e) {
 			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
-			//throw new ServletException(e); - default provider (SUN) does not have any cipher instances
+			throw new ServletException(e);
 		} catch (javax.crypto.NoSuchPaddingException e) {
 			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
-			//throw new ServletException(e); - default provider (SUN) does not have any cipher instances
+			throw new ServletException(e);
 		}
 		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String) executed");
 	}

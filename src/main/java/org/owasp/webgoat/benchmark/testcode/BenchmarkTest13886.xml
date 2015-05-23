@@ -1,6 +1,7 @@
 <test-metadata>
-  <category>cmdi</category>
+  <wbe-version>1.1</wbe-version>
+  <category>securecookie</category>
   <test-number>13886</test-number>
   <vulnerability>false</vulnerability>
-  <cwe>78</cwe>
+  <cwe>614</cwe>
 </test-metadata>

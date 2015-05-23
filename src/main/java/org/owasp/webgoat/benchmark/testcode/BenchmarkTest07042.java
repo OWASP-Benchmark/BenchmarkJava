@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,10 +43,20 @@ public class BenchmarkTest07042 extends HttpServlet {
 		String param = scr.getTheValue("foo");
 		
 		
-		String bar = org.apache.commons.lang.StringEscapeUtils.escapeHtml(param);
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map69417 = new java.util.HashMap<String,Object>();
+		map69417.put("keyA-69417", "a Value"); // put some stuff in the collection
+		map69417.put("keyB-69417", param.toString()); // put it in a collection
+		map69417.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map69417.get("keyB-69417"); // get it back out
 		
 		
-		// javax.servlet.http.HttpSession.putValue(java.lang.String,java.lang.Object^)
-		request.getSession().putValue( "foo", bar);
+		try {
+			double stuff = java.security.SecureRandom.getInstance("SHA1PRNG").nextGaussian();
+	    } catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing SecureRandom.nextGaussian() - TestCase");
+			throw new ServletException(e);
+	    }		
+		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextGaussian() executed");
 	}
 }

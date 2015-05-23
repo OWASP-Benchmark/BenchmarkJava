@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE)
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.helpers;
 
 import java.io.InputStream;
@@ -12,7 +30,7 @@ public class ThingFactory {
 
 		// create a thing using reflection
 		try {
-			InputStream thingproperties = ThingFactory.class.getResourceAsStream("thing.properties");
+			InputStream thingproperties = ThingFactory.class.getClassLoader().getResourceAsStream("thing.properties");
 			if (thingproperties == null) {
 				System.out.println("Can't find thing.properties");
 				return new Thing2();
@@ -27,7 +45,7 @@ public class ThingFactory {
 			return (ThingInterface)thingInstance;
 			
 		} catch (Exception e) {
-			
+			System.out.println("Error constructing Thing.");			
 			e.printStackTrace();
 			return new Thing1();
 		}

@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -21,32 +39,24 @@ public class BenchmarkTest17259 extends HttpServlet {
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	
-		java.util.Map<String,String[]> map = request.getParameterMap();
-		String param = "";
-		if (!map.isEmpty()) {
-			param = map.get("foo")[0];
-		}
-		
+		String param = request.getParameter("foo");
 
 		String bar = doSomething(param);
 		
+		String sql = "UPDATE USERS SET PASSWORD='" + bar + "' WHERE USERNAME='foo'";
+				
 		try {
-			javax.naming.directory.DirContext dc = org.owasp.webgoat.benchmark.helpers.Utils.getDirContext();
-			Object[] filterArgs = {"a","b"};
-			dc.search("name", bar, filterArgs, new javax.naming.directory.SearchControls());
-		} catch (javax.naming.NamingException e) {
+			java.sql.Statement statement = org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			int count = statement.executeUpdate( sql );
+		} catch (java.sql.SQLException e) {
 			throw new ServletException(e);
 		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map89781 = new java.util.HashMap<String,Object>();
-		map89781.put("keyA-89781", "a Value"); // put some stuff in the collection
-		map89781.put("keyB-89781", param.toString()); // put it in a collection
-		map89781.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map89781.get("keyB-89781"); // get it back out
+		StringBuilder sbxyz95981 = new StringBuilder(param);
+		String bar = sbxyz95981.append("_SafeStuff").toString();
 	
 		return bar;	
 	}

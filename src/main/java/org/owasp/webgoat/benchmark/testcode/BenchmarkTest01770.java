@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,16 +47,19 @@ public class BenchmarkTest01770 extends HttpServlet {
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map37798 = new java.util.HashMap<String,Object>();
-		map37798.put("keyA-37798", "a_Value"); // put some stuff in the collection
-		map37798.put("keyB-37798", param.toString()); // put it in a collection
-		map37798.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map37798.get("keyB-37798"); // get it back out
-		bar = (String)map37798.get("keyA-37798"); // get safe value back out
+		java.util.HashMap<String,Object> map25979 = new java.util.HashMap<String,Object>();
+		map25979.put("keyA-25979", "a_Value"); // put some stuff in the collection
+		map25979.put("keyB-25979", param.toString()); // put it in a collection
+		map25979.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map25979.get("keyB-25979"); // get it back out
+		bar = (String)map25979.get("keyA-25979"); // get safe value back out
 		
 		
 		try {
-			java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA1");
+		    java.util.Properties wbeprops = new java.util.Properties();
+		    wbeprops.load(this.getClass().getClassLoader().getResourceAsStream("wbe.properties"));
+			String algorithm = wbeprops.getProperty("hashAlg2", "SHA5");
+			java.security.MessageDigest md = java.security.MessageDigest.getInstance(algorithm);
 		} catch (java.security.NoSuchAlgorithmException e) {
 			System.out.println("Problem executing hash - TestCase");
 			throw new ServletException(e);

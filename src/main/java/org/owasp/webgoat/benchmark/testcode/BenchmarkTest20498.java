@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -27,32 +45,31 @@ public class BenchmarkTest20498 extends HttpServlet {
 		String bar = doSomething(param);
 		
 		try {
-			java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA1", "Sun");
-		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.lang.String)");
-		} catch (java.security.NoSuchProviderException e) {
-			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.lang.String)");
+			java.io.FileInputStream fis = new java.io.FileInputStream(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar);
+		} catch (Exception e) {
+			// OK to swallow any exception
+            // TODO: Fix this.
+			System.out.println("File exception caught and swallowed: " + e.getMessage());
 		}
-
-		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.lang.String) executed");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a97149 = param; //assign
-		StringBuilder b97149 = new StringBuilder(a97149);  // stick in stringbuilder
-		b97149.append(" SafeStuff"); // append some safe content
-		b97149.replace(b97149.length()-"Chars".length(),b97149.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map97149 = new java.util.HashMap<String,Object>();
-		map97149.put("key97149", b97149.toString()); // put in a collection
-		String c97149 = (String)map97149.get("key97149"); // get it back out
-		String d97149 = c97149.substring(0,c97149.length()-1); // extract most of it
-		String e97149 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d97149.getBytes() ) )); // B64 encode and decode it
-		String f97149 = e97149.split(" ")[0]; // split it on a space
+		String a90476 = param; //assign
+		StringBuilder b90476 = new StringBuilder(a90476);  // stick in stringbuilder
+		b90476.append(" SafeStuff"); // append some safe content
+		b90476.replace(b90476.length()-"Chars".length(),b90476.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map90476 = new java.util.HashMap<String,Object>();
+		map90476.put("key90476", b90476.toString()); // put in a collection
+		String c90476 = (String)map90476.get("key90476"); // get it back out
+		String d90476 = c90476.substring(0,c90476.length()-1); // extract most of it
+		String e90476 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d90476.getBytes() ) )); // B64 encode and decode it
+		String f90476 = e90476.split(" ")[0]; // split it on a space
 		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f97149); // reflection
+		String g90476 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g90476); // reflection
 	
 		return bar;	
 	}

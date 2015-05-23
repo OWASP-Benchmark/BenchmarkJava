@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,31 +47,30 @@ public class BenchmarkTest03927 extends HttpServlet {
 		
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a9331 = param; //assign
-		StringBuilder b9331 = new StringBuilder(a9331);  // stick in stringbuilder
-		b9331.append(" SafeStuff"); // append some safe content
-		b9331.replace(b9331.length()-"Chars".length(),b9331.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map9331 = new java.util.HashMap<String,Object>();
-		map9331.put("key9331", b9331.toString()); // put in a collection
-		String c9331 = (String)map9331.get("key9331"); // get it back out
-		String d9331 = c9331.substring(0,c9331.length()-1); // extract most of it
-		String e9331 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d9331.getBytes() ) )); // B64 encode and decode it
-		String f9331 = e9331.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f9331); // reflection
+		java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+		valuesList.add("safe");
+		valuesList.add( param );
+		valuesList.add( "moresafe" );
+		
+		valuesList.remove(0); // remove the 1st safe value
+		
+		String bar = valuesList.get(0); // get the param value
 		
 		
-		String cmd = org.owasp.webgoat.benchmark.helpers.Utils.getOSCommandString("echo");
-        
-		Runtime r = Runtime.getRuntime();
+		
+        try {
+	    	java.util.Random numGen = java.security.SecureRandom.getInstance("SHA1PRNG");
+        	boolean randNumber = getNextNumber(numGen);
+        } catch (java.security.NoSuchAlgorithmException e) {
+            System.out.println("Problem executing SecureRandom.nextBoolean() - TestCase");
+            throw new ServletException(e);
+        }
 
-		try {
-			Process p = r.exec(cmd + bar);
-			org.owasp.webgoat.benchmark.helpers.Utils.printOSCommandResults(p);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - TestCase");
-		}
+        response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextBoolean() executed");
+	}
+	
+	boolean getNextNumber(java.util.Random generator) {
+		return generator.nextBoolean();
+	
 	}
 }

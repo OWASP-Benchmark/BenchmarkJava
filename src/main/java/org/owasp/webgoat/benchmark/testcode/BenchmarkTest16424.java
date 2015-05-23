@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,47 +47,37 @@ public class BenchmarkTest16424 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		String a1 = "";
-		String a2 = "";
-		String osName = System.getProperty("os.name");
-        if (osName.indexOf("Windows") != -1) {
-        	a1 = "cmd.exe";
-        	a2 = "/c";
-        } else {
-        	a1 = "sh";
-        	a2 = "-c";
-        }
-        String[] args = {a1, a2, "echo"};
+		String cmd = org.owasp.webgoat.benchmark.helpers.Utils.getOSCommandString("echo") + bar;
         
-        String[] argsEnv = { bar };
-        
+		String[] argsEnv = { "Foo=bar" };
 		Runtime r = Runtime.getRuntime();
 
 		try {
-			Process p = r.exec(args, argsEnv, new java.io.File(System.getProperty("user.dir")));
+			Process p = r.exec(cmd, argsEnv, new java.io.File(System.getProperty("user.dir")));
 			org.owasp.webgoat.benchmark.helpers.Utils.printOSCommandResults(p);
 		} catch (IOException e) {
 			System.out.println("Problem executing cmdi - TestCase");
+            throw new ServletException(e);
 		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a98528 = param; //assign
-		StringBuilder b98528 = new StringBuilder(a98528);  // stick in stringbuilder
-		b98528.append(" SafeStuff"); // append some safe content
-		b98528.replace(b98528.length()-"Chars".length(),b98528.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map98528 = new java.util.HashMap<String,Object>();
-		map98528.put("key98528", b98528.toString()); // put in a collection
-		String c98528 = (String)map98528.get("key98528"); // get it back out
-		String d98528 = c98528.substring(0,c98528.length()-1); // extract most of it
-		String e98528 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d98528.getBytes() ) )); // B64 encode and decode it
-		String f98528 = e98528.split(" ")[0]; // split it on a space
+		String a72394 = param; //assign
+		StringBuilder b72394 = new StringBuilder(a72394);  // stick in stringbuilder
+		b72394.append(" SafeStuff"); // append some safe content
+		b72394.replace(b72394.length()-"Chars".length(),b72394.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map72394 = new java.util.HashMap<String,Object>();
+		map72394.put("key72394", b72394.toString()); // put in a collection
+		String c72394 = (String)map72394.get("key72394"); // get it back out
+		String d72394 = c72394.substring(0,c72394.length()-1); // extract most of it
+		String e72394 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d72394.getBytes() ) )); // B64 encode and decode it
+		String f72394 = e72394.split(" ")[0]; // split it on a space
 		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g98528 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g98528); // reflection
+		String g72394 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g72394); // reflection
 	
 		return bar;	
 	}

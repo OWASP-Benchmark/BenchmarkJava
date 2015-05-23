@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -30,27 +48,23 @@ public class BenchmarkTest10395 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		new java.io.File(bar, "/Test.txt");
+		try {
+			java.io.FileInputStream fis = new java.io.FileInputStream(new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar));
+		} catch (Exception e) {
+			// OK to swallow any exception
+            // TODO: Fix this.
+			System.out.println("File exception caught and swallowed: " + e.getMessage());
+		}
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a30505 = param; //assign
-		StringBuilder b30505 = new StringBuilder(a30505);  // stick in stringbuilder
-		b30505.append(" SafeStuff"); // append some safe content
-		b30505.replace(b30505.length()-"Chars".length(),b30505.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map30505 = new java.util.HashMap<String,Object>();
-		map30505.put("key30505", b30505.toString()); // put in a collection
-		String c30505 = (String)map30505.get("key30505"); // get it back out
-		String d30505 = c30505.substring(0,c30505.length()-1); // extract most of it
-		String e30505 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d30505.getBytes() ) )); // B64 encode and decode it
-		String f30505 = e30505.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f30505); // reflection
+		String bar = param;
+		if (param.length() > 1) {
+		    bar = param.substring(0,param.length()-1);
+		}
 
             return bar;
         }

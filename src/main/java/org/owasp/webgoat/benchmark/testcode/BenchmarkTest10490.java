@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -38,12 +56,14 @@ public class BenchmarkTest10490 extends HttpServlet {
 
 				md = java.security.MessageDigest.getInstance("SHA1", provider[0]);
 			} else {
-				md = java.security.MessageDigest.getInstance("SHA1", "Sun");
+				md = java.security.MessageDigest.getInstance("SHA1", "SUN");
 			}
 		} catch (java.security.NoSuchAlgorithmException e) {
 			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider)");
+            throw new ServletException(e);
 		} catch (java.security.NoSuchProviderException e) {
 			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider)");
+            throw new ServletException(e);
 		}
 
 		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider) executed");
@@ -53,20 +73,26 @@ public class BenchmarkTest10490 extends HttpServlet {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a3926 = param; //assign
-		StringBuilder b3926 = new StringBuilder(a3926);  // stick in stringbuilder
-		b3926.append(" SafeStuff"); // append some safe content
-		b3926.replace(b3926.length()-"Chars".length(),b3926.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map3926 = new java.util.HashMap<String,Object>();
-		map3926.put("key3926", b3926.toString()); // put in a collection
-		String c3926 = (String)map3926.get("key3926"); // get it back out
-		String d3926 = c3926.substring(0,c3926.length()-1); // extract most of it
-		String e3926 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d3926.getBytes() ) )); // B64 encode and decode it
-		String f3926 = e3926.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f3926); // reflection
+		String bar;
+		String guess = "ABC";
+		char switchTarget = guess.charAt(1); // condition 'B', which is safe
+		
+		// Simple case statement that assigns param to bar on conditions 'A' or 'C'
+		switch (switchTarget) {
+		  case 'A':
+		        bar = param;
+		        break;
+		  case 'B': 
+		        bar = "bob";
+		        break;
+		  case 'C':
+		  case 'D':        
+		        bar = param;
+		        break;
+		  default:
+		        bar = "bob's your uncle";
+		        break;
+		}
 
             return bar;
         }

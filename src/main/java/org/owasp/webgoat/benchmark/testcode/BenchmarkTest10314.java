@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,13 +43,13 @@ public class BenchmarkTest10314 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		String sql = "UPDATE USERS SET PASSWORD='" + bar + "' WHERE USERNAME='foo'";
-				
+		javax.xml.xpath.XPathFactory xpf = javax.xml.xpath.XPathFactory.newInstance();
+		javax.xml.xpath.XPath xp = xpf.newXPath();
 		try {
-			java.sql.Statement statement = org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			int count = statement.executeUpdate( sql, new int[] {1,2} );
-		} catch (java.sql.SQLException e) {
-			throw new ServletException(e);
+			xp.compile(bar);
+		} catch (javax.xml.xpath.XPathExpressionException e) {
+			// OK to swallow
+			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
 		}
 	}  // end doPost
 
@@ -39,7 +57,21 @@ public class BenchmarkTest10314 extends HttpServlet {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = param.split(" ")[0]; 
+		// Chain a bunch of propagators in sequence
+		String a72005 = param; //assign
+		StringBuilder b72005 = new StringBuilder(a72005);  // stick in stringbuilder
+		b72005.append(" SafeStuff"); // append some safe content
+		b72005.replace(b72005.length()-"Chars".length(),b72005.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map72005 = new java.util.HashMap<String,Object>();
+		map72005.put("key72005", b72005.toString()); // put in a collection
+		String c72005 = (String)map72005.get("key72005"); // get it back out
+		String d72005 = c72005.substring(0,c72005.length()-1); // extract most of it
+		String e72005 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d72005.getBytes() ) )); // B64 encode and decode it
+		String f72005 = e72005.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String g72005 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g72005); // reflection
 
             return bar;
         }

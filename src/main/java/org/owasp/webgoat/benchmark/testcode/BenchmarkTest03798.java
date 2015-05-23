@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -29,36 +47,26 @@ public class BenchmarkTest03798 extends HttpServlet {
 		
 		
 		
-		String bar;
+		// Chain a bunch of propagators in sequence
+		String a1391 = param; //assign
+		StringBuilder b1391 = new StringBuilder(a1391);  // stick in stringbuilder
+		b1391.append(" SafeStuff"); // append some safe content
+		b1391.replace(b1391.length()-"Chars".length(),b1391.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map1391 = new java.util.HashMap<String,Object>();
+		map1391.put("key1391", b1391.toString()); // put in a collection
+		String c1391 = (String)map1391.get("key1391"); // get it back out
+		String d1391 = c1391.substring(0,c1391.length()-1); // extract most of it
+		String e1391 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d1391.getBytes() ) )); // B64 encode and decode it
+		String f1391 = e1391.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String g1391 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g1391); // reflection
 		
-		// Simple ? condition that assigns param to bar on false condition
-		int i = 106;
 		
-		bar = (7*42) - i > 200 ? "This should never happen" : param;
+		byte[] bytes = new byte[10];
+		new java.util.Random().nextBytes(bytes);
 		
-		
-		
-		String a1 = "";
-		String a2 = "";
-		String osName = System.getProperty("os.name");
-        if (osName.indexOf("Windows") != -1) {
-        	a1 = "cmd.exe";
-        	a2 = "/c";
-        } else {
-        	a1 = "sh";
-        	a2 = "-c";
-        }
-        String[] args = {a1, a2, "echo", bar};
-
-		ProcessBuilder pb = new ProcessBuilder();
-
-		pb.command(args);
-		
-		try {
-			Process p = pb.start();
-			org.owasp.webgoat.benchmark.helpers.Utils.printOSCommandResults(p);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - java.lang.ProcessBuilder(java.util.List) Test Case");
-		}
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextBytes() executed");
 	}
 }

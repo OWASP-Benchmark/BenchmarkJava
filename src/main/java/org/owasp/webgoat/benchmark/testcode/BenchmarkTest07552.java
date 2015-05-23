@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -43,11 +61,9 @@ public class BenchmarkTest07552 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie","SomeValue");
+		int randNumber = new java.util.Random().nextInt(99);
 		
-		cookie.setSecure(true);
-		
-		response.addCookie(cookie);
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextInt(int) executed");
 	}  // end doPost
 
     private class Test {
@@ -56,8 +72,8 @@ public class BenchmarkTest07552 extends HttpServlet {
 
 		String bar = param;
 		if (param.length() > 1) {
-		    StringBuilder sbxyz83603 = new StringBuilder(param);
-		    bar = sbxyz83603.replace(param.length()-"Z".length(), param.length(),"Z").toString();
+		    StringBuilder sbxyz46505 = new StringBuilder(param);
+		    bar = sbxyz46505.replace(param.length()-"Z".length(), param.length(),"Z").toString();
 		}
 
             return bar;

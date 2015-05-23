@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -26,20 +44,13 @@ public class BenchmarkTest04851 extends HttpServlet {
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map55210 = new java.util.HashMap<String,Object>();
-		map55210.put("keyA-55210", "a_Value"); // put some stuff in the collection
-		map55210.put("keyB-55210", param.toString()); // put it in a collection
-		map55210.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map55210.get("keyB-55210"); // get it back out
-		bar = (String)map55210.get("keyA-55210"); // get safe value back out
+		java.util.HashMap<String,Object> map72580 = new java.util.HashMap<String,Object>();
+		map72580.put("keyA-72580", "a Value"); // put some stuff in the collection
+		map72580.put("keyB-72580", param.toString()); // put it in a collection
+		map72580.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map72580.get("keyB-72580"); // get it back out
 		
 		
-		try {
-			javax.naming.directory.InitialDirContext idc = org.owasp.webgoat.benchmark.helpers.Utils.getInitialDirContext();
-			Object[] filterArgs = {"a","b"};
-			idc.search("name", bar, filterArgs, new javax.naming.directory.SearchControls());
-		} catch (javax.naming.NamingException e) {
-			throw new ServletException(e);
-		}
+		java.io.FileOutputStream fos = new java.io.FileOutputStream(new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar));
 	}
 }

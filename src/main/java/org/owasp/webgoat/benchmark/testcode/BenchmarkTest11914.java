@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -26,30 +44,35 @@ public class BenchmarkTest11914 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		double rand = new java.util.Random().nextDouble();
+		java.util.List<String> argList = new java.util.ArrayList<String>();
 		
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextDouble() executed");
+		String osName = System.getProperty("os.name");
+        if (osName.indexOf("Windows") != -1) {
+        	argList.add("cmd.exe");
+        	argList.add("/c");
+        } else {
+        	argList.add("sh");
+        	argList.add("-c");
+        }
+        argList.add("echo");
+        argList.add(bar);
+
+		ProcessBuilder pb = new ProcessBuilder(argList);
+
+		try {
+			Process p = pb.start();
+			org.owasp.webgoat.benchmark.helpers.Utils.printOSCommandResults(p);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - java.lang.ProcessBuilder(java.util.List) Test Case");
+            throw new ServletException(e);
+		}
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a61946 = param; //assign
-		StringBuilder b61946 = new StringBuilder(a61946);  // stick in stringbuilder
-		b61946.append(" SafeStuff"); // append some safe content
-		b61946.replace(b61946.length()-"Chars".length(),b61946.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map61946 = new java.util.HashMap<String,Object>();
-		map61946.put("key61946", b61946.toString()); // put in a collection
-		String c61946 = (String)map61946.get("key61946"); // get it back out
-		String d61946 = c61946.substring(0,c61946.length()-1); // extract most of it
-		String e61946 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d61946.getBytes() ) )); // B64 encode and decode it
-		String f61946 = e61946.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g61946 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g61946); // reflection
+		String bar = org.owasp.esapi.ESAPI.encoder().encodeForHTML(param);
 
             return bar;
         }

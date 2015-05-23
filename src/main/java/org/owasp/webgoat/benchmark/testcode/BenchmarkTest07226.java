@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -43,19 +61,39 @@ public class BenchmarkTest07226 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		new java.io.File(bar, "/Test.txt");
+		try {
+		    java.util.Properties wbeprops = new java.util.Properties();
+		    wbeprops.load(this.getClass().getClassLoader().getResourceAsStream("wbe.properties"));
+			String algorithm = wbeprops.getProperty("cryptoAlg2", "AES/ECB/PKCS5Padding");
+			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance(algorithm);
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
+			throw new ServletException(e);
+		} catch (javax.crypto.NoSuchPaddingException e) {
+			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
+			throw new ServletException(e);
+		}
+		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String) executed");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map97143 = new java.util.HashMap<String,Object>();
-		map97143.put("keyA-97143", "a Value"); // put some stuff in the collection
-		map97143.put("keyB-97143", param.toString()); // put it in a collection
-		map97143.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map97143.get("keyB-97143"); // get it back out
+		// Chain a bunch of propagators in sequence
+		String a87202 = param; //assign
+		StringBuilder b87202 = new StringBuilder(a87202);  // stick in stringbuilder
+		b87202.append(" SafeStuff"); // append some safe content
+		b87202.replace(b87202.length()-"Chars".length(),b87202.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map87202 = new java.util.HashMap<String,Object>();
+		map87202.put("key87202", b87202.toString()); // put in a collection
+		String c87202 = (String)map87202.get("key87202"); // get it back out
+		String d87202 = c87202.substring(0,c87202.length()-1); // extract most of it
+		String e87202 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d87202.getBytes() ) )); // B64 encode and decode it
+		String f87202 = e87202.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f87202); // reflection
 
             return bar;
         }

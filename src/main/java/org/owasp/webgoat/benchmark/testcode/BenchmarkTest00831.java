@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -42,11 +60,20 @@ public class BenchmarkTest00831 extends HttpServlet {
 		}
 		
 		
-		String bar = param;
-		if (param.length() > 1) {
-		    StringBuilder sbxyz146 = new StringBuilder(param);
-		    bar = sbxyz146.replace(param.length()-"Z".length(), param.length(),"Z").toString();
-		}
+		// Chain a bunch of propagators in sequence
+		String a1647 = param; //assign
+		StringBuilder b1647 = new StringBuilder(a1647);  // stick in stringbuilder
+		b1647.append(" SafeStuff"); // append some safe content
+		b1647.replace(b1647.length()-"Chars".length(),b1647.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map1647 = new java.util.HashMap<String,Object>();
+		map1647.put("key1647", b1647.toString()); // put in a collection
+		String c1647 = (String)map1647.get("key1647"); // get it back out
+		String d1647 = c1647.substring(0,c1647.length()-1); // extract most of it
+		String e1647 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d1647.getBytes() ) )); // B64 encode and decode it
+		String f1647 = e1647.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f1647); // reflection
 		
 		
 		// javax.servlet.http.HttpSession.setAttribute(java.lang.String,java.lang.Object^)

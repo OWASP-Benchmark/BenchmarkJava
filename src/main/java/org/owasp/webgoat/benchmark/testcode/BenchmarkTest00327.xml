@@ -1,6 +1,7 @@
 <test-metadata>
-  <category>xss</category>
+  <wbe-version>1.1</wbe-version>
+  <category>crypto</category>
   <test-number>00327</test-number>
   <vulnerability>false</vulnerability>
-  <cwe>79</cwe>
+  <cwe>327</cwe>
 </test-metadata>

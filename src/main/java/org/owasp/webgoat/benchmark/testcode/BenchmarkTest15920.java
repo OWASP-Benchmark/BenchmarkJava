@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -43,8 +61,20 @@ public class BenchmarkTest15920 extends HttpServlet {
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
+		// Chain a bunch of propagators in sequence
+		String a88858 = param; //assign
+		StringBuilder b88858 = new StringBuilder(a88858);  // stick in stringbuilder
+		b88858.append(" SafeStuff"); // append some safe content
+		b88858.replace(b88858.length()-"Chars".length(),b88858.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map88858 = new java.util.HashMap<String,Object>();
+		map88858.put("key88858", b88858.toString()); // put in a collection
+		String c88858 = (String)map88858.get("key88858"); // get it back out
+		String d88858 = c88858.substring(0,c88858.length()-1); // extract most of it
+		String e88858 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d88858.getBytes() ) )); // B64 encode and decode it
+		String f88858 = e88858.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f88858); // reflection
 	
 		return bar;	
 	}

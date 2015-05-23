@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,23 +46,15 @@ public class BenchmarkTest02325 extends HttpServlet {
 		}
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a62831 = param; //assign
-		StringBuilder b62831 = new StringBuilder(a62831);  // stick in stringbuilder
-		b62831.append(" SafeStuff"); // append some safe content
-		b62831.replace(b62831.length()-"Chars".length(),b62831.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map62831 = new java.util.HashMap<String,Object>();
-		map62831.put("key62831", b62831.toString()); // put in a collection
-		String c62831 = (String)map62831.get("key62831"); // get it back out
-		String d62831 = c62831.substring(0,c62831.length()-1); // extract most of it
-		String e62831 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d62831.getBytes() ) )); // B64 encode and decode it
-		String f62831 = e62831.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String g62831 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g62831); // reflection
+		String bar;
+		
+		// Simple if statement that assigns constant to bar on true condition
+		int i = 86;
+		if ( (7*42) - i > 200 )
+		   bar = "This_should_always_happen"; 
+		else bar = param;
 		
 		
-		new java.io.File(bar, "/Test.txt");
+		java.io.FileOutputStream fos = new java.io.FileOutputStream(new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar),false);
 	}
 }

@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,24 +46,19 @@ public class BenchmarkTest04585 extends HttpServlet {
 		}
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map2345 = new java.util.HashMap<String,Object>();
-		map2345.put("keyA-2345", "a_Value"); // put some stuff in the collection
-		map2345.put("keyB-2345", param.toString()); // put it in a collection
-		map2345.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map2345.get("keyB-2345"); // get it back out
-		bar = (String)map2345.get("keyA-2345"); // get safe value back out
-		
-		
-		String sql = "{call verifyUserPassword('foo','"+bar+"')}";
-				
-		try {
-			java.sql.Connection connection = org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlConnection();
-			java.sql.CallableStatement statement = connection.prepareCall( sql, java.sql.ResultSet.TYPE_FORWARD_ONLY, 
-							java.sql.ResultSet.CONCUR_READ_ONLY, java.sql.ResultSet.CLOSE_CURSORS_AT_COMMIT );
-			statement.execute();
-		} catch (java.sql.SQLException e) {
-			throw new ServletException(e);
+		String bar = param;
+		if (param.length() > 1) {
+		    StringBuilder sbxyz78830 = new StringBuilder(param);
+		    bar = sbxyz78830.replace(param.length()-"Z".length(), param.length(),"Z").toString();
 		}
+		
+		
+		try {
+			float rand = java.security.SecureRandom.getInstance("SHA1PRNG").nextFloat();
+	    } catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing SecureRandom.nextFloat() - TestCase");
+			throw new ServletException(e);
+	    }		
+		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextFloat() executed");
 	}
 }

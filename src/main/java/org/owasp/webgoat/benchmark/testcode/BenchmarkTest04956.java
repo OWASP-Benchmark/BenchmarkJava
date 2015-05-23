@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -26,16 +44,14 @@ public class BenchmarkTest04956 extends HttpServlet {
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map53874 = new java.util.HashMap<String,Object>();
-		map53874.put("keyA-53874", "a_Value"); // put some stuff in the collection
-		map53874.put("keyB-53874", param.toString()); // put it in a collection
-		map53874.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map53874.get("keyB-53874"); // get it back out
-		bar = (String)map53874.get("keyA-53874"); // get safe value back out
+		java.util.HashMap<String,Object> map89245 = new java.util.HashMap<String,Object>();
+		map89245.put("keyA-89245", "a_Value"); // put some stuff in the collection
+		map89245.put("keyB-89245", param.toString()); // put it in a collection
+		map89245.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map89245.get("keyB-89245"); // get it back out
+		bar = (String)map89245.get("keyA-89245"); // get safe value back out
 		
 		
-		Object[] obj = { "a", "b"};
-		
-		response.getWriter().printf(java.util.Locale.US,bar,obj);
+		response.getWriter().print(bar.toCharArray());
 	}
 }

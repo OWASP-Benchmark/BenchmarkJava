@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -24,22 +42,11 @@ public class BenchmarkTest06147 extends HttpServlet {
 		String param = request.getQueryString();
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map51278 = new java.util.HashMap<String,Object>();
-		map51278.put("keyA-51278", "a_Value"); // put some stuff in the collection
-		map51278.put("keyB-51278", param.toString()); // put it in a collection
-		map51278.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map51278.get("keyB-51278"); // get it back out
-		bar = (String)map51278.get("keyA-51278"); // get safe value back out
+		String bar = param.split(" ")[0]; 
 		
 		
-		try {
-			java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA1");
-		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing hash - TestCase");
-			throw new ServletException(e);
-		}
+		Object[] obj = { "a", bar };
 		
-		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String) executed");
+		response.getWriter().format("notfoo",obj);
 	}
 }

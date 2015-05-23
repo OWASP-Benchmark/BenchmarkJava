@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,12 +46,24 @@ public class BenchmarkTest02582 extends HttpServlet {
 		}
 		
 		
-		StringBuilder sbxyz6720 = new StringBuilder(param);
-		String bar = sbxyz6720.append("_SafeStuff").toString();
+		// Chain a bunch of propagators in sequence
+		String a79079 = param; //assign
+		StringBuilder b79079 = new StringBuilder(a79079);  // stick in stringbuilder
+		b79079.append(" SafeStuff"); // append some safe content
+		b79079.replace(b79079.length()-"Chars".length(),b79079.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map79079 = new java.util.HashMap<String,Object>();
+		map79079.put("key79079", b79079.toString()); // put in a collection
+		String c79079 = (String)map79079.get("key79079"); // get it back out
+		String d79079 = c79079.substring(0,c79079.length()-1); // extract most of it
+		String e79079 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d79079.getBytes() ) )); // B64 encode and decode it
+		String f79079 = e79079.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f79079); // reflection
 		
 		
-		double stuff = new java.util.Random().nextGaussian();
+		int r = new java.util.Random().nextInt();
 		
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextGaussian() executed");
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextInt() executed");
 	}
 }

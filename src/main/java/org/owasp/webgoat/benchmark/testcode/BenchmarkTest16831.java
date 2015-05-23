@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,19 +43,19 @@ public class BenchmarkTest16831 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		Object[] obj = { "a", "b"};
+		Object[] obj = { "a", bar };
 		
-		response.getWriter().printf(java.util.Locale.US,bar,obj);
+		response.getWriter().format(java.util.Locale.US,"notfoo",obj);
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map34134 = new java.util.HashMap<String,Object>();
-		map34134.put("keyA-34134", "a Value"); // put some stuff in the collection
-		map34134.put("keyB-34134", param.toString()); // put it in a collection
-		map34134.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map34134.get("keyB-34134"); // get it back out
+		java.util.HashMap<String,Object> map11350 = new java.util.HashMap<String,Object>();
+		map11350.put("keyA-11350", "a Value"); // put some stuff in the collection
+		map11350.put("keyB-11350", param.toString()); // put it in a collection
+		map11350.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map11350.get("keyB-11350"); // get it back out
 	
 		return bar;	
 	}

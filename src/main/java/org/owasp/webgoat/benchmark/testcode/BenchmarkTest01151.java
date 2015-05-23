@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -24,17 +42,25 @@ public class BenchmarkTest01151 extends HttpServlet {
 		String param = request.getHeader("foo");
 		
 		
-		java.util.List<String> valuesList = new java.util.ArrayList<String>( );
-		valuesList.add("safe");
-		valuesList.add( param );
-		valuesList.add( "moresafe" );
+		// Chain a bunch of propagators in sequence
+		String a8347 = param; //assign
+		StringBuilder b8347 = new StringBuilder(a8347);  // stick in stringbuilder
+		b8347.append(" SafeStuff"); // append some safe content
+		b8347.replace(b8347.length()-"Chars".length(),b8347.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map8347 = new java.util.HashMap<String,Object>();
+		map8347.put("key8347", b8347.toString()); // put in a collection
+		String c8347 = (String)map8347.get("key8347"); // get it back out
+		String d8347 = c8347.substring(0,c8347.length()-1); // extract most of it
+		String e8347 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d8347.getBytes() ) )); // B64 encode and decode it
+		String f8347 = e8347.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String g8347 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g8347); // reflection
 		
-		valuesList.remove(0); // remove the 1st safe value
 		
-		String bar = valuesList.get(1); // get the last 'safe' value
+		Object[] obj = { "a", "b" };
 		
-		
-		
-		response.getWriter().print(bar.toCharArray());
+		response.getWriter().format(bar,obj);
 	}
 }

@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -30,13 +48,13 @@ public class BenchmarkTest12268 extends HttpServlet {
 		String bar = new Test().doSomething(param);
 		
 		try {
-			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("DES/CBC/PKCS5Padding");
+			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("DESEDE/ECB/PKCS5Padding");
 		} catch (java.security.NoSuchAlgorithmException e) {
 			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
-			//throw new ServletException(e); - default provider (SUN) does not have any cipher instances
+			throw new ServletException(e);
 		} catch (javax.crypto.NoSuchPaddingException e) {
 			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
-			//throw new ServletException(e); - default provider (SUN) does not have any cipher instances
+			throw new ServletException(e);
 		}
 		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String) executed");
 	}  // end doPost
@@ -45,7 +63,21 @@ public class BenchmarkTest12268 extends HttpServlet {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = param.split(" ")[0]; 
+		// Chain a bunch of propagators in sequence
+		String a22800 = param; //assign
+		StringBuilder b22800 = new StringBuilder(a22800);  // stick in stringbuilder
+		b22800.append(" SafeStuff"); // append some safe content
+		b22800.replace(b22800.length()-"Chars".length(),b22800.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map22800 = new java.util.HashMap<String,Object>();
+		map22800.put("key22800", b22800.toString()); // put in a collection
+		String c22800 = (String)map22800.get("key22800"); // get it back out
+		String d22800 = c22800.substring(0,c22800.length()-1); // extract most of it
+		String e22800 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d22800.getBytes() ) )); // B64 encode and decode it
+		String f22800 = e22800.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String g22800 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g22800); // reflection
 
             return bar;
         }

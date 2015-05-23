@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -24,23 +42,17 @@ public class BenchmarkTest06182 extends HttpServlet {
 		String param = request.getQueryString();
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a65237 = param; //assign
-		StringBuilder b65237 = new StringBuilder(a65237);  // stick in stringbuilder
-		b65237.append(" SafeStuff"); // append some safe content
-		b65237.replace(b65237.length()-"Chars".length(),b65237.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map65237 = new java.util.HashMap<String,Object>();
-		map65237.put("key65237", b65237.toString()); // put in a collection
-		String c65237 = (String)map65237.get("key65237"); // get it back out
-		String d65237 = c65237.substring(0,c65237.length()-1); // extract most of it
-		String e65237 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d65237.getBytes() ) )); // B64 encode and decode it
-		String f65237 = e65237.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f65237); // reflection
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map67066 = new java.util.HashMap<String,Object>();
+		map67066.put("keyA-67066", "a_Value"); // put some stuff in the collection
+		map67066.put("keyB-67066", param.toString()); // put it in a collection
+		map67066.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map67066.get("keyB-67066"); // get it back out
+		bar = (String)map67066.get("keyA-67066"); // get safe value back out
 		
 		
-		Object[] obj = { "a", bar};
-		response.getWriter().print(obj);
+		Object[] obj = { bar, "b"};
+		
+		response.getWriter().printf("notfoo",obj);
 	}
 }

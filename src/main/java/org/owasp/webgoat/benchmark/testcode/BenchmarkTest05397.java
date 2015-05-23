@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -28,19 +46,22 @@ public class BenchmarkTest05397 extends HttpServlet {
 		else param = null;
 		
 		
-		StringBuilder sbxyz30219 = new StringBuilder(param);
-		String bar = sbxyz30219.append("_SafeStuff").toString();
+		// Chain a bunch of propagators in sequence
+		String a96367 = param; //assign
+		StringBuilder b96367 = new StringBuilder(a96367);  // stick in stringbuilder
+		b96367.append(" SafeStuff"); // append some safe content
+		b96367.replace(b96367.length()-"Chars".length(),b96367.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map96367 = new java.util.HashMap<String,Object>();
+		map96367.put("key96367", b96367.toString()); // put in a collection
+		String c96367 = (String)map96367.get("key96367"); // get it back out
+		String d96367 = c96367.substring(0,c96367.length()-1); // extract most of it
+		String e96367 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d96367.getBytes() ) )); // B64 encode and decode it
+		String f96367 = e96367.split(" ")[0]; // split it on a space
+		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f96367); // reflection
 		
 		
-		try {
-			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("DES/CBC/PKCS5Padding");
-		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
-			//throw new ServletException(e); - default provider (SUN) does not have any cipher instances
-		} catch (javax.crypto.NoSuchPaddingException e) {
-			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
-			//throw new ServletException(e); - default provider (SUN) does not have any cipher instances
-		}
-		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String) executed");
+		new java.io.File(new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir),bar);
 	}
 }

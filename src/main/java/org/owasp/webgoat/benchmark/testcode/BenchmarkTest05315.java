@@ -1,3 +1,21 @@
+/**
+* OWASP WebGoat Benchmark Edition (WBE) v1.1
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* WebGoat Benchmark Edition (WBE) project. For details, please see
+* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+*
+* The WBE is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @created 2015
+*/
+
 package org.owasp.webgoat.benchmark.testcode;
 
 import java.io.IOException;
@@ -25,18 +43,20 @@ public class BenchmarkTest05315 extends HttpServlet {
 		String param = scr.getTheParameter("foo");
 		
 		
-		String bar = param;
-		if (param.length() > 1) {
-		    StringBuilder sbxyz48019 = new StringBuilder(param);
-		    bar = sbxyz48019.replace(param.length()-"Z".length(), param.length(),"Z").toString();
-		}
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map16271 = new java.util.HashMap<String,Object>();
+		map16271.put("keyA-16271", "a_Value"); // put some stuff in the collection
+		map16271.put("keyB-16271", param.toString()); // put it in a collection
+		map16271.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map16271.get("keyB-16271"); // get it back out
+		bar = (String)map16271.get("keyA-16271"); // get safe value back out
 		
 		
 		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
 				
 		try {
-			java.sql.Statement statement =  org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			statement.execute( sql, new int[] { 1, 2 } );
+			java.sql.Statement statement = org.owasp.webgoat.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			java.sql.ResultSet rs = statement.executeQuery( sql );
 		} catch (java.sql.SQLException e) {
 			throw new ServletException(e);
 		}

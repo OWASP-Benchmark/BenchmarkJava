@@ -42,18 +42,13 @@ public class BenchmarkTest00001 extends HttpServlet {
 
 		javax.servlet.http.Cookie[] cookies = request.getCookies();
 		
-		String param = null;
-		boolean foundit = false;
+		// no cookies found.
+		String param = "";
 		if (cookies != null) {
 			for (javax.servlet.http.Cookie cookie : cookies) {
 				if (cookie.getName().equals("foo")) {
-					param = cookie.getValue();
-					foundit = true;
+					param = cookie.getValue(); // cookie found.
 				}
-			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
 			}
 		} else {
 			// no cookies

@@ -1,14 +1,14 @@
 /**
-* OWASP WebGoat Benchmark Edition (WBE) v1.1
+* OWASP Benchmark Project v1.1
 *
 * This file is part of the Open Web Application Security Project (OWASP)
-* WebGoat Benchmark Edition (WBE) project. For details, please see
-* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+* Benchmark Project. For details, please see
+* <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The WBE is free software: you can redistribute it and/or modify it under the terms
+* The Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details
 *
@@ -16,7 +16,7 @@
 * @created 2015
 */
 
-package org.owasp.webgoat.benchmark.testcode;
+package org.owasp.benchmark.testcode;
 
 import java.io.IOException;
 
@@ -47,7 +47,7 @@ public class BenchmarkTest09183 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		java.io.FileOutputStream fos = new java.io.FileOutputStream(new java.io.File(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar));
+		java.io.FileOutputStream fos = new java.io.FileOutputStream(new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir + bar));
 	}  // end doPost
 
     private class Test {
@@ -66,7 +66,7 @@ public class BenchmarkTest09183 extends HttpServlet {
 		String e23752 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
 		    new sun.misc.BASE64Encoder().encode( d23752.getBytes() ) )); // B64 encode and decode it
 		String f23752 = e23752.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
 		String bar = thing.doSomething(f23752); // reflection
 
             return bar;

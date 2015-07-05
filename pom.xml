@@ -2,9 +2,223 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.owasp</groupId>
-	<artifactId>webgoat-benchmark</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<artifactId>benchmark</artifactId>
+	<version>1.1</version>
 	<packaging>war</packaging>
+	<profiles>
+		<profile>
+			<id>permute</id>
+			<properties>
+				<skipTests>true</skipTests>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-clean-plugin</artifactId>
+						<version>2.6.1</version>
+						<configuration>
+							<filesets>
+								<fileset>
+									<directory>src/main/java/org/owasp/benchmark/testcode</directory>
+									<includes>
+										<include>**/BenchmarkTest*</include>
+									</includes>
+									<followSymlinks>false</followSymlinks>
+								</fileset>
+								<fileset>
+									<directory>src/test/java/org/owasp/benchmark/testcode</directory>
+									<includes>
+										<include>**/BenchmarkTest*</include>
+									</includes>
+									<followSymlinks>false</followSymlinks>
+								</fileset>
+								<fileset>
+									<directory>src/main/webapp</directory>
+									<includes>
+										<include>**/BenchmarkTest*</include>
+										<include>**/*Index*</include>
+									</includes>
+									<followSymlinks>false</followSymlinks>
+								</fileset>
+							</filesets>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
+		<profile>
+			<id>benchmarkscore</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.1.1</version>
+						<executions>
+							<execution>
+								<phase>validate</phase>
+								<goals>
+									<goal>java</goal>
+								</goals>
+								<configuration>
+									<mainClass>org.owasp.benchmark.score.BenchmarkScore</mainClass>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>findsecbugs</id>
+			<properties>
+				<skipTests>true</skipTests>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>findbugs-maven-plugin</artifactId>
+						<version>3.0.1</version>
+						<executions>
+							<execution>
+								<phase>compile</phase>
+								<goals>
+									<goal>findbugs</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<effort>Max</effort>
+							<threshold>Low</threshold>
+							<failOnError>true</failOnError>
+							<includeFilterFile>${basedir}/src/main/resources/findbugs-security-include.xml</includeFilterFile>
+							<excludeFilterFile>${basedir}/src/main/resources/findbugs-security-exclude.xml</excludeFilterFile>
+							<plugins>
+								<plugin>
+									<groupId>com.h3xstream.findsecbugs</groupId>
+									<artifactId>findsecbugs-plugin</artifactId>
+									<version>1.4.0</version>
+								</plugin>
+							</plugins>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>deploy</id>
+			<properties>
+				<skipTests>true</skipTests>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-verifier-plugin</artifactId>
+						<version>1.1</version>
+						<configuration>
+							<verificationFile>verifications.xml</verificationFile>
+						</configuration>
+						<executions>
+							<execution>
+								<id>main</id>
+								<phase>validate</phase>
+								<goals>
+									<goal>verify</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.cargo</groupId>
+						<artifactId>cargo-maven2-plugin</artifactId>
+						<version>1.4.9</version>
+						<configuration>
+							<container>
+								<containerId>tomcat8x</containerId>
+								<zipUrlInstaller>
+									<url>http://archive.apache.org/dist/tomcat/tomcat-8/v8.0.21/bin/apache-tomcat-8.0.21.zip</url>
+								</zipUrlInstaller>
+							</container>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
+		<profile>
+			<id>time</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.1.1</version>
+						<executions>
+							<execution>
+								<phase>validate</phase>
+								<goals>
+									<goal>java</goal>
+								</goals>
+								<configuration>
+									<mainClass>org.owasp.benchmark.score.WriteTime</mainClass>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
+		<profile>
+			<id>only-eclipse</id>
+			<activation>
+				<property>
+					<name>m2e.version</name>
+				</property>
+			</activation>
+			<build>
+				<pluginManagement>
+					<plugins>
+						<plugin>
+							<groupId>org.eclipse.m2e</groupId>
+							<artifactId>lifecycle-mapping</artifactId>
+							<version>1.0.0</version>
+							<configuration>
+								<lifecycleMappingMetadata>
+									<pluginExecutions>
+										<pluginExecution>
+											<pluginExecutionFilter>
+												<groupId>
+													org.codehaus.mojo.jspc
+												</groupId>
+												<artifactId>
+													jspc-maven-plugin
+												</artifactId>
+												<versionRange>
+													[2.0-alpha-3,)
+												</versionRange>
+												<goals>
+													<goal>compile</goal>
+												</goals>
+											</pluginExecutionFilter>
+											<action>
+												<ignore></ignore>
+											</action>
+										</pluginExecution>
+									</pluginExecutions>
+								</lifecycleMappingMetadata>
+							</configuration>
+						</plugin>
+					</plugins>
+				</pluginManagement>
+			</build>
+		</profile>
+	</profiles>
 
 	<dependencies>
 
@@ -16,16 +230,10 @@
 		</dependency>
 
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.11</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
 			<groupId>org.apache.geronimo.ext.tomcat</groupId>
 			<artifactId>jasper</artifactId>
 			<version>7.0.39.2</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
@@ -210,95 +418,161 @@
 			<artifactId>commons-collections</artifactId>
 			<version>3.1</version>
 		</dependency>
-		
+
+		<dependency>
+			<groupId>org.jasig.mojo.jspc</groupId>
+			<artifactId>jspc-maven-plugin</artifactId>
+			<version>2.0.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jfree</groupId>
+			<artifactId>jfreechart</artifactId>
+			<version>1.0.19</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>sonar-maven-plugin</artifactId>
+			<version>2.6</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20140107</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
-		<finalName>webgoat-benchmark</finalName>
+		<finalName>benchmark</finalName>
+		<extensions>
+			<extension>
+				<groupId>co.leantechniques</groupId>
+				<artifactId>maven-buildtime-extension</artifactId>
+				<version>2.0.2</version>
+			</extension>
+		</extensions>
+
 		<resources>
 			<resource>
 				<directory>${basedir}/src/main/resources</directory>
 			</resource>
 		</resources>
 		<plugins>
+		<plugin>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>sonar-maven-plugin</artifactId>
+			<version>2.6</version>
+			<configuration>
+				<fork>true</fork>
+				<meminitial>1024m</meminitial>
+				<maxmem>4000m</maxmem>
+				<compilerArgs>
+					<arg>-XX:MaxPermSize=4000m</arg>
+				</compilerArgs>
+			</configuration>
+		</plugin>
+			<plugin>
+				<groupId>com.google.code.maven-replacer-plugin</groupId>
+				<artifactId>replacer</artifactId>
+				<version>1.5.2</version>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>replace</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<file>${basedir}/src/main/resources/temp.properties</file>
+					<outputFile>${basedir}/target/classes/build.properties</outputFile>
+					<replacements>
+						<replacement>
+							<token>@pom.version@</token>
+							<value>${project.version}</value>
+						</replacement>
+					</replacements>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.jasig.mojo.jspc</groupId>
+				<artifactId>jspc-maven-plugin</artifactId>
+				<version>2.0.0</version>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<id>jspc</id>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+				</executions>
+				<!-- Use the Tomcat 7 JSP compiler -->
+				<dependencies>
+					<dependency>
+						<groupId>org.jasig.mojo.jspc</groupId>
+						<artifactId>jspc-compiler-tomcat7</artifactId>
+						<version>2.0.0</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<webXml>${basedir}/target/jspweb.xml</webXml>
+				</configuration>
+			</plugin>
+			<!-- FindBugs Static Analysis -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>findbugs-maven-plugin</artifactId>
 				<version>3.0.1</version>
-                <configuration>
-                    <argLine>-maxHeap 2048 -include findbugsfilter.xml</argLine>
-                </configuration>
+				<configuration>
+					<effort>Max</effort>
+					<threshold>Low</threshold>
+					<failOnError>true</failOnError>
+				</configuration>
 			</plugin>
-            <plugin>
-                <groupId>com.fortify.ps.maven.plugin</groupId>
-                <artifactId>sca-maven-plugin</artifactId>
-                <version>4.10</version>
-            </plugin>
-      	  </plugins>
-
-		<pluginManagement>
-			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
-					only. It has no influence on the Maven build itself. -->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>
-											org.codehaus.mojo.jspc
-										</groupId>
-										<artifactId>
-											jspc-maven-plugin
-										</artifactId>
-										<versionRange>
-											[2.0-alpha-3,)
-										</versionRange>
-										<goals>
-											<goal>compile</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-		        <plugin>
-		          <groupId>org.codehaus.mojo</groupId>
-		          <artifactId>findbugs-maven-plugin</artifactId>
-		          <version>3.0.1</version>
-                  <configuration>
-                      <argLine>-maxHeap 2048 -include findbugsfilter.xml</argLine>
-                  </configuration>
-		        </plugin>
-			</plugins>
-		</pluginManagement>
+		</plugins>
 	</build>
 
-	  <reporting>
-	    <plugins>
-	      <plugin>
-	        <groupId>org.codehaus.mojo</groupId>
-	        <artifactId>findbugs-maven-plugin</artifactId>
-	        <version>3.0.1</version>
-            <configuration>
-                <argLine>-debug -maxHeap 2048 -include findbugsfilter.xml</argLine>
-            </configuration>
-	      </plugin>
-	    </plugins>
-	  </reporting>
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+				<version>3.0.1</version>
+				<configuration>
+					<argLine>-debug -maxHeap 2048 -include findbugsfilter.xml</argLine>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>2.3</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>3.4</version>
+				<configuration>
+					<linkXref>true</linkXref>
+					<targetJdk>1.7</targetJdk>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
 
 	<properties>
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
 		<failOnMissingWebXml>false</failOnMissingWebXml>
+		<skipTests>false</skipTests>
 	</properties>
 
 </project>

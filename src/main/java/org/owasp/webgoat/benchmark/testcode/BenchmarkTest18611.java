@@ -1,14 +1,14 @@
 /**
-* OWASP WebGoat Benchmark Edition (WBE) v1.1
+* OWASP Benchmark Project v1.1
 *
 * This file is part of the Open Web Application Security Project (OWASP)
-* WebGoat Benchmark Edition (WBE) project. For details, please see
-* <a href="https://www.owasp.org/index.php/WBE">https://www.owasp.org/index.php/WBE</a>.
+* Benchmark Project. For details, please see
+* <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The WBE is free software: you can redistribute it and/or modify it under the terms
+* The Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The WBE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details
 *
@@ -16,7 +16,7 @@
 * @created 2015
 */
 
-package org.owasp.webgoat.benchmark.testcode;
+package org.owasp.benchmark.testcode;
 
 import java.io.IOException;
 
@@ -39,12 +39,12 @@ public class BenchmarkTest18611 extends HttpServlet {
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	
-		org.owasp.webgoat.benchmark.helpers.SeparateClassRequest scr = new org.owasp.webgoat.benchmark.helpers.SeparateClassRequest( request );
+		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
 		String param = scr.getTheParameter("foo");
 
 		String bar = doSomething(param);
 		
-		java.io.FileOutputStream fos = new java.io.FileOutputStream(org.owasp.webgoat.benchmark.helpers.Utils.testfileDir + bar, false);
+		java.io.FileOutputStream fos = new java.io.FileOutputStream(org.owasp.benchmark.helpers.Utils.testfileDir + bar, false);
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
@@ -61,7 +61,7 @@ public class BenchmarkTest18611 extends HttpServlet {
 		String e87261 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
 		    new sun.misc.BASE64Encoder().encode( d87261.getBytes() ) )); // B64 encode and decode it
 		String f87261 = e87261.split(" ")[0]; // split it on a space
-		org.owasp.webgoat.benchmark.helpers.ThingInterface thing = org.owasp.webgoat.benchmark.helpers.ThingFactory.createThing();
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
 		String g87261 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
 		String bar = thing.doSomething(g87261); // reflection
 	

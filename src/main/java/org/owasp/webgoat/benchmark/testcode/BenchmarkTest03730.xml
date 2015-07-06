@@ -1,7 +1,0 @@
-<test-metadata>
-  <wbe-version>1.1</wbe-version>
-  <category>xss</category>
-  <test-number>03730</test-number>
-  <vulnerability>false</vulnerability>
-  <cwe>79</cwe>
-</test-metadata>

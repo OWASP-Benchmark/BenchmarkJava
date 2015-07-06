@@ -1,7 +1,0 @@
-<test-metadata>
-  <wbe-version>1.1</wbe-version>
-  <category>hash</category>
-  <test-number>15570</test-number>
-  <vulnerability>true</vulnerability>
-  <cwe>328</cwe>
-</test-metadata>

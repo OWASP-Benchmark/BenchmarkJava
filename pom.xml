@@ -7,47 +7,6 @@
 	<packaging>war</packaging>
 	<profiles>
 		<profile>
-			<id>permute</id>
-			<properties>
-				<skipTests>true</skipTests>
-			</properties>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-clean-plugin</artifactId>
-						<version>2.6.1</version>
-						<configuration>
-							<filesets>
-								<fileset>
-									<directory>src/main/java/org/owasp/benchmark/testcode</directory>
-									<includes>
-										<include>**/BenchmarkTest*</include>
-									</includes>
-									<followSymlinks>false</followSymlinks>
-								</fileset>
-								<fileset>
-									<directory>src/test/java/org/owasp/benchmark/testcode</directory>
-									<includes>
-										<include>**/BenchmarkTest*</include>
-									</includes>
-									<followSymlinks>false</followSymlinks>
-								</fileset>
-								<fileset>
-									<directory>src/main/webapp</directory>
-									<includes>
-										<include>**/BenchmarkTest*</include>
-										<include>**/*Index*</include>
-									</includes>
-									<followSymlinks>false</followSymlinks>
-								</fileset>
-							</filesets>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		
-		<profile>
 			<id>benchmarkscore</id>
 			<build>
 				<plugins>

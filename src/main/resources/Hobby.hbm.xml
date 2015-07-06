@@ -5,7 +5,7 @@
 
 
 <hibernate-mapping>
-    <class name="org.owasp.webgoat.benchmark.hqli.entities.Hobby" table="HOBBY" dynamic-update="false" dynamic-insert="false">
+    <class name="org.owasp.benchmark.hqli.entities.Hobby" table="HOBBY" dynamic-update="false" dynamic-insert="false">
         <cache usage="read-write"/>
         <id name="hobbyId" column="HOBBYID" type="int">
             <generator class="increment"></generator>

@@ -1,0 +1,7 @@
+<test-metadata>
+  <wbe-version>1.1</wbe-version>
+  <category>xpathi</category>
+  <test-number>13504</test-number>
+  <vulnerability>true</vulnerability>
+  <cwe>643</cwe>
+</test-metadata>

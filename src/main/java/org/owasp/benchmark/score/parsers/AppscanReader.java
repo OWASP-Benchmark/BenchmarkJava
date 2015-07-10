@@ -50,7 +50,12 @@ public class AppscanReader extends Reader {
         Map<Integer,String> conf = parsePool( root, "FindingDataPool", "id", "conf", "" );
 		Map<Integer,Set<Integer>> assess = parseAssessments( root );
 
-		TestResults tr = new TestResults();
+		TestResults tr = new TestResults( "IBM AppScan Source");
+
+	    // <AssessmentRun name="webgoat-benchmark_3 - 5/18/15 12:01AM" version="9.0.1.0">
+		String version = getAttributeValue( "version", root );
+        tr.setToolVersion( version );
+
 		List<Node> msgList = getNamedNodes( "Messages", root.getChildNodes() );
 		List<Node> msgs = getNamedChildren( "Message", msgList );
 		for ( Node node : msgs ) {

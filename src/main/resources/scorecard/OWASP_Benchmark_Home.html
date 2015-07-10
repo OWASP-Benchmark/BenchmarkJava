@@ -10,7 +10,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>Guide to the OWASP Benchmark v${version}</title>
+    <title>Guide to the OWASP Benchmark v1.1</title>
 
     <!-- Bootstrap core CSS -->
     <link href="content/css/bootstrap.min.css" rel="stylesheet">
@@ -34,18 +34,23 @@
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container-fluid">
         <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
           <a class="navbar-brand" href="OWASP_Benchmark_Home.html">OWASP Benchmark v${version}</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
             <li><a href="OWASP_Benchmark_Home.html">Home</a></li>
-${menu}
+			<li class="dropdown">
+	          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools<span class="caret"></span></a>
+	          <ul class="dropdown-menu">
+${toolmenu}
+	          </ul>
+	        </li>
+			<li class="dropdown">
+	          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Vulnerabilities<span class="caret"></span></a>
+	          <ul class="dropdown-menu">
+${vulnmenu}
+ 	          </ul>
+	        </li>
             <li><a href="OWASP_Benchmark_Guide.html">Guide</a></li>
           </ul>
         </div>
@@ -64,7 +69,7 @@ ${menu}
  
 <p>The OWASP Benchmark is a test suite designed to evaluate the speed, coverage, and accuracy of automated vulnerability detection tools. Without the ability to measure these tools, it is difficult to understand their value or interpret vendor claims. The Benchmark contains over 20,000 test cases that are fully runnable and exploitable.</p>
 
-<p>The chart below presents the overall results for this set of tools scored against version ${version} of the Benchmark. 
+<p>The chart below presents the overall results for this set of tools scored against version 1.1 of the Benchmark. 
 The score for each tool is the overall true positive rate (TPR) across all the test categories, minus the 
 overall false positive rate (FPR). To see the detailed results for any particular tool, select the tool
 from the menus above. For an explanation of all the metrics calculated for each tool, see the 
@@ -78,15 +83,11 @@ from the menus above. For an explanation of all the metrics calculated for each 
     
     </div>
 
-    <!-- Bootstrap core JavaScript
+	<!-- Bootstrap core JavaScript
     ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script src="../../dist/js/bootstrap.min.js"></script>
-    <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
-    <script src="content/assets/js/vendor/holder.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="content/assets/js/ie10-viewport-bug-workaround.js"></script>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="content/js/bootstrap.min.js"></script>
   </body>
 </html>
-

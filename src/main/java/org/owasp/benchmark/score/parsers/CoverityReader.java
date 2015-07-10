@@ -34,7 +34,7 @@ public class CoverityReader extends Reader {
 
 	    JSONArray arr = obj.getJSONArray("mergedIssues");
 
-	    TestResults tr = new TestResults();
+	    TestResults tr = new TestResults( "Coverity Code Advisor" ); // Coverity's tool is called Code Advisor or Code Advisor On Demand
 	    // Fixme: See if we can figure this out from some of the files they provide
 	    tr.setTime(f);
 	    

@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.security.SecureRandom;
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -53,6 +54,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleInsets;
 import org.jfree.ui.TextAnchor;
+import org.owasp.benchmark.score.BenchmarkScore;
 import org.owasp.benchmark.score.parsers.OverallResults;
 
 public class ScatterScores {
@@ -68,6 +70,7 @@ public class ScatterScores {
      * @param toolResults - A list of each individual tool's results.
      */
     public ScatterScores(String title, int height, int width, List<Report> toolResults ) {
+    	Collections.sort(toolResults);
         display("          " + title, height, width, toolResults );
     }
 
@@ -165,8 +168,8 @@ public class ScatterScores {
  
         Stroke dashed = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] { 6, 3 }, 0);
         for ( XYDataItem item : (List<XYDataItem>)series.getItems() ) {
-            double x = (double)item.getX();
-            double y = (double)item.getY();
+            double x = item.getX().doubleValue();
+            double y = item.getY().doubleValue();
             double z = (x+y)/2;
             XYLineAnnotation score = new XYLineAnnotation(x, y, z, z, dashed, Color.blue);
             xyplot.addAnnotation(score);
@@ -323,7 +326,7 @@ public class ScatterScores {
 
     public static void generateComparisonChart(List toolResults ) {
     	try {
-            ScatterScores scatter = new ScatterScores("OWASP Benchmark v" + Report.benchmarkVersion 
+            ScatterScores scatter = new ScatterScores("OWASP Benchmark v" + BenchmarkScore.benchmarkVersion 
             		+ " Results Comparison", 800, 800, toolResults );
             scatter.writeChartToFile(new File("scorecard/benchmark_comparison.png"), 800, 800);    		
     	} catch (IOException e) {

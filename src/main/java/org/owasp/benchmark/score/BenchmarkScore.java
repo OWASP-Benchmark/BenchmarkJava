@@ -33,11 +33,14 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
+import org.apache.commons.io.FileUtils;
 
 import org.owasp.benchmark.score.parsers.AppscanReader;
 import org.owasp.benchmark.score.parsers.Counter;
@@ -47,6 +50,7 @@ import org.owasp.benchmark.score.parsers.FortifyReader;
 import org.owasp.benchmark.score.parsers.OverallResults;
 import org.owasp.benchmark.score.parsers.PMDReader;
 import org.owasp.benchmark.score.parsers.ParasoftReader;
+import org.owasp.benchmark.score.parsers.SonarReader;
 import org.owasp.benchmark.score.parsers.TestCaseResult;
 import org.owasp.benchmark.score.parsers.TestResults;
 import org.owasp.benchmark.score.parsers.VeracodeReader;
@@ -57,12 +61,16 @@ import org.owasp.benchmark.score.report.ScatterVulns;
 public class BenchmarkScore {
 
 	private static final String GUIDEFILENAME = "OWASP_Benchmark_Guide.html";
-	private static final String HOMEFILENAME = "OWASP_Benchmark_Home.html";
+	private static final String HOMEFILENAME = "OWASP_Benchmark_Home.html";    
+    public static final String pathToScorecardResources = "src/main/resources/scorecard/";
+    public static final String scoreCardDirName = "scorecard";
+    public static String benchmarkVersion;
+	
 	
 	/*
 	 * A list of the reports produced for each tool.
 	 */
-	private static List<Report> toolResults = new ArrayList();
+	private static List<Report> toolResults = new ArrayList<Report>();
 	
 	public static void main(String[] args) {
 		if ( args == null || args.length < 2 ) {
@@ -72,6 +80,48 @@ public class BenchmarkScore {
 			System.out.println();
 			System.exit( -1 );
 		}
+		
+        java.util.Properties benchmarkprops = new java.util.Properties();
+        try {
+            benchmarkprops.load(BenchmarkScore.class.getClassLoader().getResourceAsStream("benchmark.properties"));
+            benchmarkVersion = benchmarkprops.getProperty("benchmark-version");
+        } catch (IOException e) {
+            System.out.println("Error!! - can't access benchmark.properties.");
+            e.printStackTrace();
+        }
+		
+        File scoreCardDir = new File(scoreCardDirName);
+        try {
+            if (!scoreCardDir.exists()) {
+                Files.createDirectories(Paths.get(scoreCardDirName));
+            } else {
+                System.out.println("Deleting previously generated scorecard files in: " + scoreCardDir.getAbsolutePath());
+                FileUtils.cleanDirectory(scoreCardDir);
+                
+                // now copy the entire /content directory, that was just deleted with everything else
+                File dest1 = new File(scoreCardDirName + File.separator + "content");
+                FileUtils.copyDirectory(new File(pathToScorecardResources + "content"), dest1);
+            }
+        } catch (IOException e) {
+            System.out.println("Error dealing with scorecard directory: '" + scoreCardDir.getAbsolutePath() + "' for some reason!");
+            e.printStackTrace();
+        }
+
+        
+	    // copy over the homepage and guide templates
+        try {
+            Files.copy(Paths.get(pathToScorecardResources + HOMEFILENAME),
+                    Paths.get( scoreCardDirName + "/" + HOMEFILENAME),
+                    StandardCopyOption.REPLACE_EXISTING );
+            
+            Files.copy(Paths.get(pathToScorecardResources + GUIDEFILENAME),
+                    Paths.get( scoreCardDirName + "/" + GUIDEFILENAME),
+                    StandardCopyOption.REPLACE_EXISTING );
+        } catch( IOException e ) {
+            System.out.println( "Problem copying home and guide files" );
+            e.printStackTrace();
+        }
+
 		
 		try {
 			File expected = new File( args[0] );
@@ -98,7 +148,7 @@ public class BenchmarkScore {
 			if ( f.isDirectory() ) {
     			for ( File actual : f.listFiles() ) {
     				// Don't confuse the expected results file as an actual results file if its in the same directory
-    				if (!expected.getName().equals(actual.getName()))
+    				if (!actual.isDirectory() && !expected.getName().equals(actual.getName()))
     					process( actual, expectedResults, toolResults );
     			}
 			} else {
@@ -110,9 +160,25 @@ public class BenchmarkScore {
 			System.out.println( "Error during processing: " + e.getMessage() );
 			e.printStackTrace();
 		}
-		
-		// Update the menus for each of the scorecard HTML files
-		updateMenus(toolResults);
+
+        // Generate the overall comparison chart for all the tools in this test
+        ScatterScores.generateComparisonChart(toolResults);
+
+        // Generate vulnerability category list
+        // A set is used here to eliminate duplicate categories across all the results
+        Set<String> catSet = new HashSet<String>();
+        for ( int i= 0; i < toolResults.size(); i++ ) {
+            Report toolReport = toolResults.get(i);
+            catSet.addAll( toolReport.getOverallResults().getCategories() );
+        }
+        
+        List<String> catList = new ArrayList<String>();
+        catList.addAll(catSet);
+        
+        // Generate vulnerability pages
+        BenchmarkScore.generateVulnerabilityScorecards(toolResults, catList);
+        		
+		updateMenus(toolResults, catList);
 		
 		System.exit(0);
 	}
@@ -128,7 +194,8 @@ public class BenchmarkScore {
 	 */
 	private static void process(File f, TestResults expectedResults, List<Report> toolreports) {
         try {
-        	// Figure out the actual results for this tool from the raw results file for this tool
+        	// Figure out the actual results for this tool from the raw results file for this tool            
+            System.out.println( "\nAnalyzing results from " + f.getName() );
             TestResults actualResults = readActualResults( f );
         
             if ( expectedResults != null && actualResults != null ) {
@@ -144,8 +211,7 @@ public class BenchmarkScore {
                 results.setTime( actualResults.getTime() );
                 
                 // This generates the report on disk.
-                Report scoreCard = new Report( actualResults, scores, results, expectedResults.totalResults(), 
-                		actualResultsFileName );
+                Report scoreCard = new Report( actualResults, scores, results, expectedResults.totalResults(), actualResultsFileName );
                 
                 // Add this report to the list of reports
                 toolreports.add(scoreCard);
@@ -167,6 +233,7 @@ public class BenchmarkScore {
         }
     }
 
+	// Don't delete - for debug purposes
     private static void printExtraCWE(TestResults expectedResults, TestResults actualResults) {
         Set<Integer> expectedCWE = new HashSet<Integer>();
         for ( int i : expectedResults.keySet() ) {
@@ -236,7 +303,7 @@ public class BenchmarkScore {
 	public static String translate(String category) {
 		switch( category ) {
 		case "cmdi" : return "Command Injection";
-		case "xss" : return "Cross Site Scripting";
+		case "xss" : return "Cross-Site Scripting";
 		case "ldapi" : return "LDAP Injection";
 		case "headeri" : return "Header Injection";
 		case "securecookie" : return "Insecure Cookie";
@@ -286,40 +353,40 @@ public class BenchmarkScore {
         
         if ( filename.endsWith(".ozasmt" ) ) {
             tr = new AppscanReader().parse( actual );
-            tr.setTool( "AppScan Source");
         }
         
         
         else if ( filename.endsWith(".json" ) ) {
             tr = new CoverityReader().parse( actual );
-            tr.setTool( "Coverity");
         }
         
 		else if ( filename.endsWith( ".xml" ) ) {
-		    String line = getLine2( actual );
-		    if ( line.startsWith( "<pmd")) {
+            String line1 = getLine( actual, 0 );
+            String line2 = getLine( actual, 1 );
+		    if ( line2.startsWith( "<pmd")) {
                 tr = new PMDReader().parse( actual );
-                tr.setTool( "PMD");
 		    }
 		    
-            else if ( line.startsWith( "<BugCollection")) {
+            else if ( line2.startsWith( "<BugCollection")) {
                 tr = new FindbugsReader().parse( actual );
+                
+                // change the name of the tool if the filename contains findsecbugs
                 if (actual.getName().contains("findsecbugs")) {
                     tr.setTool("FBwFindSecBugs");
-                } else {
-                    tr.setTool( "FindBugs");
                 }
             }
 
-            else if ( line.startsWith( "<ResultsSession")) {
+            else if ( line2.startsWith( "<ResultsSession")) {
                 tr = new ParasoftReader().parse( actual );
-                tr.setTool( "Parasoft");
             }
 
-	        else if ( line.startsWith( "<detailedreport")) {
+            else if ( line2.startsWith( "<detailedreport")) {
                 tr = new VeracodeReader().parse( actual );
-                tr.setTool( "Veracode");
-	        }
+            }
+
+            else if ( line1.startsWith( "<total")) {
+                tr = new SonarReader().parse( actual );
+            }
 		}
 		
 		else if ( filename.endsWith( ".fpr" ) ) {
@@ -329,17 +396,24 @@ public class BenchmarkScore {
 		    Path source = fileSystem.getPath("audit.fvdl");
 		    Files.copy(source, outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 			tr = new FortifyReader().parse( outputFile );
-            tr.setTool( "Fortify");
 		}
 		
         else if ( filename.endsWith( ".fvdl" ) ) {
             tr = new FortifyReader().parse( actual );
-            tr.setTool( "Fortify");
         }
         
-		if ( tr != null ) {
-		    System.out.println( "Analyzing " + tr.getTool() + " results from " + filename );
-		}
+        // If the version # of the tool is specified in the results file name, extract it, and set it.
+        // For example: Benchmark-1.1-Coverity-results-v1.3.2661-6720.json  (the version # is 1.3.2661 in this example). 
+        // This code should also handle: Benchmark-1.1-Coverity-results-v1.3.2661.xml (where the compute time '-6720' isn't specified)
+        int indexOfVersionMarker = filename.lastIndexOf("-v");
+        if ( indexOfVersionMarker != -1) {
+        	String restOfFileName = filename.substring(indexOfVersionMarker+2);
+        	int endIndex = restOfFileName.lastIndexOf('-');
+        	if (endIndex == -1) endIndex = restOfFileName.lastIndexOf('.');
+        	String version = restOfFileName.substring(0, endIndex);
+        	tr.setToolVersion(version);
+        }
+        
 		return tr;
 	}
 
@@ -348,11 +422,13 @@ public class BenchmarkScore {
 	 * is found and return that. Return "" if no none blank line is found from the second line on.
 	 * @return The first non-blank line in the file starting with the 2nd line.
 	 */
-	private static String getLine2(File actual) {
+	private static String getLine(File actual, int line) {
 		BufferedReader br = null;
 		try {
     	    br = new BufferedReader( new FileReader( actual ) );
-    	    br.readLine(); // Skip line 1
+    	    for ( int i=0; i<line; i++ ) {
+    	        br.readLine(); // Skip line 1
+    	    }
     	    String line2 = "";
     	    while ( line2.equals( "" ) ) {
     	        line2 = br.readLine();
@@ -386,15 +462,17 @@ public class BenchmarkScore {
 			exp.setPassed( pass );
 		}
 		
-		// Record the name of the tool whose pass/fail values were recorded in 'expected' results
+		// Record the name and version of the tool whose pass/fail values were recorded in 'expected' results
 		expected.setTool(actual.getTool());
+		expected.setToolVersion(actual.getToolVersion());
 	}
 	
 	/**
 	 * Check all actual results. If a real vulnerability matches, then exit. Otherwise keep going.
-	 * @param exp
-	 * @param actList
-	 * @return
+	 * @param exp The expected results
+	 * @param actList The list of actual results for this test case.
+	 * @return true if the expected result is found in the actual result (i.e., If True Positive, 
+	 * that results was found, If False Positive, that result was not found.)
 	 */
 	private static boolean compare( TestCaseResult exp, List<TestCaseResult> actList, String tool ) {
 		// return true if there are no actual results and this was a fake test
@@ -427,7 +505,7 @@ public class BenchmarkScore {
 
 	
 	private static TestResults readExpectedResults(File f1) throws Exception {
-		TestResults tr = new TestResults();
+		TestResults tr = new TestResults( "Expected" );
 		BufferedReader fr = new BufferedReader( new FileReader( f1 ) );
 		boolean reading = true;
 		while ( reading ) {
@@ -454,7 +532,9 @@ public class BenchmarkScore {
 	}
 	
 	/**
-	 * 
+	 * This produces the .csv of all the results for this tool. It's basically the expected results file
+	 * with a couple of extra columns in it to say what the actual result for this tool was per test case
+	 * and whether that result was a pass or fail.
 	 * @param actual The actual TestResults to produce the actual results file for.
 	 * @return The name of the results file produced
 	 */
@@ -464,8 +544,8 @@ public class BenchmarkScore {
 		PrintStream ps = null;
 		
 		try {
-			resultsFile = new File(Report.scoreCardDirName + File.separator + "OWASP_Benchmark_v" 
-					+ Report.benchmarkVersion + "_Actual_Results_for_" + actual.getTool().replace( ' ', '_' )
+			resultsFile = new File(scoreCardDirName + File.separator + "Benchmark_v" 
+					+ benchmarkVersion + "_Scorecard_for_" + actual.getTool().replace( ' ', '_' )
 					+ ".csv");
 			FileOutputStream fos = new FileOutputStream(resultsFile, false);
 			ps = new PrintStream(fos);
@@ -474,7 +554,7 @@ public class BenchmarkScore {
 			ps.print("# test name, category, real vulnerability, CWE, identified by tool, pass/fail");
 
 			// Add the version # inside the file as well
-			ps.print(", Benchmark version: " + Report.benchmarkVersion);
+			ps.print(", Benchmark version: " + benchmarkVersion);
 			
 			// Append the date YYYY-MM-DD to the header in each .csv file
 			Calendar c = Calendar.getInstance();
@@ -511,71 +591,84 @@ public class BenchmarkScore {
 		
 	}
 	
+	private static void generateVulnerabilityScorecards( List<Report> toolResults, List<String> catSet ) {
+		Collections.sort(catSet);
+        for (String cat : catSet ) {
+            try {
+                ScatterVulns.generateComparisonChart(cat, toolResults);
+                String filename = "Benchmark_v" + benchmarkVersion + "_Scorecard_for_" + cat.replace(' ', '_');  
+                Path htmlfile = Paths.get( scoreCardDirName + "/" + filename + ".html" );
+                Files.copy(Paths.get(pathToScorecardResources + "vulntemplate.html" ), htmlfile, StandardCopyOption.REPLACE_EXISTING );
+                String html = new String(Files.readAllBytes( htmlfile ) );
+                String fullTitle = "OWASP Benchmark Scorecard for " + cat;
+
+                html = html.replace("${image}", filename + ".png" );
+                html = html.replace( "${title}", fullTitle );
+                html = html.replace( "${vulnerability}", cat );
+                html = html.replace( "${version}", benchmarkVersion );
+                Files.write( htmlfile, html.getBytes() );                
+            } catch( IOException e ) {
+                System.out.println( "Error generating vulnerability summaries: " + e.getMessage() );
+                e.printStackTrace();
+            }
+        }
+	}
+	
+	
 	/**
 	 * This method updates the menus of all the scorecards previously generated so people can navigate
 	 * between all the tool results.
 	 */
-	static void updateMenus(List<Report> toolResults) {
-		
-	/*
-	 * The menus when constructed by hand look like this:
-	 *       <li><a href="OWASP_Benchmark_for_Fortify.html">Fortify</a></li>
-     *       <li><a href="OWASP_Benchmark_for_PMD.html">PMD</a></li>
-     *       etc.
-     *       
-     *       The following computes the new menus.
-	 */
-		StringBuffer sb = new StringBuffer();
-		// Go through each of the scorecard files and create the menu required for all the files
-		for (int i = 0; i < toolResults.size(); i++) {
-			Report toolReport = toolResults.get(i);
-			sb.append("            <li><a href=\"");
-			sb.append(toolReport.getFilename());
-			sb.append(".html\">");
-			sb.append(toolReport.getToolName());
-			sb.append("</a></li>");
-			sb.append(System.lineSeparator());
-		}
-		
-		// We then replace each of the menu placeholders in all the computed scorecards with the computed menu.
-		String menu = sb.toString();
-		
-		try {
-			
-			for (int i = 0; i < toolResults.size(); i++) {
-				toolResults.get(i).updateMenus(menu);
-			}
-			
-	    	// We also have to update the menus in the Home and Guide pages and then copy those
-	    	// files to where they need to go
-	    	
-			// Then copy the static HOME and GUIDE HTML files, that were also deleted
-	        String homeHtml = new String(Files.readAllBytes(Paths.get(Report.pathToScorecardResources + HOMEFILENAME)));
-	        homeHtml = homeHtml.replace("${menu}", menu);
-	        homeHtml = homeHtml.replace( "${version}", Report.benchmarkVersion );
-	        Files.write(Paths.get( Report.scoreCardDirName + "/" + HOMEFILENAME), homeHtml.getBytes());
-	        
-	        String guideHtml = new String(Files.readAllBytes(Paths.get(Report.pathToScorecardResources + GUIDEFILENAME)));
-	        guideHtml = guideHtml.replace("${menu}", menu);
-	        guideHtml = guideHtml.replace( "${version}", Report.benchmarkVersion );
-	        Files.write(Paths.get( Report.scoreCardDirName + "/" + GUIDEFILENAME), guideHtml.getBytes());
-	        
-	        // And then generate the comparison chart for the test of tools in this test
-            ScatterScores.generateComparisonChart(toolResults);
-            
-            // And generate comparison of vulnerabilities
-            HashSet<String> catSet = new HashSet<String>();
-            for ( int i= 0; i < toolResults.size(); i++ ) {
-                Report toolReport = toolResults.get(i);
-                catSet.addAll( toolReport.getOverallResults().getCategories() );
-            }
-            for ( String cat : catSet ) {
-                ScatterVulns.generateComparisonChart(cat, toolResults);
-            }
-	        
-		} catch (IOException e) {
-	    	System.out.println("Error!! - couldn't update scorecard file");
-	    	e.printStackTrace();
-	    }
+	private static void updateMenus(List<Report> toolResults, List<String> catSet ) {
+
+        // Create tool menu
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < toolResults.size(); i++) {
+            Report toolReport = toolResults.get(i);
+            sb.append("            <li><a href=\"");
+            sb.append(toolReport.getFilename());
+            sb.append(".html\">");
+            sb.append(toolReport.getToolName());
+            sb.append("</a></li>");
+            sb.append(System.lineSeparator());
+        }        
+        String toolmenu = sb.toString();
+
+        
+        // create vulnerability menu
+        sb = new StringBuffer();
+        for (String cat : catSet ) {
+            String filename = "Benchmark_v" + benchmarkVersion+"_Scorecard_for_" +cat.replace(' ', '_');  
+            sb.append("            <li><a href=\"");
+            sb.append( filename );
+            sb.append(".html\">");
+            sb.append( cat );
+            sb.append("</a></li>");
+            sb.append(System.lineSeparator());
+        }
+        String vulnmenu = sb.toString();
+        
+		// rewrite HTML files with new menus
+		updateMenuTemplates( toolmenu, vulnmenu );        
 	}
+	
+	private static void updateMenuTemplates( String toolmenu, String vulnmenu ) {
+	    File root = new File( scoreCardDirName );
+	    for ( File f : root.listFiles() ) {
+	        if ( !f.isDirectory() && f.getName().endsWith( ".html" ) ) {
+	            try {
+    	            String html = new String( Files.readAllBytes( f.toPath() ) );
+    	            html = html.replace("${toolmenu}", toolmenu);
+    	            html = html.replace("${vulnmenu}", vulnmenu);
+    	            html = html.replace( "${version}", benchmarkVersion );
+    	            Files.write( f.toPath(), html.getBytes() );
+	            } catch ( IOException e ) {
+	                System.out.println ( "Error updating menus in: " + f.getName() );
+	                e.printStackTrace();
+	            }
+	        }
+	    }
+	    
+	}
+	
 }

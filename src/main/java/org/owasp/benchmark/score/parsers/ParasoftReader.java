@@ -33,16 +33,20 @@ import org.xml.sax.InputSource;
 public class ParasoftReader extends Reader {
 
     public TestResults parse(File f) throws Exception {
-        System.out.println("Analyzing: " + f.getName());
         DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
         InputSource is = new InputSource(new FileInputStream(f));
         Document doc = docBuilder.parse(is);
 
-        TestResults tr = new TestResults();
+        TestResults tr = new TestResults( "Parasoft Jtest" );
 
-        NodeList rootList = doc.getDocumentElement().getChildNodes();
+        Node root = doc.getDocumentElement();
 
+        // <ResultsSession time="06/03/15 10:10:09" toolName="Jtest" toolVer="9.5.13.20140908���>
+        String version = this.getAttributeValue("toolVer", root);
+        tr.setToolVersion( version );
+
+        NodeList rootList = root.getChildNodes();
         List<Node> stds = getNamedNodes( "CodingStandards", rootList );
         Node std = stds.get(0);
         String time = getAttributeValue( "time", std );

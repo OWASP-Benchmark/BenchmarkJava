@@ -29,9 +29,7 @@ import java.io.IOException;
 import java.security.SecureRandom;
 import java.text.DecimalFormat;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -55,6 +53,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleInsets;
 import org.jfree.ui.TextAnchor;
+import org.owasp.benchmark.score.BenchmarkScore;
 import org.owasp.benchmark.score.parsers.OverallResult;
 import org.owasp.benchmark.score.parsers.OverallResults;
 
@@ -68,6 +67,7 @@ public class ScatterVulns {
      * @param title - The title of the chart to be produced.
      * @param height - Height of the chart (typically 800)
      * @param width - Width of the chart (typically 800)
+     * @param category - FIXME-What is this?
      * @param toolResults - A list of each individual tool's results.
      */
     public ScatterVulns(String title, int height, int width, String category, List<Report> toolResults ) {
@@ -168,8 +168,8 @@ public class ScatterVulns {
  
         Stroke dashed = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] { 6, 3 }, 0);
         for ( XYDataItem item : (List<XYDataItem>)series.getItems() ) {
-            double x = (double)item.getX();
-            double y = (double)item.getY();
+            double x = item.getX().doubleValue();
+            double y = item.getY().doubleValue();
             double z = (x+y)/2;
             XYLineAnnotation score = new XYLineAnnotation(x, y, z, z, dashed, Color.blue);
             xyplot.addAnnotation(score);
@@ -327,9 +327,9 @@ public class ScatterVulns {
 
     public static void generateComparisonChart(String category, List toolResults ) {
     	try {
-            ScatterVulns scatter = new ScatterVulns("OWASP Benchmark v" + Report.benchmarkVersion + " "
+            ScatterVulns scatter = new ScatterVulns("Benchmark v" + BenchmarkScore.benchmarkVersion + " "
             		+ category + " Comparison", 800, 800, category, toolResults );
-            scatter.writeChartToFile(new File("scorecard/OWASP_Benchmark_v" + Report.benchmarkVersion+"_Actual_Results_for_" +category.replace(' ', '_')+".png"), 800, 800);    		
+            scatter.writeChartToFile(new File("scorecard/Benchmark_v" + BenchmarkScore.benchmarkVersion+"_Scorecard_for_" +category.replace(' ', '_')+".png"), 800, 800);    		
     	} catch (IOException e) {
     		System.out.println("Couldn't generate Benchmark vulnerability chart for some reason.");
     		e.printStackTrace();

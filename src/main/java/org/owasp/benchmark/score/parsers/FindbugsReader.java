@@ -38,12 +38,18 @@ public class FindbugsReader extends Reader {
 		InputSource is = new InputSource( new FileInputStream(f) );
 		Document doc = docBuilder.parse(is);
 		
-		TestResults tr = new TestResults();
+		// FIXME: need a way to figure out if this is SecFindBugs
+		TestResults tr = new TestResults( "FindBugs" );
 		
 		// If the filename includes an elapsed time in seconds (e.g., TOOLNAME-seconds.xml), set the compute time on the scorecard.
 		tr.setTime(f);
 
-		NodeList nl = doc.getDocumentElement().getChildNodes();
+//		<BugCollection timestamp='1434663265000' analysisTimestamp='1434663273732' sequence='0' release='' version='3.0.1���>
+        Node root = doc.getDocumentElement();
+        String version = getAttributeValue( "version", root );
+        tr.setToolVersion( version );
+
+		NodeList nl = root.getChildNodes();
 		for ( int i = 0; i < nl.getLength(); i++ ) {
 			Node n = nl.item( i );
 			if ( n.getNodeName().equals( "BugInstance")) {
@@ -106,23 +112,26 @@ public class FindbugsReader extends Reader {
 		switch( cat ) {
 		case "SECCU" : 		return 614;  // insecure cookie use
 		case "SECPR" : 		return 330;  // weak random
-		case "SECLDAPI" : 	return 90;   // ldap injection
+		case "SECLDAPI" : 	return 90;   // LDAP injection
 		case "SECPTO" : 	return 22;   // path traversal
 		case "SECPTI" : 	return 22;   // path traversal
 		case "CIPINT" : 	return 327;	 // weak encryption - cipher with no integrity
 		case "PADORA" : 	return 327;  // padding oracle -- FIXME: probably wrong
-		case "SECXPI" : 	return 643;  // xpath injection
+		case "SECXPI" : 	return 643;  // XPATH injection
 		case "SECWMD" : 	return 328;  // weak hash
 		case "SECCI" : 		return 78;   // command injection
 		case "SECDU" : 		return 327;  // weak encryption DES
-		case "SECXRW" :		return 79;   // xss
-		case "SECXSS1" :	return 79;   // xss
-		case "SECXSS2" :	return 79;   // xss
+		case "SECXRW" :		return 79;   // XSS
+		case "SECXSS1" :	return 79;   // XSS
+		case "SECXSS2" :	return 79;   // XSS
+		case "SECXXEDOC" :  return 611;  // XXE - Probably DOM Parser
+		case "SECSQLIHIB" : return 564;  // Hibernate Injection, child of SQL Injection
+		case "SECXXESAX" :  return 611;  // XXE - SAX Parser
 
 		case "SECSP" : 		return 00;	 // servlet parameter - not a vuln
 		case "SECSH" : 		return 00;   // servlet header -- not a vuln
 		case "SECSSQ" : 	return 00;   // servlet query - not a vuln
-		
+
 		default : System.out.println( "Unknown category: " + cat );
 		}
 

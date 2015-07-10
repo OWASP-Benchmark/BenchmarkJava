@@ -20,7 +20,6 @@ package org.owasp.benchmark.score.parsers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -38,6 +37,11 @@ public class Reader {
         return null;
     }
 
+    public Node getNamedChild(String name, Node parent) {
+        NodeList children = parent.getChildNodes();
+        return getNamedNode( name, children );
+    }
+
     public List<Node> getNamedChildren(String name, List<Node> list) {
         List<Node> results = new ArrayList<Node>();
         for (Node n : list) {
@@ -53,6 +57,11 @@ public class Reader {
         return results;
     }
 
+    public List<Node> getNamedChildren(String name, Node parent) {
+        NodeList children = parent.getChildNodes();
+        return getNamedNodes( name, children );
+    }
+        
     public List<Node> getNamedNodes(String name, NodeList list) {
         List<Node> results = new ArrayList<Node>();
         for (int i = 0; i < list.getLength(); i++) {

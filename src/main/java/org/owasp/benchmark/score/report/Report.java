@@ -26,73 +26,43 @@ import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
+import org.owasp.benchmark.score.BenchmarkScore;
 import org.owasp.benchmark.score.parsers.Counter;
 import org.owasp.benchmark.score.parsers.OverallResult;
 import org.owasp.benchmark.score.parsers.OverallResults;
 import org.owasp.benchmark.score.parsers.TestResults;
 
-public class Report {
-	
-	public static final String pathToScorecardResources = "src/main/resources/scorecard/";
-	public static final String scoreCardDirName = "scorecard";
-	public static String benchmarkVersion;
+public class Report implements Comparable<Report>{
 	
 	private String toolName = "not specified";
-//	private String reportFilename;
-	private String reportHtml;
 	private String reportPath;
 	private OverallResults overallResults;
 	
 	// The name of the file that contains this scorecard report
 	private String filename = null;
-
-	static {
-		File scoreCardDir = new File(scoreCardDirName);
-		try {
-			if (!scoreCardDir.exists()) {
-				Files.createDirectories(Paths.get(scoreCardDirName));
-			} else {
-				System.out.println("Deleting previously generated scorecard files in: " + scoreCardDir.getAbsolutePath());
-				FileUtils.cleanDirectory(scoreCardDir);
-				
-				// now copy the entire /content directory, that was just deleted with everything else
-				File dest1 = new File(scoreCardDirName + File.separator + "content");
-				FileUtils.copyDirectory(new File(pathToScorecardResources + "content"), dest1);
-			}
-		} catch (IOException e) {
-			System.out.println("Error dealing with scorecard directory: '" + scoreCardDir.getAbsolutePath() + "' for some reason!");
-			e.printStackTrace();
-		}
-		
-	    java.util.Properties benchmarkprops = new java.util.Properties();
-	    try {
-		    benchmarkprops.load(Report.class.getClassLoader().getResourceAsStream("benchmark.properties"));
-			benchmarkVersion = benchmarkprops.getProperty("benchmark-version");
-	    } catch (IOException e) {
-	    	System.out.println("Error!! - can't access benchmark.properties.");
-	    	e.printStackTrace();
-	    }
-	}
 	
 	public Report(TestResults actualResults, Map<String, Counter> scores, OverallResults or, 
-			int totalResults, String actualResultsFileName) throws IOException, URISyntaxException {
-
+		int totalResults, String actualResultsFileName) throws IOException, URISyntaxException {
+                
         toolName = actualResults.getTool();
-        String fullTitle = "OWASP Benchmark Scorecard for " + toolName;
-        String shortTitle = "Benchmark v" + benchmarkVersion + " Scorecard for " + toolName;
+        String version = actualResults.getToolVersion();
+        if (version != null)
+        	version = " v" + version;
+        else version = "";
+        
+        String fullTitle = "OWASP Benchmark Scorecard for " + toolName + version;
+        String shortTitle = "Benchmark v" + BenchmarkScore.benchmarkVersion + " Scorecard for " + toolName;
         filename = shortTitle.replace( ' ', '_' );
         
         overallResults = or;
         
-        reportPath = scoreCardDirName + File.separator + filename + ".html";
-        File img = new File( scoreCardDirName + File.separator + filename + ".png" );
-        Scatter graph = new Scatter( fullTitle, 800, 800, or);
+        reportPath = BenchmarkScore.scoreCardDirName + File.separator + filename + ".html";
+        File img = new File( BenchmarkScore.scoreCardDirName + File.separator + filename + ".png" );
+        Scatter graph = new Scatter( shortTitle, 800, 800, or);
         
         graph.writeChartToFile( img, 800, 800 );
 
-        reportHtml = generateHtml( fullTitle, actualResults, scores, or, totalResults, img, 
-        		actualResultsFileName );
+        String reportHtml = generateHtml( fullTitle, actualResults, scores, or, totalResults, img, actualResultsFileName );
         Files.write(Paths.get( reportPath ), reportHtml.getBytes());
         System.out.println("Report written to: " + new File(reportPath).getAbsolutePath());
     }
@@ -123,7 +93,7 @@ public class Report {
 	
     private String generateHtml( String title, TestResults actualResults, Map<String, Counter> scores, 
     		OverallResults or, int totalResults, File img, String actualResultsFileName) throws IOException, URISyntaxException {
-        String template = new String(Files.readAllBytes(Paths.get(pathToScorecardResources + "template.html")));
+        String template = new String(Files.readAllBytes(Paths.get(BenchmarkScore.pathToScorecardResources + "template.html")));
     	
 //    	String template = new String(Files.readAllBytes(
 //                Paths.get(this.getClass().getClassLoader()
@@ -136,7 +106,7 @@ public class Report {
         html = html.replace( "${time}", or.getTime() );
         html = html.replace( "${score}", ""+new DecimalFormat("#0.00%").format(or.getScore() ) );
         html = html.replace( "${tool}", actualResults.getTool() );
-        html = html.replace( "${version}", benchmarkVersion );
+        html = html.replace( "${version}", BenchmarkScore.benchmarkVersion );
         html = html.replace( "${actualResultsFile}", actualResultsFileName );
         
         
@@ -206,23 +176,8 @@ public class Report {
         sb.append( "</table>");
         return sb.toString();
     }
-    
-    /**
-     * This method is used to replace the placeholder for the menus with the actual menu.
-     * @param menu - The HTML menu to put into each of the HTML pages.
-     */
-    public void updateMenus(String menu) {
-    	
-    	// The following updates the menus for the computed scorecards and the home/guide pages
-    	try {
-    		// reportHtml contains the HTML of the report that has already been computed.
-    		reportHtml = reportHtml.replace( "${menu}", menu );
-	        Files.write(Paths.get( reportPath ), reportHtml.getBytes());
-	        
-    	} catch (IOException e) {
-	    	System.out.println("Error!! - couldn't update scorecard file: " + reportPath);
-	    	e.printStackTrace();
-	    }
-   }
 
+    public int compareTo(Report r) {
+    	return this.toolName.compareTo(r.toolName);
+    }
 }

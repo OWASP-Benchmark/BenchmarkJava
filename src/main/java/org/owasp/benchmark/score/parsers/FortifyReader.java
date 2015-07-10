@@ -33,18 +33,34 @@ import org.xml.sax.InputSource;
 public class FortifyReader extends Reader {
 
 	public TestResults parse( File f ) throws Exception {
-		System.out.println( "Analyzing: " + f.getName() );
 		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 		InputSource is = new InputSource( new FileInputStream(f) );
 		Document doc = docBuilder.parse(is);
 		
-		TestResults tr = new TestResults();
+		TestResults tr = new TestResults( "HP Fortify" );
 		// FIXME - parse real number
 		tr.setTime("3:38:40");
-		
-        NodeList rootList = doc.getDocumentElement().getChildNodes();
 
+        Node root = doc.getDocumentElement();
+				
+        // try to figure out if this is Fortify On-Demand
+        Node build = getNamedChild("Build", root );
+        String source = getNamedChild( "SourceBasePath", build ).getTextContent();
+        if ( source.contains("ronq") ) {
+        	tr.setTool( tr.getTool() + "-OnDemand" );
+        	// Fixme - get real time from results somehow if possible
+    		tr.setTime("7+ Days");
+        }
+              
+        // FIXME: in the FPR there is audit.xml that has a different version number in it
+        
+        // get engine build version
+        Node eData = getNamedChild("EngineData", root );
+        String version = getNamedChild( "EngineVersion", eData ).getTextContent();
+        tr.setToolVersion( version );
+          
+        NodeList rootList = root.getChildNodes();
         List<Node> vulnList = getNamedNodes( "Vulnerabilities", rootList );
 
         List<Node> vulns = getNamedChildren( "Vulnerability", vulnList );		

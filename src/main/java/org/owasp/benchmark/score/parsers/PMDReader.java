@@ -38,12 +38,16 @@ public class PMDReader extends Reader {
 		InputSource is = new InputSource( new FileInputStream(f) );
 		Document doc = docBuilder.parse(is);
 		
-		TestResults tr = new TestResults();
+		TestResults tr = new TestResults( "PMD" );
 		
 		// If the filename includes an elapsed time in seconds (e.g., TOOLNAME-seconds.xml), set the compute time on the scorecard.
 		tr.setTime(f);
 
-		NodeList nl = doc.getDocumentElement().getChildNodes();
+		Node root = doc.getDocumentElement();
+		String version = getAttributeValue( "version", root );
+        tr.setToolVersion( version );
+		
+		NodeList nl = root.getChildNodes();
 		for ( int i = 0; i < nl.getLength(); i++ ) {
 			Node n = nl.item( i );
 			if ( n.getNodeName().equals( "file")) {

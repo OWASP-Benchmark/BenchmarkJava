@@ -31,18 +31,23 @@ import java.util.concurrent.TimeUnit;
  */
 
 public class TestResults {
-	private String tool = "Unknown Tool";
+    private String tool = "Unknown Tool";
+    private String toolVersion = null;
 	private String time = "Unknown";
 	
 	private Map<Integer, List<TestCaseResult>> map = new TreeMap<Integer, List<TestCaseResult>>();
 		
-	public void put( TestCaseResult tr ) {
-		List<TestCaseResult> results = map.get( tr.getNumber() );
+	public TestResults( String toolname ) {
+	    this.setTool( toolname );
+	}
+	
+	public void put( TestCaseResult tcr ) {
+		List<TestCaseResult> results = map.get( tcr.getNumber() );
 		if ( results == null ) {
 			results = new ArrayList<TestCaseResult>();
-			map.put( tr.getNumber(),  results );
+			map.put( tcr.getNumber(),  results );
 		}
-		results.add( tr );
+		results.add( tcr );
 	}
 	
 	public List<TestCaseResult> get( int tn ) {
@@ -52,15 +57,22 @@ public class TestResults {
 	public Set<Integer> keySet() {
 		return map.keySet();
 	}
-	
-	public String getTool() {
-	    return tool;
-	}
+    
+    public String getTool() {
+        return tool;
+    }
+    
+    public String getToolVersion() {
+        return toolVersion;
+    }
 	
 	public void setTool( String tool ) {
 	    this.tool = tool;
 	}
 	
+	public void setToolVersion( String version ) {
+	    this.toolVersion = version;
+	}
 
     public String getTime() {
         return time;
@@ -120,5 +132,17 @@ public class TestResults {
 
         return(sb.toString());
     }  
+    
+    public String getShortName() {
+        return tool;
+    }
+    
+    public String getFullName() {
+        if ( toolVersion != null) {
+            return tool + "_v" + toolVersion;
+        } else {
+            return tool;
+        }
+    }
     
 }

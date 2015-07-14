@@ -456,6 +456,7 @@
 					</replacements>
 				</configuration>
 			</plugin>
+            <!--
 			<plugin>
 				<groupId>org.jasig.mojo.jspc</groupId>
 				<artifactId>jspc-maven-plugin</artifactId>
@@ -469,7 +470,6 @@
 						</goals>
 					</execution>
 				</executions>
-				<!-- Use the Tomcat 7 JSP compiler -->
 				<dependencies>
 					<dependency>
 						<groupId>org.jasig.mojo.jspc</groupId>
@@ -486,6 +486,7 @@
 					<webXml>${basedir}/target/jspweb.xml</webXml>
 				</configuration>
 			</plugin>
+            -->
 			<!-- FindBugs Static Analysis -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>

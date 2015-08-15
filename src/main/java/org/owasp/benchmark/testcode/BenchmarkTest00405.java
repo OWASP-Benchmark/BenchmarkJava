@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,37 +38,30 @@ public class BenchmarkTest00405 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
 	
-		javax.servlet.http.Cookie[] cookies = request.getCookies();
-		
-		String param = null;
-		boolean foundit = false;
-		if (cookies != null) {
-			for (javax.servlet.http.Cookie cookie : cookies) {
-				if (cookie.getName().equals("foo")) {
-					param = cookie.getValue();
-					foundit = true;
-				}
-			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
-		}
+		String param = request.getParameter("vector");
+		if (param == null) param = "";
 		
 		
-		String bar;
+		// Chain a bunch of propagators in sequence
+		String a18426 = param; //assign
+		StringBuilder b18426 = new StringBuilder(a18426);  // stick in stringbuilder
+		b18426.append(" SafeStuff"); // append some safe content
+		b18426.replace(b18426.length()-"Chars".length(),b18426.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map18426 = new java.util.HashMap<String,Object>();
+		map18426.put("key18426", b18426.toString()); // put in a collection
+		String c18426 = (String)map18426.get("key18426"); // get it back out
+		String d18426 = c18426.substring(0,c18426.length()-1); // extract most of it
+		String e18426 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d18426.getBytes() ) )); // B64 encode and decode it
+		String f18426 = e18426.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String g18426 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g18426); // reflection
 		
-		// Simple ? condition that assigns constant to bar on true condition
-		int i = 106;
 		
-		bar = (7*18) + i > 200 ? "This_should_always_happen" : param;
-		
-		
-		
-		new java.io.File(bar, "/Test.txt");
+		Object[] obj = { bar, "b"};
+		response.getWriter().printf("Formatted like: %1$s and %2$s.",obj);
 	}
 }

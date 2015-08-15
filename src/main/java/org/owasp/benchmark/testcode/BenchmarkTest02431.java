@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,33 +38,84 @@ public class BenchmarkTest02431 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	
-		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("foo");
-		if (headers.hasMoreElements()) {
-			param = headers.nextElement(); // just grab first element
+		response.setContentType("text/html");
+
+		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
+		String param = scr.getTheParameter("vector");
+		if (param == null) param = "";
+
+		String bar = doSomething(param);
+		
+		// Code based on example from:
+		// http://examples.javacodegeeks.com/core-java/crypto/encrypt-decrypt-file-stream-with-des/
+
+		try {
+			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("RSA/ECB/PKCS1Padding", "SunJCE");
+            // Prepare the cipher to encrypt
+            java.security.KeyPairGenerator keyGen = java.security.KeyPairGenerator.getInstance("RSA");
+            keyGen.initialize(1024);
+            java.security.PublicKey publicKey= keyGen.genKeyPair().getPublic();
+            c.init(javax.crypto.Cipher.ENCRYPT_MODE, publicKey);
+			
+			// encrypt and store the results
+			byte[] input = { (byte)'?' };
+			Object inputParam = bar;
+			if (inputParam instanceof String) input = ((String) inputParam).getBytes();
+			if (inputParam instanceof java.io.InputStream) {
+				byte[] strInput = new byte[1000];
+				int i = ((java.io.InputStream) inputParam).read(strInput);
+				if (i == -1) {
+					response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+					return;
+				}
+				input = java.util.Arrays.copyOf(strInput, i);
+			}
+			byte[] result = c.doFinal(input);
+			
+			java.io.File fileTarget = new java.io.File(
+					new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),"passwordFile.txt");
+			java.io.FileWriter fw = new java.io.FileWriter(fileTarget,true); //the true will append the new data
+			    fw.write("secret_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
+			fw.close();
+			response.getWriter().println("Sensitive value: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' encrypted and stored<br/>");
+			
+		} catch (java.security.NoSuchAlgorithmException e) {
+			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
+			e.printStackTrace(response.getWriter());
+			throw new ServletException(e);
+		} catch (java.security.NoSuchProviderException e) {
+			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
+			e.printStackTrace(response.getWriter());
+			throw new ServletException(e);
+		} catch (javax.crypto.NoSuchPaddingException e) {
+			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
+			e.printStackTrace(response.getWriter());
+			throw new ServletException(e);
+		} catch (javax.crypto.IllegalBlockSizeException e) {
+			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
+			e.printStackTrace(response.getWriter());
+			throw new ServletException(e);
+		} catch (javax.crypto.BadPaddingException e) {
+			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
+			e.printStackTrace(response.getWriter());
+			throw new ServletException(e);
+		} catch (java.security.InvalidKeyException e) {
+			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
+			e.printStackTrace(response.getWriter());
+			throw new ServletException(e);
 		}
-		
-		
-		// Chain a bunch of propagators in sequence
-		String a6017 = param; //assign
-		StringBuilder b6017 = new StringBuilder(a6017);  // stick in stringbuilder
-		b6017.append(" SafeStuff"); // append some safe content
-		b6017.replace(b6017.length()-"Chars".length(),b6017.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map6017 = new java.util.HashMap<String,Object>();
-		map6017.put("key6017", b6017.toString()); // put in a collection
-		String c6017 = (String)map6017.get("key6017"); // get it back out
-		String d6017 = c6017.substring(0,c6017.length()-1); // extract most of it
-		String e6017 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d6017.getBytes() ) )); // B64 encode and decode it
-		String f6017 = e6017.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g6017 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g6017); // reflection
-		
-		
-		Object[] obj = { "a", bar };
-		
-		response.getWriter().format("notfoo",obj);
+		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String,java.lang.String) executed");
+	}  // end doPost
+	
+	private static String doSomething(String param) throws ServletException, IOException {
+
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map41844 = new java.util.HashMap<String,Object>();
+		map41844.put("keyA-41844", "a Value"); // put some stuff in the collection
+		map41844.put("keyB-41844", param); // put it in a collection
+		map41844.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map41844.get("keyB-41844"); // get it back out
+	
+		return bar;	
 	}
 }

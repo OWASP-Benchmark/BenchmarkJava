@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,51 +38,45 @@ public class BenchmarkTest00379 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
 	
-		javax.servlet.http.Cookie[] cookies = request.getCookies();
-		
-		String param = null;
-		boolean foundit = false;
-		if (cookies != null) {
-			for (javax.servlet.http.Cookie cookie : cookies) {
-				if (cookie.getName().equals("foo")) {
-					param = cookie.getValue();
-					foundit = true;
-				}
-			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
-		}
+		String param = request.getParameter("vector");
+		if (param == null) param = "";
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a33721 = param; //assign
-		StringBuilder b33721 = new StringBuilder(a33721);  // stick in stringbuilder
-		b33721.append(" SafeStuff"); // append some safe content
-		b33721.replace(b33721.length()-"Chars".length(),b33721.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map33721 = new java.util.HashMap<String,Object>();
-		map33721.put("key33721", b33721.toString()); // put in a collection
-		String c33721 = (String)map33721.get("key33721"); // get it back out
-		String d33721 = c33721.substring(0,c33721.length()-1); // extract most of it
-		String e33721 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d33721.getBytes() ) )); // B64 encode and decode it
-		String f33721 = e33721.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g33721 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g33721); // reflection
+		java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+		valuesList.add("safe");
+		valuesList.add( param );
+		valuesList.add( "moresafe" );
+		
+		valuesList.remove(0); // remove the 1st safe value
+		
+		String bar = valuesList.get(0); // get the param value
 		
 		
-		try {
-			javax.naming.directory.DirContext dc = org.owasp.benchmark.helpers.Utils.getDirContext();
-			Object[] filterArgs = {"a","b"};
-			dc.search("name", bar, filterArgs, new javax.naming.directory.SearchControls());
-		} catch (javax.naming.NamingException e) {
-			throw new ServletException(e);
-		}
+		
+		String fileName = null;
+        java.io.FileInputStream fis = null;
+
+        try {
+			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
+			fis = new java.io.FileInputStream(new java.io.File(fileName));
+			byte[] b = new byte[1000];
+			int size = fis.read(b);
+			response.getWriter().write("The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n");
+			response.getWriter().write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size)));
+		} catch (Exception e) {
+            System.out.println("Couldn't open FileInputStream on file: '" + fileName + "'");
+			response.getWriter().write("Problem getting FileInputStream: " + e.getMessage());
+        } finally {
+			if (fis != null) {
+                try {
+                    fis.close();
+                    fis = null;
+                } catch (Exception e) {
+                    // we tried...
+                }
+            }
+        }
 	}
 }

@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,55 +38,41 @@ public class BenchmarkTest00383 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
 	
-		javax.servlet.http.Cookie[] cookies = request.getCookies();
-		
-		String param = null;
-		boolean foundit = false;
-		if (cookies != null) {
-			for (javax.servlet.http.Cookie cookie : cookies) {
-				if (cookie.getName().equals("foo")) {
-					param = cookie.getValue();
-					foundit = true;
-				}
-			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
-		}
+		String param = request.getParameter("vector");
+		if (param == null) param = "";
 		
 		
 		String bar;
-		String guess = "ABC";
-		char switchTarget = guess.charAt(2);
 		
-		// Simple case statement that assigns param to bar on conditions 'A' or 'C'
-		switch (switchTarget) {
-		  case 'A':
-		        bar = param;
-		        break;
-		  case 'B': 
-		        bar = "bobs_your_uncle";
-		        break;
-		  case 'C':
-		  case 'D':        
-		        bar = param;
-		        break;
-		  default:
-		        bar = "bobs_your_uncle";
-		        break;
-		}
+		// Simple if statement that assigns param to bar on true condition
+		int num = 196;
+		if ( (500/42) + num > 200 )
+		   bar = param;
+		else bar = "This should never happen"; 
 		
 		
+		String fileName = null;
+		java.io.FileOutputStream fos = null;
+
 		try {
-			javax.naming.directory.DirContext dc = org.owasp.benchmark.helpers.Utils.getDirContext();
-			dc.search("name", bar, new javax.naming.directory.SearchControls());
-		} catch (javax.naming.NamingException e) {
-			throw new ServletException(e);
+			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
+	
+			fos = new java.io.FileOutputStream(fileName, false);
+	        response.getWriter().write("Now ready to write to file: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName));
+		} catch (Exception e) {
+			System.out.println("Couldn't open FileOutputStream on file: '" + fileName + "'");
+//			System.out.println("File exception caught and swallowed: " + e.getMessage());
+		} finally {
+			if (fos != null) {
+				try {
+					fos.close();
+                    fos = null;
+				} catch (Exception e) {
+					// we tried...
+				}
+			}
 		}
 	}
 }

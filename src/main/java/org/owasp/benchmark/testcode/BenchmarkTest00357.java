@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,66 +38,43 @@ public class BenchmarkTest00357 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
 	
-		javax.servlet.http.Cookie[] cookies = request.getCookies();
-		
-		String param = null;
-		boolean foundit = false;
-		if (cookies != null) {
-			for (javax.servlet.http.Cookie cookie : cookies) {
-				if (cookie.getName().equals("foo")) {
-					param = cookie.getValue();
-					foundit = true;
-				}
-			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
+		String param = "";
+		java.util.Enumeration<String> headers = request.getHeaders("vector");
+		if (headers.hasMoreElements()) {
+			param = headers.nextElement(); // just grab first element
 		}
 		
 		
-		String bar;
-		String guess = "ABC";
-		char switchTarget = guess.charAt(1); // condition 'B', which is safe
-		
-		// Simple case statement that assigns param to bar on conditions 'A' or 'C'
-		switch (switchTarget) {
-		  case 'A':
-		        bar = param;
-		        break;
-		  case 'B': 
-		        bar = "bob";
-		        break;
-		  case 'C':
-		  case 'D':        
-		        bar = param;
-		        break;
-		  default:
-		        bar = "bob's your uncle";
-		        break;
-		}
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map29126 = new java.util.HashMap<String,Object>();
+		map29126.put("keyA-29126", "a_Value"); // put some stuff in the collection
+		map29126.put("keyB-29126", param); // put it in a collection
+		map29126.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map29126.get("keyB-29126"); // get it back out
+		bar = (String)map29126.get("keyA-29126"); // get safe value back out
 		
 		
-		java.security.Provider[] provider = java.security.Security.getProviders();
-		javax.crypto.Cipher c;
-
 		try {
-			if (provider.length > 1) {
-				c = javax.crypto.Cipher.getInstance("DES/CBC/PKCS5PADDING", java.security.Security.getProvider("SunJCE"));
-			} else {
-				c = javax.crypto.Cipher.getInstance("DES/CBC/PKCS5PADDING", java.security.Security.getProvider("SunJCE"));
+	        String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"
+	            + bar + "'";
+	
+			java.util.List list = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.queryForList(sql);
+			java.io.PrintWriter out = response.getWriter();
+	        out.write("Your results are: <br>");
+	//		System.out.println("Your results are");
+			
+			for(Object o:list){
+				out.write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(o.toString()) + "<br>");
+	//			System.out.println(o.toString());
 			}
-		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			throw new ServletException(e);
-		} catch (javax.crypto.NoSuchPaddingException e) {
-			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			throw new ServletException(e);
+		} catch (org.springframework.dao.DataAccessException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
 		}
-		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) executed");
 	}
 }

@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,46 +38,67 @@ public class BenchmarkTest00471 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
 	
-		javax.servlet.http.Cookie[] cookies = request.getCookies();
-		
-		String param = null;
-		boolean foundit = false;
-		if (cookies != null) {
-			for (javax.servlet.http.Cookie cookie : cookies) {
-				if (cookie.getName().equals("foo")) {
-					param = cookie.getValue();
-					foundit = true;
-				}
-			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
+		java.util.Map<String,String[]> map = request.getParameterMap();
+		String param = "";
+		if (!map.isEmpty()) {
+			param = map.get("vector")[0];
 		}
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a45386 = param; //assign
-		StringBuilder b45386 = new StringBuilder(a45386);  // stick in stringbuilder
-		b45386.append(" SafeStuff"); // append some safe content
-		b45386.replace(b45386.length()-"Chars".length(),b45386.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map45386 = new java.util.HashMap<String,Object>();
-		map45386.put("key45386", b45386.toString()); // put in a collection
-		String c45386 = (String)map45386.get("key45386"); // get it back out
-		String d45386 = c45386.substring(0,c45386.length()-1); // extract most of it
-		String e45386 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d45386.getBytes() ) )); // B64 encode and decode it
-		String f45386 = e45386.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f45386); // reflection
+		
+		String bar;
+		String guess = "ABC";
+		char switchTarget = guess.charAt(2);
+		
+		// Simple case statement that assigns param to bar on conditions 'A', 'C', or 'D'
+		switch (switchTarget) {
+		  case 'A':
+		        bar = param;
+		        break;
+		  case 'B': 
+		        bar = "bobs_your_uncle";
+		        break;
+		  case 'C':
+		  case 'D':        
+		        bar = param;
+		        break;
+		  default:
+		        bar = "bobs_your_uncle";
+		        break;
+		}
 		
 		
-		java.lang.Math.random();
-		
-		response.getWriter().println("Weak Randomness Test java.lang.Math.random() executed");
+		String fileName = null;
+		java.io.FileOutputStream fos = null;
+
+		try {
+			// Create the file first so the test won't throw an exception if it doesn't exist.
+			// Note: Don't actually do this because this method signature could cause a tool to find THIS file constructor 
+			// as a vuln, rather than the File signature we are trying to actually test.
+			// If necessary, just run the benchmark twice. The 1st run should create all the necessary files.
+			//new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir + bar).createNewFile();
+			
+			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
+	
+	
+	        java.io.FileInputStream fileInputStream = new java.io.FileInputStream(fileName);
+	        java.io.FileDescriptor fd = fileInputStream.getFD();
+	        fos = new java.io.FileOutputStream(fd);
+	        response.getWriter().write("Now ready to write to file: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName));
+		} catch (Exception e) {
+			System.out.println("Couldn't open FileOutputStream on file: '" + fileName + "'");
+//			System.out.println("File exception caught and swallowed: " + e.getMessage());
+		} finally {
+			if (fos != null) {
+				try {
+					fos.close();
+                    fos = null;
+				} catch (Exception e) {
+					// we tried...
+				}
+			}
+		}
 	}
 }

@@ -1,18 +1,18 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
-* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
 */
 
@@ -38,19 +38,63 @@ public class BenchmarkTest01048 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
 	
-		String param = request.getHeader("foo");
+		javax.servlet.http.Cookie[] theCookies = request.getCookies();
 		
+		String param = null;
+		boolean foundit = false;
+		if (theCookies != null) {
+			for (javax.servlet.http.Cookie theCookie : theCookies) {
+				if (theCookie.getName().equals("vector")) {
+					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
+					foundit = true;
+				}
+			}
+			if (!foundit) {
+				// no cookie found in collection
+				param = "";
+			}
+		} else {
+			// no cookies
+			param = "";
+		}
+
+		String bar = new Test().doSomething(param);
 		
+		try {
+			String sql = "SELECT  * from USERS where USERNAME='foo' and PASSWORD='"+ bar + "'" ;
+	
+	        org.springframework.jdbc.support.rowset.SqlRowSet results = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.queryForRowSet(sql);
+	        java.io.PrintWriter out = response.getWriter();
+			out.write("Your results are: ");
+	//		System.out.println("Your results are");
+			while(results.next()) {
+	            out.write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(results.getString("USERNAME")) + " ");
+	//			System.out.println(results.getString("USERNAME"));
+			}
+		} catch (org.springframework.dao.DataAccessException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
+	}  // end doPost
+
+    private class Test {
+
+        public String doSomething(String param) throws ServletException, IOException {
+
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map70187 = new java.util.HashMap<String,Object>();
-		map70187.put("keyA-70187", "a_Value"); // put some stuff in the collection
-		map70187.put("keyB-70187", param.toString()); // put it in a collection
-		map70187.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map70187.get("keyB-70187"); // get it back out
-		bar = (String)map70187.get("keyA-70187"); // get safe value back out
-		
-		
-		java.io.FileOutputStream fos = new java.io.FileOutputStream(new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir + bar));
-	}
-}
+		java.util.HashMap<String,Object> map97663 = new java.util.HashMap<String,Object>();
+		map97663.put("keyA-97663", "a Value"); // put some stuff in the collection
+		map97663.put("keyB-97663", param); // put it in a collection
+		map97663.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map97663.get("keyB-97663"); // get it back out
+
+            return bar;
+        }
+    } // end innerclass Test
+
+} // end DataflowThruInnerClass

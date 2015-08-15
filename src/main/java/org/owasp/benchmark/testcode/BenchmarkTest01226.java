@@ -1,18 +1,18 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
-* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
 */
 
@@ -38,19 +38,50 @@ public class BenchmarkTest01226 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
 	
-		String param = request.getHeader("foo");
+		String param = "";
+		java.util.Enumeration<String> headers = request.getHeaders("vector");
+		if (headers.hasMoreElements()) {
+			param = headers.nextElement(); // just grab first element
+		}
+
+		String bar = new Test().doSomething(param);
 		
+		String cmd = "";
+        String osName = System.getProperty("os.name");
+        if (osName.indexOf("Windows") != -1) {
+        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("echo");
+        }
+        
+		String[] argsEnv = { "Foo=bar" };
+		Runtime r = Runtime.getRuntime();
+
+		try {
+			Process p = r.exec(cmd + bar, argsEnv);
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - TestCase");
+            throw new ServletException(e);
+		}
+	}  // end doPost
+
+    private class Test {
+
+        public String doSomething(String param) throws ServletException, IOException {
+
+		java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+		valuesList.add("safe");
+		valuesList.add( param );
+		valuesList.add( "moresafe" );
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map81219 = new java.util.HashMap<String,Object>();
-		map81219.put("keyA-81219", "a_Value"); // put some stuff in the collection
-		map81219.put("keyB-81219", param.toString()); // put it in a collection
-		map81219.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map81219.get("keyB-81219"); // get it back out
-		bar = (String)map81219.get("keyA-81219"); // get safe value back out
+		valuesList.remove(0); // remove the 1st safe value
 		
+		String bar = valuesList.get(0); // get the param value
 		
-		response.getWriter().write(bar.toCharArray());
-	}
-}
+
+            return bar;
+        }
+    } // end innerclass Test
+
+} // end DataflowThruInnerClass

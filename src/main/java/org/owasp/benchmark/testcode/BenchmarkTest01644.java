@@ -1,18 +1,18 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
-* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
 */
 
@@ -38,39 +38,70 @@ public class BenchmarkTest01644 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
 	
-		String param = "";
-		java.util.Enumeration<String> headerNames = request.getHeaderNames();
-		if (headerNames.hasMoreElements()) {
-			param = headerNames.nextElement(); // just grab first element
-		}
-		
-		
-		// Chain a bunch of propagators in sequence
-		String a11217 = param; //assign
-		StringBuilder b11217 = new StringBuilder(a11217);  // stick in stringbuilder
-		b11217.append(" SafeStuff"); // append some safe content
-		b11217.replace(b11217.length()-"Chars".length(),b11217.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map11217 = new java.util.HashMap<String,Object>();
-		map11217.put("key11217", b11217.toString()); // put in a collection
-		String c11217 = (String)map11217.get("key11217"); // get it back out
-		String d11217 = c11217.substring(0,c11217.length()-1); // extract most of it
-		String e11217 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d11217.getBytes() ) )); // B64 encode and decode it
-		String f11217 = e11217.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f11217); // reflection
-		
+		String[] values = request.getParameterValues("vector");
+		String param;
+		if (values != null && values.length > 0)
+		  param = values[0];
+		else param = "";
+
+		String bar = new Test().doSomething(param);
 		
 		try {
-			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("DES/CBC/PKCS5Padding");
+			int r = java.security.SecureRandom.getInstance("SHA1PRNG").nextInt();
+			String rememberMeKey = Integer.toString(r);
+			
+			String user = "SafeIngrid";
+			String fullClassName = this.getClass().getName();
+			String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
+			user+= testCaseNumber;
+			
+			String cookieName = "rememberMe" + testCaseNumber;
+			
+			boolean foundUser = false;
+			javax.servlet.http.Cookie[] cookies = request.getCookies();
+			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
+				javax.servlet.http.Cookie cookie = cookies[i];
+				if (cookieName.equals(cookie.getName())) {
+					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+						foundUser = true;
+					}
+				}
+			}
+			
+			if (foundUser) {
+				response.getWriter().println("Welcome back: " + user + "<br/>");			
+			} else {			
+				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
+				rememberMe.setSecure(true);
+				request.getSession().setAttribute(cookieName, rememberMeKey);
+				response.addCookie(rememberMe);
+				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
+						+ " whose value is: " + rememberMe.getValue() + "<br/>");
+			}
+
 		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
+			System.out.println("Problem executing SecureRandom.nextInt() - TestCase");
 			throw new ServletException(e);
-		} catch (javax.crypto.NoSuchPaddingException e) {
-			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case");
-			throw new ServletException(e);
-		}
-		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String) executed");
-	}
-}
+	    }
+		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextInt() executed");
+	}  // end doPost
+
+    private class Test {
+
+        public String doSomething(String param) throws ServletException, IOException {
+
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map41099 = new java.util.HashMap<String,Object>();
+		map41099.put("keyA-41099", "a_Value"); // put some stuff in the collection
+		map41099.put("keyB-41099", param); // put it in a collection
+		map41099.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map41099.get("keyB-41099"); // get it back out
+		bar = (String)map41099.get("keyA-41099"); // get safe value back out
+
+            return bar;
+        }
+    } // end innerclass Test
+
+} // end DataflowThruInnerClass

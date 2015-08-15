@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,39 +38,52 @@ public class BenchmarkTest02118 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	
+		response.setContentType("text/html");
+
 		String param = "";
-		java.util.Enumeration<String> headerNames = request.getHeaderNames();
-		if (headerNames.hasMoreElements()) {
-			param = headerNames.nextElement(); // just grab first element
+		java.util.Enumeration<String> headers = request.getHeaders("vector");
+		if (headers.hasMoreElements()) {
+			param = headers.nextElement(); // just grab first element
 		}
+
+		String bar = doSomething(param);
 		
-		
-		// Chain a bunch of propagators in sequence
-		String a21023 = param; //assign
-		StringBuilder b21023 = new StringBuilder(a21023);  // stick in stringbuilder
-		b21023.append(" SafeStuff"); // append some safe content
-		b21023.replace(b21023.length()-"Chars".length(),b21023.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map21023 = new java.util.HashMap<String,Object>();
-		map21023.put("key21023", b21023.toString()); // put in a collection
-		String c21023 = (String)map21023.get("key21023"); // get it back out
-		String d21023 = c21023.substring(0,c21023.length()-1); // extract most of it
-		String e21023 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d21023.getBytes() ) )); // B64 encode and decode it
-		String f21023 = e21023.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f21023); // reflection
-		
-		
-		String sql = "{call verifyUserPassword('foo','"+bar+"')}";
-				
+		String cmd = "";
+        String osName = System.getProperty("os.name");
+        if (osName.indexOf("Windows") != -1) {
+        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("echo");
+        }
+        
+		String[] argsEnv = { "Foo=bar" };
+		Runtime r = Runtime.getRuntime();
+
 		try {
-			java.sql.Connection connection = org.owasp.benchmark.helpers.DatabaseHelper.getSqlConnection();
-			java.sql.CallableStatement statement = connection.prepareCall( sql, java.sql.ResultSet.TYPE_FORWARD_ONLY, 
-							java.sql.ResultSet.CONCUR_READ_ONLY, java.sql.ResultSet.CLOSE_CURSORS_AT_COMMIT );
-			statement.execute();
-		} catch (java.sql.SQLException e) {
-			throw new ServletException(e);
+			Process p = r.exec(cmd + bar, argsEnv);
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - TestCase");
+            throw new ServletException(e);
 		}
+	}  // end doPost
+	
+	private static String doSomething(String param) throws ServletException, IOException {
+
+		// Chain a bunch of propagators in sequence
+		String a13054 = param; //assign
+		StringBuilder b13054 = new StringBuilder(a13054);  // stick in stringbuilder
+		b13054.append(" SafeStuff"); // append some safe content
+		b13054.replace(b13054.length()-"Chars".length(),b13054.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map13054 = new java.util.HashMap<String,Object>();
+		map13054.put("key13054", b13054.toString()); // put in a collection
+		String c13054 = (String)map13054.get("key13054"); // get it back out
+		String d13054 = c13054.substring(0,c13054.length()-1); // extract most of it
+		String e13054 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d13054.getBytes() ) )); // B64 encode and decode it
+		String f13054 = e13054.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String g13054 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g13054); // reflection
+	
+		return bar;	
 	}
 }

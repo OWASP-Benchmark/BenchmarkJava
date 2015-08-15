@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,47 +38,38 @@ public class BenchmarkTest01993 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	
-		String param = "";
-		java.util.Enumeration<String> headerNames = request.getHeaderNames();
-		if (headerNames.hasMoreElements()) {
-			param = headerNames.nextElement(); // just grab first element
-		}
+		response.setContentType("text/html");
+
+		String param = request.getHeader("vector");
+		if (param == null) param = "";
+
+		String bar = doSomething(param);
 		
-		
-		String bar;
-		String guess = "ABC";
-		char switchTarget = guess.charAt(1); // condition 'B', which is safe
-		
-		// Simple case statement that assigns param to bar on conditions 'A' or 'C'
-		switch (switchTarget) {
-		  case 'A':
-		        bar = param;
-		        break;
-		  case 'B': 
-		        bar = "bob";
-		        break;
-		  case 'C':
-		  case 'D':        
-		        bar = param;
-		        break;
-		  default:
-		        bar = "bob's your uncle";
-		        break;
-		}
-		
-		
-		String cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("echo");
+		String cmd = org.owasp.benchmark.helpers.Utils.getInsecureOSCommandString(this.getClass().getClassLoader());
+		String[] args = {cmd};
+        String[] argsEnv = { bar };
         
-		String[] argsEnv = { bar };
 		Runtime r = Runtime.getRuntime();
 
 		try {
-			Process p = r.exec(cmd, argsEnv);
-			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p);
+			Process p = r.exec(args, argsEnv);
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
 		} catch (IOException e) {
 			System.out.println("Problem executing cmdi - TestCase");
             throw new ServletException(e);
 		}
+	}  // end doPost
+	
+	private static String doSomething(String param) throws ServletException, IOException {
+
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map91774 = new java.util.HashMap<String,Object>();
+		map91774.put("keyA-91774", "a_Value"); // put some stuff in the collection
+		map91774.put("keyB-91774", param); // put it in a collection
+		map91774.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map91774.get("keyB-91774"); // get it back out
+		bar = (String)map91774.get("keyA-91774"); // get safe value back out
+	
+		return bar;	
 	}
 }

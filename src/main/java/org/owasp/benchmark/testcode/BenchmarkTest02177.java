@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,25 +38,21 @@ public class BenchmarkTest02177 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
+
+		String param = request.getParameter("vector");
+		if (param == null) param = "";
+
+		String bar = doSomething(param);
+		
+		Object[] obj = { "a", "b" };
+		response.getWriter().format(java.util.Locale.US,bar,obj);
+	}  // end doPost
 	
-		String param = "";
-		java.util.Enumeration<String> headerNames = request.getHeaderNames();
-		if (headerNames.hasMoreElements()) {
-			param = headerNames.nextElement(); // just grab first element
-		}
-		
-		
-		StringBuilder sbxyz28660 = new StringBuilder(param);
-		String bar = sbxyz28660.append("_SafeStuff").toString();
-		
-		
-		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
-				
-		try {
-			java.sql.Statement statement =  org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			statement.execute( sql, new int[] { 1, 2 } );
-		} catch (java.sql.SQLException e) {
-			throw new ServletException(e);
-		}
+	private static String doSomething(String param) throws ServletException, IOException {
+
+		String bar = org.springframework.web.util.HtmlUtils.htmlEscape(param);
+	
+		return bar;	
 	}
 }

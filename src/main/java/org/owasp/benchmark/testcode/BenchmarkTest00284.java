@@ -1,18 +1,18 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
-* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
 */
 
@@ -38,13 +38,62 @@ public class BenchmarkTest00284 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// some code
-
-		String param = request.getQueryString();
-
+		response.setContentType("text/html");
+	
+		String param = "";
+		java.util.Enumeration<String> headers = request.getHeaders("vector");
+		if (headers.hasMoreElements()) {
+			param = headers.nextElement(); // just grab first element
+		}
 		
-		double rand = new java.util.Random().nextDouble();
 		
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextDouble() executed");
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map88741 = new java.util.HashMap<String,Object>();
+		map88741.put("keyA-88741", "a Value"); // put some stuff in the collection
+		map88741.put("keyB-88741", param); // put it in a collection
+		map88741.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map88741.get("keyB-88741"); // get it back out
+		
+		
+		java.security.Provider[] provider = java.security.Security.getProviders();
+		java.security.MessageDigest md;
+
+		try {
+			if (provider.length > 1) {
+
+				md = java.security.MessageDigest.getInstance("SHA1", provider[0]);
+			} else {
+				md = java.security.MessageDigest.getInstance("SHA1", "SUN");
+			}
+			byte[] input = { (byte)'?' };
+			Object inputParam = bar;
+			if (inputParam instanceof String) input = ((String) inputParam).getBytes();
+			if (inputParam instanceof java.io.InputStream) {
+				byte[] strInput = new byte[1000];
+				int i = ((java.io.InputStream) inputParam).read(strInput);
+				if (i == -1) {
+					response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+					return;
+				}
+				input = java.util.Arrays.copyOf(strInput, i);
+			}
+			md.update(input);
+			
+			byte[] result = md.digest();
+			java.io.File fileTarget = new java.io.File(
+					new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),"passwordFile.txt");
+			java.io.FileWriter fw = new java.io.FileWriter(fileTarget,true); //the true will append the new data
+			    fw.write("hash_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
+			fw.close();
+			response.getWriter().println("Sensitive value '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' hashed and stored<br/>");
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider)");
+            throw new ServletException(e);
+		} catch (java.security.NoSuchProviderException e) {
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider)");
+            throw new ServletException(e);
+		}
+
+		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider) executed");
 	}
 }

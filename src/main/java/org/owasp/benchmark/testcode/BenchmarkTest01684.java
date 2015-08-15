@@ -1,18 +1,18 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
-* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
 */
 
@@ -38,50 +38,78 @@ public class BenchmarkTest01684 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
 	
-		String param = "";
-		java.util.Enumeration<String> headerNames = request.getHeaderNames();
-		if (headerNames.hasMoreElements()) {
-			param = headerNames.nextElement(); // just grab first element
+		String queryString = request.getQueryString();
+		String paramval = "vector"+"=";
+		int paramLoc = queryString.indexOf(paramval);
+		if (paramLoc == -1) {
+			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "vector" + "' in query string.");
+			return;
 		}
-		
-		
-		String bar;
-		String guess = "ABC";
-		char switchTarget = guess.charAt(1); // condition 'B', which is safe
-		
-		// Simple case statement that assigns param to bar on conditions 'A' or 'C'
-		switch (switchTarget) {
-		  case 'A':
-		        bar = param;
-		        break;
-		  case 'B': 
-		        bar = "bob";
-		        break;
-		  case 'C':
-		  case 'D':        
-		        bar = param;
-		        break;
-		  default:
-		        bar = "bob's your uncle";
-		        break;
+		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "vector" param is last parameter in query string.
+		int ampersandLoc = queryString.indexOf("&", paramLoc);
+		if (ampersandLoc != -1) {
+			param = queryString.substring(paramLoc + paramval.length(), ampersandLoc);
 		}
-		
-		
-		// FILE URIs are tricky because they are different between Mac and Windows because of lack of standardization.
-		// Mac requires an extra slash for some reason.
-		String startURIslashes = "";
-        if (System.getProperty("os.name").indexOf("Windows") != -1)
-	        if (System.getProperty("os.name").indexOf("Windows") != -1)
-	        	startURIslashes = "/";
-	        else startURIslashes = "//";
+		param = java.net.URLDecoder.decode(param, "UTF-8");
 
-		try {
-			java.net.URI fileURI = new java.net.URI("file:" + startURIslashes 
-				+ org.owasp.benchmark.helpers.Utils.testfileDir.replace('\\', '/').replace(' ', '_') + bar);
-			new java.io.File(fileURI);
-		} catch (java.net.URISyntaxException e) {
+		String bar = new Test().doSomething(param);
+		
+	org.owasp.benchmark.helpers.LDAPManager ads = new org.owasp.benchmark.helpers.LDAPManager();
+	try {
+		response.setContentType("text/html");
+		String base = "ou=users,ou=system";
+		javax.naming.directory.SearchControls sc = new javax.naming.directory.SearchControls();
+		sc.setSearchScope(javax.naming.directory.SearchControls.SUBTREE_SCOPE);
+		String filter = "(&(objectclass=person)(uid=" + bar
+				+ "))";
+		
+		javax.naming.directory.DirContext ctx = ads.getDirContext();
+		javax.naming.directory.InitialDirContext idc = (javax.naming.directory.InitialDirContext) ctx;
+		javax.naming.NamingEnumeration<javax.naming.directory.SearchResult> results = 
+				idc.search(base, filter, sc);
+		
+		while (results.hasMore()) {
+			javax.naming.directory.SearchResult sr = (javax.naming.directory.SearchResult) results.next();
+			javax.naming.directory.Attributes attrs = sr.getAttributes();
+
+			javax.naming.directory.Attribute attr = attrs.get("uid");
+			javax.naming.directory.Attribute attr2 = attrs.get("street");
+			if (attr != null){
+				response.getWriter().write("LDAP query results:<br>"
+						+ " Record found with name " + attr.get() + "<br>"
+								+ "Address: " + attr2.get()+ "<br>");
+				System.out.println("record found " + attr.get());
+			}
+		}
+	} catch (javax.naming.NamingException e) {
+		throw new ServletException(e);
+	}finally{
+    	try {
+    		ads.closeDirContext();
+		} catch (Exception e) {
 			throw new ServletException(e);
 		}
-	}
-}
+    }
+	}  // end doPost
+
+    private class Test {
+
+        public String doSomething(String param) throws ServletException, IOException {
+
+		java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+		valuesList.add("safe");
+		valuesList.add( param );
+		valuesList.add( "moresafe" );
+		
+		valuesList.remove(0); // remove the 1st safe value
+		
+		String bar = valuesList.get(0); // get the param value
+		
+
+            return bar;
+        }
+    } // end innerclass Test
+
+} // end DataflowThruInnerClass

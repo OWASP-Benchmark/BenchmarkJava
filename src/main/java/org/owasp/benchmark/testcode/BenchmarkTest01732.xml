@@ -1,7 +1,7 @@
 <test-metadata>
-  <wbe-version>1.1</wbe-version>
-  <category>pathtraver</category>
+  <benchmark-version>1.2beta</benchmark-version>
+  <category>securecookie</category>
   <test-number>01732</test-number>
   <vulnerability>false</vulnerability>
-  <cwe>22</cwe>
+  <cwe>614</cwe>
 </test-metadata>

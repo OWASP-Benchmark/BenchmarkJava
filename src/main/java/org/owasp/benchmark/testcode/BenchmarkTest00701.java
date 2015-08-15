@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,26 +38,11 @@ public class BenchmarkTest00701 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
 	
-		javax.servlet.http.Cookie[] cookies = request.getCookies();
-		
-		String param = null;
-		boolean foundit = false;
-		if (cookies != null) {
-			for (javax.servlet.http.Cookie cookie : cookies) {
-				if (cookie.getName().equals("foo")) {
-					param = cookie.getValue();
-					foundit = true;
-				}
-			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
-		}
+		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
+		String param = scr.getTheParameter("vector");
+		if (param == null) param = "";
 		
 		
 		java.util.List<String> valuesList = new java.util.ArrayList<String>( );
@@ -67,20 +52,29 @@ public class BenchmarkTest00701 extends HttpServlet {
 		
 		valuesList.remove(0); // remove the 1st safe value
 		
-		String bar = valuesList.get(1); // get the last 'safe' value
+		String bar = valuesList.get(0); // get the param value
 		
 		
 		
-		String cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("echo");
-        
-		Runtime r = Runtime.getRuntime();
-
 		try {
-			Process p = r.exec(cmd + bar);
-			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - TestCase");
-            throw new ServletException(e);
+			java.io.FileInputStream file = new java.io.FileInputStream(org.owasp.benchmark.helpers.Utils.getFileFromClasspath("employees.xml", this.getClass().getClassLoader()));
+			javax.xml.parsers.DocumentBuilderFactory builderFactory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+			javax.xml.parsers.DocumentBuilder builder = builderFactory.newDocumentBuilder();
+			org.w3c.dom.Document xmlDocument = builder.parse(file);
+			javax.xml.xpath.XPathFactory xpf = javax.xml.xpath.XPathFactory.newInstance();
+			javax.xml.xpath.XPath xp = xpf.newXPath();
+			
+			response.getWriter().println("Your query results are: <br/>"); 
+			String expression = "/Employees/Employee[@emplid='"+bar+"']";
+			response.getWriter().println(xp.evaluate(expression, xmlDocument) + "<br/>");
+			
+		} catch (javax.xml.xpath.XPathExpressionException e) {
+			// OK to swallow
+			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
+		} catch (javax.xml.parsers.ParserConfigurationException e) {
+			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
+		} catch (org.xml.sax.SAXException e) {
+			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
 		}
 	}
 }

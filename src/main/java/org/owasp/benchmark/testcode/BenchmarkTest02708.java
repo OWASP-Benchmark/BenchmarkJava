@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,42 +38,49 @@ public class BenchmarkTest02708 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	
-		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("foo");
-		if (headers.hasMoreElements()) {
-			param = headers.nextElement(); // just grab first element
+		response.setContentType("text/html");
+
+		String queryString = request.getQueryString();
+		String paramval = "vector"+"=";
+		int paramLoc = queryString.indexOf(paramval);
+		if (paramLoc == -1) {
+			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "vector" + "' in query string.");
+			return;
 		}
-		
-		
-		String bar;
-		String guess = "ABC";
-		char switchTarget = guess.charAt(2);
-		
-		// Simple case statement that assigns param to bar on conditions 'A' or 'C'
-		switch (switchTarget) {
-		  case 'A':
-		        bar = param;
-		        break;
-		  case 'B': 
-		        bar = "bobs_your_uncle";
-		        break;
-		  case 'C':
-		  case 'D':        
-		        bar = param;
-		        break;
-		  default:
-		        bar = "bobs_your_uncle";
-		        break;
+		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "vector" param is last parameter in query string.
+		int ampersandLoc = queryString.indexOf("&", paramLoc);
+		if (ampersandLoc != -1) {
+			param = queryString.substring(paramLoc + paramval.length(), ampersandLoc);
 		}
+		param = java.net.URLDecoder.decode(param, "UTF-8");
+
+		String bar = doSomething(param);
 		
-		
+		String sql = "INSERT INTO users (username, password) VALUES ('foo','"+ bar + "')";
+				
 		try {
-			long l = java.security.SecureRandom.getInstance("SHA1PRNG").nextLong();
-	    } catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing SecureRandom.nextLong() - TestCase");
-			throw new ServletException(e);
-	    }		
-		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextLong() executed");
+			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			int count = statement.executeUpdate( sql, new int[] {1,2} );
+            org.owasp.benchmark.helpers.DatabaseHelper.outputUpdateComplete(sql, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
+	}  // end doPost
+	
+	private static String doSomething(String param) throws ServletException, IOException {
+
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map53517 = new java.util.HashMap<String,Object>();
+		map53517.put("keyA-53517", "a_Value"); // put some stuff in the collection
+		map53517.put("keyB-53517", param); // put it in a collection
+		map53517.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map53517.get("keyB-53517"); // get it back out
+		bar = (String)map53517.get("keyA-53517"); // get safe value back out
+	
+		return bar;	
 	}
 }

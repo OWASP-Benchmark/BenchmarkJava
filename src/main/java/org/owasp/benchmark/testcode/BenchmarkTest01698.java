@@ -1,18 +1,18 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
-* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
 */
 
@@ -38,36 +38,42 @@ public class BenchmarkTest01698 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
 	
-		String param = "";
-		java.util.Enumeration<String> headerNames = request.getHeaderNames();
-		if (headerNames.hasMoreElements()) {
-			param = headerNames.nextElement(); // just grab first element
+		String queryString = request.getQueryString();
+		String paramval = "vector"+"=";
+		int paramLoc = queryString.indexOf(paramval);
+		if (paramLoc == -1) {
+			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "vector" + "' in query string.");
+			return;
 		}
-		
-		
-		// Chain a bunch of propagators in sequence
-		String a64975 = param; //assign
-		StringBuilder b64975 = new StringBuilder(a64975);  // stick in stringbuilder
-		b64975.append(" SafeStuff"); // append some safe content
-		b64975.replace(b64975.length()-"Chars".length(),b64975.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map64975 = new java.util.HashMap<String,Object>();
-		map64975.put("key64975", b64975.toString()); // put in a collection
-		String c64975 = (String)map64975.get("key64975"); // get it back out
-		String d64975 = c64975.substring(0,c64975.length()-1); // extract most of it
-		String e64975 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d64975.getBytes() ) )); // B64 encode and decode it
-		String f64975 = e64975.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f64975); // reflection
-		
-		
-		try {
-			java.io.FileInputStream fis = new java.io.FileInputStream(org.owasp.benchmark.helpers.Utils.testfileDir + bar);
-		} catch (Exception e) {
-			// OK to swallow any exception
-            // TODO: Fix this.
-			System.out.println("File exception caught and swallowed: " + e.getMessage());
+		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "vector" param is last parameter in query string.
+		int ampersandLoc = queryString.indexOf("&", paramLoc);
+		if (ampersandLoc != -1) {
+			param = queryString.substring(paramLoc + paramval.length(), ampersandLoc);
 		}
-	}
-}
+		param = java.net.URLDecoder.decode(param, "UTF-8");
+
+		String bar = new Test().doSomething(param);
+		
+		Object[] obj = { "a", "b" };
+		response.getWriter().format(java.util.Locale.US,bar,obj);
+	}  // end doPost
+
+    private class Test {
+
+        public String doSomething(String param) throws ServletException, IOException {
+
+		String bar;
+		
+		// Simple ? condition that assigns constant to bar on true condition
+		int num = 106;
+		
+		bar = (7*18) + num > 200 ? "This_should_always_happen" : param;
+		
+
+            return bar;
+        }
+    } // end innerclass Test
+
+} // end DataflowThruInnerClass

@@ -1,5 +1,5 @@
 <test-metadata>
-  <wbe-version>1.1</wbe-version>
+  <benchmark-version>1.2beta</benchmark-version>
   <category>pathtraver</category>
   <test-number>01675</test-number>
   <vulnerability>true</vulnerability>

@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,53 +38,69 @@ public class BenchmarkTest01906 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
+
+		javax.servlet.http.Cookie[] theCookies = request.getCookies();
+		
+		String param = null;
+		boolean foundit = false;
+		if (theCookies != null) {
+			for (javax.servlet.http.Cookie theCookie : theCookies) {
+				if (theCookie.getName().equals("vector")) {
+					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
+					foundit = true;
+				}
+			}
+			if (!foundit) {
+				// no cookie found in collection
+				param = "";
+			}
+		} else {
+			// no cookies
+			param = "";
+		}
+
+		String bar = doSomething(param);
+		
+		byte[] input = new byte[1000];
+		String str = "?";
+		Object inputParam = param;
+		if (inputParam instanceof String) str = ((String) inputParam);
+		if (inputParam instanceof java.io.InputStream) {
+			int i = ((java.io.InputStream) inputParam).read(input);
+			if (i == -1) {
+				response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+				return;
+			}			
+			str = new String(input, 0, i);
+		}
+		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie", str);
+		
+		cookie.setSecure(true);
+		
+		response.addCookie(cookie);
+
+		response.getWriter().println("Created cookie: SomeCookie: with value: '"
+		  + org.owasp.esapi.ESAPI.encoder().encodeForHTML(str) + "' and secure flag set to: true");
+	}  // end doPost
 	
-		String param = "";
-		java.util.Enumeration<String> headerNames = request.getHeaderNames();
-		if (headerNames.hasMoreElements()) {
-			param = headerNames.nextElement(); // just grab first element
-		}
-		
-		
+	private static String doSomething(String param) throws ServletException, IOException {
+
 		// Chain a bunch of propagators in sequence
-		String a75175 = param; //assign
-		StringBuilder b75175 = new StringBuilder(a75175);  // stick in stringbuilder
-		b75175.append(" SafeStuff"); // append some safe content
-		b75175.replace(b75175.length()-"Chars".length(),b75175.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map75175 = new java.util.HashMap<String,Object>();
-		map75175.put("key75175", b75175.toString()); // put in a collection
-		String c75175 = (String)map75175.get("key75175"); // get it back out
-		String d75175 = c75175.substring(0,c75175.length()-1); // extract most of it
-		String e75175 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d75175.getBytes() ) )); // B64 encode and decode it
-		String f75175 = e75175.split(" ")[0]; // split it on a space
+		String a98519 = param; //assign
+		StringBuilder b98519 = new StringBuilder(a98519);  // stick in stringbuilder
+		b98519.append(" SafeStuff"); // append some safe content
+		b98519.replace(b98519.length()-"Chars".length(),b98519.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map98519 = new java.util.HashMap<String,Object>();
+		map98519.put("key98519", b98519.toString()); // put in a collection
+		String c98519 = (String)map98519.get("key98519"); // get it back out
+		String d98519 = c98519.substring(0,c98519.length()-1); // extract most of it
+		String e98519 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d98519.getBytes() ) )); // B64 encode and decode it
+		String f98519 = e98519.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g75175 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g75175); // reflection
-		
-		
-		String a1 = "";
-		String a2 = "";
-		String osName = System.getProperty("os.name");
-        if (osName.indexOf("Windows") != -1) {
-        	a1 = "cmd.exe";
-        	a2 = "/c";
-        } else {
-        	a1 = "sh";
-        	a2 = "-c";
-        }
-        String[] args = {a1, a2, "echo", bar};
-
-		ProcessBuilder pb = new ProcessBuilder();
-
-		pb.command(args);
-		
-		try {
-			Process p = pb.start();
-			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - java.lang.ProcessBuilder(java.util.List) Test Case");
-            throw new ServletException(e);
-		}
+		String bar = thing.doSomething(f98519); // reflection
+	
+		return bar;	
 	}
 }

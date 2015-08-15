@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>AST Benchmark Crawler</title>
+</head>
+<body onload="crawl()">
+</body>
+<script>
+	function crawl() {
+		//Start @ Index.html
+		var URI = 'Index.html';
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', encodeURI(URI));
+		xhr.onload = function() {
+			if (xhr.status === 200) {
+				var parser = new DOMParser();
+				var doc = parser.parseFromString(xhr.responseText, "text/html");
+				var links = doc.links.length;
+                links = docCrawl(doc);
+			} else {
+				alert('Request failed.  Returned status of ' + xhr.status);
+			}
+		};
+		xhr.send();
+	}
+
+    function docCrawl(doc) {
+		if(doc.links.length > 0){
+			//Launch requests for every link, Keep Crawling
+			for (i = 0; i < doc.links.length; i++) {
+				console.log("Keep crawling: " + doc.links[i].href);
+				doGet(doc.links[i].href);
+			}
+		}else{
+			//End of the crawl, we reached a TC
+			//console.log("Found a Test Case: " + document.title);
+            var x = doc.forms.length;
+            if (x == 1) {
+                if (doc.forms[0].method == "post") {
+                    var params = serializeForm(doc.forms[0]);
+                    //console.log("Calling POST with parameters: " + params);
+                    doPost(doc.forms[0].action, params);
+			}
+		  }    
+		}
+	}
+    
+	function doGet(URI) {
+		var xhr = new XMLHttpRequest();
+		var doc;
+		xhr.open('GET', encodeURI(URI));
+		xhr.onload = function() {
+			if (xhr.status === 200) {
+				var parser = new DOMParser();
+				doc = parser.parseFromString(xhr.responseText, "text/html");
+				//console.log("Doing GET for URI: " + URI + " \n it has: " + doc.links.length + " links in response.");
+				docCrawl(doc);
+			} else {
+				alert('Request failed.  Returned status of ' + xhr.status);
+			}
+		};
+		xhr.send();
+	}
+
+	function doPost(URI, params) {
+		var xhr = new XMLHttpRequest();
+		xhr.open('POST', encodeURI(URI));
+		xhr.setRequestHeader('Content-Type',
+				'application/x-www-form-urlencoded');
+		xhr.onload = function() {
+			if (xhr.status === 200) {
+				console.log("Test Case executed correctly.");
+			} else if (xhr.status !== 200) {
+				alert('Request failed.  Returned status of ' + xhr.status);
+			}
+		};
+		xhr.send(encodeURI(params));
+	}
+
+	function serializeForm(form) {
+		var elems = form.elements;
+		var serialized = [], i, len = elems.length, str = '';
+		for (i = 0; i < len; i += 1) {
+			var element = elems[i];
+			var type = element.type;
+			var name = element.name;
+			var value = element.value;
+
+			switch (type) {
+			case 'text':
+			case 'radio':
+			case 'checkbox':
+			case 'textarea':
+			case 'select-one':
+			case 'hidden':
+				str = name + '=' + value;
+				serialized.push(str);
+				break;
+			default:
+				break;
+			}
+		}
+		return serialized.join('&');
+	}
+</script>
+
+</html>

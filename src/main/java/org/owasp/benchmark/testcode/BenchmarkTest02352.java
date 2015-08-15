@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,24 +38,81 @@ public class BenchmarkTest02352 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	
+		response.setContentType("text/html");
+
 		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("foo");
-		if (headers.hasMoreElements()) {
-			param = headers.nextElement(); // just grab first element
+		boolean flag = true;
+		java.util.Enumeration<String> names = request.getParameterNames();
+		while (names.hasMoreElements() && flag) {
+			String name = (String) names.nextElement();		    	
+			String[] values = request.getParameterValues(name);
+			if (values != null) {
+				for(int i=0;i<values.length && flag; i++){
+					String value = values[i];
+					if (value.equals("vector")) {
+						param = name;
+					    flag = false;
+					}
+				}
+			}
 		}
+
+		String bar = doSomething(param);
 		
-		
-		String bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
-		
-		
+		java.security.Provider[] provider = java.security.Security.getProviders();
+		java.security.MessageDigest md;
+
 		try {
-			javax.naming.directory.InitialDirContext idc = org.owasp.benchmark.helpers.Utils.getInitialDirContext();
-			Object[] filterArgs = {"a","b"};
-			idc.search("name", bar, filterArgs, new javax.naming.directory.SearchControls());
-		} catch (javax.naming.NamingException e) {
-			throw new ServletException(e);
+			if (provider.length > 1) {
+
+				md = java.security.MessageDigest.getInstance("SHA1", provider[0]);
+			} else {
+				md = java.security.MessageDigest.getInstance("SHA1", "SUN");
+			}
+			byte[] input = { (byte)'?' };
+			Object inputParam = bar;
+			if (inputParam instanceof String) input = ((String) inputParam).getBytes();
+			if (inputParam instanceof java.io.InputStream) {
+				byte[] strInput = new byte[1000];
+				int i = ((java.io.InputStream) inputParam).read(strInput);
+				if (i == -1) {
+					response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+					return;
+				}
+				input = java.util.Arrays.copyOf(strInput, i);
+			}
+			md.update(input);
+			
+			byte[] result = md.digest();
+			java.io.File fileTarget = new java.io.File(
+					new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),"passwordFile.txt");
+			java.io.FileWriter fw = new java.io.FileWriter(fileTarget,true); //the true will append the new data
+			    fw.write("hash_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
+			fw.close();
+			response.getWriter().println("Sensitive value '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' hashed and stored<br/>");
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider)");
+            throw new ServletException(e);
+		} catch (java.security.NoSuchProviderException e) {
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider)");
+            throw new ServletException(e);
 		}
+
+		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider) executed");
+	}  // end doPost
+	
+	private static String doSomething(String param) throws ServletException, IOException {
+
+		java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+		valuesList.add("safe");
+		valuesList.add( param );
+		valuesList.add( "moresafe" );
+		
+		valuesList.remove(0); // remove the 1st safe value
+		
+		String bar = valuesList.get(1); // get the last 'safe' value
+		
+	
+		return bar;	
 	}
 }

@@ -1,18 +1,18 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
-* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
 */
 
@@ -38,15 +38,41 @@ public class BenchmarkTest01208 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
 	
-		String param = request.getHeader("foo");
+		String param = "";
+		java.util.Enumeration<String> headers = request.getHeaders("vector");
+		if (headers.hasMoreElements()) {
+			param = headers.nextElement(); // just grab first element
+		}
+
+		String bar = new Test().doSomething(param);
 		
-		
-		StringBuilder sbxyz85930 = new StringBuilder(param);
-		String bar = sbxyz85930.append("_SafeStuff").toString();
-		
-		
-		Object[] obj = { "a", bar};
-		response.getWriter().println(obj);
-	}
-}
+		response.getWriter().write(bar.toCharArray());
+	}  // end doPost
+
+    private class Test {
+
+        public String doSomething(String param) throws ServletException, IOException {
+
+		// Chain a bunch of propagators in sequence
+		String a91558 = param; //assign
+		StringBuilder b91558 = new StringBuilder(a91558);  // stick in stringbuilder
+		b91558.append(" SafeStuff"); // append some safe content
+		b91558.replace(b91558.length()-"Chars".length(),b91558.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map91558 = new java.util.HashMap<String,Object>();
+		map91558.put("key91558", b91558.toString()); // put in a collection
+		String c91558 = (String)map91558.get("key91558"); // get it back out
+		String d91558 = c91558.substring(0,c91558.length()-1); // extract most of it
+		String e91558 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d91558.getBytes() ) )); // B64 encode and decode it
+		String f91558 = e91558.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String g91558 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g91558); // reflection
+
+            return bar;
+        }
+    } // end innerclass Test
+
+} // end DataflowThruInnerClass

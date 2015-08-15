@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,32 +38,33 @@ public class BenchmarkTest02790 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	
-		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("foo");
-		if (headers.hasMoreElements()) {
-			param = headers.nextElement(); // just grab first element
-		}
+		response.setContentType("text/html");
+
+		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
+		String param = scr.getTheValue("vector");
+
+		String bar = doSomething(param);
 		
-		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map80502 = new java.util.HashMap<String,Object>();
-		map80502.put("keyA-80502", "a_Value"); // put some stuff in the collection
-		map80502.put("keyB-80502", param.toString()); // put it in a collection
-		map80502.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map80502.get("keyB-80502"); // get it back out
-		bar = (String)map80502.get("keyA-80502"); // get safe value back out
-		
-		
-		String sql = "SELECT * from USERS where USERNAME=? and PASSWORD='"+ bar +"'";
+		String sql = "INSERT INTO users (username, password) VALUES ('foo','"+ bar + "')";
 				
 		try {
-			java.sql.Connection connection = org.owasp.benchmark.helpers.DatabaseHelper.getSqlConnection();
-			java.sql.PreparedStatement statement = connection.prepareStatement( sql );
-			statement.setString(1, "foo");
-			statement.execute();
+			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			int count = statement.executeUpdate( sql, new int[] {1,2} );
+            org.owasp.benchmark.helpers.DatabaseHelper.outputUpdateComplete(sql, response);
 		} catch (java.sql.SQLException e) {
-			throw new ServletException(e);
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
 		}
+	}  // end doPost
+	
+	private static String doSomething(String param) throws ServletException, IOException {
+
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(param);
+	
+		return bar;	
 	}
 }

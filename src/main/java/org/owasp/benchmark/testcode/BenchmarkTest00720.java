@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,58 +38,49 @@ public class BenchmarkTest00720 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
 	
-		javax.servlet.http.Cookie[] cookies = request.getCookies();
-		
-		String param = null;
-		boolean foundit = false;
-		if (cookies != null) {
-			for (javax.servlet.http.Cookie cookie : cookies) {
-				if (cookie.getName().equals("foo")) {
-					param = cookie.getValue();
-					foundit = true;
-				}
-			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
-		}
+		String[] values = request.getParameterValues("vector");
+		String param;
+		if (values != null && values.length > 0)
+		  param = values[0];
+		else param = "";
 		
 		
-		String bar;
+		java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+		valuesList.add("safe");
+		valuesList.add( param );
+		valuesList.add( "moresafe" );
 		
-		// Simple if statement that assigns constant to bar on true condition
-		int i = 86;
-		if ( (7*42) - i > 200 )
-		   bar = "This_should_always_happen"; 
-		else bar = param;
+		valuesList.remove(0); // remove the 1st safe value
+		
+		String bar = valuesList.get(0); // get the param value
 		
 		
-	
-		String a1 = "";
-		String a2 = "";
-		String osName = System.getProperty("os.name");
-        if (osName.indexOf("Windows") != -1) {
-        	a1 = "cmd.exe";
-        	a2 = "/c";
-        } else {
-        	a1 = "sh";
-        	a2 = "-c";
-        }
-        String[] args = {a1, a2, "echo", bar};
+		
+		String fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
+        java.io.InputStream is = null;
         
-		Runtime r = Runtime.getRuntime();
-
-		try {
-			Process p = r.exec(args);
-			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - TestCase");
-            throw new ServletException(e);
-		}
+		try {	
+			java.nio.file.Path path = java.nio.file.Paths.get(fileName);
+			is = java.nio.file.Files.newInputStream(path, java.nio.file.StandardOpenOption.READ);
+			byte[] b = new byte[1000];
+			int size = is.read(b);
+			response.getWriter().write("The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n");
+			response.getWriter().write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size)));
+			is.close();
+		} catch (Exception e) {
+            System.out.println("Couldn't open InputStream on file: '" + fileName + "'");
+			response.getWriter().write("Problem getting InputStream: " + e.getMessage());
+        } finally {
+			if (is != null) {
+                try {
+                    is.close();
+                    is = null;
+                } catch (Exception e) {
+                    // we tried...
+                }
+            }
+        }
 	}
 }

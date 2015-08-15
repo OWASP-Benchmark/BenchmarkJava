@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,49 +38,51 @@ public class BenchmarkTest00350 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
 	
-		javax.servlet.http.Cookie[] cookies = request.getCookies();
-		
-		String param = null;
-		boolean foundit = false;
-		if (cookies != null) {
-			for (javax.servlet.http.Cookie cookie : cookies) {
-				if (cookie.getName().equals("foo")) {
-					param = cookie.getValue();
-					foundit = true;
-				}
-			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
+		String param = "";
+		java.util.Enumeration<String> headers = request.getHeaders("vector");
+		if (headers.hasMoreElements()) {
+			param = headers.nextElement(); // just grab first element
 		}
 		
 		
 		String bar;
+		String guess = "ABC";
+		char switchTarget = guess.charAt(1); // condition 'B', which is safe
 		
-		// Simple if statement that assigns constant to bar on true condition
-		int i = 86;
-		if ( (7*42) - i > 200 )
-		   bar = "This_should_always_happen"; 
-		else bar = param;
-		
-		
-		java.security.Provider[] provider = java.security.Security.getProviders();
-		javax.crypto.Cipher c;
-
-		try {
-			c = javax.crypto.Cipher.getInstance("AES/CBC/PKCS5PADDING", java.security.Security.getProvider("SunJCE"));
-		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			throw new ServletException(e);
-		} catch (javax.crypto.NoSuchPaddingException e) {
-			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			throw new ServletException(e);
+		// Simple case statement that assigns param to bar on conditions 'A', 'C', or 'D'
+		switch (switchTarget) {
+		  case 'A':
+		        bar = param;
+		        break;
+		  case 'B': 
+		        bar = "bob";
+		        break;
+		  case 'C':
+		  case 'D':        
+		        bar = param;
+		        break;
+		  default:
+		        bar = "bob's your uncle";
+		        break;
 		}
-		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) executed");
+		
+		
+		String sql = "SELECT * from USERS where USERNAME=? and PASSWORD='"+ bar +"'";
+				
+		try {
+			java.sql.Connection connection = org.owasp.benchmark.helpers.DatabaseHelper.getSqlConnection();
+			java.sql.PreparedStatement statement = connection.prepareStatement( sql, new int[] { 1, 2 } );
+			statement.setString(1, "foo");
+			statement.execute();
+            org.owasp.benchmark.helpers.DatabaseHelper.printResults(statement, sql, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}
 }

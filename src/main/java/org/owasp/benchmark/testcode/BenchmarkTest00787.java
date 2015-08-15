@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,51 +38,36 @@ public class BenchmarkTest00787 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
 	
-		javax.servlet.http.Cookie[] cookies = request.getCookies();
-		
-		String param = null;
-		boolean foundit = false;
-		if (cookies != null) {
-			for (javax.servlet.http.Cookie cookie : cookies) {
-				if (cookie.getName().equals("foo")) {
-					param = cookie.getValue();
-					foundit = true;
-				}
-			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
-		}
+		String[] values = request.getParameterValues("vector");
+		String param;
+		if (values != null && values.length > 0)
+		  param = values[0];
+		else param = "";
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a71237 = param; //assign
-		StringBuilder b71237 = new StringBuilder(a71237);  // stick in stringbuilder
-		b71237.append(" SafeStuff"); // append some safe content
-		b71237.replace(b71237.length()-"Chars".length(),b71237.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map71237 = new java.util.HashMap<String,Object>();
-		map71237.put("key71237", b71237.toString()); // put in a collection
-		String c71237 = (String)map71237.get("key71237"); // get it back out
-		String d71237 = c71237.substring(0,c71237.length()-1); // extract most of it
-		String e71237 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d71237.getBytes() ) )); // B64 encode and decode it
-		String f71237 = e71237.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f71237); // reflection
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map31147 = new java.util.HashMap<String,Object>();
+		map31147.put("keyA-31147", "a_Value"); // put some stuff in the collection
+		map31147.put("keyB-31147", param); // put it in a collection
+		map31147.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map31147.get("keyB-31147"); // get it back out
+		bar = (String)map31147.get("keyA-31147"); // get safe value back out
 		
 		
+		String sql = "INSERT INTO users (username, password) VALUES ('foo','"+ bar + "')";
+				
 		try {
-			double rand = java.security.SecureRandom.getInstance("SHA1PRNG").nextDouble();
-	    } catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing SecureRandom.nextDouble() - TestCase");
-			throw new ServletException(e);
-	    }
-		
-		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextDouble() executed");
+			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			int count = statement.executeUpdate( sql, java.sql.Statement.RETURN_GENERATED_KEYS );
+            org.owasp.benchmark.helpers.DatabaseHelper.outputUpdateComplete(sql, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}
 }

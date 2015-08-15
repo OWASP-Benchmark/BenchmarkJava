@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,32 +38,48 @@ public class BenchmarkTest02194 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	
-		String param = "";
-		java.util.Enumeration<String> headerNames = request.getHeaderNames();
-		if (headerNames.hasMoreElements()) {
-			param = headerNames.nextElement(); // just grab first element
-		}
+		response.setContentType("text/html");
+
+		String param = request.getParameter("vector");
+		if (param == null) param = "";
+
+		String bar = doSomething(param);
 		
+		java.util.List<String> argList = new java.util.ArrayList<String>();
 		
-		java.util.List<String> valuesList = new java.util.ArrayList<String>( );
-		valuesList.add("safe");
-		valuesList.add( param );
-		valuesList.add( "moresafe" );
+		String osName = System.getProperty("os.name");
+        if (osName.indexOf("Windows") != -1) {
+        	argList.add("cmd.exe");
+        	argList.add("/c");
+        } else {
+        	argList.add("sh");
+        	argList.add("-c");
+        }
+        argList.add("echo " + bar);
+
+		ProcessBuilder pb = new ProcessBuilder();
+
+		pb.command(argList);
 		
-		valuesList.remove(0); // remove the 1st safe value
-		
-		String bar = valuesList.get(1); // get the last 'safe' value
-		
-		
-		
-		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
-				
 		try {
-			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			java.sql.ResultSet rs = statement.executeQuery( sql );
-		} catch (java.sql.SQLException e) {
-			throw new ServletException(e);
+			Process p = pb.start();
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - java.lang.ProcessBuilder(java.util.List) Test Case");
+            throw new ServletException(e);
 		}
+	}  // end doPost
+	
+	private static String doSomething(String param) throws ServletException, IOException {
+
+		String bar;
+		
+		// Simple if statement that assigns param to bar on true condition
+		int num = 196;
+		if ( (500/42) + num > 200 )
+		   bar = param;
+		else bar = "This should never happen"; 
+	
+		return bar;	
 	}
 }

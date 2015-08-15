@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,44 +38,58 @@ public class BenchmarkTest02038 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	
-		String param = "";
-		java.util.Enumeration<String> headerNames = request.getHeaderNames();
-		if (headerNames.hasMoreElements()) {
-			param = headerNames.nextElement(); // just grab first element
-		}
-		
-		
-		// Chain a bunch of propagators in sequence
-		String a77700 = param; //assign
-		StringBuilder b77700 = new StringBuilder(a77700);  // stick in stringbuilder
-		b77700.append(" SafeStuff"); // append some safe content
-		b77700.replace(b77700.length()-"Chars".length(),b77700.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map77700 = new java.util.HashMap<String,Object>();
-		map77700.put("key77700", b77700.toString()); // put in a collection
-		String c77700 = (String)map77700.get("key77700"); // get it back out
-		String d77700 = c77700.substring(0,c77700.length()-1); // extract most of it
-		String e77700 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d77700.getBytes() ) )); // B64 encode and decode it
-		String f77700 = e77700.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g77700 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g77700); // reflection
-		
-		
-        try {
-	    	java.util.Random numGen = java.security.SecureRandom.getInstance("SHA1PRNG");
-        	boolean randNumber = getNextNumber(numGen);
-        } catch (java.security.NoSuchAlgorithmException e) {
-            System.out.println("Problem executing SecureRandom.nextBoolean() - TestCase");
-            throw new ServletException(e);
-        }
+		response.setContentType("text/html");
 
-        response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextBoolean() executed");
-	}
+		String param = "";
+		boolean flag = true;
+		java.util.Enumeration<String> names = request.getHeaderNames();
+		while (names.hasMoreElements() && flag) {
+			String name = (String) names.nextElement();
+			java.util.Enumeration<String> values = request.getHeaders(name);
+			if (values != null) {
+				while (values.hasMoreElements() && flag) {
+					String value = (String) values.nextElement();
+					if (value.equals("vector")) {
+						param = name;
+						flag = false;
+					}
+				}
+			}
+		}
+
+		String bar = doSomething(param);
+		
+		// FILE URIs are tricky because they are different between Mac and Windows because of lack of standardization.
+		// Mac requires an extra slash for some reason.
+		String startURIslashes = "";
+        if (System.getProperty("os.name").indexOf("Windows") != -1)
+	        if (System.getProperty("os.name").indexOf("Windows") != -1)
+	        	startURIslashes = "/";
+	        else startURIslashes = "//";
+
+		try {
+			java.net.URI fileURI = new java.net.URI("file", null, startURIslashes 
+				+ org.owasp.benchmark.helpers.Utils.testfileDir.replace('\\', java.io.File.separatorChar).replace(' ', '_') + bar, null, null);
+			java.io.File fileTarget = new java.io.File(fileURI);
+            response.getWriter().write("Access to file: '" + fileTarget + "' created." );
+            if (fileTarget.exists()) {
+            response.getWriter().write(" And file already exists.");
+            } else { response.getWriter().write(" But file doesn't exist yet."); }
+		} catch (java.net.URISyntaxException e) {
+			throw new ServletException(e);
+		}
+	}  // end doPost
 	
-	boolean getNextNumber(java.util.Random generator) {
-		return generator.nextBoolean();
+	private static String doSomething(String param) throws ServletException, IOException {
+
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map65603 = new java.util.HashMap<String,Object>();
+		map65603.put("keyA-65603", "a_Value"); // put some stuff in the collection
+		map65603.put("keyB-65603", param); // put it in a collection
+		map65603.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map65603.get("keyB-65603"); // get it back out
+		bar = (String)map65603.get("keyA-65603"); // get safe value back out
 	
+		return bar;	
 	}
 }

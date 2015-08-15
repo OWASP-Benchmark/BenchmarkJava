@@ -1,18 +1,18 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
-* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
 */
 
@@ -38,33 +38,61 @@ public class BenchmarkTest01038 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
 	
-		String param = request.getHeader("foo");
+		javax.servlet.http.Cookie[] theCookies = request.getCookies();
 		
-		
-		// Chain a bunch of propagators in sequence
-		String a81974 = param; //assign
-		StringBuilder b81974 = new StringBuilder(a81974);  // stick in stringbuilder
-		b81974.append(" SafeStuff"); // append some safe content
-		b81974.replace(b81974.length()-"Chars".length(),b81974.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map81974 = new java.util.HashMap<String,Object>();
-		map81974.put("key81974", b81974.toString()); // put in a collection
-		String c81974 = (String)map81974.get("key81974"); // get it back out
-		String d81974 = c81974.substring(0,c81974.length()-1); // extract most of it
-		String e81974 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d81974.getBytes() ) )); // B64 encode and decode it
-		String f81974 = e81974.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g81974 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g81974); // reflection
-		
-		
-		try {
-			java.io.FileInputStream fis = new java.io.FileInputStream(org.owasp.benchmark.helpers.Utils.testfileDir + bar);
-		} catch (Exception e) {
-			// OK to swallow any exception
-            // TODO: Fix this.
-			System.out.println("File exception caught and swallowed: " + e.getMessage());
+		String param = null;
+		boolean foundit = false;
+		if (theCookies != null) {
+			for (javax.servlet.http.Cookie theCookie : theCookies) {
+				if (theCookie.getName().equals("vector")) {
+					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
+					foundit = true;
+				}
+			}
+			if (!foundit) {
+				// no cookie found in collection
+				param = "";
+			}
+		} else {
+			// no cookies
+			param = "";
 		}
-	}
-}
+
+		String bar = new Test().doSomething(param);
+		
+		String sql = "SELECT * from USERS where USERNAME=? and PASSWORD='"+ bar +"'";
+				
+		try {
+			java.sql.Connection connection = org.owasp.benchmark.helpers.DatabaseHelper.getSqlConnection();
+			java.sql.PreparedStatement statement = connection.prepareStatement( sql, new String[] {"Column1","Column2"} );
+			statement.setString(1, "foo");
+			statement.execute();
+            org.owasp.benchmark.helpers.DatabaseHelper.printResults(statement, sql, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
+	}  // end doPost
+
+    private class Test {
+
+        public String doSomething(String param) throws ServletException, IOException {
+
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map58559 = new java.util.HashMap<String,Object>();
+		map58559.put("keyA-58559", "a_Value"); // put some stuff in the collection
+		map58559.put("keyB-58559", param); // put it in a collection
+		map58559.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map58559.get("keyB-58559"); // get it back out
+		bar = (String)map58559.get("keyA-58559"); // get safe value back out
+
+            return bar;
+        }
+    } // end innerclass Test
+
+} // end DataflowThruInnerClass

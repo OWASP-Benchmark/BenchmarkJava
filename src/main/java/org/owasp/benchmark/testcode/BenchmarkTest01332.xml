@@ -1,7 +1,7 @@
 <test-metadata>
-  <wbe-version>1.1</wbe-version>
-  <category>cmdi</category>
+  <benchmark-version>1.2beta</benchmark-version>
+  <category>sqli</category>
   <test-number>01332</test-number>
   <vulnerability>true</vulnerability>
-  <cwe>78</cwe>
+  <cwe>89</cwe>
 </test-metadata>

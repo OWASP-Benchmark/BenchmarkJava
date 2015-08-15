@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,48 +38,22 @@ public class BenchmarkTest00740 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
 	
-		javax.servlet.http.Cookie[] cookies = request.getCookies();
+		String[] values = request.getParameterValues("vector");
+		String param;
+		if (values != null && values.length > 0)
+		  param = values[0];
+		else param = "";
 		
-		String param = null;
-		boolean foundit = false;
-		if (cookies != null) {
-			for (javax.servlet.http.Cookie cookie : cookies) {
-				if (cookie.getName().equals("foo")) {
-					param = cookie.getValue();
-					foundit = true;
-				}
-			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
+		
+		String bar = param;
+		if (param != null && param.length() > 1) {
+		    StringBuilder sbxyz24746 = new StringBuilder(param);
+		    bar = sbxyz24746.replace(param.length()-"Z".length(), param.length(),"Z").toString();
 		}
 		
 		
-		String bar;
-		
-		// Simple if statement that assigns constant to bar on true condition
-		int i = 86;
-		if ( (7*42) - i > 200 )
-		   bar = "This_should_always_happen"; 
-		else bar = param;
-		
-		
-		String cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("echo") + bar;
-        
-		String[] argsEnv = { "Foo=bar" };
-		Runtime r = Runtime.getRuntime();
-
-		try {
-			Process p = r.exec(cmd, argsEnv, new java.io.File(System.getProperty("user.dir")));
-			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - TestCase");
-            throw new ServletException(e);
-		}
+		response.getWriter().println(bar);
 	}
 }

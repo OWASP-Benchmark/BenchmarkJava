@@ -1,18 +1,18 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
-* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
 */
 
@@ -38,20 +38,68 @@ public class BenchmarkTest00243 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// some code
-
-		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheParameter("foo");
-
+		response.setContentType("text/html");
+	
+		String param = "";
+		boolean flag = true;
+		java.util.Enumeration<String> names = request.getHeaderNames();
+		while (names.hasMoreElements() && flag) {
+			String name = (String) names.nextElement();
+			java.util.Enumeration<String> values = request.getHeaders(name);
+			if (values != null) {
+				while (values.hasMoreElements() && flag) {
+					String value = (String) values.nextElement();
+					if (value.equals("vector")) {
+						param = name;
+						flag = false;
+					}
+				}
+			}
+		}
 		
-		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ param +"'";
-				
+		
+		String bar;
+		String guess = "ABC";
+		char switchTarget = guess.charAt(2);
+		
+		// Simple case statement that assigns param to bar on conditions 'A', 'C', or 'D'
+		switch (switchTarget) {
+		  case 'A':
+		        bar = param;
+		        break;
+		  case 'B': 
+		        bar = "bobs_your_uncle";
+		        break;
+		  case 'C':
+		  case 'D':        
+		        bar = param;
+		        break;
+		  default:
+		        bar = "bobs_your_uncle";
+		        break;
+		}
+		
+		
+		String fileName = null;
+		java.io.FileOutputStream fos = null;
+
 		try {
-			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			statement.addBatch( sql );
-			int[] counts = statement.executeBatch();
-		} catch (java.sql.SQLException e) {
-			throw new ServletException(e);
+			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
+	
+			fos = new java.io.FileOutputStream(fileName);
+	        response.getWriter().write("Now ready to write to file: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName));
+   		} catch (Exception e) {
+			System.out.println("Couldn't open FileOutputStream on file: '" + fileName + "'");
+//			System.out.println("File exception caught and swallowed: " + e.getMessage());
+		} finally {
+			if (fos != null) {
+				try {
+					fos.close();
+                    fos = null;
+				} catch (Exception e) {
+					// we tried...
+				}
+			}
 		}
 	}
 }

@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,52 +38,64 @@ public class BenchmarkTest00934 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
 	
-		javax.servlet.http.Cookie[] cookies = request.getCookies();
+		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
+		String param = scr.getTheValue("vector");
 		
-		String param = null;
-		boolean foundit = false;
-		if (cookies != null) {
-			for (javax.servlet.http.Cookie cookie : cookies) {
-				if (cookie.getName().equals("foo")) {
-					param = cookie.getValue();
-					foundit = true;
+		
+		String bar;
+		
+		// Simple ? condition that assigns constant to bar on true condition
+		int num = 106;
+		
+		bar = (7*18) + num > 200 ? "This_should_always_happen" : param;
+		
+		
+		
+	    try {
+		    java.security.SecureRandom secureRandomGenerator = java.security.SecureRandom.getInstance("SHA1PRNG");
+		
+		    // Get 40 random bytes
+		    byte[] randomBytes = new byte[40];
+		    secureRandomGenerator.nextBytes(randomBytes);
+		    
+	        String rememberMeKey = org.owasp.esapi.ESAPI.encoder().encodeForBase64(randomBytes, true);
+	
+			String user = "SafeByron";
+			String fullClassName = this.getClass().getName();
+			String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
+			user+= testCaseNumber;
+			
+			String cookieName = "rememberMe" + testCaseNumber;
+			
+			boolean foundUser = false;
+			javax.servlet.http.Cookie[] cookies = request.getCookies();
+			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
+				javax.servlet.http.Cookie cookie = cookies[i];
+				if (cookieName.equals(cookie.getName())) {
+					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+						foundUser = true;
+					}
 				}
 			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
+			
+			if (foundUser) {
+				response.getWriter().println("Welcome back: " + user + "<br/>");			
+			} else {			
+				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
+				rememberMe.setSecure(true);
+				request.getSession().setAttribute(cookieName, rememberMeKey);
+				response.addCookie(rememberMe);
+				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
+						+ " whose value is: " + rememberMe.getValue() + "<br/>");
 			}
-		} else {
-			// no cookies
-			param = "";
-		}
-		
-		
-		// Chain a bunch of propagators in sequence
-		String a48296 = param; //assign
-		StringBuilder b48296 = new StringBuilder(a48296);  // stick in stringbuilder
-		b48296.append(" SafeStuff"); // append some safe content
-		b48296.replace(b48296.length()-"Chars".length(),b48296.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map48296 = new java.util.HashMap<String,Object>();
-		map48296.put("key48296", b48296.toString()); // put in a collection
-		String c48296 = (String)map48296.get("key48296"); // get it back out
-		String d48296 = c48296.substring(0,c48296.length()-1); // extract most of it
-		String e48296 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d48296.getBytes() ) )); // B64 encode and decode it
-		String f48296 = e48296.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g48296 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g48296); // reflection
-		
-		
-		String sql = "UPDATE USERS SET PASSWORD='" + bar + "' WHERE USERNAME='foo'";
-				
-		try {
-			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			int count = statement.executeUpdate( sql );
-		} catch (java.sql.SQLException e) {
+				    
+	    } catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing SecureRandom.nextBytes() - TestCase");
 			throw new ServletException(e);
-		}
+	    } finally {
+			response.getWriter().println("Randomness Test java.security.SecureRandom.nextBytes(byte[]) executed");	    
+	    }
 	}
 }

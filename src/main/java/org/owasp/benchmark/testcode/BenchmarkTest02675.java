@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,49 +38,70 @@ public class BenchmarkTest02675 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	
-		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("foo");
-		if (headers.hasMoreElements()) {
-			param = headers.nextElement(); // just grab first element
+		response.setContentType("text/html");
+
+		String queryString = request.getQueryString();
+		String paramval = "vector"+"=";
+		int paramLoc = queryString.indexOf(paramval);
+		if (paramLoc == -1) {
+			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "vector" + "' in query string.");
+			return;
 		}
-		
-		
-		String bar;
-		String guess = "ABC";
-		char switchTarget = guess.charAt(1); // condition 'B', which is safe
-		
-		// Simple case statement that assigns param to bar on conditions 'A' or 'C'
-		switch (switchTarget) {
-		  case 'A':
-		        bar = param;
-		        break;
-		  case 'B': 
-		        bar = "bob";
-		        break;
-		  case 'C':
-		  case 'D':        
-		        bar = param;
-		        break;
-		  default:
-		        bar = "bob's your uncle";
-		        break;
+		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "vector" param is last parameter in query string.
+		int ampersandLoc = queryString.indexOf("&", paramLoc);
+		if (ampersandLoc != -1) {
+			param = queryString.substring(paramLoc + paramval.length(), ampersandLoc);
 		}
+		param = java.net.URLDecoder.decode(param, "UTF-8");
+
+		String bar = doSomething(param);
 		
-		
-	    try {
-		    java.security.SecureRandom secureRandomGenerator = java.security.SecureRandom.getInstance("SHA1PRNG");
-		
-		    // Get 40 random bytes
-		    byte[] randomBytes = new byte[40];
-		    secureRandomGenerator.nextBytes(randomBytes);
-			response.getWriter().println("Random bytes are: " + new String(randomBytes));
-				    
+		try {
+			double rand = java.security.SecureRandom.getInstance("SHA1PRNG").nextDouble();
+			
+			String rememberMeKey = Double.toString(rand).substring(2); // Trim off the 0. at the front.
+			
+			String user = "SafeDonna";
+			String fullClassName = this.getClass().getName();
+			String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
+			user+= testCaseNumber;
+			
+			String cookieName = "rememberMe" + testCaseNumber;
+			
+			boolean foundUser = false;
+			javax.servlet.http.Cookie[] cookies = request.getCookies();
+			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
+				javax.servlet.http.Cookie cookie = cookies[i];
+				if (cookieName.equals(cookie.getName())) {
+					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+						foundUser = true;
+					}
+				}
+			}
+			
+			if (foundUser) {
+				response.getWriter().println("Welcome back: " + user + "<br/>");			
+			} else {			
+				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
+				rememberMe.setSecure(true);
+				request.getSession().setAttribute(cookieName, rememberMeKey);
+				response.addCookie(rememberMe);
+				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
+						+ " whose value is: " + rememberMe.getValue() + "<br/>");
+			}
+
 	    } catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing SecureRandom.nextBytes() - TestCase");
+			System.out.println("Problem executing SecureRandom.nextDouble() - TestCase");
 			throw new ServletException(e);
-	    } finally {
-			response.getWriter().println("Randomness Test java.security.SecureRandom.nextBytes(byte[]) executed");	    
 	    }
+		
+		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextDouble() executed");
+	}  // end doPost
+	
+	private static String doSomething(String param) throws ServletException, IOException {
+
+		String bar = org.owasp.esapi.ESAPI.encoder().encodeForHTML(param);
+	
+		return bar;	
 	}
 }

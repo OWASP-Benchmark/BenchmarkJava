@@ -1,18 +1,18 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
-* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
 */
 
@@ -38,49 +38,34 @@ public class BenchmarkTest01781 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
 	
-		String param = "";
-		java.util.Enumeration<String> headerNames = request.getHeaderNames();
-		if (headerNames.hasMoreElements()) {
-			param = headerNames.nextElement(); // just grab first element
-		}
-		
-		
-		// Chain a bunch of propagators in sequence
-		String a42558 = param; //assign
-		StringBuilder b42558 = new StringBuilder(a42558);  // stick in stringbuilder
-		b42558.append(" SafeStuff"); // append some safe content
-		b42558.replace(b42558.length()-"Chars".length(),b42558.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map42558 = new java.util.HashMap<String,Object>();
-		map42558.put("key42558", b42558.toString()); // put in a collection
-		String c42558 = (String)map42558.get("key42558"); // get it back out
-		String d42558 = c42558.substring(0,c42558.length()-1); // extract most of it
-		String e42558 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d42558.getBytes() ) )); // B64 encode and decode it
-		String f42558 = e42558.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g42558 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g42558); // reflection
-		
-		
-		java.security.Provider[] provider = java.security.Security.getProviders();
-		java.security.MessageDigest md;
+		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
+		String param = scr.getTheValue("vector");
 
-		try {
-			if (provider.length > 1) {
+		String bar = new Test().doSomething(param);
+		
+		java.io.File fileTarget = new java.io.File(bar, "/Test.txt");
+		response.getWriter().write("Access to file: '" + fileTarget + "' created." );
+		if (fileTarget.exists()) {
+			response.getWriter().write(" And file already exists.");
+		} else { response.getWriter().write(" But file doesn't exist yet."); }
+	}  // end doPost
 
-				md = java.security.MessageDigest.getInstance("SHA1", provider[0]);
-			} else {
-				md = java.security.MessageDigest.getInstance("SHA1", "SUN");
-			}
-		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider)");
-            throw new ServletException(e);
-		} catch (java.security.NoSuchProviderException e) {
-			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider)");
-            throw new ServletException(e);
-		}
+    private class Test {
 
-		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider) executed");
-	}
-}
+        public String doSomething(String param) throws ServletException, IOException {
+
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map40358 = new java.util.HashMap<String,Object>();
+		map40358.put("keyA-40358", "a_Value"); // put some stuff in the collection
+		map40358.put("keyB-40358", param); // put it in a collection
+		map40358.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map40358.get("keyB-40358"); // get it back out
+		bar = (String)map40358.get("keyA-40358"); // get safe value back out
+
+            return bar;
+        }
+    } // end innerclass Test
+
+} // end DataflowThruInnerClass

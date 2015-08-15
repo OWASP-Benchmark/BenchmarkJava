@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,53 +38,50 @@ public class BenchmarkTest00884 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
 	
-		javax.servlet.http.Cookie[] cookies = request.getCookies();
+		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
+		String param = scr.getTheValue("vector");
 		
-		String param = null;
-		boolean foundit = false;
-		if (cookies != null) {
-			for (javax.servlet.http.Cookie cookie : cookies) {
-				if (cookie.getName().equals("foo")) {
-					param = cookie.getValue();
-					foundit = true;
+		
+		String bar;
+		
+		// Simple if statement that assigns constant to bar on true condition
+		int num = 86;
+		if ( (7*42) - num > 200 )
+		   bar = "This_should_always_happen"; 
+		else bar = param;
+		
+		
+		String fileName = null;
+		java.io.FileOutputStream fos = null;
+
+		try {
+			// Create the file first so the test won't throw an exception if it doesn't exist.
+			// Note: Don't actually do this because this method signature could cause a tool to find THIS file constructor 
+			// as a vuln, rather than the File signature we are trying to actually test.
+			// If necessary, just run the benchmark twice. The 1st run should create all the necessary files.
+			//new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir + bar).createNewFile();
+			
+			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
+	
+	
+	        java.io.FileInputStream fileInputStream = new java.io.FileInputStream(fileName);
+	        java.io.FileDescriptor fd = fileInputStream.getFD();
+	        fos = new java.io.FileOutputStream(fd);
+	        response.getWriter().write("Now ready to write to file: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName));
+		} catch (Exception e) {
+			System.out.println("Couldn't open FileOutputStream on file: '" + fileName + "'");
+//			System.out.println("File exception caught and swallowed: " + e.getMessage());
+		} finally {
+			if (fos != null) {
+				try {
+					fos.close();
+                    fos = null;
+				} catch (Exception e) {
+					// we tried...
 				}
 			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
-		}
-		
-		
-		// Chain a bunch of propagators in sequence
-		String a99908 = param; //assign
-		StringBuilder b99908 = new StringBuilder(a99908);  // stick in stringbuilder
-		b99908.append(" SafeStuff"); // append some safe content
-		b99908.replace(b99908.length()-"Chars".length(),b99908.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map99908 = new java.util.HashMap<String,Object>();
-		map99908.put("key99908", b99908.toString()); // put in a collection
-		String c99908 = (String)map99908.get("key99908"); // get it back out
-		String d99908 = c99908.substring(0,c99908.length()-1); // extract most of it
-		String e99908 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d99908.getBytes() ) )); // B64 encode and decode it
-		String f99908 = e99908.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g99908 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g99908); // reflection
-		
-		
-		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
-				
-		try {
-			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			statement.addBatch( sql );
-			int[] counts = statement.executeBatch();
-		} catch (java.sql.SQLException e) {
-			throw new ServletException(e);
 		}
 	}
 }

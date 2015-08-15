@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,41 +38,41 @@ public class BenchmarkTest02617 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	
-		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("foo");
-		if (headers.hasMoreElements()) {
-			param = headers.nextElement(); // just grab first element
-		}
-		
-		
-		// Chain a bunch of propagators in sequence
-		String a56976 = param; //assign
-		StringBuilder b56976 = new StringBuilder(a56976);  // stick in stringbuilder
-		b56976.append(" SafeStuff"); // append some safe content
-		b56976.replace(b56976.length()-"Chars".length(),b56976.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map56976 = new java.util.HashMap<String,Object>();
-		map56976.put("key56976", b56976.toString()); // put in a collection
-		String c56976 = (String)map56976.get("key56976"); // get it back out
-		String d56976 = c56976.substring(0,c56976.length()-1); // extract most of it
-		String e56976 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d56976.getBytes() ) )); // B64 encode and decode it
-		String f56976 = e56976.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g56976 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g56976); // reflection
-		
-		
-		String cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("echo");
-        
-		Runtime r = Runtime.getRuntime();
+		response.setContentType("text/html");
 
-		try {
-			Process p = r.exec(cmd + bar);
-			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - TestCase");
-            throw new ServletException(e);
+		String queryString = request.getQueryString();
+		String paramval = "vector"+"=";
+		int paramLoc = queryString.indexOf(paramval);
+		if (paramLoc == -1) {
+			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "vector" + "' in query string.");
+			return;
 		}
+		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "vector" param is last parameter in query string.
+		int ampersandLoc = queryString.indexOf("&", paramLoc);
+		if (ampersandLoc != -1) {
+			param = queryString.substring(paramLoc + paramval.length(), ampersandLoc);
+		}
+		param = java.net.URLDecoder.decode(param, "UTF-8");
+
+		String bar = doSomething(param);
+		
+		java.io.File fileTarget = new java.io.File(bar, "/Test.txt");
+		response.getWriter().write("Access to file: '" + fileTarget + "' created." );
+		if (fileTarget.exists()) {
+			response.getWriter().write(" And file already exists.");
+		} else { response.getWriter().write(" But file doesn't exist yet."); }
+	}  // end doPost
+	
+	private static String doSomething(String param) throws ServletException, IOException {
+
+		String bar;
+		
+		// Simple if statement that assigns param to bar on true condition
+		int num = 196;
+		if ( (500/42) + num > 200 )
+		   bar = param;
+		else bar = "This should never happen"; 
+	
+		return bar;	
 	}
 }

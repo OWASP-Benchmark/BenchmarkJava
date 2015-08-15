@@ -1,18 +1,18 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
-* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
 */
 
@@ -38,28 +38,47 @@ public class BenchmarkTest00191 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// some code
-
-		String param = "";
-		java.util.Enumeration<String> names = request.getParameterNames();
-		if (names.hasMoreElements()) {
-			param = names.nextElement(); // just grab first element
-		}
-
+		response.setContentType("text/html");
+	
+		String param = request.getHeader("vector");
+		if (param == null) param = "";
 		
-		try {
-			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("DES/CBC/PKCS5Padding", "SunJCE");
-		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.lang.String) Test Case");
-			throw new ServletException(e);
-		} catch (java.security.NoSuchProviderException e) {
-			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.lang.String) Test Case");
-			throw new ServletException(e);
-		} catch (javax.crypto.NoSuchPaddingException e) {
-			System.out.println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.lang.String) Test Case");
-			throw new ServletException(e);
+		
+		String bar = "";
+		if (param != null) {
+			bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    	new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
 		}
+		
+		
+		String cmd = "";	
+		String a1 = "";
+		String a2 = "";
+		String[] args = null;
+		String osName = System.getProperty("os.name");
+		
+		if (osName.indexOf("Windows") != -1) {
+        	a1 = "cmd.exe";
+        	a2 = "/c";
+        	cmd = "echo ";
+        	args = new String[]{a1, a2, cmd, bar};
+        } else {
+        	a1 = "sh";
+        	a2 = "-c";
+        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("ls");
+        	args = new String[]{a1, a2,cmd + bar};
+        }
+        
+        String[] argsEnv = { "foo=bar" };
+        
+		Runtime r = Runtime.getRuntime();
 
-		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String,java.lang.String) executed");
+		try {
+			Process p = r.exec(args, argsEnv, new java.io.File(System.getProperty("user.dir")));
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - TestCase");
+            throw new ServletException(e);
+		}
 	}
 }

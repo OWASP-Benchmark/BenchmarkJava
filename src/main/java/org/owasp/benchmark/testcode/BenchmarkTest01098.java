@@ -1,18 +1,18 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
-* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
 */
 
@@ -38,37 +38,43 @@ public class BenchmarkTest01098 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
 	
-		String param = request.getHeader("foo");
-		
-		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map84020 = new java.util.HashMap<String,Object>();
-		map84020.put("keyA-84020", "a_Value"); // put some stuff in the collection
-		map84020.put("keyB-84020", param.toString()); // put it in a collection
-		map84020.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map84020.get("keyB-84020"); // get it back out
-		bar = (String)map84020.get("keyA-84020"); // get safe value back out
-		
-		
-		java.security.Provider[] provider = java.security.Security.getProviders();
-		java.security.MessageDigest md;
+		String param = request.getHeader("vector");
+		if (param == null) param = "";
 
-		try {
-			if (provider.length > 1) {
+		String bar = new Test().doSomething(param);
+		
+		response.getWriter().write("Parameter value: " + bar);
+	}  // end doPost
 
-				md = java.security.MessageDigest.getInstance("sha-384", provider[0]);
-			} else {
-				md = java.security.MessageDigest.getInstance("sha-384","SUN");
-			}
-		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider)");
-            throw new ServletException(e);
-		} catch (java.security.NoSuchProviderException e) {
-			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider)");
-            throw new ServletException(e);
+    private class Test {
+
+        public String doSomething(String param) throws ServletException, IOException {
+
+		String bar;
+		String guess = "ABC";
+		char switchTarget = guess.charAt(2);
+		
+		// Simple case statement that assigns param to bar on conditions 'A', 'C', or 'D'
+		switch (switchTarget) {
+		  case 'A':
+		        bar = param;
+		        break;
+		  case 'B': 
+		        bar = "bobs_your_uncle";
+		        break;
+		  case 'C':
+		  case 'D':        
+		        bar = param;
+		        break;
+		  default:
+		        bar = "bobs_your_uncle";
+		        break;
 		}
 
-		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider) executed");
-	}
-}
+            return bar;
+        }
+    } // end innerclass Test
+
+} // end DataflowThruInnerClass

@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -39,34 +39,34 @@ public class BenchmarkTest00029 extends HttpServlet {
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// some code
-
-		javax.servlet.http.Cookie[] cookies = request.getCookies();
+		response.setContentType("text/html");
 		
-		String param = null;
-		boolean foundit = false;
-		if (cookies != null) {
-			for (javax.servlet.http.Cookie cookie : cookies) {
-				if (cookie.getName().equals("foo")) {
-					param = cookie.getValue();
-					foundit = true;
-				}
-			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
+
+		java.util.Map<String,String[]> map = request.getParameterMap();
+		String param = "";
+		if (!map.isEmpty()) {
+			param = map.get("vector")[0];
 		}
+		
 
 		
-		String sql = "UPDATE USERS SET PASSWORD='" + param + "' WHERE USERNAME='foo'";
-				
+		// FILE URIs are tricky because they are different between Mac and Windows because of lack of standardization.
+		// Mac requires an extra slash for some reason.
+		String startURIslashes = "";
+        if (System.getProperty("os.name").indexOf("Windows") != -1)
+	        if (System.getProperty("os.name").indexOf("Windows") != -1)
+	        	startURIslashes = "/";
+	        else startURIslashes = "//";
+
 		try {
-			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			int count = statement.executeUpdate( sql, java.sql.Statement.RETURN_GENERATED_KEYS );
-		} catch (java.sql.SQLException e) {
+			java.net.URI fileURI = new java.net.URI("file:" + startURIslashes 
+				+ org.owasp.benchmark.helpers.Utils.testfileDir.replace('\\', '/').replace(' ', '_') + param);
+			java.io.File fileTarget = new java.io.File(fileURI);
+			response.getWriter().write("Access to file: '" + fileTarget + "' created." );
+			if (fileTarget.exists()) {
+				response.getWriter().write(" And file already exists.");
+			} else { response.getWriter().write(" But file doesn't exist yet."); }
+		} catch (java.net.URISyntaxException e) {
 			throw new ServletException(e);
 		}
 	}

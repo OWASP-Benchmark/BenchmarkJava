@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,54 +38,27 @@ public class BenchmarkTest00485 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
 	
-		javax.servlet.http.Cookie[] cookies = request.getCookies();
-		
-		String param = null;
-		boolean foundit = false;
-		if (cookies != null) {
-			for (javax.servlet.http.Cookie cookie : cookies) {
-				if (cookie.getName().equals("foo")) {
-					param = cookie.getValue();
-					foundit = true;
-				}
-			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
+		java.util.Map<String,String[]> map = request.getParameterMap();
+		String param = "";
+		if (!map.isEmpty()) {
+			param = map.get("vector")[0];
 		}
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a32861 = param; //assign
-		StringBuilder b32861 = new StringBuilder(a32861);  // stick in stringbuilder
-		b32861.append(" SafeStuff"); // append some safe content
-		b32861.replace(b32861.length()-"Chars".length(),b32861.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map32861 = new java.util.HashMap<String,Object>();
-		map32861.put("key32861", b32861.toString()); // put in a collection
-		String c32861 = (String)map32861.get("key32861"); // get it back out
-		String d32861 = c32861.substring(0,c32861.length()-1); // extract most of it
-		String e32861 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d32861.getBytes() ) )); // B64 encode and decode it
-		String f32861 = e32861.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f32861); // reflection
+		
+		java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+		valuesList.add("safe");
+		valuesList.add( param );
+		valuesList.add( "moresafe" );
+		
+		valuesList.remove(0); // remove the 1st safe value
+		
+		String bar = valuesList.get(0); // get the param value
 		
 		
-		try {
-		    java.util.Properties Benchmarkprops = new java.util.Properties();
-		    Benchmarkprops.load(this.getClass().getClassLoader().getResourceAsStream("Benchmark.properties"));
-			String algorithm = Benchmarkprops.getProperty("hashAlg2", "SHA5");
-			java.security.MessageDigest md = java.security.MessageDigest.getInstance(algorithm);
-		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing hash - TestCase");
-			throw new ServletException(e);
-		}
 		
-		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String) executed");
+		response.getWriter().print(bar);
 	}
 }

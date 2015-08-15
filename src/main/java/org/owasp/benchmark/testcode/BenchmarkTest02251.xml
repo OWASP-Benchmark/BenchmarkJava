@@ -1,7 +1,7 @@
 <test-metadata>
-  <wbe-version>1.1</wbe-version>
+  <benchmark-version>1.2beta</benchmark-version>
   <category>crypto</category>
   <test-number>02251</test-number>
-  <vulnerability>false</vulnerability>
+  <vulnerability>true</vulnerability>
   <cwe>327</cwe>
 </test-metadata>

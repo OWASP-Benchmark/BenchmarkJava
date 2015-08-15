@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,42 +38,33 @@ public class BenchmarkTest00377 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
 	
-		javax.servlet.http.Cookie[] cookies = request.getCookies();
-		
-		String param = null;
-		boolean foundit = false;
-		if (cookies != null) {
-			for (javax.servlet.http.Cookie cookie : cookies) {
-				if (cookie.getName().equals("foo")) {
-					param = cookie.getValue();
-					foundit = true;
-				}
-			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
-		}
+		String param = request.getParameter("vector");
+		if (param == null) param = "";
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map43081 = new java.util.HashMap<String,Object>();
-		map43081.put("keyA-43081", "a Value"); // put some stuff in the collection
-		map43081.put("keyB-43081", param.toString()); // put it in a collection
-		map43081.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map43081.get("keyB-43081"); // get it back out
+		// Chain a bunch of propagators in sequence
+		String a13989 = param; //assign
+		StringBuilder b13989 = new StringBuilder(a13989);  // stick in stringbuilder
+		b13989.append(" SafeStuff"); // append some safe content
+		b13989.replace(b13989.length()-"Chars".length(),b13989.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map13989 = new java.util.HashMap<String,Object>();
+		map13989.put("key13989", b13989.toString()); // put in a collection
+		String c13989 = (String)map13989.get("key13989"); // get it back out
+		String d13989 = c13989.substring(0,c13989.length()-1); // extract most of it
+		String e13989 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d13989.getBytes() ) )); // B64 encode and decode it
+		String f13989 = e13989.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String g13989 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g13989); // reflection
 		
 		
-		try {
-			javax.naming.directory.DirContext dc = org.owasp.benchmark.helpers.Utils.getDirContext();
-			Object[] filterArgs = {"a","b"};
-			dc.search("name", bar, filterArgs, new javax.naming.directory.SearchControls());
-		} catch (javax.naming.NamingException e) {
-			throw new ServletException(e);
-		}
+		java.io.File fileTarget = new java.io.File(bar);
+		response.getWriter().write("Access to file: '" + fileTarget + "' created." );
+		if (fileTarget.exists()) {
+			response.getWriter().write(" And file already exists.");
+		} else { response.getWriter().write(" But file doesn't exist yet."); }
 	}
 }

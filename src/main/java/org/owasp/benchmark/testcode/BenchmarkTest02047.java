@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,27 +38,79 @@ public class BenchmarkTest02047 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	
+		response.setContentType("text/html");
+
 		String param = "";
-		java.util.Enumeration<String> headerNames = request.getHeaderNames();
-		if (headerNames.hasMoreElements()) {
-			param = headerNames.nextElement(); // just grab first element
+		boolean flag = true;
+		java.util.Enumeration<String> names = request.getHeaderNames();
+		while (names.hasMoreElements() && flag) {
+			String name = (String) names.nextElement();
+			java.util.Enumeration<String> values = request.getHeaders(name);
+			if (values != null) {
+				while (values.hasMoreElements() && flag) {
+					String value = (String) values.nextElement();
+					if (value.equals("vector")) {
+						param = name;
+						flag = false;
+					}
+				}
+			}
+		}
+
+		String bar = doSomething(param);
+		
+		try {
+		    java.util.Properties benchmarkprops = new java.util.Properties();
+		    benchmarkprops.load(this.getClass().getClassLoader().getResourceAsStream("benchmark.properties"));
+			String algorithm = benchmarkprops.getProperty("hashAlg2", "SHA5");
+			java.security.MessageDigest md = java.security.MessageDigest.getInstance(algorithm);
+			byte[] input = { (byte)'?' };
+			Object inputParam = bar;
+			if (inputParam instanceof String) input = ((String) inputParam).getBytes();
+			if (inputParam instanceof java.io.InputStream) {
+				byte[] strInput = new byte[1000];
+				int i = ((java.io.InputStream) inputParam).read(strInput);
+				if (i == -1) {
+					response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+					return;
+				}
+				input = java.util.Arrays.copyOf(strInput, i);
+			}			
+			md.update(input);
+			
+			byte[] result = md.digest();
+			java.io.File fileTarget = new java.io.File(
+					new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),"passwordFile.txt");
+			java.io.FileWriter fw = new java.io.FileWriter(fileTarget,true); //the true will append the new data
+			    fw.write("hash_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
+			fw.close();
+			response.getWriter().println("Sensitive value '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' hashed and stored<br/>");
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing hash - TestCase");
+			throw new ServletException(e);
 		}
 		
-		
-		String bar = org.springframework.web.util.HtmlUtils.htmlEscape(param);
-		
-		
-        try {
-	    	java.util.Random numGen = java.security.SecureRandom.getInstance("SHA1PRNG");
-        	boolean randNumber = numGen.nextBoolean();
-        } catch (java.security.NoSuchAlgorithmException e) {
-            System.out.println("Problem executing SecureRandom.nextBoolean() - TestCase");
-            throw new ServletException(e);
-        }
-
-        response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextBoolean() executed");
-
+		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String) executed");
+	}  // end doPost
 	
+	private static String doSomething(String param) throws ServletException, IOException {
+
+		// Chain a bunch of propagators in sequence
+		String a17578 = param; //assign
+		StringBuilder b17578 = new StringBuilder(a17578);  // stick in stringbuilder
+		b17578.append(" SafeStuff"); // append some safe content
+		b17578.replace(b17578.length()-"Chars".length(),b17578.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map17578 = new java.util.HashMap<String,Object>();
+		map17578.put("key17578", b17578.toString()); // put in a collection
+		String c17578 = (String)map17578.get("key17578"); // get it back out
+		String d17578 = c17578.substring(0,c17578.length()-1); // extract most of it
+		String e17578 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d17578.getBytes() ) )); // B64 encode and decode it
+		String f17578 = e17578.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String g17578 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g17578); // reflection
+	
+		return bar;	
 	}
 }

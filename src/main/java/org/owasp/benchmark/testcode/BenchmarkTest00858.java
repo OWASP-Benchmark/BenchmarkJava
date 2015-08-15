@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,54 +38,46 @@ public class BenchmarkTest00858 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
 	
-		javax.servlet.http.Cookie[] cookies = request.getCookies();
-		
-		String param = null;
-		boolean foundit = false;
-		if (cookies != null) {
-			for (javax.servlet.http.Cookie cookie : cookies) {
-				if (cookie.getName().equals("foo")) {
-					param = cookie.getValue();
-					foundit = true;
-				}
-			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
+		String queryString = request.getQueryString();
+		String paramval = "vector"+"=";
+		int paramLoc = queryString.indexOf(paramval);
+		if (paramLoc == -1) {
+			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "vector" + "' in query string.");
+			return;
 		}
+		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "vector" param is last parameter in query string.
+		int ampersandLoc = queryString.indexOf("&", paramLoc);
+		if (ampersandLoc != -1) {
+			param = queryString.substring(paramLoc + paramval.length(), ampersandLoc);
+		}
+		param = java.net.URLDecoder.decode(param, "UTF-8");
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a51993 = param; //assign
-		StringBuilder b51993 = new StringBuilder(a51993);  // stick in stringbuilder
-		b51993.append(" SafeStuff"); // append some safe content
-		b51993.replace(b51993.length()-"Chars".length(),b51993.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map51993 = new java.util.HashMap<String,Object>();
-		map51993.put("key51993", b51993.toString()); // put in a collection
-		String c51993 = (String)map51993.get("key51993"); // get it back out
-		String d51993 = c51993.substring(0,c51993.length()-1); // extract most of it
-		String e51993 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d51993.getBytes() ) )); // B64 encode and decode it
-		String f51993 = e51993.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f51993); // reflection
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map80446 = new java.util.HashMap<String,Object>();
+		map80446.put("keyA-80446", "a_Value"); // put some stuff in the collection
+		map80446.put("keyB-80446", param); // put it in a collection
+		map80446.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map80446.get("keyB-80446"); // get it back out
+		bar = (String)map80446.get("keyA-80446"); // get safe value back out
 		
 		
 		String sql = "SELECT * from USERS where USERNAME=? and PASSWORD='"+ bar +"'";
 				
 		try {
 			java.sql.Connection connection = org.owasp.benchmark.helpers.DatabaseHelper.getSqlConnection();
-			java.sql.PreparedStatement statement = connection.prepareStatement( sql, 
-			    java.sql.Statement.RETURN_GENERATED_KEYS );
-			    statement.setString(1, "foo");
+			java.sql.PreparedStatement statement = connection.prepareStatement( sql, new String[] {"Column1","Column2"} );
+			statement.setString(1, "foo");
 			statement.execute();
+            org.owasp.benchmark.helpers.DatabaseHelper.printResults(statement, sql, response);
 		} catch (java.sql.SQLException e) {
-			throw new ServletException(e);
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
 		}
 	}
 }

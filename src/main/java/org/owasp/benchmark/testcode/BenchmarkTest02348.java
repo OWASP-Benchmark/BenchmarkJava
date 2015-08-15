@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,38 +38,63 @@ public class BenchmarkTest02348 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	
+		response.setContentType("text/html");
+
 		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("foo");
-		if (headers.hasMoreElements()) {
-			param = headers.nextElement(); // just grab first element
+		boolean flag = true;
+		java.util.Enumeration<String> names = request.getParameterNames();
+		while (names.hasMoreElements() && flag) {
+			String name = (String) names.nextElement();		    	
+			String[] values = request.getParameterValues(name);
+			if (values != null) {
+				for(int i=0;i<values.length && flag; i++){
+					String value = values[i];
+					if (value.equals("vector")) {
+						param = name;
+					    flag = false;
+					}
+				}
+			}
 		}
+
+		String bar = doSomething(param);
 		
-		
-		// Chain a bunch of propagators in sequence
-		String a16801 = param; //assign
-		StringBuilder b16801 = new StringBuilder(a16801);  // stick in stringbuilder
-		b16801.append(" SafeStuff"); // append some safe content
-		b16801.replace(b16801.length()-"Chars".length(),b16801.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map16801 = new java.util.HashMap<String,Object>();
-		map16801.put("key16801", b16801.toString()); // put in a collection
-		String c16801 = (String)map16801.get("key16801"); // get it back out
-		String d16801 = c16801.substring(0,c16801.length()-1); // extract most of it
-		String e16801 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d16801.getBytes() ) )); // B64 encode and decode it
-		String f16801 = e16801.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g16801 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g16801); // reflection
-		
-		
-		try {	
-			java.nio.file.Path path = java.nio.file.Paths.get(org.owasp.benchmark.helpers.Utils.testfileDir + bar);
-			java.io.InputStream is = java.nio.file.Files.newInputStream(path, java.nio.file.StandardOpenOption.READ);
+		String fileName = null;
+		java.io.FileOutputStream fos = null;
+
+		try {
+			// Create the file first so the test won't throw an exception if it doesn't exist.
+			// Note: Don't actually do this because this method signature could cause a tool to find THIS file constructor 
+			// as a vuln, rather than the File signature we are trying to actually test.
+			// If necessary, just run the benchmark twice. The 1st run should create all the necessary files.
+			//new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir + bar).createNewFile();
+			
+			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
+	
+	
+	        java.io.FileInputStream fileInputStream = new java.io.FileInputStream(fileName);
+	        java.io.FileDescriptor fd = fileInputStream.getFD();
+	        fos = new java.io.FileOutputStream(fd);
+	        response.getWriter().write("Now ready to write to file: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName));
 		} catch (Exception e) {
-			// OK to swallow any exception for now
-            // TODO: Fix this, if possible.
-			System.out.println("File exception caught and swallowed: " + e.getMessage());
+			System.out.println("Couldn't open FileOutputStream on file: '" + fileName + "'");
+//			System.out.println("File exception caught and swallowed: " + e.getMessage());
+		} finally {
+			if (fos != null) {
+				try {
+					fos.close();
+                    fos = null;
+				} catch (Exception e) {
+					// we tried...
+				}
+			}
 		}
+	}  // end doPost
+	
+	private static String doSomething(String param) throws ServletException, IOException {
+
+		String bar = param;
+	
+		return bar;	
 	}
 }

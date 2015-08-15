@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,51 +38,34 @@ public class BenchmarkTest00453 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
 	
-		javax.servlet.http.Cookie[] cookies = request.getCookies();
-		
-		String param = null;
-		boolean foundit = false;
-		if (cookies != null) {
-			for (javax.servlet.http.Cookie cookie : cookies) {
-				if (cookie.getName().equals("foo")) {
-					param = cookie.getValue();
-					foundit = true;
-				}
-			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
-		}
+		String param = request.getParameter("vector");
+		if (param == null) param = "";
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a71491 = param; //assign
-		StringBuilder b71491 = new StringBuilder(a71491);  // stick in stringbuilder
-		b71491.append(" SafeStuff"); // append some safe content
-		b71491.replace(b71491.length()-"Chars".length(),b71491.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map71491 = new java.util.HashMap<String,Object>();
-		map71491.put("key71491", b71491.toString()); // put in a collection
-		String c71491 = (String)map71491.get("key71491"); // get it back out
-		String d71491 = c71491.substring(0,c71491.length()-1); // extract most of it
-		String e71491 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d71491.getBytes() ) )); // B64 encode and decode it
-		String f71491 = e71491.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f71491); // reflection
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map55763 = new java.util.HashMap<String,Object>();
+		map55763.put("keyA-55763", "a_Value"); // put some stuff in the collection
+		map55763.put("keyB-55763", param); // put it in a collection
+		map55763.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map55763.get("keyB-55763"); // get it back out
+		bar = (String)map55763.get("keyA-55763"); // get safe value back out
 		
 		
-		try {	
-			java.nio.file.Path path = java.nio.file.Paths.get(org.owasp.benchmark.helpers.Utils.testfileDir + bar);
-			java.io.InputStream is = java.nio.file.Files.newInputStream(path, java.nio.file.StandardOpenOption.READ);
-		} catch (Exception e) {
-			// OK to swallow any exception for now
-            // TODO: Fix this, if possible.
-			System.out.println("File exception caught and swallowed: " + e.getMessage());
+		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
+				
+		try {
+			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			statement.addBatch( sql );
+			int[] counts = statement.executeBatch();
+            org.owasp.benchmark.helpers.DatabaseHelper.printResults(sql, counts, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
 		}
 	}
 }

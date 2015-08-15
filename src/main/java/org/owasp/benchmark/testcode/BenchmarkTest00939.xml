@@ -1,7 +1,7 @@
 <test-metadata>
-  <wbe-version>1.1</wbe-version>
-  <category>xpathi</category>
+  <benchmark-version>1.2beta</benchmark-version>
+  <category>trustbound</category>
   <test-number>00939</test-number>
   <vulnerability>false</vulnerability>
-  <cwe>643</cwe>
+  <cwe>501</cwe>
 </test-metadata>

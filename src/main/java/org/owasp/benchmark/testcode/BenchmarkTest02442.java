@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,30 +38,42 @@ public class BenchmarkTest02442 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
+
+		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
+		String param = scr.getTheParameter("vector");
+		if (param == null) param = "";
+
+		String bar = doSomething(param);
+		
+		String fileName = null;
+		java.io.FileOutputStream fos = null;
+
+		try {
+			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
 	
-		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("foo");
-		if (headers.hasMoreElements()) {
-			param = headers.nextElement(); // just grab first element
+			fos = new java.io.FileOutputStream(new java.io.File(fileName));
+	        response.getWriter().write("Now ready to write to file: " + fileName);
+		} catch (Exception e) {
+			System.out.println("Couldn't open FileOutputStream on file: '" + fileName + "'");
+//			System.out.println("File exception caught and swallowed: " + e.getMessage());
+		} finally {
+			if (fos != null) {
+				try {
+					fos.close();
+                    fos = null;
+				} catch (Exception e) {
+					// we tried...
+				}
+			}
 		}
-		
-		
-		// Chain a bunch of propagators in sequence
-		String a67053 = param; //assign
-		StringBuilder b67053 = new StringBuilder(a67053);  // stick in stringbuilder
-		b67053.append(" SafeStuff"); // append some safe content
-		b67053.replace(b67053.length()-"Chars".length(),b67053.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map67053 = new java.util.HashMap<String,Object>();
-		map67053.put("key67053", b67053.toString()); // put in a collection
-		String c67053 = (String)map67053.get("key67053"); // get it back out
-		String d67053 = c67053.substring(0,c67053.length()-1); // extract most of it
-		String e67053 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d67053.getBytes() ) )); // B64 encode and decode it
-		String f67053 = e67053.split(" ")[0]; // split it on a space
+	}  // end doPost
+	
+	private static String doSomething(String param) throws ServletException, IOException {
+
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f67053); // reflection
-		
-		
-		response.getWriter().print(bar.toCharArray());
+		String bar = thing.doSomething(param);
+	
+		return bar;	
 	}
 }

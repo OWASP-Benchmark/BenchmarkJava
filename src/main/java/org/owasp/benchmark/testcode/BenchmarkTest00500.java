@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,47 +38,20 @@ public class BenchmarkTest00500 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
 	
-		javax.servlet.http.Cookie[] cookies = request.getCookies();
-		
-		String param = null;
-		boolean foundit = false;
-		if (cookies != null) {
-			for (javax.servlet.http.Cookie cookie : cookies) {
-				if (cookie.getName().equals("foo")) {
-					param = cookie.getValue();
-					foundit = true;
-				}
-			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
+		java.util.Map<String,String[]> map = request.getParameterMap();
+		String param = "";
+		if (!map.isEmpty()) {
+			param = map.get("vector")[0];
 		}
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map98162 = new java.util.HashMap<String,Object>();
-		map98162.put("keyA-98162", "a_Value"); // put some stuff in the collection
-		map98162.put("keyB-98162", param.toString()); // put it in a collection
-		map98162.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map98162.get("keyB-98162"); // get it back out
-		bar = (String)map98162.get("keyA-98162"); // get safe value back out
+		
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(param);
 		
 		
-		try {
-			java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA1", "SUN");
-		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.lang.String)");
-			throw new ServletException(e);			
-		} catch (java.security.NoSuchProviderException e) {
-			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.lang.String)");
-			throw new ServletException(e);
-		}
-
-		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.lang.String) executed");
+		response.getWriter().write(bar);
 	}
 }

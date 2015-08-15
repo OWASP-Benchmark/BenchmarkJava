@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,19 +38,66 @@ public class BenchmarkTest02471 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	
-		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("foo");
-		if (headers.hasMoreElements()) {
-			param = headers.nextElement(); // just grab first element
+		response.setContentType("text/html");
+
+		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
+		String param = scr.getTheParameter("vector");
+		if (param == null) param = "";
+
+		String bar = doSomething(param);
+		
+		String cmd = "";	
+		String a1 = "";
+		String a2 = "";
+		String[] args = null;
+		String osName = System.getProperty("os.name");
+		
+		if (osName.indexOf("Windows") != -1) {
+        	a1 = "cmd.exe";
+        	a2 = "/c";
+        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("echo");
+        	args = new String[]{a1, a2, cmd, bar};
+        } else {
+        	a1 = "sh";
+        	a2 = "-c";
+        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("ping -c1");
+        	args = new String[]{a1, a2,cmd + bar};
+        }
+		
+		Runtime r = Runtime.getRuntime();
+
+		try {
+			Process p = r.exec(args);
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - TestCase");
+            throw new ServletException(e);
 		}
+	}  // end doPost
+	
+	private static String doSomething(String param) throws ServletException, IOException {
+
+		String bar;
+		String guess = "ABC";
+		char switchTarget = guess.charAt(1); // condition 'B', which is safe
 		
-		
-		String bar = org.owasp.esapi.ESAPI.encoder().encodeForHTML(param);
-		
-		
-		Object[] obj = { "a", "b"};
-		
-		response.getWriter().printf(bar,obj);
+		// Simple case statement that assigns param to bar on conditions 'A', 'C', or 'D'
+		switch (switchTarget) {
+		  case 'A':
+		        bar = param;
+		        break;
+		  case 'B': 
+		        bar = "bob";
+		        break;
+		  case 'C':
+		  case 'D':        
+		        bar = param;
+		        break;
+		  default:
+		        bar = "bob's your uncle";
+		        break;
+		}
+	
+		return bar;	
 	}
 }

@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,19 +38,49 @@ public class BenchmarkTest02572 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	
-		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("foo");
-		if (headers.hasMoreElements()) {
-			param = headers.nextElement(); // just grab first element
+		response.setContentType("text/html");
+
+		String[] values = request.getParameterValues("vector");
+		String param;
+		if (values != null && values.length > 0)
+		  param = values[0];
+		else param = "";
+
+		String bar = doSomething(param);
+		
+		String cmd = org.owasp.benchmark.helpers.Utils.getInsecureOSCommandString(this.getClass().getClassLoader());
+		String[] args = {cmd};
+        String[] argsEnv = { bar };
+        
+		Runtime r = Runtime.getRuntime();
+
+		try {
+			Process p = r.exec(args, argsEnv);
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - TestCase");
+            throw new ServletException(e);
 		}
-		
-		
-		String bar = org.owasp.esapi.ESAPI.encoder().encodeForHTML(param);
-		
-		
-		int randNumber = new java.util.Random().nextInt(99);
-		
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextInt(int) executed");
+	}  // end doPost
+	
+	private static String doSomething(String param) throws ServletException, IOException {
+
+		// Chain a bunch of propagators in sequence
+		String a54284 = param; //assign
+		StringBuilder b54284 = new StringBuilder(a54284);  // stick in stringbuilder
+		b54284.append(" SafeStuff"); // append some safe content
+		b54284.replace(b54284.length()-"Chars".length(),b54284.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map54284 = new java.util.HashMap<String,Object>();
+		map54284.put("key54284", b54284.toString()); // put in a collection
+		String c54284 = (String)map54284.get("key54284"); // get it back out
+		String d54284 = c54284.substring(0,c54284.length()-1); // extract most of it
+		String e54284 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d54284.getBytes() ) )); // B64 encode and decode it
+		String f54284 = e54284.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String g54284 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g54284); // reflection
+	
+		return bar;	
 	}
 }

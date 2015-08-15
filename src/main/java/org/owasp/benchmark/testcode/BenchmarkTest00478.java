@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,47 +38,63 @@ public class BenchmarkTest00478 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
 	
-		javax.servlet.http.Cookie[] cookies = request.getCookies();
-		
-		String param = null;
-		boolean foundit = false;
-		if (cookies != null) {
-			for (javax.servlet.http.Cookie cookie : cookies) {
-				if (cookie.getName().equals("foo")) {
-					param = cookie.getValue();
-					foundit = true;
-				}
-			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
+		java.util.Map<String,String[]> map = request.getParameterMap();
+		String param = "";
+		if (!map.isEmpty()) {
+			param = map.get("vector")[0];
 		}
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map99846 = new java.util.HashMap<String,Object>();
-		map99846.put("keyA-99846", "a_Value"); // put some stuff in the collection
-		map99846.put("keyB-99846", param.toString()); // put it in a collection
-		map99846.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map99846.get("keyB-99846"); // get it back out
-		bar = (String)map99846.get("keyA-99846"); // get safe value back out
+		
+		// Chain a bunch of propagators in sequence
+		String a92911 = param; //assign
+		StringBuilder b92911 = new StringBuilder(a92911);  // stick in stringbuilder
+		b92911.append(" SafeStuff"); // append some safe content
+		b92911.replace(b92911.length()-"Chars".length(),b92911.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map92911 = new java.util.HashMap<String,Object>();
+		map92911.put("key92911", b92911.toString()); // put in a collection
+		String c92911 = (String)map92911.get("key92911"); // get it back out
+		String d92911 = c92911.substring(0,c92911.length()-1); // extract most of it
+		String e92911 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d92911.getBytes() ) )); // B64 encode and decode it
+		String f92911 = e92911.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f92911); // reflection
 		
 		
 		try {
-		    java.util.Properties Benchmarkprops = new java.util.Properties();
-		    Benchmarkprops.load(this.getClass().getClassLoader().getResourceAsStream("Benchmark.properties"));
-			String algorithm = Benchmarkprops.getProperty("hashAlg1", "SHA512");
-			java.security.MessageDigest md = java.security.MessageDigest.getInstance(algorithm);
+			java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA1", "SUN");
+			byte[] input = { (byte)'?' };
+			Object inputParam = bar;
+			if (inputParam instanceof String) input = ((String) inputParam).getBytes();
+			if (inputParam instanceof java.io.InputStream) {
+				byte[] strInput = new byte[1000];
+				int i = ((java.io.InputStream) inputParam).read(strInput);
+				if (i == -1) {
+					response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+					return;
+				}
+				input = java.util.Arrays.copyOf(strInput, i);
+			}		
+			md.update(input);
+			
+			byte[] result = md.digest();
+			java.io.File fileTarget = new java.io.File(
+					new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),"passwordFile.txt");
+			java.io.FileWriter fw = new java.io.FileWriter(fileTarget,true); //the true will append the new data
+			    fw.write("hash_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
+			fw.close();
+			response.getWriter().println("Sensitive value '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' hashed and stored<br/>");
 		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing hash - TestCase");
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.lang.String)");
+			throw new ServletException(e);			
+		} catch (java.security.NoSuchProviderException e) {
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.lang.String)");
 			throw new ServletException(e);
 		}
-		
-		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String) executed");
+
+		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.lang.String) executed");
 	}
 }

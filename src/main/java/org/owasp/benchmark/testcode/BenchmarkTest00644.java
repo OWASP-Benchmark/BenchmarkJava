@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,42 +38,42 @@ public class BenchmarkTest00644 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
 	
-		javax.servlet.http.Cookie[] cookies = request.getCookies();
+		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
+		String param = scr.getTheParameter("vector");
+		if (param == null) param = "";
 		
-		String param = null;
-		boolean foundit = false;
-		if (cookies != null) {
-			for (javax.servlet.http.Cookie cookie : cookies) {
-				if (cookie.getName().equals("foo")) {
-					param = cookie.getValue();
-					foundit = true;
+		
+		String bar;
+		
+		// Simple ? condition that assigns param to bar on false condition
+		int num = 106;
+		
+		bar = (7*42) - num > 200 ? "This should never happen" : param;
+		
+		
+		
+		String fileName = null;
+		java.io.FileOutputStream fos = null;
+
+		try {
+			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
+	
+			fos = new java.io.FileOutputStream(new java.io.File(fileName));
+	        response.getWriter().write("Now ready to write to file: " + fileName);
+		} catch (Exception e) {
+			System.out.println("Couldn't open FileOutputStream on file: '" + fileName + "'");
+//			System.out.println("File exception caught and swallowed: " + e.getMessage());
+		} finally {
+			if (fos != null) {
+				try {
+					fos.close();
+                    fos = null;
+				} catch (Exception e) {
+					// we tried...
 				}
 			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
 		}
-		
-		
-		java.util.List<String> valuesList = new java.util.ArrayList<String>( );
-		valuesList.add("safe");
-		valuesList.add( param );
-		valuesList.add( "moresafe" );
-		
-		valuesList.remove(0); // remove the 1st safe value
-		
-		String bar = valuesList.get(0); // get the param value
-		
-		
-		
-		byte[] bytes = new byte[10];
-		new java.util.Random().nextBytes(bytes);
-		
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextBytes() executed");
 	}
 }

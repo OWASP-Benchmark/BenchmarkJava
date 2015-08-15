@@ -41,8 +41,8 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.commons.io.FileUtils;
-
 import org.owasp.benchmark.score.parsers.AppscanReader;
+import org.owasp.benchmark.score.parsers.CheckmarxReader;
 import org.owasp.benchmark.score.parsers.Counter;
 import org.owasp.benchmark.score.parsers.CoverityReader;
 import org.owasp.benchmark.score.parsers.FindbugsReader;
@@ -54,6 +54,7 @@ import org.owasp.benchmark.score.parsers.SonarReader;
 import org.owasp.benchmark.score.parsers.TestCaseResult;
 import org.owasp.benchmark.score.parsers.TestResults;
 import org.owasp.benchmark.score.parsers.VeracodeReader;
+import org.owasp.benchmark.score.parsers.ZapReader;
 import org.owasp.benchmark.score.report.Report;
 import org.owasp.benchmark.score.report.ScatterScores;
 import org.owasp.benchmark.score.report.ScatterVulns;
@@ -97,11 +98,12 @@ public class BenchmarkScore {
             } else {
                 System.out.println("Deleting previously generated scorecard files in: " + scoreCardDir.getAbsolutePath());
                 FileUtils.cleanDirectory(scoreCardDir);
-                
-                // now copy the entire /content directory, that was just deleted with everything else
-                File dest1 = new File(scoreCardDirName + File.separator + "content");
-                FileUtils.copyDirectory(new File(pathToScorecardResources + "content"), dest1);
             }
+            
+            // now copy the entire /content directory, that either didn't exist, or was just deleted with everything else
+            File dest1 = new File(scoreCardDirName + File.separator + "content");
+            FileUtils.copyDirectory(new File(pathToScorecardResources + "content"), dest1);
+            
         } catch (IOException e) {
             System.out.println("Error dealing with scorecard directory: '" + scoreCardDir.getAbsolutePath() + "' for some reason!");
             e.printStackTrace();
@@ -148,9 +150,12 @@ public class BenchmarkScore {
 			if ( f.isDirectory() ) {
     			for ( File actual : f.listFiles() ) {
     				// Don't confuse the expected results file as an actual results file if its in the same directory
+    				
+    				//actual
     				if (!actual.isDirectory() && !expected.getName().equals(actual.getName()))
-    					process( actual, expectedResults, toolResults );
+    					process( actual, expectedResults, toolResults);
     			}
+    			//expected
 			} else {
 			    process( f, expectedResults, toolResults );
 			}
@@ -210,8 +215,9 @@ public class BenchmarkScore {
                 OverallResults results = calculateResults( scores );
                 results.setTime( actualResults.getTime() );
                 
+                
                 // This generates the report on disk.
-                Report scoreCard = new Report( actualResults, scores, results, expectedResults.totalResults(), actualResultsFileName );
+                Report scoreCard = new Report( actualResults, scores, results, expectedResults.totalResults(), actualResultsFileName,actualResults.isCommercial,true);
                 
                 // Add this report to the list of reports
                 toolreports.add(scoreCard);
@@ -353,8 +359,7 @@ public class BenchmarkScore {
         
         if ( filename.endsWith(".ozasmt" ) ) {
             tr = new AppscanReader().parse( actual );
-        }
-        
+        }      
         
         else if ( filename.endsWith(".json" ) ) {
             tr = new CoverityReader().parse( actual );
@@ -386,6 +391,14 @@ public class BenchmarkScore {
 
             else if ( line1.startsWith( "<total")) {
                 tr = new SonarReader().parse( actual );
+            }
+            
+            else if ( line1.contains( "<OWASPZAPReport") || line2.contains( "<OWASPZAPReport")) {
+                tr = new ZapReader().parse( actual );
+            }
+            
+            else if ( line2.startsWith( "<CxXMLResults")) {
+                tr = new CheckmarxReader().parse( actual );
             }
 		}
 		
@@ -505,7 +518,7 @@ public class BenchmarkScore {
 
 	
 	private static TestResults readExpectedResults(File f1) throws Exception {
-		TestResults tr = new TestResults( "Expected" );
+		TestResults tr = new TestResults( "Expected" ,true,null);
 		BufferedReader fr = new BufferedReader( new FileReader( f1 ) );
 		boolean reading = true;
 		while ( reading ) {

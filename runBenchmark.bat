@@ -1,0 +1,1 @@
+call mvn compile verify cargo:run -Pdeploy

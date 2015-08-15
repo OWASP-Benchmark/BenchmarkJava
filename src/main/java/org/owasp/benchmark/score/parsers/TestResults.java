@@ -34,11 +34,19 @@ public class TestResults {
     private String tool = "Unknown Tool";
     private String toolVersion = null;
 	private String time = "Unknown";
-	
+	public boolean isCommercial;
+	public ToolType toolType;
 	private Map<Integer, List<TestCaseResult>> map = new TreeMap<Integer, List<TestCaseResult>>();
-		
-	public TestResults( String toolname ) {
+	public static enum ToolType{
+		SAST,
+		DAST,
+		IAST
+	}
+	public TestResults( String toolname,boolean isCommercial,ToolType toolType) {
 	    this.setTool( toolname );
+	    this.isCommercial = isCommercial;
+	    this.toolType = toolType;
+	  
 	}
 	
 	public void put( TestCaseResult tcr ) {

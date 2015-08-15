@@ -32,7 +32,8 @@ public class TestCaseResult {
 	String category = null;
 	String evidence = null;
 	int confidence = 0;
-
+	
+	
 	/*
 	 *  Set the name of the test case (E.g., BenchmarkTest00001). This is frequently only used for 
 	 *  expected results, not actual results. Expected to actual can be correlated by the test number.

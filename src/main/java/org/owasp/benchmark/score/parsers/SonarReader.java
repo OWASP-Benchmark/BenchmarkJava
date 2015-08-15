@@ -41,7 +41,7 @@ public class SonarReader extends Reader {
         InputSource is = new InputSource(new ByteArrayInputStream( fixed.getBytes() ) );
         Document doc = docBuilder.parse(is);
  
-        TestResults tr = new TestResults( "SonarQube" );
+        TestResults tr = new TestResults( "SonarQube" ,false,TestResults.ToolType.SAST);
 
         NodeList rootList = doc.getDocumentElement().getChildNodes();
 
@@ -127,7 +127,7 @@ public class SonarReader extends Reader {
         case "S864" : return 783; //S864��Limited dependence should be placed on operator precedence rules in expressions
         case "S888" : return 835; //S888��Relational operators should be used in"for" loop termination conditions
         }
-        System.out.println( "Failed to translate " + squidNumber );
+        // System.out.println( "Failed to translate " + squidNumber );
         return -1;
     }
     

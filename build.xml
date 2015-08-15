@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE xml>
+<project>
+	<target name="run">
+	<parallel> 
+        <daemons>
+	<!--<exec executable="java">
+		<arg line="org.owasp.benchmark.helpers.EmbeddedADS"/>
+	</exec>
+	-->	<java classname="org.owasp.benchmark.helpers.LDAPServer" fork="true" failonerror="true" >
+		 <!-- 	<arg value="-b" />
+			<arg value="${dist.dir}" />
+			<arg value="-o" />
+			<arg value="${xml.dir}/treeindex" />
+			<arg value="tree.xml" /> 
+			<jvmarg value="-Dstrategy=treeParser" /> -->
+			<classpath refid="maven.compile.classpath" />
+		</java>
+	 </daemons>
+ </parallel> 
+	</target>
+</project>

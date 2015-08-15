@@ -19,15 +19,21 @@
 package org.owasp.benchmark.helpers;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.sql.SQLException;
+import java.nio.file.Files;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -35,12 +41,63 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
+import javax.servlet.http.HttpServletResponse;
 
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
+import org.owasp.esapi.ESAPI;
 
 public class Utils {
+	
+	public static final String testfileDir = System.getProperty("user.dir")
+			+ File.separator + "testfiles" + File.separator;
+	
+	static {
+		File tempDir = new File(testfileDir);
+		if (!tempDir.exists()) {
+			tempDir.mkdir();
+			File testFile = new File(testfileDir + "FileName");
+			try {
+				PrintWriter out = new PrintWriter(testFile);
+				out.write("Test is a test file.\n");
+				out.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			File testFile2 = new File(testfileDir + "SafeText");
+			try {
+				PrintWriter out = new PrintWriter(testFile2);
+				out.write("Test is a 'safe' test file.\n");
+				out.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			File secreTestFile = new File(testfileDir + "SecretFile");
+			try {
+				PrintWriter out = new PrintWriter(secreTestFile);
+				out.write("Test is a 'secret' file that no one should find.\n");
+				out.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+		if(!System.getProperty("os.name").contains("Windows")){
+			File script = getFileFromClasspath("insecureCmd.sh", Utils.class.getClassLoader());
+			Set<PosixFilePermission> perms = new HashSet<PosixFilePermission>();
+	        perms.add(PosixFilePermission.OWNER_READ);
+	        perms.add(PosixFilePermission.OWNER_WRITE);
+	        perms.add(PosixFilePermission.OWNER_EXECUTE);
+	        perms.add(PosixFilePermission.GROUP_READ);
+	        perms.add(PosixFilePermission.GROUP_EXECUTE);
+	        perms.add(PosixFilePermission.OTHERS_READ);
+	        perms.add(PosixFilePermission.OTHERS_EXECUTE);
+	         
+	        try {
+				Files.setPosixFilePermissions(script.toPath(), perms);
+			} catch (IOException e) {
+				System.out.println("Problem while changing executable permissions: " + e.getMessage());
+			}
+		}
+	}
 
 	public static String getOSCommandString(String append) {
 
@@ -49,9 +106,20 @@ public class Utils {
 		if (osName.indexOf("Windows") != -1) {
 			command = "cmd.exe /c " + append + " ";
 		} else {
-			command = "sh -c " + append + " ";
+			command = append + " ";
 		}
 
+		return command;
+	}
+	
+	public static String getInsecureOSCommandString(ClassLoader classLoader) {
+		String command = null;
+		String osName = System.getProperty("os.name");
+		if (osName.indexOf("Windows") != -1) {
+			command = Utils.getFileFromClasspath("insecureCmd.bat", classLoader).getAbsolutePath();
+		} else {
+			command = Utils.getFileFromClasspath("insecureCmd.sh", classLoader).getAbsolutePath();
+		}
 		return command;
 	}
 
@@ -77,7 +145,17 @@ public class Utils {
 		return cmds;
 	}
 
-	public static void printOSCommandResults(java.lang.Process proc) {
+	public static void printOSCommandResults(java.lang.Process proc, HttpServletResponse response) throws IOException {
+		
+		PrintWriter out = response.getWriter();		
+		out.write("<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n"
+		+ "<html>\n"
+		+ "<head>\n"
+		+ "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=ISO-8859-1\">\n"
+		+ "</head>\n"
+		+ "<body>\n"
+		+ "<p>\n");
+		
 		BufferedReader stdInput = new BufferedReader(new InputStreamReader(
 				proc.getInputStream()));
 		BufferedReader stdError = new BufferedReader(new InputStreamReader(
@@ -85,20 +163,25 @@ public class Utils {
 
 		try {
 			// read the output from the command
-			System.out.println("Here is the standard output of the command:\n");
+			//System.out.println("Here is the standard output of the command:\n");
+			out.write("Here is the standard output of the command:<br>");
 			String s = null;
 			while ((s = stdInput.readLine()) != null) {
-				System.out.println(s);
+				//System.out.println(s);
+				out.write(ESAPI.encoder().encodeForHTML(s));
+				out.write("<br>");
 			}
 
 			// read any errors from the attempted command
-			System.out
-					.println("Here is the standard error of the command (if any):\n");
+			//System.out.println("Here is the standard error of the command (if any):\n");
+			out.write("<br>Here is the standard error of the command (if any):<br>");
 			while ((s = stdError.readLine()) != null) {
-				System.out.println(s);
+				//System.out.println(s);
+				out.write(ESAPI.encoder().encodeForHTML(s));
+				out.write("<br>");
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("An error ocurred while printOSCommandResults");
 		}
 	}
 
@@ -138,76 +221,6 @@ public class Utils {
 						Mockito.any(SearchControls.class))).thenReturn(ne);
 
 		return dc;
-	}
-
-	public static java.sql.Statement getSqlStatement() throws SQLException {
-
-		java.sql.Statement s = Mockito.mock(java.sql.Statement.class);
-		java.sql.ResultSet rs = Mockito.mock(java.sql.ResultSet.class);
-
-		Mockito.stubVoid(s).toAnswer(new Answer<Void>() {
-			@Override
-			public Void answer(InvocationOnMock invocation) throws Throwable {
-				return null;
-			}
-		}).on().addBatch(Mockito.anyString());
-		Mockito.when(s.execute(Mockito.anyString())).thenReturn(true);
-		Mockito.when(s.execute(Mockito.anyString(), Mockito.anyInt()))
-				.thenReturn(true);
-		Mockito.when(s.execute(Mockito.anyString(), Mockito.any(int[].class)))
-				.thenReturn(true);
-		Mockito.when(
-				s.execute(Mockito.anyString(), Mockito.any(String[].class)))
-				.thenReturn(true);
-		Mockito.when(s.executeQuery(Mockito.anyString())).thenReturn(rs);
-		Mockito.when(s.executeUpdate(Mockito.anyString())).thenReturn(1);
-		Mockito.when(s.executeUpdate(Mockito.anyString(), Mockito.anyInt()))
-				.thenReturn(1);
-		Mockito.when(
-				s.executeUpdate(Mockito.anyString(), Mockito.any(int[].class)))
-				.thenReturn(1);
-		Mockito.when(
-				s.executeUpdate(Mockito.anyString(),
-						Mockito.any(String[].class))).thenReturn(1);
-
-		return s;
-	}
-
-	public static java.sql.Connection getSqlConnection() throws SQLException {
-
-		java.sql.Connection c = Mockito.mock(java.sql.Connection.class);
-
-		java.sql.CallableStatement cs = Mockito
-				.mock(java.sql.CallableStatement.class);
-		Mockito.when(c.prepareCall(Mockito.anyString())).thenReturn(cs);
-		Mockito.when(
-				c.prepareCall(Mockito.anyString(), Mockito.anyInt(),
-						Mockito.anyInt())).thenReturn(cs);
-		Mockito.when(
-				c.prepareCall(Mockito.anyString(), Mockito.anyInt(),
-						Mockito.anyInt(), Mockito.anyInt())).thenReturn(cs);
-		Mockito.when(cs.execute()).thenReturn(true);
-
-		java.sql.PreparedStatement ps = Mockito
-				.mock(java.sql.PreparedStatement.class);
-		Mockito.when(c.prepareStatement(Mockito.anyString())).thenReturn(ps);
-		Mockito.when(c.prepareStatement(Mockito.anyString(), Mockito.anyInt()))
-				.thenReturn(ps);
-		Mockito.when(
-				c.prepareStatement(Mockito.anyString(), Mockito.anyInt(),
-						Mockito.anyInt())).thenReturn(ps);
-		Mockito.when(
-				c.prepareStatement(Mockito.anyString(), Mockito.anyInt(),
-						Mockito.anyInt(), Mockito.anyInt())).thenReturn(ps);
-		Mockito.when(
-				c.prepareStatement(Mockito.anyString(),
-						Mockito.any(int[].class))).thenReturn(ps);
-		Mockito.when(
-				c.prepareStatement(Mockito.anyString(),
-						Mockito.any(String[].class))).thenReturn(ps);
-		Mockito.when(ps.execute()).thenReturn(true);
-
-		return c;
 	}
 
 	public static File getFileFromClasspath(String fileName,
@@ -254,7 +267,29 @@ public class Utils {
 
 		return sourceLines;
 	}
+	
+public static String encodeForHTML(Object param) {
+		
+		String value = "objectTypeUnknown";
+		if (param instanceof String) {
+			value = (String)param;
+		}
+		else if (param instanceof java.io.InputStream) {
+			byte[] buff = new byte[1000];
+			int length = 0;
+			try {
+				java.io.InputStream stream = (java.io.InputStream) param;
+				stream.reset();
+				length = stream.read(buff);			
+			} catch (IOException e) {
+				buff[0] = (byte)'?';
+				length = 1;
+			}
+			ByteArrayOutputStream b = new ByteArrayOutputStream();
+			b.write(buff, 0, length);
+			value = b.toString();
+		}
+		return ESAPI.encoder().encodeForHTML(value);
+	}
 
-	public static final String testfileDir = System.getProperty("user.dir")
-			+ File.separator + "testfiles" + File.separator;
 }

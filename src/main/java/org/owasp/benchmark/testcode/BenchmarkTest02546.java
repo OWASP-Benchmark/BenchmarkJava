@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,25 +38,27 @@ public class BenchmarkTest02546 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
+
+		String[] values = request.getParameterValues("vector");
+		String param;
+		if (values != null && values.length > 0)
+		  param = values[0];
+		else param = "";
+
+		String bar = doSomething(param);
+		
+		response.getWriter().println(bar.toCharArray());
+	}  // end doPost
 	
-		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("foo");
-		if (headers.hasMoreElements()) {
-			param = headers.nextElement(); // just grab first element
+	private static String doSomething(String param) throws ServletException, IOException {
+
+		String bar = param;
+		if (param != null && param.length() > 1) {
+		    StringBuilder sbxyz52385 = new StringBuilder(param);
+		    bar = sbxyz52385.replace(param.length()-"Z".length(), param.length(),"Z").toString();
 		}
-		
-		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map60455 = new java.util.HashMap<String,Object>();
-		map60455.put("keyA-60455", "a_Value"); // put some stuff in the collection
-		map60455.put("keyB-60455", param.toString()); // put it in a collection
-		map60455.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map60455.get("keyB-60455"); // get it back out
-		bar = (String)map60455.get("keyA-60455"); // get safe value back out
-		
-		
-		boolean randNumber = new java.util.Random().nextBoolean();
-		
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextBoolean() executed");
+	
+		return bar;	
 	}
 }

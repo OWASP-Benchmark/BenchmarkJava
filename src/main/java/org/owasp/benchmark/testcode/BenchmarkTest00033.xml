@@ -1,7 +1,7 @@
 <test-metadata>
-  <wbe-version>1.1</wbe-version>
-  <category>pathtraver</category>
+  <benchmark-version>1.2beta</benchmark-version>
+  <category>trustbound</category>
   <test-number>00033</test-number>
   <vulnerability>true</vulnerability>
-  <cwe>22</cwe>
+  <cwe>501</cwe>
 </test-metadata>

@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,38 +38,20 @@ public class BenchmarkTest02204 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
+
+		String param = request.getParameter("vector");
+		if (param == null) param = "";
+
+		String bar = doSomething(param);
+		
+		response.getWriter().write("Parameter value: " + bar);
+	}  // end doPost
 	
-		String param = "";
-		java.util.Enumeration<String> headerNames = request.getHeaderNames();
-		if (headerNames.hasMoreElements()) {
-			param = headerNames.nextElement(); // just grab first element
-		}
-		
-		
-		// Chain a bunch of propagators in sequence
-		String a53941 = param; //assign
-		StringBuilder b53941 = new StringBuilder(a53941);  // stick in stringbuilder
-		b53941.append(" SafeStuff"); // append some safe content
-		b53941.replace(b53941.length()-"Chars".length(),b53941.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map53941 = new java.util.HashMap<String,Object>();
-		map53941.put("key53941", b53941.toString()); // put in a collection
-		String c53941 = (String)map53941.get("key53941"); // get it back out
-		String d53941 = c53941.substring(0,c53941.length()-1); // extract most of it
-		String e53941 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d53941.getBytes() ) )); // B64 encode and decode it
-		String f53941 = e53941.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g53941 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g53941); // reflection
-		
-		
-		String sql = "UPDATE USERS SET PASSWORD='" + bar + "' WHERE USERNAME='foo'";
-				
-		try {
-			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			int count = statement.executeUpdate( sql, new int[] {1,2} );
-		} catch (java.sql.SQLException e) {
-			throw new ServletException(e);
-		}
+	private static String doSomething(String param) throws ServletException, IOException {
+
+		String bar = org.owasp.esapi.ESAPI.encoder().encodeForHTML(param);
+	
+		return bar;	
 	}
 }

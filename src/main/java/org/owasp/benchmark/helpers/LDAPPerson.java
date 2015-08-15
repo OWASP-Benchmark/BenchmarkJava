@@ -23,6 +23,14 @@ public class LDAPPerson {
 	private String address;
 	private String password;
 	
+	public LDAPPerson(){}
+	
+	public LDAPPerson(String name, String password, String address){
+		this.name = name;
+		this.password = password;
+		this.address = address;
+	}
+	
 	public String getName() {
 		return name;
 	}

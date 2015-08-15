@@ -1,7 +1,7 @@
 <test-metadata>
-  <wbe-version>1.1</wbe-version>
-  <category>cmdi</category>
+  <benchmark-version>1.2beta</benchmark-version>
+  <category>xss</category>
   <test-number>01374</test-number>
-  <vulnerability>true</vulnerability>
-  <cwe>78</cwe>
+  <vulnerability>false</vulnerability>
+  <cwe>79</cwe>
 </test-metadata>

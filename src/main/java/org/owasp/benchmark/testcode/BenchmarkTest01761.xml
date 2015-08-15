@@ -1,7 +1,7 @@
 <test-metadata>
-  <wbe-version>1.1</wbe-version>
-  <category>hash</category>
+  <benchmark-version>1.2beta</benchmark-version>
+  <category>sqli</category>
   <test-number>01761</test-number>
   <vulnerability>false</vulnerability>
-  <cwe>328</cwe>
+  <cwe>89</cwe>
 </test-metadata>

@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,51 +38,54 @@ public class BenchmarkTest01919 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	
-		String param = "";
-		java.util.Enumeration<String> headerNames = request.getHeaderNames();
-		if (headerNames.hasMoreElements()) {
-			param = headerNames.nextElement(); // just grab first element
-		}
-		
-		
-		// Chain a bunch of propagators in sequence
-		String a98229 = param; //assign
-		StringBuilder b98229 = new StringBuilder(a98229);  // stick in stringbuilder
-		b98229.append(" SafeStuff"); // append some safe content
-		b98229.replace(b98229.length()-"Chars".length(),b98229.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map98229 = new java.util.HashMap<String,Object>();
-		map98229.put("key98229", b98229.toString()); // put in a collection
-		String c98229 = (String)map98229.get("key98229"); // get it back out
-		String d98229 = c98229.substring(0,c98229.length()-1); // extract most of it
-		String e98229 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d98229.getBytes() ) )); // B64 encode and decode it
-		String f98229 = e98229.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g98229 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g98229); // reflection
-		
-		
-		String a1 = "";
-		String a2 = "";
-		String osName = System.getProperty("os.name");
-        if (osName.indexOf("Windows") != -1) {
-        	a1 = "cmd.exe";
-        	a2 = "/c";
-        } else {
-        	a1 = "sh";
-        	a2 = "-c";
-        }
-        String[] args = {a1, a2, "echo", bar};
+		response.setContentType("text/html");
 
-		ProcessBuilder pb = new ProcessBuilder(args);
+		javax.servlet.http.Cookie[] theCookies = request.getCookies();
 		
-		try {
-			Process p = pb.start();
-			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - java.lang.ProcessBuilder(java.lang.String[]) Test Case");
-            throw new ServletException(e);
+		String param = null;
+		boolean foundit = false;
+		if (theCookies != null) {
+			for (javax.servlet.http.Cookie theCookie : theCookies) {
+				if (theCookie.getName().equals("vector")) {
+					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
+					foundit = true;
+				}
+			}
+			if (!foundit) {
+				// no cookie found in collection
+				param = "";
+			}
+		} else {
+			// no cookies
+			param = "";
 		}
+
+		String bar = doSomething(param);
+		
+		// javax.servlet.http.HttpSession.setAttribute(java.lang.String,java.lang.Object^)
+		request.getSession().setAttribute( "userid", bar);
+				
+		response.getWriter().println("Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
+			+ "' saved in session.");
+	}  // end doPost
+	
+	private static String doSomething(String param) throws ServletException, IOException {
+
+		// Chain a bunch of propagators in sequence
+		String a37498 = param; //assign
+		StringBuilder b37498 = new StringBuilder(a37498);  // stick in stringbuilder
+		b37498.append(" SafeStuff"); // append some safe content
+		b37498.replace(b37498.length()-"Chars".length(),b37498.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map37498 = new java.util.HashMap<String,Object>();
+		map37498.put("key37498", b37498.toString()); // put in a collection
+		String c37498 = (String)map37498.get("key37498"); // get it back out
+		String d37498 = c37498.substring(0,c37498.length()-1); // extract most of it
+		String e37498 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d37498.getBytes() ) )); // B64 encode and decode it
+		String f37498 = e37498.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f37498); // reflection
+	
+		return bar;	
 	}
 }

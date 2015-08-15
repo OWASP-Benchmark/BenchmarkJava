@@ -1,7 +1,7 @@
 <test-metadata>
-  <wbe-version>1.1</wbe-version>
-  <category>hash</category>
+  <benchmark-version>1.2beta</benchmark-version>
+  <category>xss</category>
   <test-number>00500</test-number>
   <vulnerability>true</vulnerability>
-  <cwe>328</cwe>
+  <cwe>79</cwe>
 </test-metadata>

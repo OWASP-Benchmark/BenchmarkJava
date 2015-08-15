@@ -1,18 +1,18 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
-* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
 */
 
@@ -38,26 +38,34 @@ public class BenchmarkTest01330 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
 	
-		String param = request.getHeader("foo");
+		String param = request.getParameter("vector");
+		if (param == null) param = "";
+
+		String bar = new Test().doSomething(param);
 		
+		// javax.servlet.http.HttpSession.putValue(java.lang.String^,java.lang.Object)
+		request.getSession().putValue( bar, "10340");
 		
-		// Chain a bunch of propagators in sequence
-		String a93825 = param; //assign
-		StringBuilder b93825 = new StringBuilder(a93825);  // stick in stringbuilder
-		b93825.append(" SafeStuff"); // append some safe content
-		b93825.replace(b93825.length()-"Chars".length(),b93825.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map93825 = new java.util.HashMap<String,Object>();
-		map93825.put("key93825", b93825.toString()); // put in a collection
-		String c93825 = (String)map93825.get("key93825"); // get it back out
-		String d93825 = c93825.substring(0,c93825.length()-1); // extract most of it
-		String e93825 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d93825.getBytes() ) )); // B64 encode and decode it
-		String f93825 = e93825.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f93825); // reflection
-		
-		
-		response.getWriter().write(bar);
-	}
-}
+		response.getWriter().println("Item: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
+			+ "' with value: 10340 saved in session.");
+	}  // end doPost
+
+    private class Test {
+
+        public String doSomething(String param) throws ServletException, IOException {
+
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map23412 = new java.util.HashMap<String,Object>();
+		map23412.put("keyA-23412", "a_Value"); // put some stuff in the collection
+		map23412.put("keyB-23412", param); // put it in a collection
+		map23412.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map23412.get("keyB-23412"); // get it back out
+		bar = (String)map23412.get("keyA-23412"); // get safe value back out
+
+            return bar;
+        }
+    } // end innerclass Test
+
+} // end DataflowThruInnerClass

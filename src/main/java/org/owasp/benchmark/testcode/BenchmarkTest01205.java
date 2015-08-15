@@ -1,18 +1,18 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
-* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
 */
 
@@ -38,27 +38,29 @@ public class BenchmarkTest01205 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
 	
-		String param = request.getHeader("foo");
+		String param = "";
+		java.util.Enumeration<String> headers = request.getHeaders("vector");
+		if (headers.hasMoreElements()) {
+			param = headers.nextElement(); // just grab first element
+		}
+
+		String bar = new Test().doSomething(param);
 		
-		
-		// Chain a bunch of propagators in sequence
-		String a14550 = param; //assign
-		StringBuilder b14550 = new StringBuilder(a14550);  // stick in stringbuilder
-		b14550.append(" SafeStuff"); // append some safe content
-		b14550.replace(b14550.length()-"Chars".length(),b14550.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map14550 = new java.util.HashMap<String,Object>();
-		map14550.put("key14550", b14550.toString()); // put in a collection
-		String c14550 = (String)map14550.get("key14550"); // get it back out
-		String d14550 = c14550.substring(0,c14550.length()-1); // extract most of it
-		String e14550 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d14550.getBytes() ) )); // B64 encode and decode it
-		String f14550 = e14550.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f14550); // reflection
-		
-		
-		Object[] obj = { "a", bar};
-		response.getWriter().println(obj);
-	}
-}
+		Object[] obj = { "a", "b"};
+		response.getWriter().printf(bar,obj);
+	}  // end doPost
+
+    private class Test {
+
+        public String doSomething(String param) throws ServletException, IOException {
+
+		String bar = "";
+		if (param != null) bar = param.split(" ")[0];
+
+            return bar;
+        }
+    } // end innerclass Test
+
+} // end DataflowThruInnerClass

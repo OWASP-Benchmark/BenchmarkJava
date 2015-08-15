@@ -1,16 +1,16 @@
 /**
-* OWASP Benchmark Project v1.1
+* OWASP Benchmark Project v1.2beta
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
 * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
 *
-* The Benchmark is free software: you can redistribute it and/or modify it under the terms
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
 *
-* The Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
+* GNU General Public License for more details.
 *
 * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
@@ -38,52 +38,28 @@ public class BenchmarkTest00910 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
 	
-		javax.servlet.http.Cookie[] cookies = request.getCookies();
-		
-		String param = null;
-		boolean foundit = false;
-		if (cookies != null) {
-			for (javax.servlet.http.Cookie cookie : cookies) {
-				if (cookie.getName().equals("foo")) {
-					param = cookie.getValue();
-					foundit = true;
-				}
-			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
-		}
+		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
+		String param = scr.getTheValue("vector");
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a23364 = param; //assign
-		StringBuilder b23364 = new StringBuilder(a23364);  // stick in stringbuilder
-		b23364.append(" SafeStuff"); // append some safe content
-		b23364.replace(b23364.length()-"Chars".length(),b23364.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map23364 = new java.util.HashMap<String,Object>();
-		map23364.put("key23364", b23364.toString()); // put in a collection
-		String c23364 = (String)map23364.get("key23364"); // get it back out
-		String d23364 = c23364.substring(0,c23364.length()-1); // extract most of it
-		String e23364 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d23364.getBytes() ) )); // B64 encode and decode it
-		String f23364 = e23364.split(" ")[0]; // split it on a space
+		String a47812 = param; //assign
+		StringBuilder b47812 = new StringBuilder(a47812);  // stick in stringbuilder
+		b47812.append(" SafeStuff"); // append some safe content
+		b47812.replace(b47812.length()-"Chars".length(),b47812.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map47812 = new java.util.HashMap<String,Object>();
+		map47812.put("key47812", b47812.toString()); // put in a collection
+		String c47812 = (String)map47812.get("key47812"); // get it back out
+		String d47812 = c47812.substring(0,c47812.length()-1); // extract most of it
+		String e47812 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d47812.getBytes() ) )); // B64 encode and decode it
+		String f47812 = e47812.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g23364 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g23364); // reflection
+		String bar = thing.doSomething(f47812); // reflection
 		
 		
-		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
-				
-		try {
-			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			java.sql.ResultSet rs = statement.executeQuery( sql );
-		} catch (java.sql.SQLException e) {
-			throw new ServletException(e);
-		}
+		response.getWriter().write(bar);
 	}
 }

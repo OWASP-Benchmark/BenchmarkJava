@@ -7,8 +7,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
+import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -278,17 +280,24 @@ class WriteFiles {
 		return "";
 	}
 
-	public String getbenchmarkVersion() throws Exception {
-		String[] results = new String[2];
-		List<String> lines = Utils.getLinesFromFile(Utils.getFileFromClasspath(
-				VERSION_FILE, this.getClass().getClassLoader()));
-		for (String i : lines) {
-			results = i.split("=");
-			// System.out.println(results[1]);
-			return results[1];
+	/**
+	 * Gets the current version of the Benchmark from the benchmark.properties file.
+	 * @return The version # (as a String). An empty string if its not defined in that file.
+	 * @throws Exception
+	 */
+	public String getbenchmarkVersion() { // throws Exception {
+		Properties benchMprops = new Properties();
+		try {
+			File propsFile = new File(this.getClass().getClassLoader().getResource(VERSION_FILE).toURI().getPath());
+			benchMprops.load(new FileInputStream(propsFile));
+			String v = benchMprops.getProperty("version");
+			if (v == null) return "";
+			return v;
+		} catch (IOException | URISyntaxException e) {
+			System.out.println("Can't load version # from properties file.");
+			e.printStackTrace();
+			return "";
 		}
-		return "";
-
 	}
 
 }

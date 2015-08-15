@@ -38,7 +38,7 @@ public class FortifyReader extends Reader {
 		InputSource is = new InputSource( new FileInputStream(f) );
 		Document doc = docBuilder.parse(is);
 		
-		TestResults tr = new TestResults( "HP Fortify" );
+		TestResults tr = new TestResults( "HP Fortify" ,true,TestResults.ToolType.SAST);
 		// FIXME - parse real number
 		tr.setTime("3:38:40");
 

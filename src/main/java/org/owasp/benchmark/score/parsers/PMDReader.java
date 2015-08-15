@@ -38,7 +38,7 @@ public class PMDReader extends Reader {
 		InputSource is = new InputSource( new FileInputStream(f) );
 		Document doc = docBuilder.parse(is);
 		
-		TestResults tr = new TestResults( "PMD" );
+		TestResults tr = new TestResults( "PMD" ,false,TestResults.ToolType.SAST);
 		
 		// If the filename includes an elapsed time in seconds (e.g., TOOLNAME-seconds.xml), set the compute time on the scorecard.
 		tr.setTime(f);

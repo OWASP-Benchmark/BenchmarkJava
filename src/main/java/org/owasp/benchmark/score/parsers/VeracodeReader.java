@@ -39,7 +39,7 @@ public class VeracodeReader extends Reader {
         InputSource is = new InputSource(new FileInputStream(f));
         Document doc = docBuilder.parse(is);
 
-        TestResults tr = new TestResults( "Veracode SAST" );
+        TestResults tr = new TestResults( "Veracode SAST" ,true,TestResults.ToolType.SAST);
        
         // <static-analysis rating="F" score="24" submitted_date="2015-05-23 00:04:57 UTC" published_date="2015-05-28 15:28:35 UTC" next_scan_due="2015-08-28 15:28:35 UTC" analysis_size_bytes="70797465" engine_version="82491">
         Node root = doc.getDocumentElement();

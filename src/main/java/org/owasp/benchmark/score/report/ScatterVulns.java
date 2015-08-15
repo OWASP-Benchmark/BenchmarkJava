@@ -28,6 +28,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -58,7 +59,8 @@ import org.owasp.benchmark.score.parsers.OverallResult;
 import org.owasp.benchmark.score.parsers.OverallResults;
 
 public class ScatterVulns {
-
+	double afr = 0;
+	double atr = 0;
     JFreeChart chart = null;
     StandardChartTheme theme = null;
     
@@ -78,14 +80,41 @@ public class ScatterVulns {
         JFrame f = new JFrame(title);
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
+        //averages
+        ArrayList<Double> averageFalseRates = new ArrayList<Double>();
+
+        ArrayList<Double> averageTrueRates = new ArrayList<Double>();
+        double averageFalseRate=0;
+        double averageTrueRate=0;
+        
         XYSeriesCollection dataset = new XYSeriesCollection(); 
         XYSeries series = new XYSeries("Scores");        
 		for (int i = 0; i < toolResults.size(); i++) {
 			Report toolReport = toolResults.get(i);
 			OverallResult overallResults = toolReport.getOverallResults().getResults(category);
 	        series.add( overallResults.getFalsePositiveRate() * 100, overallResults.getTruePositiveRate() * 100);
+	        if(toolReport.isCommercial()){
+	        averageFalseRates.add(overallResults.getFalsePositiveRate());
+	        averageTrueRates.add(overallResults.getTruePositiveRate());
+	        }
 		}
+	        
+		
+		for (double d : averageFalseRates){
+			averageFalseRate  += d;
+		}
+		averageFalseRate = averageFalseRate/averageFalseRates.size();
+		
+		
+		for (double d : averageTrueRates){
+			averageTrueRate += d;
+		}
+		averageTrueRate = averageTrueRate/averageTrueRates.size();
+		
+		series.add(averageFalseRate *100, averageTrueRate*100);
         dataset.addSeries(series);
+        afr = averageFalseRate;
+        atr = averageTrueRate;
 
         chart = ChartFactory.createScatterPlot(title, "False Positive Rate", "True Positive Rate", dataset, PlotOrientation.VERTICAL, true, true, false);
         String fontName = "Arial";
@@ -256,6 +285,9 @@ public class ScatterVulns {
             map.put( p, label );
             ch++;
         }
+        Point2D ap= new Point2D.Double(afr*100 + sr.nextDouble() * .000001,atr*100 + sr.nextDouble() * .000001 - 1);
+        
+        map.put(ap, ""+ch);
         dedupify( map );
         return map;
     }
@@ -304,6 +336,17 @@ public class ScatterVulns {
             i++;
             ch++;
         }
+        XYTextAnnotation stroketext = new XYTextAnnotation("\u25A0 M: Average(Commertial Tools)", x, y + i * -3.3);
+        stroketext.setTextAnchor(TextAnchor.CENTER_LEFT);
+        stroketext.setBackgroundPaint(Color.white);
+        stroketext.setPaint(Color.blue);
+        stroketext.setFont(theme.getRegularFont());
+        
+        
+        xyplot.addAnnotation(stroketext);
+        
+        
+       
     }
     
     private XYPointerAnnotation makePointer(int x, int y, String msg, TextAnchor anchor, int angle ) {

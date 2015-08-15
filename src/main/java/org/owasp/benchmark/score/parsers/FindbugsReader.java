@@ -38,13 +38,12 @@ public class FindbugsReader extends Reader {
 		InputSource is = new InputSource( new FileInputStream(f) );
 		Document doc = docBuilder.parse(is);
 		
-		// FIXME: need a way to figure out if this is SecFindBugs
-		TestResults tr = new TestResults( "FindBugs" );
+		TestResults tr = new TestResults( "FindBugs" ,false,TestResults.ToolType.SAST);
 		
 		// If the filename includes an elapsed time in seconds (e.g., TOOLNAME-seconds.xml), set the compute time on the scorecard.
 		tr.setTime(f);
 
-//		<BugCollection timestamp='1434663265000' analysisTimestamp='1434663273732' sequence='0' release='' version='3.0.1���>
+//		<BugCollection timestamp='1434663265000' analysisTimestamp='1434663273732' sequence='0' release='' version='3.0.1>
         Node root = doc.getDocumentElement();
         String version = getAttributeValue( "version", root );
         tr.setToolVersion( version );
@@ -127,10 +126,12 @@ public class FindbugsReader extends Reader {
 		case "SECXXEDOC" :  return 611;  // XXE - Probably DOM Parser
 		case "SECSQLIHIB" : return 564;  // Hibernate Injection, child of SQL Injection
 		case "SECXXESAX" :  return 611;  // XXE - SAX Parser
+		case "STAIV" : 		return 329;  // static initialization vector for crypto
 
 		case "SECSP" : 		return 00;	 // servlet parameter - not a vuln
 		case "SECSH" : 		return 00;   // servlet header -- not a vuln
 		case "SECSSQ" : 	return 00;   // servlet query - not a vuln
+		
 
 		default : System.out.println( "Unknown category: " + cat );
 		}

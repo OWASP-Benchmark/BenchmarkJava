@@ -50,7 +50,7 @@ public class AppscanReader extends Reader {
         Map<Integer,String> conf = parsePool( root, "FindingDataPool", "id", "conf", "" );
 		Map<Integer,Set<Integer>> assess = parseAssessments( root );
 
-		TestResults tr = new TestResults( "IBM AppScan Source");
+		TestResults tr = new TestResults( "IBM AppScan Source",true,TestResults.ToolType.SAST);
 
 	    // <AssessmentRun name="webgoat-benchmark_3 - 5/18/15 12:01AM" version="9.0.1.0">
 		String version = getAttributeValue( "version", root );
@@ -85,7 +85,8 @@ public class AppscanReader extends Reader {
 				TestCaseResult tcr = new TestCaseResult();
 				tcr.setNumber( tn );
 				int vid = Integer.parseInt( finding.get( findingid ) );
-				int confidence = Integer.parseInt( conf.get( findingid ));
+				String confString = conf.get( findingid );
+				int confidence = Integer.parseInt( confString );
 				
 				String vtype = vulns.get( vid );
 				tcr.setCategory( vtype );
@@ -94,10 +95,10 @@ public class AppscanReader extends Reader {
 				tcr.setEvidence( vtype );
 				tcr.setConfidence( confidence );
 				
-				// FIXME - include 3's??
-				// if ( confidence != 3 ) {
+				// Exclude 3 and above - apparently these are "scan coverage"
+				if ( confidence < 3 ) {
 				    tr.put(tcr);
-				// }
+				}
 			}
 		}
 		return tr;

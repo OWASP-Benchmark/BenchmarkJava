@@ -59,19 +59,19 @@ public class BenchmarkTest00571 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a1960 = param; //assign
-		StringBuilder b1960 = new StringBuilder(a1960);  // stick in stringbuilder
-		b1960.append(" SafeStuff"); // append some safe content
-		b1960.replace(b1960.length()-"Chars".length(),b1960.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map1960 = new java.util.HashMap<String,Object>();
-		map1960.put("key1960", b1960.toString()); // put in a collection
-		String c1960 = (String)map1960.get("key1960"); // get it back out
-		String d1960 = c1960.substring(0,c1960.length()-1); // extract most of it
-		String e1960 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d1960.getBytes() ) )); // B64 encode and decode it
-		String f1960 = e1960.split(" ")[0]; // split it on a space
+		String a73586 = param; //assign
+		StringBuilder b73586 = new StringBuilder(a73586);  // stick in stringbuilder
+		b73586.append(" SafeStuff"); // append some safe content
+		b73586.replace(b73586.length()-"Chars".length(),b73586.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map73586 = new java.util.HashMap<String,Object>();
+		map73586.put("key73586", b73586.toString()); // put in a collection
+		String c73586 = (String)map73586.get("key73586"); // get it back out
+		String d73586 = c73586.substring(0,c73586.length()-1); // extract most of it
+		String e73586 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d73586.getBytes() ) )); // B64 encode and decode it
+		String f73586 = e73586.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f1960); // reflection
+		String bar = thing.doSomething(f73586); // reflection
 		
 		
 		response.getWriter().write(bar.toCharArray());

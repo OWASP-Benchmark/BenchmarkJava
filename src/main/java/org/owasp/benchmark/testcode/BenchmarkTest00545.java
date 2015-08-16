@@ -58,15 +58,17 @@ public class BenchmarkTest00545 extends HttpServlet {
 		}
 		
 		
-		java.util.List<String> valuesList = new java.util.ArrayList<String>( );
-		valuesList.add("safe");
-		valuesList.add( param );
-		valuesList.add( "moresafe" );
-		
-		valuesList.remove(0); // remove the 1st safe value
-		
-		String bar = valuesList.get(0); // get the param value
-		
+		String bar = "";
+		if (param != null) {
+			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+			valuesList.add("safe");
+			valuesList.add( param );
+			valuesList.add( "moresafe" );
+			
+			valuesList.remove(0); // remove the 1st safe value
+			
+			bar = valuesList.get(0); // get the param value
+		}
 		
 		
 		String fileName = null;

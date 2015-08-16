@@ -42,12 +42,15 @@ public class BenchmarkTest00799 extends HttpServlet {
 	
 		String queryString = request.getQueryString();
 		String paramval = "vector"+"=";
-		int paramLoc = queryString.indexOf(paramval);
+		int paramLoc = -1;
+		if (queryString != null) paramLoc = queryString.indexOf(paramval);
 		if (paramLoc == -1) {
 			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "vector" + "' in query string.");
 			return;
 		}
+		
 		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "vector" param is last parameter in query string.
+		// And then check to see if its in the middle of the query string and if so, trim off what comes after.
 		int ampersandLoc = queryString.indexOf("&", paramLoc);
 		if (ampersandLoc != -1) {
 			param = queryString.substring(paramLoc + paramval.length(), ampersandLoc);
@@ -56,12 +59,12 @@ public class BenchmarkTest00799 extends HttpServlet {
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map75928 = new java.util.HashMap<String,Object>();
-		map75928.put("keyA-75928", "a_Value"); // put some stuff in the collection
-		map75928.put("keyB-75928", param); // put it in a collection
-		map75928.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map75928.get("keyB-75928"); // get it back out
-		bar = (String)map75928.get("keyA-75928"); // get safe value back out
+		java.util.HashMap<String,Object> map5436 = new java.util.HashMap<String,Object>();
+		map5436.put("keyA-5436", "a_Value"); // put some stuff in the collection
+		map5436.put("keyB-5436", param); // put it in a collection
+		map5436.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map5436.get("keyB-5436"); // get it back out
+		bar = (String)map5436.get("keyA-5436"); // get safe value back out
 		
 		
 	org.owasp.benchmark.helpers.LDAPManager ads = new org.owasp.benchmark.helpers.LDAPManager();

@@ -43,25 +43,26 @@ public class BenchmarkTest00517 extends HttpServlet {
 		java.util.Map<String,String[]> map = request.getParameterMap();
 		String param = "";
 		if (!map.isEmpty()) {
-			param = map.get("vector")[0];
+			String[] values = map.get("vector");
+			if (values != null) param = values[0];
 		}
 		
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a22961 = param; //assign
-		StringBuilder b22961 = new StringBuilder(a22961);  // stick in stringbuilder
-		b22961.append(" SafeStuff"); // append some safe content
-		b22961.replace(b22961.length()-"Chars".length(),b22961.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map22961 = new java.util.HashMap<String,Object>();
-		map22961.put("key22961", b22961.toString()); // put in a collection
-		String c22961 = (String)map22961.get("key22961"); // get it back out
-		String d22961 = c22961.substring(0,c22961.length()-1); // extract most of it
-		String e22961 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d22961.getBytes() ) )); // B64 encode and decode it
-		String f22961 = e22961.split(" ")[0]; // split it on a space
+		String a53888 = param; //assign
+		StringBuilder b53888 = new StringBuilder(a53888);  // stick in stringbuilder
+		b53888.append(" SafeStuff"); // append some safe content
+		b53888.replace(b53888.length()-"Chars".length(),b53888.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map53888 = new java.util.HashMap<String,Object>();
+		map53888.put("key53888", b53888.toString()); // put in a collection
+		String c53888 = (String)map53888.get("key53888"); // get it back out
+		String d53888 = c53888.substring(0,c53888.length()-1); // extract most of it
+		String e53888 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d53888.getBytes() ) )); // B64 encode and decode it
+		String f53888 = e53888.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f22961); // reflection
+		String bar = thing.doSomething(f53888); // reflection
 		
 		
 		try {

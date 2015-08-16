@@ -43,7 +43,8 @@ public class BenchmarkTest01419 extends HttpServlet {
 		java.util.Map<String,String[]> map = request.getParameterMap();
 		String param = "";
 		if (!map.isEmpty()) {
-			param = map.get("vector")[0];
+			String[] values = map.get("vector");
+			if (values != null) param = values[0];
 		}
 		
 
@@ -72,12 +73,12 @@ public class BenchmarkTest01419 extends HttpServlet {
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map66537 = new java.util.HashMap<String,Object>();
-		map66537.put("keyA-66537", "a_Value"); // put some stuff in the collection
-		map66537.put("keyB-66537", param); // put it in a collection
-		map66537.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map66537.get("keyB-66537"); // get it back out
-		bar = (String)map66537.get("keyA-66537"); // get safe value back out
+		java.util.HashMap<String,Object> map5932 = new java.util.HashMap<String,Object>();
+		map5932.put("keyA-5932", "a_Value"); // put some stuff in the collection
+		map5932.put("keyB-5932", param); // put it in a collection
+		map5932.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map5932.get("keyB-5932"); // get it back out
+		bar = (String)map5932.get("keyA-5932"); // get safe value back out
 
             return bar;
         }

@@ -42,12 +42,15 @@ public class BenchmarkTest02648 extends HttpServlet {
 
 		String queryString = request.getQueryString();
 		String paramval = "vector"+"=";
-		int paramLoc = queryString.indexOf(paramval);
+		int paramLoc = -1;
+		if (queryString != null) paramLoc = queryString.indexOf(paramval);
 		if (paramLoc == -1) {
 			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "vector" + "' in query string.");
 			return;
 		}
+		
 		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "vector" param is last parameter in query string.
+		// And then check to see if its in the middle of the query string and if so, trim off what comes after.
 		int ampersandLoc = queryString.indexOf("&", paramLoc);
 		if (ampersandLoc != -1) {
 			param = queryString.substring(paramLoc + paramval.length(), ampersandLoc);
@@ -64,8 +67,8 @@ public class BenchmarkTest02648 extends HttpServlet {
 
 		String bar = param;
 		if (param != null && param.length() > 1) {
-		    StringBuilder sbxyz75174 = new StringBuilder(param);
-		    bar = sbxyz75174.replace(param.length()-"Z".length(), param.length(),"Z").toString();
+		    StringBuilder sbxyz29949 = new StringBuilder(param);
+		    bar = sbxyz29949.replace(param.length()-"Z".length(), param.length(),"Z").toString();
 		}
 	
 		return bar;	

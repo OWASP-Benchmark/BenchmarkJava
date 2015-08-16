@@ -65,15 +65,17 @@ public class BenchmarkTest02237 extends HttpServlet {
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		java.util.List<String> valuesList = new java.util.ArrayList<String>( );
-		valuesList.add("safe");
-		valuesList.add( param );
-		valuesList.add( "moresafe" );
-		
-		valuesList.remove(0); // remove the 1st safe value
-		
-		String bar = valuesList.get(1); // get the last 'safe' value
-		
+		String bar = "alsosafe";
+		if (param != null) {
+			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+			valuesList.add("safe");
+			valuesList.add( param );
+			valuesList.add( "moresafe" );
+			
+			valuesList.remove(0); // remove the 1st safe value
+			
+			bar = valuesList.get(1); // get the last 'safe' value
+		}
 	
 		return bar;	
 	}

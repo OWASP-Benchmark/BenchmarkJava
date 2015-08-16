@@ -61,8 +61,8 @@ public class BenchmarkTest00095 extends HttpServlet {
 		}
 		
 		
-		StringBuilder sbxyz92235 = new StringBuilder(param);
-		String bar = sbxyz92235.append("_SafeStuff").toString();
+		StringBuilder sbxyz69363 = new StringBuilder(param);
+		String bar = sbxyz69363.append("_SafeStuff").toString();
 		
 		
 		double stuff = new java.util.Random().nextGaussian();

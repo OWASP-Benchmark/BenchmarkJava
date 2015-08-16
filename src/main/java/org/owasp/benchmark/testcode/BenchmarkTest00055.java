@@ -62,11 +62,11 @@ public class BenchmarkTest00055 extends HttpServlet {
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map21454 = new java.util.HashMap<String,Object>();
-		map21454.put("keyA-21454", "a Value"); // put some stuff in the collection
-		map21454.put("keyB-21454", param); // put it in a collection
-		map21454.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map21454.get("keyB-21454"); // get it back out
+		java.util.HashMap<String,Object> map51918 = new java.util.HashMap<String,Object>();
+		map51918.put("keyA-51918", "a Value"); // put some stuff in the collection
+		map51918.put("keyB-51918", param); // put it in a collection
+		map51918.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map51918.get("keyB-51918"); // get it back out
 		
 		
 		// Code based on example from:

@@ -59,20 +59,20 @@ public class BenchmarkTest00605 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a9644 = param; //assign
-		StringBuilder b9644 = new StringBuilder(a9644);  // stick in stringbuilder
-		b9644.append(" SafeStuff"); // append some safe content
-		b9644.replace(b9644.length()-"Chars".length(),b9644.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map9644 = new java.util.HashMap<String,Object>();
-		map9644.put("key9644", b9644.toString()); // put in a collection
-		String c9644 = (String)map9644.get("key9644"); // get it back out
-		String d9644 = c9644.substring(0,c9644.length()-1); // extract most of it
-		String e9644 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d9644.getBytes() ) )); // B64 encode and decode it
-		String f9644 = e9644.split(" ")[0]; // split it on a space
+		String a50535 = param; //assign
+		StringBuilder b50535 = new StringBuilder(a50535);  // stick in stringbuilder
+		b50535.append(" SafeStuff"); // append some safe content
+		b50535.replace(b50535.length()-"Chars".length(),b50535.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map50535 = new java.util.HashMap<String,Object>();
+		map50535.put("key50535", b50535.toString()); // put in a collection
+		String c50535 = (String)map50535.get("key50535"); // get it back out
+		String d50535 = c50535.substring(0,c50535.length()-1); // extract most of it
+		String e50535 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d50535.getBytes() ) )); // B64 encode and decode it
+		String f50535 = e50535.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g9644 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g9644); // reflection
+		String g50535 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g50535); // reflection
 		
 		
 		// javax.servlet.http.HttpSession.putValue(java.lang.String^,java.lang.Object)

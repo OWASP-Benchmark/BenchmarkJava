@@ -43,13 +43,14 @@ public class BenchmarkTest00488 extends HttpServlet {
 		java.util.Map<String,String[]> map = request.getParameterMap();
 		String param = "";
 		if (!map.isEmpty()) {
-			param = map.get("vector")[0];
+			String[] values = map.get("vector");
+			if (values != null) param = values[0];
 		}
 		
 		
 		
-		StringBuilder sbxyz61664 = new StringBuilder(param);
-		String bar = sbxyz61664.append("_SafeStuff").toString();
+		StringBuilder sbxyz39021 = new StringBuilder(param);
+		String bar = sbxyz39021.append("_SafeStuff").toString();
 		
 		
 		response.getWriter().print(bar);

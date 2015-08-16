@@ -97,19 +97,19 @@ public class BenchmarkTest02576 extends HttpServlet {
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a39831 = param; //assign
-		StringBuilder b39831 = new StringBuilder(a39831);  // stick in stringbuilder
-		b39831.append(" SafeStuff"); // append some safe content
-		b39831.replace(b39831.length()-"Chars".length(),b39831.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map39831 = new java.util.HashMap<String,Object>();
-		map39831.put("key39831", b39831.toString()); // put in a collection
-		String c39831 = (String)map39831.get("key39831"); // get it back out
-		String d39831 = c39831.substring(0,c39831.length()-1); // extract most of it
-		String e39831 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d39831.getBytes() ) )); // B64 encode and decode it
-		String f39831 = e39831.split(" ")[0]; // split it on a space
+		String a890 = param; //assign
+		StringBuilder b890 = new StringBuilder(a890);  // stick in stringbuilder
+		b890.append(" SafeStuff"); // append some safe content
+		b890.replace(b890.length()-"Chars".length(),b890.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map890 = new java.util.HashMap<String,Object>();
+		map890.put("key890", b890.toString()); // put in a collection
+		String c890 = (String)map890.get("key890"); // get it back out
+		String d890 = c890.substring(0,c890.length()-1); // extract most of it
+		String e890 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d890.getBytes() ) )); // B64 encode and decode it
+		String f890 = e890.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f39831); // reflection
+		String bar = thing.doSomething(f890); // reflection
 	
 		return bar;	
 	}

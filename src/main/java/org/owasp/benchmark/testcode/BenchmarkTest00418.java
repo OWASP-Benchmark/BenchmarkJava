@@ -45,12 +45,12 @@ public class BenchmarkTest00418 extends HttpServlet {
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map25921 = new java.util.HashMap<String,Object>();
-		map25921.put("keyA-25921", "a_Value"); // put some stuff in the collection
-		map25921.put("keyB-25921", param); // put it in a collection
-		map25921.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map25921.get("keyB-25921"); // get it back out
-		bar = (String)map25921.get("keyA-25921"); // get safe value back out
+		java.util.HashMap<String,Object> map43483 = new java.util.HashMap<String,Object>();
+		map43483.put("keyA-43483", "a_Value"); // put some stuff in the collection
+		map43483.put("keyB-43483", param); // put it in a collection
+		map43483.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map43483.get("keyB-43483"); // get it back out
+		bar = (String)map43483.get("keyA-43483"); // get safe value back out
 		
 		
 		float rand = new java.util.Random().nextFloat();

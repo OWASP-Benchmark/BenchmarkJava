@@ -42,12 +42,15 @@ public class BenchmarkTest01696 extends HttpServlet {
 	
 		String queryString = request.getQueryString();
 		String paramval = "vector"+"=";
-		int paramLoc = queryString.indexOf(paramval);
+		int paramLoc = -1;
+		if (queryString != null) paramLoc = queryString.indexOf(paramval);
 		if (paramLoc == -1) {
 			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "vector" + "' in query string.");
 			return;
 		}
+		
 		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "vector" param is last parameter in query string.
+		// And then check to see if its in the middle of the query string and if so, trim off what comes after.
 		int ampersandLoc = queryString.indexOf("&", paramLoc);
 		if (ampersandLoc != -1) {
 			param = queryString.substring(paramLoc + paramval.length(), ampersandLoc);
@@ -68,19 +71,19 @@ public class BenchmarkTest01696 extends HttpServlet {
         public String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a42170 = param; //assign
-		StringBuilder b42170 = new StringBuilder(a42170);  // stick in stringbuilder
-		b42170.append(" SafeStuff"); // append some safe content
-		b42170.replace(b42170.length()-"Chars".length(),b42170.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map42170 = new java.util.HashMap<String,Object>();
-		map42170.put("key42170", b42170.toString()); // put in a collection
-		String c42170 = (String)map42170.get("key42170"); // get it back out
-		String d42170 = c42170.substring(0,c42170.length()-1); // extract most of it
-		String e42170 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d42170.getBytes() ) )); // B64 encode and decode it
-		String f42170 = e42170.split(" ")[0]; // split it on a space
+		String a61497 = param; //assign
+		StringBuilder b61497 = new StringBuilder(a61497);  // stick in stringbuilder
+		b61497.append(" SafeStuff"); // append some safe content
+		b61497.replace(b61497.length()-"Chars".length(),b61497.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map61497 = new java.util.HashMap<String,Object>();
+		map61497.put("key61497", b61497.toString()); // put in a collection
+		String c61497 = (String)map61497.get("key61497"); // get it back out
+		String d61497 = c61497.substring(0,c61497.length()-1); // extract most of it
+		String e61497 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d61497.getBytes() ) )); // B64 encode and decode it
+		String f61497 = e61497.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f42170); // reflection
+		String bar = thing.doSomething(f61497); // reflection
 
             return bar;
         }

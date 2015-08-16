@@ -94,19 +94,19 @@ public class BenchmarkTest02764 extends HttpServlet {
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a41449 = param; //assign
-		StringBuilder b41449 = new StringBuilder(a41449);  // stick in stringbuilder
-		b41449.append(" SafeStuff"); // append some safe content
-		b41449.replace(b41449.length()-"Chars".length(),b41449.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map41449 = new java.util.HashMap<String,Object>();
-		map41449.put("key41449", b41449.toString()); // put in a collection
-		String c41449 = (String)map41449.get("key41449"); // get it back out
-		String d41449 = c41449.substring(0,c41449.length()-1); // extract most of it
-		String e41449 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d41449.getBytes() ) )); // B64 encode and decode it
-		String f41449 = e41449.split(" ")[0]; // split it on a space
+		String a27414 = param; //assign
+		StringBuilder b27414 = new StringBuilder(a27414);  // stick in stringbuilder
+		b27414.append(" SafeStuff"); // append some safe content
+		b27414.replace(b27414.length()-"Chars".length(),b27414.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map27414 = new java.util.HashMap<String,Object>();
+		map27414.put("key27414", b27414.toString()); // put in a collection
+		String c27414 = (String)map27414.get("key27414"); // get it back out
+		String d27414 = c27414.substring(0,c27414.length()-1); // extract most of it
+		String e27414 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d27414.getBytes() ) )); // B64 encode and decode it
+		String f27414 = e27414.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f41449); // reflection
+		String bar = thing.doSomething(f27414); // reflection
 	
 		return bar;	
 	}

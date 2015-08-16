@@ -45,20 +45,20 @@ public class BenchmarkTest00881 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a35063 = param; //assign
-		StringBuilder b35063 = new StringBuilder(a35063);  // stick in stringbuilder
-		b35063.append(" SafeStuff"); // append some safe content
-		b35063.replace(b35063.length()-"Chars".length(),b35063.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map35063 = new java.util.HashMap<String,Object>();
-		map35063.put("key35063", b35063.toString()); // put in a collection
-		String c35063 = (String)map35063.get("key35063"); // get it back out
-		String d35063 = c35063.substring(0,c35063.length()-1); // extract most of it
-		String e35063 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d35063.getBytes() ) )); // B64 encode and decode it
-		String f35063 = e35063.split(" ")[0]; // split it on a space
+		String a56317 = param; //assign
+		StringBuilder b56317 = new StringBuilder(a56317);  // stick in stringbuilder
+		b56317.append(" SafeStuff"); // append some safe content
+		b56317.replace(b56317.length()-"Chars".length(),b56317.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map56317 = new java.util.HashMap<String,Object>();
+		map56317.put("key56317", b56317.toString()); // put in a collection
+		String c56317 = (String)map56317.get("key56317"); // get it back out
+		String d56317 = c56317.substring(0,c56317.length()-1); // extract most of it
+		String e56317 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d56317.getBytes() ) )); // B64 encode and decode it
+		String f56317 = e56317.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g35063 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g35063); // reflection
+		String g56317 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g56317); // reflection
 		
 		
 		String fileName = null;

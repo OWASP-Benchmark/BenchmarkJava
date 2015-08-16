@@ -44,8 +44,8 @@ public class BenchmarkTest00184 extends HttpServlet {
 		if (param == null) param = "";
 		
 		
-		StringBuilder sbxyz59075 = new StringBuilder(param);
-		String bar = sbxyz59075.append("_SafeStuff").toString();
+		StringBuilder sbxyz28159 = new StringBuilder(param);
+		String bar = sbxyz28159.append("_SafeStuff").toString();
 		
 		
 		int randNumber = new java.util.Random().nextInt(99);

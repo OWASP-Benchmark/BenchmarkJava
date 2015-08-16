@@ -43,17 +43,18 @@ public class BenchmarkTest00497 extends HttpServlet {
 		java.util.Map<String,String[]> map = request.getParameterMap();
 		String param = "";
 		if (!map.isEmpty()) {
-			param = map.get("vector")[0];
+			String[] values = map.get("vector");
+			if (values != null) param = values[0];
 		}
 		
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map65917 = new java.util.HashMap<String,Object>();
-		map65917.put("keyA-65917", "a Value"); // put some stuff in the collection
-		map65917.put("keyB-65917", param); // put it in a collection
-		map65917.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map65917.get("keyB-65917"); // get it back out
+		java.util.HashMap<String,Object> map24334 = new java.util.HashMap<String,Object>();
+		map24334.put("keyA-24334", "a Value"); // put some stuff in the collection
+		map24334.put("keyB-24334", param); // put it in a collection
+		map24334.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map24334.get("keyB-24334"); // get it back out
 		
 		
 		response.getWriter().println(bar);

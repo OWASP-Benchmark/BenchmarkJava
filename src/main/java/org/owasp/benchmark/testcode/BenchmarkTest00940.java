@@ -45,19 +45,19 @@ public class BenchmarkTest00940 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a77026 = param; //assign
-		StringBuilder b77026 = new StringBuilder(a77026);  // stick in stringbuilder
-		b77026.append(" SafeStuff"); // append some safe content
-		b77026.replace(b77026.length()-"Chars".length(),b77026.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map77026 = new java.util.HashMap<String,Object>();
-		map77026.put("key77026", b77026.toString()); // put in a collection
-		String c77026 = (String)map77026.get("key77026"); // get it back out
-		String d77026 = c77026.substring(0,c77026.length()-1); // extract most of it
-		String e77026 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d77026.getBytes() ) )); // B64 encode and decode it
-		String f77026 = e77026.split(" ")[0]; // split it on a space
+		String a9776 = param; //assign
+		StringBuilder b9776 = new StringBuilder(a9776);  // stick in stringbuilder
+		b9776.append(" SafeStuff"); // append some safe content
+		b9776.replace(b9776.length()-"Chars".length(),b9776.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map9776 = new java.util.HashMap<String,Object>();
+		map9776.put("key9776", b9776.toString()); // put in a collection
+		String c9776 = (String)map9776.get("key9776"); // get it back out
+		String d9776 = c9776.substring(0,c9776.length()-1); // extract most of it
+		String e9776 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d9776.getBytes() ) )); // B64 encode and decode it
+		String f9776 = e9776.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f77026); // reflection
+		String bar = thing.doSomething(f9776); // reflection
 		
 		
 		// javax.servlet.http.HttpSession.setAttribute(java.lang.String^,java.lang.Object)

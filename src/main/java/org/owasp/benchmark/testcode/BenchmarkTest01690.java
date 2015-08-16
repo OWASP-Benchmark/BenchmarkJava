@@ -42,12 +42,15 @@ public class BenchmarkTest01690 extends HttpServlet {
 	
 		String queryString = request.getQueryString();
 		String paramval = "vector"+"=";
-		int paramLoc = queryString.indexOf(paramval);
+		int paramLoc = -1;
+		if (queryString != null) paramLoc = queryString.indexOf(paramval);
 		if (paramLoc == -1) {
 			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "vector" + "' in query string.");
 			return;
 		}
+		
 		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "vector" param is last parameter in query string.
+		// And then check to see if its in the middle of the query string and if so, trim off what comes after.
 		int ampersandLoc = queryString.indexOf("&", paramLoc);
 		if (ampersandLoc != -1) {
 			param = queryString.substring(paramLoc + paramval.length(), ampersandLoc);
@@ -92,11 +95,11 @@ public class BenchmarkTest01690 extends HttpServlet {
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map64188 = new java.util.HashMap<String,Object>();
-		map64188.put("keyA-64188", "a Value"); // put some stuff in the collection
-		map64188.put("keyB-64188", param); // put it in a collection
-		map64188.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map64188.get("keyB-64188"); // get it back out
+		java.util.HashMap<String,Object> map48180 = new java.util.HashMap<String,Object>();
+		map48180.put("keyA-48180", "a Value"); // put some stuff in the collection
+		map48180.put("keyB-48180", param); // put it in a collection
+		map48180.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map48180.get("keyB-48180"); // get it back out
 
             return bar;
         }

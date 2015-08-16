@@ -45,19 +45,19 @@ public class BenchmarkTest00390 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a1031 = param; //assign
-		StringBuilder b1031 = new StringBuilder(a1031);  // stick in stringbuilder
-		b1031.append(" SafeStuff"); // append some safe content
-		b1031.replace(b1031.length()-"Chars".length(),b1031.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map1031 = new java.util.HashMap<String,Object>();
-		map1031.put("key1031", b1031.toString()); // put in a collection
-		String c1031 = (String)map1031.get("key1031"); // get it back out
-		String d1031 = c1031.substring(0,c1031.length()-1); // extract most of it
-		String e1031 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d1031.getBytes() ) )); // B64 encode and decode it
-		String f1031 = e1031.split(" ")[0]; // split it on a space
+		String a82381 = param; //assign
+		StringBuilder b82381 = new StringBuilder(a82381);  // stick in stringbuilder
+		b82381.append(" SafeStuff"); // append some safe content
+		b82381.replace(b82381.length()-"Chars".length(),b82381.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map82381 = new java.util.HashMap<String,Object>();
+		map82381.put("key82381", b82381.toString()); // put in a collection
+		String c82381 = (String)map82381.get("key82381"); // get it back out
+		String d82381 = c82381.substring(0,c82381.length()-1); // extract most of it
+		String e82381 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d82381.getBytes() ) )); // B64 encode and decode it
+		String f82381 = e82381.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f1031); // reflection
+		String bar = thing.doSomething(f82381); // reflection
 		
 		
 		java.security.Provider[] provider = java.security.Security.getProviders();

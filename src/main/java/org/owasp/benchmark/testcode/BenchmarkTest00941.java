@@ -44,8 +44,8 @@ public class BenchmarkTest00941 extends HttpServlet {
 		String param = scr.getTheValue("vector");
 		
 		
-		StringBuilder sbxyz49531 = new StringBuilder(param);
-		String bar = sbxyz49531.append("_SafeStuff").toString();
+		StringBuilder sbxyz62151 = new StringBuilder(param);
+		String bar = sbxyz62151.append("_SafeStuff").toString();
 		
 		
 		// javax.servlet.http.HttpSession.setAttribute(java.lang.String^,java.lang.Object)

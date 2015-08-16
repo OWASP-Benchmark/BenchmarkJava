@@ -43,18 +43,19 @@ public class BenchmarkTest00469 extends HttpServlet {
 		java.util.Map<String,String[]> map = request.getParameterMap();
 		String param = "";
 		if (!map.isEmpty()) {
-			param = map.get("vector")[0];
+			String[] values = map.get("vector");
+			if (values != null) param = values[0];
 		}
 		
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map34789 = new java.util.HashMap<String,Object>();
-		map34789.put("keyA-34789", "a_Value"); // put some stuff in the collection
-		map34789.put("keyB-34789", param); // put it in a collection
-		map34789.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map34789.get("keyB-34789"); // get it back out
-		bar = (String)map34789.get("keyA-34789"); // get safe value back out
+		java.util.HashMap<String,Object> map84231 = new java.util.HashMap<String,Object>();
+		map84231.put("keyA-84231", "a_Value"); // put some stuff in the collection
+		map84231.put("keyB-84231", param); // put it in a collection
+		map84231.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map84231.get("keyB-84231"); // get it back out
+		bar = (String)map84231.get("keyA-84231"); // get safe value back out
 		
 		
 		// FILE URIs are tricky because they are different between Mac and Windows because of lack of standardization.

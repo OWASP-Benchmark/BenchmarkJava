@@ -43,7 +43,8 @@ public class BenchmarkTest02262 extends HttpServlet {
 		java.util.Map<String,String[]> map = request.getParameterMap();
 		String param = "";
 		if (!map.isEmpty()) {
-			param = map.get("vector")[0];
+			String[] values = map.get("vector");
+			if (values != null) param = values[0];
 		}
 		
 
@@ -85,8 +86,8 @@ public class BenchmarkTest02262 extends HttpServlet {
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		StringBuilder sbxyz9609 = new StringBuilder(param);
-		String bar = sbxyz9609.append("_SafeStuff").toString();
+		StringBuilder sbxyz34758 = new StringBuilder(param);
+		String bar = sbxyz34758.append("_SafeStuff").toString();
 	
 		return bar;	
 	}

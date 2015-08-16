@@ -43,7 +43,8 @@ public class BenchmarkTest02297 extends HttpServlet {
 		java.util.Map<String,String[]> map = request.getParameterMap();
 		String param = "";
 		if (!map.isEmpty()) {
-			param = map.get("vector")[0];
+			String[] values = map.get("vector");
+			if (values != null) param = values[0];
 		}
 		
 
@@ -88,20 +89,20 @@ public class BenchmarkTest02297 extends HttpServlet {
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a97498 = param; //assign
-		StringBuilder b97498 = new StringBuilder(a97498);  // stick in stringbuilder
-		b97498.append(" SafeStuff"); // append some safe content
-		b97498.replace(b97498.length()-"Chars".length(),b97498.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map97498 = new java.util.HashMap<String,Object>();
-		map97498.put("key97498", b97498.toString()); // put in a collection
-		String c97498 = (String)map97498.get("key97498"); // get it back out
-		String d97498 = c97498.substring(0,c97498.length()-1); // extract most of it
-		String e97498 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d97498.getBytes() ) )); // B64 encode and decode it
-		String f97498 = e97498.split(" ")[0]; // split it on a space
+		String a18438 = param; //assign
+		StringBuilder b18438 = new StringBuilder(a18438);  // stick in stringbuilder
+		b18438.append(" SafeStuff"); // append some safe content
+		b18438.replace(b18438.length()-"Chars".length(),b18438.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map18438 = new java.util.HashMap<String,Object>();
+		map18438.put("key18438", b18438.toString()); // put in a collection
+		String c18438 = (String)map18438.get("key18438"); // get it back out
+		String d18438 = c18438.substring(0,c18438.length()-1); // extract most of it
+		String e18438 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d18438.getBytes() ) )); // B64 encode and decode it
+		String f18438 = e18438.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g97498 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g97498); // reflection
+		String g18438 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g18438); // reflection
 	
 		return bar;	
 	}

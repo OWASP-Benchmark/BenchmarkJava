@@ -43,18 +43,19 @@ public class BenchmarkTest00472 extends HttpServlet {
 		java.util.Map<String,String[]> map = request.getParameterMap();
 		String param = "";
 		if (!map.isEmpty()) {
-			param = map.get("vector")[0];
+			String[] values = map.get("vector");
+			if (values != null) param = values[0];
 		}
 		
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map28419 = new java.util.HashMap<String,Object>();
-		map28419.put("keyA-28419", "a_Value"); // put some stuff in the collection
-		map28419.put("keyB-28419", param); // put it in a collection
-		map28419.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map28419.get("keyB-28419"); // get it back out
-		bar = (String)map28419.get("keyA-28419"); // get safe value back out
+		java.util.HashMap<String,Object> map60750 = new java.util.HashMap<String,Object>();
+		map60750.put("keyA-60750", "a_Value"); // put some stuff in the collection
+		map60750.put("keyB-60750", param); // put it in a collection
+		map60750.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map60750.get("keyB-60750"); // get it back out
+		bar = (String)map60750.get("keyA-60750"); // get safe value back out
 		
 		
 	org.owasp.benchmark.helpers.LDAPManager ads = new org.owasp.benchmark.helpers.LDAPManager();

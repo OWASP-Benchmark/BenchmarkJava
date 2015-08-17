@@ -42,7 +42,7 @@ public class ParasoftReader extends Reader {
 
         Node root = doc.getDocumentElement();
 
-        // <ResultsSession time="06/03/15 10:10:09" toolName="Jtest" toolVer="9.5.13.20140908���>
+        // <ResultsSession time="06/03/15 10:10:09" toolName="Jtest" toolVer="9.5.13.20140908>
         String version = this.getAttributeValue("toolVer", root);
         tr.setToolVersion( version );
 

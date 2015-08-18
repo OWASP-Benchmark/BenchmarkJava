@@ -44,8 +44,8 @@ public class BenchmarkTest00412 extends HttpServlet {
 		if (param == null) param = "";
 		
 		
-		StringBuilder sbxyz28876 = new StringBuilder(param);
-		String bar = sbxyz28876.append("_SafeStuff").toString();
+		StringBuilder sbxyz88934 = new StringBuilder(param);
+		String bar = sbxyz88934.append("_SafeStuff").toString();
 		
 		
 		response.getWriter().write(bar);

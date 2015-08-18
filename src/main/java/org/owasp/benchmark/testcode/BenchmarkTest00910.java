@@ -45,19 +45,19 @@ public class BenchmarkTest00910 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a10563 = param; //assign
-		StringBuilder b10563 = new StringBuilder(a10563);  // stick in stringbuilder
-		b10563.append(" SafeStuff"); // append some safe content
-		b10563.replace(b10563.length()-"Chars".length(),b10563.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map10563 = new java.util.HashMap<String,Object>();
-		map10563.put("key10563", b10563.toString()); // put in a collection
-		String c10563 = (String)map10563.get("key10563"); // get it back out
-		String d10563 = c10563.substring(0,c10563.length()-1); // extract most of it
-		String e10563 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d10563.getBytes() ) )); // B64 encode and decode it
-		String f10563 = e10563.split(" ")[0]; // split it on a space
+		String a26154 = param; //assign
+		StringBuilder b26154 = new StringBuilder(a26154);  // stick in stringbuilder
+		b26154.append(" SafeStuff"); // append some safe content
+		b26154.replace(b26154.length()-"Chars".length(),b26154.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map26154 = new java.util.HashMap<String,Object>();
+		map26154.put("key26154", b26154.toString()); // put in a collection
+		String c26154 = (String)map26154.get("key26154"); // get it back out
+		String d26154 = c26154.substring(0,c26154.length()-1); // extract most of it
+		String e26154 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d26154.getBytes() ) )); // B64 encode and decode it
+		String f26154 = e26154.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f10563); // reflection
+		String bar = thing.doSomething(f26154); // reflection
 		
 		
 		response.getWriter().write(bar);

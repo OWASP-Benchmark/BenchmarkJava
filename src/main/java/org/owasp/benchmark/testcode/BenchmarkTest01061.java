@@ -58,7 +58,8 @@ public class BenchmarkTest01061 extends HttpServlet {
 			is.close();
 		} catch (Exception e) {
             System.out.println("Couldn't open InputStream on file: '" + fileName + "'");
-			response.getWriter().write("Problem getting InputStream: " + e.getMessage());
+			response.getWriter().write("Problem getting InputStream: " 
+				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage()));
         } finally {
 			if (is != null) {
                 try {
@@ -76,12 +77,12 @@ public class BenchmarkTest01061 extends HttpServlet {
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map9248 = new java.util.HashMap<String,Object>();
-		map9248.put("keyA-9248", "a_Value"); // put some stuff in the collection
-		map9248.put("keyB-9248", param); // put it in a collection
-		map9248.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map9248.get("keyB-9248"); // get it back out
-		bar = (String)map9248.get("keyA-9248"); // get safe value back out
+		java.util.HashMap<String,Object> map26621 = new java.util.HashMap<String,Object>();
+		map26621.put("keyA-26621", "a_Value"); // put some stuff in the collection
+		map26621.put("keyB-26621", param); // put it in a collection
+		map26621.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map26621.get("keyB-26621"); // get it back out
+		bar = (String)map26621.get("keyA-26621"); // get safe value back out
 
             return bar;
         }

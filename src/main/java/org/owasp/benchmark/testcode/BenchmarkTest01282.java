@@ -58,7 +58,8 @@ public class BenchmarkTest01282 extends HttpServlet {
 			is.close();
 		} catch (Exception e) {
             System.out.println("Couldn't open InputStream on file: '" + fileName + "'");
-			response.getWriter().write("Problem getting InputStream: " + e.getMessage());
+			response.getWriter().write("Problem getting InputStream: " 
+				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage()));
         } finally {
 			if (is != null) {
                 try {
@@ -76,20 +77,20 @@ public class BenchmarkTest01282 extends HttpServlet {
         public String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a20090 = param; //assign
-		StringBuilder b20090 = new StringBuilder(a20090);  // stick in stringbuilder
-		b20090.append(" SafeStuff"); // append some safe content
-		b20090.replace(b20090.length()-"Chars".length(),b20090.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map20090 = new java.util.HashMap<String,Object>();
-		map20090.put("key20090", b20090.toString()); // put in a collection
-		String c20090 = (String)map20090.get("key20090"); // get it back out
-		String d20090 = c20090.substring(0,c20090.length()-1); // extract most of it
-		String e20090 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d20090.getBytes() ) )); // B64 encode and decode it
-		String f20090 = e20090.split(" ")[0]; // split it on a space
+		String a81937 = param; //assign
+		StringBuilder b81937 = new StringBuilder(a81937);  // stick in stringbuilder
+		b81937.append(" SafeStuff"); // append some safe content
+		b81937.replace(b81937.length()-"Chars".length(),b81937.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map81937 = new java.util.HashMap<String,Object>();
+		map81937.put("key81937", b81937.toString()); // put in a collection
+		String c81937 = (String)map81937.get("key81937"); // get it back out
+		String d81937 = c81937.substring(0,c81937.length()-1); // extract most of it
+		String e81937 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d81937.getBytes() ) )); // B64 encode and decode it
+		String f81937 = e81937.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g20090 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g20090); // reflection
+		String g81937 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g81937); // reflection
 
             return bar;
         }

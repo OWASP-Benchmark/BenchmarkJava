@@ -47,8 +47,8 @@ public class BenchmarkTest00754 extends HttpServlet {
 		else param = "";
 		
 		
-		StringBuilder sbxyz50614 = new StringBuilder(param);
-		String bar = sbxyz50614.append("_SafeStuff").toString();
+		StringBuilder sbxyz95382 = new StringBuilder(param);
+		String bar = sbxyz95382.append("_SafeStuff").toString();
 		
 		
 		byte[] input = new byte[1000];

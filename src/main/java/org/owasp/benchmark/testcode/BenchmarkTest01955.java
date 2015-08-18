@@ -85,20 +85,20 @@ public class BenchmarkTest01955 extends HttpServlet {
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a21888 = param; //assign
-		StringBuilder b21888 = new StringBuilder(a21888);  // stick in stringbuilder
-		b21888.append(" SafeStuff"); // append some safe content
-		b21888.replace(b21888.length()-"Chars".length(),b21888.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map21888 = new java.util.HashMap<String,Object>();
-		map21888.put("key21888", b21888.toString()); // put in a collection
-		String c21888 = (String)map21888.get("key21888"); // get it back out
-		String d21888 = c21888.substring(0,c21888.length()-1); // extract most of it
-		String e21888 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d21888.getBytes() ) )); // B64 encode and decode it
-		String f21888 = e21888.split(" ")[0]; // split it on a space
+		String a62457 = param; //assign
+		StringBuilder b62457 = new StringBuilder(a62457);  // stick in stringbuilder
+		b62457.append(" SafeStuff"); // append some safe content
+		b62457.replace(b62457.length()-"Chars".length(),b62457.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map62457 = new java.util.HashMap<String,Object>();
+		map62457.put("key62457", b62457.toString()); // put in a collection
+		String c62457 = (String)map62457.get("key62457"); // get it back out
+		String d62457 = c62457.substring(0,c62457.length()-1); // extract most of it
+		String e62457 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d62457.getBytes() ) )); // B64 encode and decode it
+		String f62457 = e62457.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g21888 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g21888); // reflection
+		String g62457 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g62457); // reflection
 	
 		return bar;	
 	}

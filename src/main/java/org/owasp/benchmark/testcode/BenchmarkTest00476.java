@@ -49,8 +49,8 @@ public class BenchmarkTest00476 extends HttpServlet {
 		
 		
 		
-		StringBuilder sbxyz66000 = new StringBuilder(param);
-		String bar = sbxyz66000.append("_SafeStuff").toString();
+		StringBuilder sbxyz82003 = new StringBuilder(param);
+		String bar = sbxyz82003.append("_SafeStuff").toString();
 		
 		
 		java.security.Provider[] provider = java.security.Security.getProviders();

@@ -60,7 +60,8 @@ public class BenchmarkTest02520 extends HttpServlet {
 			response.getWriter().write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size)));
 		} catch (Exception e) {
             System.out.println("Couldn't open FileInputStream on file: '" + fileName + "'");
-			response.getWriter().write("Problem getting FileInputStream: " + e.getMessage());
+			response.getWriter().write("Problem getting FileInputStream: " 
+				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage()));
         } finally {
 			if (fis != null) {
                 try {
@@ -76,12 +77,12 @@ public class BenchmarkTest02520 extends HttpServlet {
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map14168 = new java.util.HashMap<String,Object>();
-		map14168.put("keyA-14168", "a_Value"); // put some stuff in the collection
-		map14168.put("keyB-14168", param); // put it in a collection
-		map14168.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map14168.get("keyB-14168"); // get it back out
-		bar = (String)map14168.get("keyA-14168"); // get safe value back out
+		java.util.HashMap<String,Object> map63953 = new java.util.HashMap<String,Object>();
+		map63953.put("keyA-63953", "a_Value"); // put some stuff in the collection
+		map63953.put("keyB-63953", param); // put it in a collection
+		map63953.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map63953.get("keyB-63953"); // get it back out
+		bar = (String)map63953.get("keyA-63953"); // get safe value back out
 	
 		return bar;	
 	}

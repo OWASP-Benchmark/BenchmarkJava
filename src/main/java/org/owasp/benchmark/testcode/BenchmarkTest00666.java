@@ -46,19 +46,19 @@ public class BenchmarkTest00666 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a16988 = param; //assign
-		StringBuilder b16988 = new StringBuilder(a16988);  // stick in stringbuilder
-		b16988.append(" SafeStuff"); // append some safe content
-		b16988.replace(b16988.length()-"Chars".length(),b16988.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map16988 = new java.util.HashMap<String,Object>();
-		map16988.put("key16988", b16988.toString()); // put in a collection
-		String c16988 = (String)map16988.get("key16988"); // get it back out
-		String d16988 = c16988.substring(0,c16988.length()-1); // extract most of it
-		String e16988 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d16988.getBytes() ) )); // B64 encode and decode it
-		String f16988 = e16988.split(" ")[0]; // split it on a space
+		String a14068 = param; //assign
+		StringBuilder b14068 = new StringBuilder(a14068);  // stick in stringbuilder
+		b14068.append(" SafeStuff"); // append some safe content
+		b14068.replace(b14068.length()-"Chars".length(),b14068.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map14068 = new java.util.HashMap<String,Object>();
+		map14068.put("key14068", b14068.toString()); // put in a collection
+		String c14068 = (String)map14068.get("key14068"); // get it back out
+		String d14068 = c14068.substring(0,c14068.length()-1); // extract most of it
+		String e14068 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d14068.getBytes() ) )); // B64 encode and decode it
+		String f14068 = e14068.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f16988); // reflection
+		String bar = thing.doSomething(f14068); // reflection
 		
 		
 		int randNumber = new java.util.Random().nextInt(99);

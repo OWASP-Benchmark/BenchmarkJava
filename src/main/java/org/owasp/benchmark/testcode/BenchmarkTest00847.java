@@ -59,19 +59,19 @@ public class BenchmarkTest00847 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a20025 = param; //assign
-		StringBuilder b20025 = new StringBuilder(a20025);  // stick in stringbuilder
-		b20025.append(" SafeStuff"); // append some safe content
-		b20025.replace(b20025.length()-"Chars".length(),b20025.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map20025 = new java.util.HashMap<String,Object>();
-		map20025.put("key20025", b20025.toString()); // put in a collection
-		String c20025 = (String)map20025.get("key20025"); // get it back out
-		String d20025 = c20025.substring(0,c20025.length()-1); // extract most of it
-		String e20025 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d20025.getBytes() ) )); // B64 encode and decode it
-		String f20025 = e20025.split(" ")[0]; // split it on a space
+		String a89999 = param; //assign
+		StringBuilder b89999 = new StringBuilder(a89999);  // stick in stringbuilder
+		b89999.append(" SafeStuff"); // append some safe content
+		b89999.replace(b89999.length()-"Chars".length(),b89999.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map89999 = new java.util.HashMap<String,Object>();
+		map89999.put("key89999", b89999.toString()); // put in a collection
+		String c89999 = (String)map89999.get("key89999"); // get it back out
+		String d89999 = c89999.substring(0,c89999.length()-1); // extract most of it
+		String e89999 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d89999.getBytes() ) )); // B64 encode and decode it
+		String f89999 = e89999.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f20025); // reflection
+		String bar = thing.doSomething(f89999); // reflection
 		
 		
 		try {

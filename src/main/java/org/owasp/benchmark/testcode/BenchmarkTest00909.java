@@ -45,19 +45,19 @@ public class BenchmarkTest00909 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a27267 = param; //assign
-		StringBuilder b27267 = new StringBuilder(a27267);  // stick in stringbuilder
-		b27267.append(" SafeStuff"); // append some safe content
-		b27267.replace(b27267.length()-"Chars".length(),b27267.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map27267 = new java.util.HashMap<String,Object>();
-		map27267.put("key27267", b27267.toString()); // put in a collection
-		String c27267 = (String)map27267.get("key27267"); // get it back out
-		String d27267 = c27267.substring(0,c27267.length()-1); // extract most of it
-		String e27267 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d27267.getBytes() ) )); // B64 encode and decode it
-		String f27267 = e27267.split(" ")[0]; // split it on a space
+		String a60272 = param; //assign
+		StringBuilder b60272 = new StringBuilder(a60272);  // stick in stringbuilder
+		b60272.append(" SafeStuff"); // append some safe content
+		b60272.replace(b60272.length()-"Chars".length(),b60272.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map60272 = new java.util.HashMap<String,Object>();
+		map60272.put("key60272", b60272.toString()); // put in a collection
+		String c60272 = (String)map60272.get("key60272"); // get it back out
+		String d60272 = c60272.substring(0,c60272.length()-1); // extract most of it
+		String e60272 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d60272.getBytes() ) )); // B64 encode and decode it
+		String f60272 = e60272.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f27267); // reflection
+		String bar = thing.doSomething(f60272); // reflection
 		
 		
 		response.getWriter().write(bar.toCharArray());

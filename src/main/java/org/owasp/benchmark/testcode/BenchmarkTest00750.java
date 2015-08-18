@@ -48,19 +48,19 @@ public class BenchmarkTest00750 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a73229 = param; //assign
-		StringBuilder b73229 = new StringBuilder(a73229);  // stick in stringbuilder
-		b73229.append(" SafeStuff"); // append some safe content
-		b73229.replace(b73229.length()-"Chars".length(),b73229.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map73229 = new java.util.HashMap<String,Object>();
-		map73229.put("key73229", b73229.toString()); // put in a collection
-		String c73229 = (String)map73229.get("key73229"); // get it back out
-		String d73229 = c73229.substring(0,c73229.length()-1); // extract most of it
-		String e73229 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d73229.getBytes() ) )); // B64 encode and decode it
-		String f73229 = e73229.split(" ")[0]; // split it on a space
+		String a41014 = param; //assign
+		StringBuilder b41014 = new StringBuilder(a41014);  // stick in stringbuilder
+		b41014.append(" SafeStuff"); // append some safe content
+		b41014.replace(b41014.length()-"Chars".length(),b41014.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map41014 = new java.util.HashMap<String,Object>();
+		map41014.put("key41014", b41014.toString()); // put in a collection
+		String c41014 = (String)map41014.get("key41014"); // get it back out
+		String d41014 = c41014.substring(0,c41014.length()-1); // extract most of it
+		String e41014 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d41014.getBytes() ) )); // B64 encode and decode it
+		String f41014 = e41014.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f73229); // reflection
+		String bar = thing.doSomething(f41014); // reflection
 		
 		
 		float rand = new java.util.Random().nextFloat();

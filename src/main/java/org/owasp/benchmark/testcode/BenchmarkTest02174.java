@@ -55,19 +55,19 @@ public class BenchmarkTest02174 extends HttpServlet {
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a85935 = param; //assign
-		StringBuilder b85935 = new StringBuilder(a85935);  // stick in stringbuilder
-		b85935.append(" SafeStuff"); // append some safe content
-		b85935.replace(b85935.length()-"Chars".length(),b85935.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map85935 = new java.util.HashMap<String,Object>();
-		map85935.put("key85935", b85935.toString()); // put in a collection
-		String c85935 = (String)map85935.get("key85935"); // get it back out
-		String d85935 = c85935.substring(0,c85935.length()-1); // extract most of it
-		String e85935 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d85935.getBytes() ) )); // B64 encode and decode it
-		String f85935 = e85935.split(" ")[0]; // split it on a space
+		String a1740 = param; //assign
+		StringBuilder b1740 = new StringBuilder(a1740);  // stick in stringbuilder
+		b1740.append(" SafeStuff"); // append some safe content
+		b1740.replace(b1740.length()-"Chars".length(),b1740.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map1740 = new java.util.HashMap<String,Object>();
+		map1740.put("key1740", b1740.toString()); // put in a collection
+		String c1740 = (String)map1740.get("key1740"); // get it back out
+		String d1740 = c1740.substring(0,c1740.length()-1); // extract most of it
+		String e1740 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d1740.getBytes() ) )); // B64 encode and decode it
+		String f1740 = e1740.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f85935); // reflection
+		String bar = thing.doSomething(f1740); // reflection
 	
 		return bar;	
 	}

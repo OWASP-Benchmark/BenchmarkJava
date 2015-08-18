@@ -59,12 +59,12 @@ public class BenchmarkTest00238 extends HttpServlet {
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map16464 = new java.util.HashMap<String,Object>();
-		map16464.put("keyA-16464", "a_Value"); // put some stuff in the collection
-		map16464.put("keyB-16464", param); // put it in a collection
-		map16464.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map16464.get("keyB-16464"); // get it back out
-		bar = (String)map16464.get("keyA-16464"); // get safe value back out
+		java.util.HashMap<String,Object> map9350 = new java.util.HashMap<String,Object>();
+		map9350.put("keyA-9350", "a_Value"); // put some stuff in the collection
+		map9350.put("keyB-9350", param); // put it in a collection
+		map9350.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map9350.get("keyB-9350"); // get it back out
+		bar = (String)map9350.get("keyA-9350"); // get safe value back out
 		
 		
 		String fileName = null;
@@ -79,7 +79,8 @@ public class BenchmarkTest00238 extends HttpServlet {
 			response.getWriter().write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size)));
 		} catch (Exception e) {
             System.out.println("Couldn't open FileInputStream on file: '" + fileName + "'");
-			response.getWriter().write("Problem getting FileInputStream: " + e.getMessage());
+			response.getWriter().write("Problem getting FileInputStream: " 
+				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage()));
         } finally {
 			if (fis != null) {
                 try {

@@ -48,19 +48,19 @@ public class BenchmarkTest00304 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a62225 = param; //assign
-		StringBuilder b62225 = new StringBuilder(a62225);  // stick in stringbuilder
-		b62225.append(" SafeStuff"); // append some safe content
-		b62225.replace(b62225.length()-"Chars".length(),b62225.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map62225 = new java.util.HashMap<String,Object>();
-		map62225.put("key62225", b62225.toString()); // put in a collection
-		String c62225 = (String)map62225.get("key62225"); // get it back out
-		String d62225 = c62225.substring(0,c62225.length()-1); // extract most of it
-		String e62225 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d62225.getBytes() ) )); // B64 encode and decode it
-		String f62225 = e62225.split(" ")[0]; // split it on a space
+		String a70614 = param; //assign
+		StringBuilder b70614 = new StringBuilder(a70614);  // stick in stringbuilder
+		b70614.append(" SafeStuff"); // append some safe content
+		b70614.replace(b70614.length()-"Chars".length(),b70614.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map70614 = new java.util.HashMap<String,Object>();
+		map70614.put("key70614", b70614.toString()); // put in a collection
+		String c70614 = (String)map70614.get("key70614"); // get it back out
+		String d70614 = c70614.substring(0,c70614.length()-1); // extract most of it
+		String e70614 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d70614.getBytes() ) )); // B64 encode and decode it
+		String f70614 = e70614.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f62225); // reflection
+		String bar = thing.doSomething(f70614); // reflection
 		
 		
 		response.getWriter().println(bar);

@@ -80,7 +80,8 @@ public class BenchmarkTest00548 extends HttpServlet {
 			is.close();
 		} catch (Exception e) {
             System.out.println("Couldn't open InputStream on file: '" + fileName + "'");
-			response.getWriter().write("Problem getting InputStream: " + e.getMessage());
+			response.getWriter().write("Problem getting InputStream: " 
+				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage()));
         } finally {
 			if (is != null) {
                 try {

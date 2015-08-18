@@ -93,19 +93,19 @@ public class BenchmarkTest01238 extends HttpServlet {
         public String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a6566 = param; //assign
-		StringBuilder b6566 = new StringBuilder(a6566);  // stick in stringbuilder
-		b6566.append(" SafeStuff"); // append some safe content
-		b6566.replace(b6566.length()-"Chars".length(),b6566.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map6566 = new java.util.HashMap<String,Object>();
-		map6566.put("key6566", b6566.toString()); // put in a collection
-		String c6566 = (String)map6566.get("key6566"); // get it back out
-		String d6566 = c6566.substring(0,c6566.length()-1); // extract most of it
-		String e6566 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d6566.getBytes() ) )); // B64 encode and decode it
-		String f6566 = e6566.split(" ")[0]; // split it on a space
+		String a32037 = param; //assign
+		StringBuilder b32037 = new StringBuilder(a32037);  // stick in stringbuilder
+		b32037.append(" SafeStuff"); // append some safe content
+		b32037.replace(b32037.length()-"Chars".length(),b32037.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map32037 = new java.util.HashMap<String,Object>();
+		map32037.put("key32037", b32037.toString()); // put in a collection
+		String c32037 = (String)map32037.get("key32037"); // get it back out
+		String d32037 = c32037.substring(0,c32037.length()-1); // extract most of it
+		String e32037 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d32037.getBytes() ) )); // B64 encode and decode it
+		String f32037 = e32037.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f6566); // reflection
+		String bar = thing.doSomething(f32037); // reflection
 
             return bar;
         }

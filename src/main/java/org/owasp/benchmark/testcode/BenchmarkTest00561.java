@@ -58,8 +58,8 @@ public class BenchmarkTest00561 extends HttpServlet {
 		}
 		
 		
-		StringBuilder sbxyz27110 = new StringBuilder(param);
-		String bar = sbxyz27110.append("_SafeStuff").toString();
+		StringBuilder sbxyz78992 = new StringBuilder(param);
+		String bar = sbxyz78992.append("_SafeStuff").toString();
 		
 		
 		Object[] obj = { "a", bar };

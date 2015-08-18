@@ -46,19 +46,19 @@ public class BenchmarkTest00670 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a65942 = param; //assign
-		StringBuilder b65942 = new StringBuilder(a65942);  // stick in stringbuilder
-		b65942.append(" SafeStuff"); // append some safe content
-		b65942.replace(b65942.length()-"Chars".length(),b65942.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map65942 = new java.util.HashMap<String,Object>();
-		map65942.put("key65942", b65942.toString()); // put in a collection
-		String c65942 = (String)map65942.get("key65942"); // get it back out
-		String d65942 = c65942.substring(0,c65942.length()-1); // extract most of it
-		String e65942 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d65942.getBytes() ) )); // B64 encode and decode it
-		String f65942 = e65942.split(" ")[0]; // split it on a space
+		String a62824 = param; //assign
+		StringBuilder b62824 = new StringBuilder(a62824);  // stick in stringbuilder
+		b62824.append(" SafeStuff"); // append some safe content
+		b62824.replace(b62824.length()-"Chars".length(),b62824.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map62824 = new java.util.HashMap<String,Object>();
+		map62824.put("key62824", b62824.toString()); // put in a collection
+		String c62824 = (String)map62824.get("key62824"); // get it back out
+		String d62824 = c62824.substring(0,c62824.length()-1); // extract most of it
+		String e62824 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d62824.getBytes() ) )); // B64 encode and decode it
+		String f62824 = e62824.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f65942); // reflection
+		String bar = thing.doSomething(f62824); // reflection
 		
 		
 		byte[] input = new byte[1000];

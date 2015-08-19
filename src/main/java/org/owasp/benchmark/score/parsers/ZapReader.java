@@ -53,10 +53,15 @@ public class ZapReader extends Reader {
         List<Node> issueList = getNamedChildren( "alertitem", alertsList );
         
         for ( Node flaw : issueList ) {
-            TestCaseResult tcr = parseZapIssue(flaw);
-            if (tcr != null ) {
-                // System.out.println( tcr.getNumber() + " " + tcr.getName() + " -> " + tcr.getCWE() + "\t" + tcr.getEvidence() );
-                tr.put(tcr);
+            try {
+                TestCaseResult tcr = parseZapIssue(flaw);
+                if (tcr != null ) {
+                    // System.out.println( tcr.getNumber() + " " + tcr.getName() + " -> " + tcr.getCWE() + "\t" + tcr.getEvidence() );
+                    tr.put(tcr);
+                }
+            } catch( Exception e ) {
+                // print and continue
+                e.printStackTrace();
             }
         }
         return tr;

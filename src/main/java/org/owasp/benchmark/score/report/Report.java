@@ -42,12 +42,16 @@ public class Report implements Comparable<Report> {
 
 	// The name of the file that contains this scorecard report
 	private String filename = null;
-
+	public Report( OverallResults or,boolean isCommercial,String toolName){
+		this.toolName = toolName;
+		this.overallResults = or;
+		this.isCommercial = isCommercial;
+	}
 	public Report(TestResults actualResults, Map<String, Counter> scores, OverallResults or, int totalResults,
-			String actualResultsFileName, boolean isCommertial, boolean isStatic)
+			String actualResultsFileName, boolean isCommercial, boolean isStatic)
 					throws IOException, URISyntaxException {
 		this.isStatic = isStatic;
-		this.isCommercial = isCommertial;
+		this.isCommercial = isCommercial;
 		toolName = actualResults.getTool();
 		String version = actualResults.getToolVersion();
 		if (version != null)
@@ -152,9 +156,11 @@ public class Report implements Comparable<Report> {
 		double totalScore = 0;
 
 		for (String category : scores.keySet()) {
+			
 			Counter c = scores.get(category);
 			OverallResult r = or.getResults(category);
 			String style = "";
+			
 			if (Math.abs(r.tpr - r.fpr) < .1)
 				style = "class=\"danger\"";
 			else if (r.tpr > .7 && r.fpr < .3)

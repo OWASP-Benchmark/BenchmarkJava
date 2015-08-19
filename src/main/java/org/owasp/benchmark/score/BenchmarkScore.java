@@ -42,6 +42,7 @@ import java.util.TreeMap;
 
 import org.apache.commons.io.FileUtils;
 import org.owasp.benchmark.score.parsers.AppscanReader;
+import org.owasp.benchmark.score.parsers.ArachniReader;
 import org.owasp.benchmark.score.parsers.CheckmarxReader;
 import org.owasp.benchmark.score.parsers.Counter;
 import org.owasp.benchmark.score.parsers.CoverityReader;
@@ -160,16 +161,13 @@ public class BenchmarkScore {
 			    process( f, expectedResults, toolResults );
 			}
 			
-			System.out.println( "Benchmark scorecards computed." );
+			System.out.println( "Tool scorecards computed." );
 		} catch( Exception e ) {
 			System.out.println( "Error during processing: " + e.getMessage() );
 			e.printStackTrace();
 		}
 
-        // Generate the overall comparison chart for all the tools in this test
-        ScatterScores.generateComparisonChart(toolResults);
-
-        // Generate vulnerability category list
+		// Generate vulnerability category list
         // A set is used here to eliminate duplicate categories across all the results
         Set<String> catSet = new HashSet<String>();
         for ( int i= 0; i < toolResults.size(); i++ ) {
@@ -180,11 +178,18 @@ public class BenchmarkScore {
         List<String> catList = new ArrayList<String>();
         catList.addAll(catSet);
         
-        // Generate vulnerability pages
+		
+		// Generate vulnerability pages
+//        System.out.println("generating vulns");
         BenchmarkScore.generateVulnerabilityScorecards(toolResults, catList);
+		System.out.println( "Vulnerability scorecards computed." );
         		
 		updateMenus(toolResults, catList);
 		
+        // Generate the overall comparison chart for all the tools in this test
+        ScatterScores.generateComparisonChart(toolResults);
+		System.out.println( "Benchmark scorecards complete." );
+       
 		System.exit(0);
 	}
 
@@ -399,6 +404,10 @@ public class BenchmarkScore {
             
             else if ( line2.startsWith( "<CxXMLResults")) {
                 tr = new CheckmarxReader().parse( actual );
+            }
+            
+            else if ( line2.startsWith( "<report")) {
+                tr = new ArachniReader().parse( actual );
             }
 		}
 		

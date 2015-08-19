@@ -26,6 +26,7 @@ import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.security.SecureRandom;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -57,6 +58,8 @@ import org.jfree.ui.TextAnchor;
 import org.owasp.benchmark.score.BenchmarkScore;
 import org.owasp.benchmark.score.parsers.OverallResult;
 import org.owasp.benchmark.score.parsers.OverallResults;
+import org.owasp.benchmark.score.parsers.TestCaseResult;
+import org.owasp.benchmark.score.parsers.TestResults;
 
 public class ScatterVulns {
 	double afr = 0;
@@ -77,7 +80,9 @@ public class ScatterVulns {
     }
 
     private JFreeChart display(String title, int height, int width, String category, List<Report> toolResults ) {
-        JFrame f = new JFrame(title);
+        
+    	
+    	JFrame f = new JFrame(title);
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         //averages
@@ -95,7 +100,10 @@ public class ScatterVulns {
 	        series.add( overallResults.getFalsePositiveRate() * 100, overallResults.getTruePositiveRate() * 100);
 	        if(toolReport.isCommercial()){
 	        averageFalseRates.add(overallResults.getFalsePositiveRate());
+	        
 	        averageTrueRates.add(overallResults.getTruePositiveRate());
+	        
+	        
 	        }
 		}
 	        
@@ -191,6 +199,13 @@ public class ScatterVulns {
 //            ItemLabelPosition position = new ItemLabelPosition(ItemLabelAnchor.OUTSIDE12, TextAnchor.BASELINE_CENTER );
 //            renderer.setSeriesPositiveItemLabelPosition(i, position);
 //        }
+        
+        
+        
+
+        
+        
+        
 
         makeDataLabels( category, toolResults, xyplot );
         makeLegend( category, toolResults, 57, 48, dataset, xyplot );
@@ -239,7 +254,9 @@ public class ScatterVulns {
         f.pack();
         f.setLocationRelativeTo(null);
 //      f.setVisible(true);
-        return chart;
+        
+        
+		return chart;
     }
 
     
@@ -321,29 +338,82 @@ public class ScatterVulns {
 
     private void makeLegend( String category, List<Report> toolResults, int x, int y, XYSeriesCollection dataset, XYPlot xyplot ) {
         char ch = 'A';
-        int i = 0;
+        int i = -2;
+      
+        
+        
+      //print commercial label
+        XYTextAnnotation stroketext = new XYTextAnnotation("commercial", x, y + i * -3.3);
+        stroketext.setTextAnchor(TextAnchor.CENTER_LEFT);
+        stroketext.setBackgroundPaint(Color.white);
+        stroketext.setPaint(Color.gray);
+        stroketext.setFont(theme.getRegularFont());
+        i++;
+        
+        //commercial tools
         for (Report r : toolResults ) {
             OverallResults or = r.getOverallResults();
+            if(r.isCommercial()){
             String label = ( ch == 'I' ? ch + ":  " : ""+ch + ": " );
             int score = (int)(or.getResults(category).getScore() * 100);
             String msg = "\u25A0 " + label + r.getToolName() + " (" + score + "%)";
-            XYTextAnnotation stroketext = new XYTextAnnotation(msg, x, y + i * -3.3);
-            stroketext.setTextAnchor(TextAnchor.CENTER_LEFT);
-            stroketext.setBackgroundPaint(Color.white);
-            stroketext.setPaint(Color.blue);
-            stroketext.setFont(theme.getRegularFont());
-            xyplot.addAnnotation(stroketext);
-            i++;
-            ch++;
-        }
-        XYTextAnnotation stroketext = new XYTextAnnotation("\u25A0 M: Average(Commertial Tools)", x, y + i * -3.3);
-        stroketext.setTextAnchor(TextAnchor.CENTER_LEFT);
-        stroketext.setBackgroundPaint(Color.white);
-        stroketext.setPaint(Color.blue);
-        stroketext.setFont(theme.getRegularFont());
+            XYTextAnnotation stroketext4 = new XYTextAnnotation(msg, x, y + i * -3.3);
+            stroketext4.setTextAnchor(TextAnchor.CENTER_LEFT);
+            stroketext4.setBackgroundPaint(Color.white);
+            stroketext4.setPaint(Color.blue);
+            stroketext4.setFont(theme.getRegularFont());
+            xyplot.addAnnotation(stroketext4);
+            
         
+            i++;
+            
+            ch++;
+            }
+           
+        }
+        //print non commercial label
+        XYTextAnnotation stroketext1 = new XYTextAnnotation("non - commercial", x, y + i * -3.3);
+        stroketext1.setTextAnchor(TextAnchor.CENTER_LEFT);
+        stroketext1.setBackgroundPaint(Color.white);
+        stroketext1.setPaint(Color.gray);
+        stroketext1.setFont(theme.getRegularFont());
+        i++;
+        
+        
+        //non-commercial results
+        for (Report r : toolResults ) {
+            OverallResults or = r.getOverallResults();
+            if(!r.isCommercial()){
+            String label = ( ch == 'I' ? ch + ":  " : ""+ch + ": " );
+            int score = (int)(or.getResults(category).getScore() * 100);
+            String msg = "\u25A0 " + label + r.getToolName() + " (" + score + "%)";
+            XYTextAnnotation stroketext3 = new XYTextAnnotation(msg, x, y + i * -3.3);
+            stroketext3.setTextAnchor(TextAnchor.CENTER_LEFT);
+            stroketext3.setBackgroundPaint(Color.white);
+            stroketext3.setPaint(Color.blue);
+            stroketext3.setFont(theme.getRegularFont());
+            xyplot.addAnnotation(stroketext3);
+            
+            i++;
+            
+            ch++;
+            }
+           
+        }
+        
+        //commercial average
+        
+        XYTextAnnotation stroketext2 = new XYTextAnnotation("\u25A0 M: Commercial Average", x, y + i * -3.3);
+        stroketext2.setTextAnchor(TextAnchor.CENTER_LEFT);
+        stroketext2.setBackgroundPaint(Color.white);
+        stroketext2.setPaint(Color.black);
+        stroketext2.setFont(theme.getRegularFont());
         
         xyplot.addAnnotation(stroketext);
+        xyplot.addAnnotation(stroketext1);
+        xyplot.addAnnotation(stroketext2);
+       
+       
         
         
        
@@ -378,5 +448,6 @@ public class ScatterVulns {
     		e.printStackTrace();
     	}
     }
+    
     
 }

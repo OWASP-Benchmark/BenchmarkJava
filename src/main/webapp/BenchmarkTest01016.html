@@ -33,7 +33,7 @@ function setCookie(cname, cvalue, exdays) {
     }else{
     	Cookies.set(cname, "FOO=echo Injection", { version: 1 });
     }
-    document.getElementById("cValue").innerHTML = document.cookie;
+    document.getElementById("cValue").innerText = document.cookie;
 }
 </script> 
 </body>

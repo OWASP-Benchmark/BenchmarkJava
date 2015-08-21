@@ -8,7 +8,6 @@
 	<name>OWASP Benchmark Project</name>
 	<url>https://www.owasp.org/index.php/Benchmark</url>
 	<profiles>
-
 		<profile>
 			<id>benchmarkscore</id>
 			<build>
@@ -79,24 +78,6 @@
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-verifier-plugin</artifactId>
-						<version>1.1</version>
-						<configuration>
-							<verificationFile>verifications.xml</verificationFile>
-						</configuration>
-						<executions>
-							<execution>
-								<id>main</id>
-								<phase>validate</phase>
-								<goals>
-									<goal>verify</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-
-					<plugin>
 						<artifactId>maven-antrun-plugin</artifactId>
 						<version>1.7</version>
 						<executions>
@@ -108,7 +89,7 @@
 								</goals>
 								<configuration>
 									<target>
-										<ant target="run" antfile="${basedir}/build.xml">
+										<ant target="run" antfile="${basedir}/src/config/build.xml">
 											<!-- This is the important bit -->
 											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
 										</ant>
@@ -568,7 +549,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
 			<!-- FindBugs Static Analysis -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>

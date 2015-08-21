@@ -31,7 +31,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-public class SonarReader extends Reader {
+public class SonarQubeLegacyReader extends Reader {
 
     public TestResults parse(File f) throws Exception {
         DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -78,8 +78,37 @@ public class SonarReader extends Reader {
         return null;
     }
 
+//    //case "Build Misconfiguration" : return 00;
+//    case "Command Injection" : return 78;
+//    case "Cookie Security" : return 614;
+//    case "Cross-Site Scripting" : return 79;
+//    //case "Dead Code" : return 00;
+//    //case "Denial of Service" : return 00;
+//    case "Header Manipulation" : return 113;
+//    case "Insecure Randomness" : return 330;
+//    //case "J2EE Bad Practices" : return 00;
+//    case "LDAP Injection" : return 90;
+//    //case "Missing Check against Null" : return 00;
+//    //case "Null Dereference" : return 00;
+//    case "Password Management" : return 00;
+//    case "Path Manipulation" : return 22;
+//    //case "Poor Error Handling" : return 00;
+//    //case "Poor Logging Practice" : return 00;
+//    //case "Poor Style" : return 00;
+//    //case "Resource Injection" : return 00;
+//    case "SQL Injection" : return 89;
+//    //case "System Information Leak" : return 00;
+//    case "Trust Boundary Violation" : return 501;
+//    //case "Unreleased Resource" : return 00;
+//    //case "Unsafe Reflection" : return 00;
+//    case "Weak Cryptographic Hash" : return 328;
+//    case "Weak Encryption" : return 327;
+//    case "XPath Injection" : return 643;
+    
 
-    private int cweLookup(String squidNumber) {        
+    
+    
+    public static int cweLookup(String squidNumber) {        
         switch( squidNumber ) {       
         case "S00105" : return 0000; //S00105-Replace all tab characters in this file by sequences of white-spaces.
         case "S106" : return 0000; //S00106-Replace this usage of System.out or System.err by a logger.
@@ -106,7 +135,7 @@ public class SonarReader extends Reader {
         case "S1948" : return 594; //S1948-Fields in a"Serializable" class should either be transient or serializable
         case "S2068" : return 259; //S2068-Credentials should not be hard-coded
         case "S2070" : return 328; //S2070-SHA-1 and Message-Digest hash algorithms should not be used
-        case "S2076" : return 88; //S2076-Values passed to OS commands should be sanitized
+        case "S2076" : return 78; //S2076-Values passed to OS commands should be sanitized
         case "S2077" : return 89; //S2077-Values passed to SQL commands should be sanitized
         case "S2078" : return 90; //S2078-Values passed to LDAP queries should be sanitized
         case "S2089" : return 293; //S2089-HTTP referers should not be relied on

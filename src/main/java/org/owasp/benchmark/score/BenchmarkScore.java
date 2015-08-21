@@ -20,6 +20,7 @@ package org.owasp.benchmark.score;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -40,9 +41,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.apache.commons.io.FileUtils;
 import org.owasp.benchmark.score.parsers.AppscanReader;
 import org.owasp.benchmark.score.parsers.ArachniReader;
+import org.owasp.benchmark.score.parsers.BurpReader;
 import org.owasp.benchmark.score.parsers.CheckmarxReader;
 import org.owasp.benchmark.score.parsers.Counter;
 import org.owasp.benchmark.score.parsers.CoverityReader;
@@ -51,7 +56,9 @@ import org.owasp.benchmark.score.parsers.FortifyReader;
 import org.owasp.benchmark.score.parsers.OverallResults;
 import org.owasp.benchmark.score.parsers.PMDReader;
 import org.owasp.benchmark.score.parsers.ParasoftReader;
-import org.owasp.benchmark.score.parsers.SonarReader;
+import org.owasp.benchmark.score.parsers.Reader;
+import org.owasp.benchmark.score.parsers.SonarQubeLegacyReader;
+import org.owasp.benchmark.score.parsers.SonarQubeReader;
 import org.owasp.benchmark.score.parsers.TestCaseResult;
 import org.owasp.benchmark.score.parsers.TestResults;
 import org.owasp.benchmark.score.parsers.VeracodeReader;
@@ -59,6 +66,9 @@ import org.owasp.benchmark.score.parsers.ZapReader;
 import org.owasp.benchmark.score.report.Report;
 import org.owasp.benchmark.score.report.ScatterScores;
 import org.owasp.benchmark.score.report.ScatterVulns;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
 
 public class BenchmarkScore {
 
@@ -367,7 +377,15 @@ public class BenchmarkScore {
         }      
         
         else if ( filename.endsWith(".json" ) ) {
-            tr = new CoverityReader().parse( actual );
+            String line1 = getLine( actual, 0 );
+            String line2 = getLine( actual, 1 );
+            if ( line2.contains("formatVersion")) {
+                tr = new CoverityReader().parse( actual );
+            }
+            
+            else {
+                tr = new SonarQubeReader().parse( actual );
+            }
         }
         
 		else if ( filename.endsWith( ".xml" ) ) {
@@ -395,7 +413,7 @@ public class BenchmarkScore {
             }
 
             else if ( line1.startsWith( "<total")) {
-                tr = new SonarReader().parse( actual );
+                tr = new SonarQubeLegacyReader().parse( actual );
             }
             
             else if ( line1.contains( "<OWASPZAPReport") || line2.contains( "<OWASPZAPReport")) {
@@ -408,6 +426,14 @@ public class BenchmarkScore {
             
             else if ( line2.startsWith( "<report")) {
                 tr = new ArachniReader().parse( actual );
+            }
+		    
+            else {
+                Document doc = getXMLDocument( actual );
+                Node root = doc.getDocumentElement();
+                if ( root.getNodeName().equals( "issues" ) ) {
+                    tr = new BurpReader().parse( doc );
+                }
             }
 		}
 		
@@ -690,7 +716,14 @@ public class BenchmarkScore {
 	            }
 	        }
 	    }
-	    
+	}
+	
+	private static Document getXMLDocument( File f ) throws Exception {
+        DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+        InputSource is = new InputSource(new FileInputStream(f));
+        Document doc = docBuilder.parse(is);
+        return doc;
 	}
 	
 }

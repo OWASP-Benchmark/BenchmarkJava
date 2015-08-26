@@ -44,30 +44,16 @@ public class BenchmarkTest00150 extends HttpServlet {
 		if (param == null) param = "";
 		
 		
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(param);
+		String bar;
+		
+		// Simple if statement that assigns param to bar on true condition
+		int num = 196;
+		if ( (500/42) + num > 200 )
+		   bar = param;
+		else bar = "This should never happen"; 
 		
 		
-		String fileName = null;
-		java.io.FileOutputStream fos = null;
-
-		try {
-			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
-	
-			fos = new java.io.FileOutputStream(fileName, false);
-	        response.getWriter().write("Now ready to write to file: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName));
-		} catch (Exception e) {
-			System.out.println("Couldn't open FileOutputStream on file: '" + fileName + "'");
-//			System.out.println("File exception caught and swallowed: " + e.getMessage());
-		} finally {
-			if (fos != null) {
-				try {
-					fos.close();
-                    fos = null;
-				} catch (Exception e) {
-					// we tried...
-				}
-			}
-		}
+		Object[] obj = { "a", bar};
+		response.getWriter().printf(java.util.Locale.US,"Formatted like: %1$s and %2$s.",obj);
 	}
 }

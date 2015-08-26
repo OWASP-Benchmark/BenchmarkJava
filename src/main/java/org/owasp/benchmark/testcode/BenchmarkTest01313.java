@@ -45,39 +45,36 @@ public class BenchmarkTest01313 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		byte[] input = new byte[1000];
-		String str = "?";
-		Object inputParam = param;
-		if (inputParam instanceof String) str = ((String) inputParam);
-		if (inputParam instanceof java.io.InputStream) {
-			int i = ((java.io.InputStream) inputParam).read(input);
-			if (i == -1) {
-				response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
-				return;
-			}			
-			str = new String(input, 0, i);
+		String sql = "INSERT INTO users (username, password) VALUES ('foo','"+ bar + "')";
+				
+		try {
+			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			int count = statement.executeUpdate( sql );
+            org.owasp.benchmark.helpers.DatabaseHelper.outputUpdateComplete(sql, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
 		}
-		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie", str);
-		
-		cookie.setSecure(true);
-		
-		response.addCookie(cookie);
-
-		response.getWriter().println("Created cookie: SomeCookie: with value: '"
-		  + org.owasp.esapi.ESAPI.encoder().encodeForHTML(str) + "' and secure flag set to: true");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map47798 = new java.util.HashMap<String,Object>();
-		map47798.put("keyA-47798", "a_Value"); // put some stuff in the collection
-		map47798.put("keyB-47798", param); // put it in a collection
-		map47798.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map47798.get("keyB-47798"); // get it back out
-		bar = (String)map47798.get("keyA-47798"); // get safe value back out
+		String bar = "";
+		if (param != null) {
+			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+			valuesList.add("safe");
+			valuesList.add( param );
+			valuesList.add( "moresafe" );
+			
+			valuesList.remove(0); // remove the 1st safe value
+			
+			bar = valuesList.get(0); // get the param value
+		}
 
             return bar;
         }

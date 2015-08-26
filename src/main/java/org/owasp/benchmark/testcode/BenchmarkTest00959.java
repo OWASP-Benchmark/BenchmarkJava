@@ -12,7 +12,7 @@
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details.
 *
-* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
 */
 
@@ -40,41 +40,71 @@ public class BenchmarkTest00959 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheValue("vector");
+		javax.servlet.http.Cookie[] theCookies = request.getCookies();
 		
-		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map31996 = new java.util.HashMap<String,Object>();
-		map31996.put("keyA-31996", "a Value"); // put some stuff in the collection
-		map31996.put("keyB-31996", param); // put it in a collection
-		map31996.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map31996.get("keyB-31996"); // get it back out
-		
-		
-		try {
-			java.io.FileInputStream file = new java.io.FileInputStream(org.owasp.benchmark.helpers.Utils.getFileFromClasspath("employees.xml", this.getClass().getClassLoader()));
-			javax.xml.parsers.DocumentBuilderFactory builderFactory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
-			javax.xml.parsers.DocumentBuilder builder = builderFactory.newDocumentBuilder();
-			org.w3c.dom.Document xmlDocument = builder.parse(file);
-			javax.xml.xpath.XPathFactory xpf = javax.xml.xpath.XPathFactory.newInstance();
-			javax.xml.xpath.XPath xp = xpf.newXPath();
-			
-			String expression = "/Employees/Employee[@emplid='"+bar+"']";
-			
-			response.getWriter().println("Your query results are: <br/>"); 
-			org.w3c.dom.NodeList nodeList = (org.w3c.dom.NodeList) xp.compile(expression).evaluate(xmlDocument, javax.xml.xpath.XPathConstants.NODESET);
-			for (int i = 0; i < nodeList.getLength(); i++) {
-				org.w3c.dom.Element value = (org.w3c.dom.Element) nodeList.item(i);
-				response.getWriter().println(value.getTextContent() + "<br/>");
+		String param = "";
+		if (theCookies != null) {
+			for (javax.servlet.http.Cookie theCookie : theCookies) {
+				if (theCookie.getName().equals("vector")) {
+					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
+					break;
+				}
 			}
-		} catch (javax.xml.xpath.XPathExpressionException e) {
-			// OK to swallow
-			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
-		} catch (javax.xml.parsers.ParserConfigurationException e) {
-			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
-		} catch (org.xml.sax.SAXException e) {
-			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
 		}
-	}
-}
+
+		String bar = new Test().doSomething(param);
+		
+	org.owasp.benchmark.helpers.LDAPManager ads = new org.owasp.benchmark.helpers.LDAPManager();
+	try {
+		response.setContentType("text/html");
+		String base = "ou=users,ou=system";
+		javax.naming.directory.SearchControls sc = new javax.naming.directory.SearchControls();
+		sc.setSearchScope(javax.naming.directory.SearchControls.SUBTREE_SCOPE);
+		String filter = "(&(objectclass=person))(|(uid="+bar+")(street={0}))";
+		Object[] filters = new Object[]{"The streetz 4 Ms bar"};
+		
+		javax.naming.directory.DirContext ctx = ads.getDirContext();
+		javax.naming.directory.InitialDirContext idc = (javax.naming.directory.InitialDirContext) ctx;
+		javax.naming.NamingEnumeration<javax.naming.directory.SearchResult> results = 
+				idc.search(base, filter,filters, sc);
+		while (results.hasMore()) {
+			javax.naming.directory.SearchResult sr = (javax.naming.directory.SearchResult) results.next();
+			javax.naming.directory.Attributes attrs = sr.getAttributes();
+
+			javax.naming.directory.Attribute attr = attrs.get("uid");
+			javax.naming.directory.Attribute attr2 = attrs.get("street");
+			if (attr != null){
+				response.getWriter().write("LDAP query results:<br>"
+						+ " Record found with name " + attr.get() + "<br>"
+								+ "Address: " + attr2.get()+ "<br>");
+				System.out.println("record found " + attr.get());
+			}
+		}
+	} catch (javax.naming.NamingException e) {
+		throw new ServletException(e);
+	}finally{
+    	try {
+    		ads.closeDirContext();
+		} catch (Exception e) {
+			throw new ServletException(e);
+		}
+    }
+	}  // end doPost
+
+    private class Test {
+
+        public String doSomething(String param) throws ServletException, IOException {
+
+		String bar;
+		
+		// Simple if statement that assigns param to bar on true condition
+		int num = 196;
+		if ( (500/42) + num > 200 )
+		   bar = param;
+		else bar = "This should never happen"; 
+
+            return bar;
+        }
+    } // end innerclass Test
+
+} // end DataflowThruInnerClass

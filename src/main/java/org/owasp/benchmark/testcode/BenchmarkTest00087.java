@@ -42,29 +42,43 @@ public class BenchmarkTest00087 extends HttpServlet {
 	
 		javax.servlet.http.Cookie[] theCookies = request.getCookies();
 		
-		String param = null;
-		boolean foundit = false;
+		String param = "";
 		if (theCookies != null) {
 			for (javax.servlet.http.Cookie theCookie : theCookies) {
 				if (theCookie.getName().equals("vector")) {
 					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
-					foundit = true;
+					break;
 				}
 			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
 		}
 		
 		
-		String bar = org.apache.commons.lang.StringEscapeUtils.escapeHtml(param);
+		String bar = "";
+		if (param != null) {
+			bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    	new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
+		}
 		
 		
-		Object[] obj = { "a", "b"};
-		response.getWriter().printf(java.util.Locale.US,bar,obj);
+		byte[] input = new byte[1000];
+		String str = "?";
+		Object inputParam = param;
+		if (inputParam instanceof String) str = ((String) inputParam);
+		if (inputParam instanceof java.io.InputStream) {
+			int i = ((java.io.InputStream) inputParam).read(input);
+			if (i == -1) {
+				response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+				return;
+			}			
+			str = new String(input, 0, i);
+		}
+		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie", str);
+		
+		cookie.setSecure(false);
+		
+		response.addCookie(cookie);
+
+        response.getWriter().println("Created cookie: 'SomeCookie': with value: '"
+          + org.owasp.esapi.ESAPI.encoder().encodeForHTML(str) + "' and secure flag set to: false");
 	}
 }

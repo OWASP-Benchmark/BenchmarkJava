@@ -44,10 +44,38 @@ public class BenchmarkTest00169 extends HttpServlet {
 		if (param == null) param = "";
 		
 		
-		String bar = param;
+		String bar = "alsosafe";
+		if (param != null) {
+			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+			valuesList.add("safe");
+			valuesList.add( param );
+			valuesList.add( "moresafe" );
+			
+			valuesList.remove(0); // remove the 1st safe value
+			
+			bar = valuesList.get(1); // get the last 'safe' value
+		}
 		
 		
-		Object[] obj = { "a", "b"};
-		response.getWriter().printf(java.util.Locale.US,bar,obj);
+		byte[] input = new byte[1000];
+		String str = "?";
+		Object inputParam = param;
+		if (inputParam instanceof String) str = ((String) inputParam);
+		if (inputParam instanceof java.io.InputStream) {
+			int i = ((java.io.InputStream) inputParam).read(input);
+			if (i == -1) {
+				response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+				return;
+			}			
+			str = new String(input, 0, i);
+		}
+		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie", str);
+		
+		cookie.setSecure(false);
+		
+		response.addCookie(cookie);
+
+        response.getWriter().println("Created cookie: 'SomeCookie': with value: '"
+          + org.owasp.esapi.ESAPI.encoder().encodeForHTML(str) + "' and secure flag set to: false");
 	}
 }

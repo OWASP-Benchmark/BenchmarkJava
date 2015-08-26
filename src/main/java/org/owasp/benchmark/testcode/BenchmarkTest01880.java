@@ -42,68 +42,46 @@ public class BenchmarkTest01880 extends HttpServlet {
 
 		javax.servlet.http.Cookie[] theCookies = request.getCookies();
 		
-		String param = null;
-		boolean foundit = false;
+		String param = "";
 		if (theCookies != null) {
 			for (javax.servlet.http.Cookie theCookie : theCookies) {
 				if (theCookie.getName().equals("vector")) {
 					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
-					foundit = true;
+					break;
 				}
 			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
 		}
 
 		String bar = doSomething(param);
 		
+		String sql = "SELECT * from USERS where USERNAME=? and PASSWORD='"+ bar +"'";
+				
 		try {
-		    java.util.Properties benchmarkprops = new java.util.Properties();
-		    benchmarkprops.load(this.getClass().getClassLoader().getResourceAsStream("benchmark.properties"));
-			String algorithm = benchmarkprops.getProperty("hashAlg1", "SHA512");
-			java.security.MessageDigest md = java.security.MessageDigest.getInstance(algorithm);
-			byte[] input = { (byte)'?' };
-			Object inputParam = bar;
-			if (inputParam instanceof String) input = ((String) inputParam).getBytes();
-			if (inputParam instanceof java.io.InputStream) {
-				byte[] strInput = new byte[1000];
-				int i = ((java.io.InputStream) inputParam).read(strInput);
-				if (i == -1) {
-					response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
-					return;
-				}
-				input = java.util.Arrays.copyOf(strInput, i);
-			}			
-			md.update(input);
-			
-			byte[] result = md.digest();
-			java.io.File fileTarget = new java.io.File(
-					new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),"passwordFile.txt");
-			java.io.FileWriter fw = new java.io.FileWriter(fileTarget,true); //the true will append the new data
-			    fw.write("hash_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
-			fw.close();
-			response.getWriter().println("Sensitive value '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' hashed and stored<br/>");
-		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing hash - TestCase");
-			throw new ServletException(e);
+			java.sql.Connection connection = org.owasp.benchmark.helpers.DatabaseHelper.getSqlConnection();
+			java.sql.PreparedStatement statement = connection.prepareStatement( sql,
+				java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY, 
+				java.sql.ResultSet.CLOSE_CURSORS_AT_COMMIT );
+				statement.setString(1, "foo");
+			statement.execute();
+            org.owasp.benchmark.helpers.DatabaseHelper.printResults(statement, sql, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
 		}
-		
-		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String) executed");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map97751 = new java.util.HashMap<String,Object>();
-		map97751.put("keyA-97751", "a Value"); // put some stuff in the collection
-		map97751.put("keyB-97751", param); // put it in a collection
-		map97751.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map97751.get("keyB-97751"); // get it back out
+		java.util.HashMap<String,Object> map12014 = new java.util.HashMap<String,Object>();
+		map12014.put("keyA-12014", "a_Value"); // put some stuff in the collection
+		map12014.put("keyB-12014", param); // put it in a collection
+		map12014.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map12014.get("keyB-12014"); // get it back out
+		bar = (String)map12014.get("keyA-12014"); // get safe value back out
 	
 		return bar;	
 	}

@@ -50,53 +50,36 @@ public class BenchmarkTest02267 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
+		String sql = "SELECT * from USERS where USERNAME=? and PASSWORD='"+ bar +"'";
+				
 		try {
-			java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
-			byte[] input = { (byte)'?' };
-			Object inputParam = bar;
-			if (inputParam instanceof String) input = ((String) inputParam).getBytes();
-			if (inputParam instanceof java.io.InputStream) {
-				byte[] strInput = new byte[1000];
-				int i = ((java.io.InputStream) inputParam).read(strInput);
-				if (i == -1) {
-					response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
-					return;
-				}
-				input = java.util.Arrays.copyOf(strInput, i);
-			}			
-			md.update(input);
-			
-			byte[] result = md.digest();
-			java.io.File fileTarget = new java.io.File(
-					new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),"passwordFile.txt");
-			java.io.FileWriter fw = new java.io.FileWriter(fileTarget,true); //the true will append the new data
-			    fw.write("hash_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
-			fw.close();
-			response.getWriter().println("Sensitive value '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' hashed and stored<br/>");
-		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing hash - TestCase");
-			throw new ServletException(e);
+			java.sql.Connection connection = org.owasp.benchmark.helpers.DatabaseHelper.getSqlConnection();
+			java.sql.PreparedStatement statement = connection.prepareStatement( sql );
+			statement.setString(1, "foo");
+			statement.execute();
+            org.owasp.benchmark.helpers.DatabaseHelper.printResults(statement, sql, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
 		}
-		
-		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String) executed");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a41998 = param; //assign
-		StringBuilder b41998 = new StringBuilder(a41998);  // stick in stringbuilder
-		b41998.append(" SafeStuff"); // append some safe content
-		b41998.replace(b41998.length()-"Chars".length(),b41998.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map41998 = new java.util.HashMap<String,Object>();
-		map41998.put("key41998", b41998.toString()); // put in a collection
-		String c41998 = (String)map41998.get("key41998"); // get it back out
-		String d41998 = c41998.substring(0,c41998.length()-1); // extract most of it
-		String e41998 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d41998.getBytes() ) )); // B64 encode and decode it
-		String f41998 = e41998.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f41998); // reflection
+		String bar = "alsosafe";
+		if (param != null) {
+			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+			valuesList.add("safe");
+			valuesList.add( param );
+			valuesList.add( "moresafe" );
+			
+			valuesList.remove(0); // remove the 1st safe value
+			
+			bar = valuesList.get(1); // get the last 'safe' value
+		}
 	
 		return bar;	
 	}

@@ -44,14 +44,47 @@ public class BenchmarkTest00161 extends HttpServlet {
 		if (param == null) param = "";
 		
 		
-		String bar = "";
-		if (param != null) {
-			bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    	new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map85065 = new java.util.HashMap<String,Object>();
+		map85065.put("keyA-85065", "a_Value"); // put some stuff in the collection
+		map85065.put("keyB-85065", param); // put it in a collection
+		map85065.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map85065.get("keyB-85065"); // get it back out
+		bar = (String)map85065.get("keyA-85065"); // get safe value back out
+		
+		
+		double value = new java.util.Random().nextDouble();
+		String rememberMeKey = Double.toString(value).substring(2); // Trim off the 0. at the front.
+		
+		String user = "Donna";
+		String fullClassName = this.getClass().getName();
+		String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
+		user+= testCaseNumber;
+		
+		String cookieName = "rememberMe" + testCaseNumber;
+		
+		boolean foundUser = false;
+		javax.servlet.http.Cookie[] cookies = request.getCookies();
+		for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
+			javax.servlet.http.Cookie cookie = cookies[i];
+			if (cookieName.equals(cookie.getName())) {
+				if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+					foundUser = true;
+				}
+			}
 		}
 		
+		if (foundUser) {
+			response.getWriter().println("Welcome back: " + user + "<br/>");			
+		} else {			
+			javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
+			rememberMe.setSecure(true);
+			request.getSession().setAttribute(cookieName, rememberMeKey);
+			response.addCookie(rememberMe);
+			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
+					+ " whose value is: " + rememberMe.getValue() + "<br/>");
+		}
 		
-		Object[] obj = { "a", bar };
-		response.getWriter().format("Formatted like: %1$s and %2$s.",obj);
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextDouble() executed");
 	}
 }

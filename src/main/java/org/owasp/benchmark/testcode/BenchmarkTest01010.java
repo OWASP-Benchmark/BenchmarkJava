@@ -42,79 +42,51 @@ public class BenchmarkTest01010 extends HttpServlet {
 	
 		javax.servlet.http.Cookie[] theCookies = request.getCookies();
 		
-		String param = null;
-		boolean foundit = false;
+		String param = "";
 		if (theCookies != null) {
 			for (javax.servlet.http.Cookie theCookie : theCookies) {
 				if (theCookie.getName().equals("vector")) {
 					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
-					foundit = true;
+					break;
 				}
 			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
 		}
 
 		String bar = new Test().doSomething(param);
 		
-		int randNumber = new java.util.Random().nextInt(99);
-		String rememberMeKey = Integer.toString(randNumber);
-		
-		String user = "Inga";
-		String fullClassName = this.getClass().getName();
-		String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
-		user+= testCaseNumber;
-		
-		String cookieName = "rememberMe" + testCaseNumber;
-		
-		boolean foundUser = false;
-		javax.servlet.http.Cookie[] cookies = request.getCookies();
-		for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-			javax.servlet.http.Cookie cookie = cookies[i];
-			if (cookieName.equals(cookie.getName())) {
-				if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-					foundUser = true;
-				}
-			}
+		try {
+	        String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"
+	            + bar + "'";
+	
+			org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.batchUpdate(sql);
+			java.io.PrintWriter out = response.getWriter();
+	//		System.out.println("no results for query: " + sql + " because the Spring batchUpdate method doesn't return results.");
+			out.write("No results can be displayed for query: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(sql) + "<br>");
+			out.write(" because the Spring batchUpdate method doesn't return results.");
+		} catch (org.springframework.dao.DataAccessException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
 		}
-		
-		if (foundUser) {
-			response.getWriter().println("Welcome back: " + user + "<br/>");			
-		} else {			
-			javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
-			rememberMe.setSecure(true);
-			request.getSession().setAttribute(cookieName, rememberMeKey);
-			response.addCookie(rememberMe);
-			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-					+ " whose value is: " + rememberMe.getValue() + "<br/>");
-		}
-		
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextInt(int) executed");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a65369 = param; //assign
-		StringBuilder b65369 = new StringBuilder(a65369);  // stick in stringbuilder
-		b65369.append(" SafeStuff"); // append some safe content
-		b65369.replace(b65369.length()-"Chars".length(),b65369.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map65369 = new java.util.HashMap<String,Object>();
-		map65369.put("key65369", b65369.toString()); // put in a collection
-		String c65369 = (String)map65369.get("key65369"); // get it back out
-		String d65369 = c65369.substring(0,c65369.length()-1); // extract most of it
-		String e65369 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d65369.getBytes() ) )); // B64 encode and decode it
-		String f65369 = e65369.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f65369); // reflection
+		String bar = "alsosafe";
+		if (param != null) {
+			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+			valuesList.add("safe");
+			valuesList.add( param );
+			valuesList.add( "moresafe" );
+			
+			valuesList.remove(0); // remove the 1st safe value
+			
+			bar = valuesList.get(1); // get the last 'safe' value
+		}
 
             return bar;
         }

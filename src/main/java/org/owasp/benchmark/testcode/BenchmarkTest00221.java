@@ -40,25 +40,53 @@ public class BenchmarkTest00221 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String param = request.getHeader("vector");
-		if (param == null) param = "";
+		String param = "";
+		boolean flag = true;
+		java.util.Enumeration<String> names = request.getHeaderNames();
+		while (names.hasMoreElements() && flag) {
+			String name = (String) names.nextElement();
+			java.util.Enumeration<String> values = request.getHeaders(name);
+			if (values != null) {
+				while (values.hasMoreElements() && flag) {
+					String value = (String) values.nextElement();
+					if (value.equals("vector")) {
+						param = name;
+						flag = false;
+					}
+				}
+			}
+		}
 		
 		
-		String bar = param;
+		String bar;
+		
+		// Simple ? condition that assigns constant to bar on true condition
+		int num = 106;
+		
+		bar = (7*18) + num > 200 ? "This_should_always_happen" : param;
 		
 		
-		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
-				
+		
+		String fileName = null;
+		java.io.FileOutputStream fos = null;
+
 		try {
-			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			java.sql.ResultSet rs = statement.executeQuery( sql );
-            org.owasp.benchmark.helpers.DatabaseHelper.printResults(rs, sql, response);
-		} catch (java.sql.SQLException e) {
-			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
-        		return;
-        	}
-			else throw new ServletException(e);
+			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
+	
+			fos = new java.io.FileOutputStream(fileName, false);
+	        response.getWriter().write("Now ready to write to file: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName));
+		} catch (Exception e) {
+			System.out.println("Couldn't open FileOutputStream on file: '" + fileName + "'");
+//			System.out.println("File exception caught and swallowed: " + e.getMessage());
+		} finally {
+			if (fos != null) {
+				try {
+					fos.close();
+                    fos = null;
+				} catch (Exception e) {
+					// we tried...
+				}
+			}
 		}
 	}
 }

@@ -42,43 +42,36 @@ public class BenchmarkTest01887 extends HttpServlet {
 
 		javax.servlet.http.Cookie[] theCookies = request.getCookies();
 		
-		String param = null;
-		boolean foundit = false;
+		String param = "";
 		if (theCookies != null) {
 			for (javax.servlet.http.Cookie theCookie : theCookies) {
 				if (theCookie.getName().equals("vector")) {
 					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
-					foundit = true;
+					break;
 				}
 			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
 		}
 
 		String bar = doSomething(param);
 		
-		Object[] obj = { "a", "b"};
-		response.getWriter().printf(bar,obj);
+		String sql = "INSERT INTO users (username, password) VALUES ('foo','"+ bar + "')";
+				
+		try {
+			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			int count = statement.executeUpdate( sql );
+            org.owasp.benchmark.helpers.DatabaseHelper.outputUpdateComplete(sql, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "";
-		if (param != null) {
-			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
-			valuesList.add("safe");
-			valuesList.add( param );
-			valuesList.add( "moresafe" );
-			
-			valuesList.remove(0); // remove the 1st safe value
-			
-			bar = valuesList.get(0); // get the param value
-		}
+		String bar = param;
 	
 		return bar;	
 	}

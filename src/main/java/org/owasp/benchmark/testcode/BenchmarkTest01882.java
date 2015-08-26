@@ -42,38 +42,58 @@ public class BenchmarkTest01882 extends HttpServlet {
 
 		javax.servlet.http.Cookie[] theCookies = request.getCookies();
 		
-		String param = null;
-		boolean foundit = false;
+		String param = "";
 		if (theCookies != null) {
 			for (javax.servlet.http.Cookie theCookie : theCookies) {
 				if (theCookie.getName().equals("vector")) {
 					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
-					foundit = true;
+					break;
 				}
 			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
 		}
 
 		String bar = doSomething(param);
 		
-		Object[] obj = { "a", "b" };
-		response.getWriter().format(java.util.Locale.US,bar,obj);
+ 		try {
+	        String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='" + bar + "'";
+	
+			java.util.List<String> results = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.query(sql,  new org.springframework.jdbc.core.RowMapper<String>() {
+	            public String mapRow(java.sql.ResultSet rs, int rowNum) throws java.sql.SQLException {
+	                try {
+	                	return rs.getString("USERNAME");
+	                } catch (java.sql.SQLException e) {
+	                	if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+	        				return "Error processing query.";
+	        			}
+						else throw e;
+					}
+	            }
+	        });
+			java.io.PrintWriter out = response.getWriter();
+			
+			out.write("Your results are: ");
+	//		System.out.println("Your results are");
+			for(String s : results){
+				out.write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(s) + "<br>");
+	//			System.out.println(s);
+			}
+		} catch (org.springframework.dao.DataAccessException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map35896 = new java.util.HashMap<String,Object>();
-		map35896.put("keyA-35896", "a Value"); // put some stuff in the collection
-		map35896.put("keyB-35896", param); // put it in a collection
-		map35896.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map35896.get("keyB-35896"); // get it back out
+		java.util.HashMap<String,Object> map36388 = new java.util.HashMap<String,Object>();
+		map36388.put("keyA-36388", "a Value"); // put some stuff in the collection
+		map36388.put("keyB-36388", param); // put it in a collection
+		map36388.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map36388.get("keyB-36388"); // get it back out
 	
 		return bar;	
 	}

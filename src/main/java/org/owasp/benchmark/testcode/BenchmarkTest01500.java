@@ -40,43 +40,49 @@ public class BenchmarkTest01500 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String param = "";
-		boolean flag = true;
-		java.util.Enumeration<String> names = request.getParameterNames();
-		while (names.hasMoreElements() && flag) {
-			String name = (String) names.nextElement();		    	
-			String[] values = request.getParameterValues(name);
-			if (values != null) {
-				for(int i=0;i<values.length && flag; i++){
-					String value = values[i];
-					if (value.equals("vector")) {
-						param = name;
-					    flag = false;
-					}
-				}
-			}
-		}
+		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
+		String param = scr.getTheParameter("vector");
+		if (param == null) param = "";
 
 		String bar = new Test().doSomething(param);
 		
-		// javax.servlet.http.HttpSession.setAttribute(java.lang.String^,java.lang.Object)
-		request.getSession().setAttribute( bar, "10340");
-				
-		response.getWriter().println("Item: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
-			+ "' with value: '10340' saved in session.");
+		String fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
+        java.io.InputStream is = null;
+        
+		try {	
+			java.nio.file.Path path = java.nio.file.Paths.get(fileName);
+			is = java.nio.file.Files.newInputStream(path, java.nio.file.StandardOpenOption.READ);
+			byte[] b = new byte[1000];
+			int size = is.read(b);
+			response.getWriter().write("The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n");
+			response.getWriter().write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size)));
+			is.close();
+		} catch (Exception e) {
+            System.out.println("Couldn't open InputStream on file: '" + fileName + "'");
+			response.getWriter().write("Problem getting InputStream: " 
+				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage()));
+        } finally {
+			if (is != null) {
+                try {
+                    is.close();
+                    is = null;
+                } catch (Exception e) {
+                    // we tried...
+                }
+            }
+        }
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		
-		// Simple ? condition that assigns constant to bar on true condition
-		int num = 106;
-		
-		bar = (7*18) + num > 200 ? "This_should_always_happen" : param;
-		
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map79274 = new java.util.HashMap<String,Object>();
+		map79274.put("keyA-79274", "a Value"); // put some stuff in the collection
+		map79274.put("keyB-79274", param); // put it in a collection
+		map79274.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map79274.get("keyB-79274"); // get it back out
 
             return bar;
         }

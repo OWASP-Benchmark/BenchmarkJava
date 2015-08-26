@@ -40,19 +40,44 @@ public class BenchmarkTest02469 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheParameter("vector");
-		if (param == null) param = "";
+		String[] values = request.getParameterValues("vector");
+		String param;
+		if (values != null && values.length > 0)
+		  param = values[0];
+		else param = "";
 
 		String bar = doSomething(param);
 		
-		response.getWriter().write("Parameter value: " + bar);
+		String fileName = null;
+		java.io.FileOutputStream fos = null;
+
+		try {
+			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
+	
+			fos = new java.io.FileOutputStream(fileName, false);
+	        response.getWriter().write("Now ready to write to file: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName));
+		} catch (Exception e) {
+			System.out.println("Couldn't open FileOutputStream on file: '" + fileName + "'");
+//			System.out.println("File exception caught and swallowed: " + e.getMessage());
+		} finally {
+			if (fos != null) {
+				try {
+					fos.close();
+                    fos = null;
+				} catch (Exception e) {
+					// we tried...
+				}
+			}
+		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "";
-		if (param != null) bar = param.split(" ")[0];
+		if (param != null) {
+			bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    	new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
+		}
 	
 		return bar;	
 	}

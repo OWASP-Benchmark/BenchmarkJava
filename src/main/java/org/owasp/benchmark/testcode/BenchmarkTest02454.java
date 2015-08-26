@@ -46,17 +46,25 @@ public class BenchmarkTest02454 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		response.getWriter().print(bar);
+		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
+				
+		try {
+			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			statement.addBatch( sql );
+			int[] counts = statement.executeBatch();
+            org.owasp.benchmark.helpers.DatabaseHelper.printResults(sql, counts, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map7816 = new java.util.HashMap<String,Object>();
-		map7816.put("keyA-7816", "a Value"); // put some stuff in the collection
-		map7816.put("keyB-7816", param); // put it in a collection
-		map7816.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map7816.get("keyB-7816"); // get it back out
+		String bar = param;
 	
 		return bar;	
 	}

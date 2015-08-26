@@ -40,46 +40,46 @@ public class BenchmarkTest02142 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("vector");
-		if (headers.hasMoreElements()) {
-			param = headers.nextElement(); // just grab first element
-		}
+		String param = request.getParameter("vector");
+		if (param == null) param = "";
 
 		String bar = doSomething(param);
 		
-		String sql = "INSERT INTO users (username, password) VALUES ('foo','"+ bar + "')";
-				
-		try {
-			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			int count = statement.executeUpdate( sql, new String[] {"USERNAME","PASSWORD"} );
-            org.owasp.benchmark.helpers.DatabaseHelper.outputUpdateComplete(sql, response);
-		} catch (java.sql.SQLException e) {
-			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
-        		return;
-        	}
-			else throw new ServletException(e);
+		byte[] input = new byte[1000];
+		String str = "?";
+		Object inputParam = param;
+		if (inputParam instanceof String) str = ((String) inputParam);
+		if (inputParam instanceof java.io.InputStream) {
+			int i = ((java.io.InputStream) inputParam).read(input);
+			if (i == -1) {
+				response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+				return;
+			}			
+			str = new String(input, 0, i);
 		}
+		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie", str);
+		
+		cookie.setSecure(false);
+		
+		response.addCookie(cookie);
+
+        response.getWriter().println("Created cookie: 'SomeCookie': with value: '"
+          + org.owasp.esapi.ESAPI.encoder().encodeForHTML(str) + "' and secure flag set to: false");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a12524 = param; //assign
-		StringBuilder b12524 = new StringBuilder(a12524);  // stick in stringbuilder
-		b12524.append(" SafeStuff"); // append some safe content
-		b12524.replace(b12524.length()-"Chars".length(),b12524.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map12524 = new java.util.HashMap<String,Object>();
-		map12524.put("key12524", b12524.toString()); // put in a collection
-		String c12524 = (String)map12524.get("key12524"); // get it back out
-		String d12524 = c12524.substring(0,c12524.length()-1); // extract most of it
-		String e12524 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d12524.getBytes() ) )); // B64 encode and decode it
-		String f12524 = e12524.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g12524 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g12524); // reflection
+		String bar = "alsosafe";
+		if (param != null) {
+			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+			valuesList.add("safe");
+			valuesList.add( param );
+			valuesList.add( "moresafe" );
+			
+			valuesList.remove(0); // remove the 1st safe value
+			
+			bar = valuesList.get(1); // get the last 'safe' value
+		}
 	
 		return bar;	
 	}

@@ -47,58 +47,30 @@ public class BenchmarkTest00336 extends HttpServlet {
 		}
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map63910 = new java.util.HashMap<String,Object>();
-		map63910.put("keyA-63910", "a_Value"); // put some stuff in the collection
-		map63910.put("keyB-63910", param); // put it in a collection
-		map63910.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map63910.get("keyB-63910"); // get it back out
-		bar = (String)map63910.get("keyA-63910"); // get safe value back out
+		String bar;
+		
+		// Simple if statement that assigns constant to bar on true condition
+		int num = 86;
+		if ( (7*42) - num > 200 )
+		   bar = "This_should_always_happen"; 
+		else bar = param;
 		
 		
-	    try {
-		    java.security.SecureRandom secureRandomGenerator = java.security.SecureRandom.getInstance("SHA1PRNG");
-		
-		    // Get 40 random bytes
-		    byte[] randomBytes = new byte[40];
-		    secureRandomGenerator.nextBytes(randomBytes);
-		    
-	        String rememberMeKey = org.owasp.esapi.ESAPI.encoder().encodeForBase64(randomBytes, true);
+		try {
+			String sql = "SELECT TOP 1 userid from USERS where USERNAME='foo' and PASSWORD='"+ bar + "'";
 	
-			String user = "SafeByron";
-			String fullClassName = this.getClass().getName();
-			String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
-			user+= testCaseNumber;
-			
-			String cookieName = "rememberMe" + testCaseNumber;
-			
-			boolean foundUser = false;
-			javax.servlet.http.Cookie[] cookies = request.getCookies();
-			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-				javax.servlet.http.Cookie cookie = cookies[i];
-				if (cookieName.equals(cookie.getName())) {
-					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-						foundUser = true;
-					}
-				}
-			}
-			
-			if (foundUser) {
-				response.getWriter().println("Welcome back: " + user + "<br/>");			
-			} else {			
-				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
-				rememberMe.setSecure(true);
-				request.getSession().setAttribute(cookieName, rememberMeKey);
-				response.addCookie(rememberMe);
-				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-						+ " whose value is: " + rememberMe.getValue() + "<br/>");
-			}
-				    
-	    } catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing SecureRandom.nextBytes() - TestCase");
-			throw new ServletException(e);
-	    } finally {
-			response.getWriter().println("Randomness Test java.security.SecureRandom.nextBytes(byte[]) executed");	    
-	    }
+			Long results = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.queryForLong(sql);
+			java.io.PrintWriter out = response.getWriter();
+			out.write("Your results are: ");
+	//		System.out.println("your results are");
+			out.write(results.toString());
+	//		System.out.println(results);
+		} catch (org.springframework.dao.DataAccessException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}
 }

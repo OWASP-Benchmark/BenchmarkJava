@@ -45,48 +45,39 @@ public class BenchmarkTest01085 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		java.util.List<String> argList = new java.util.ArrayList<String>();
-		
-		String osName = System.getProperty("os.name");
-        if (osName.indexOf("Windows") != -1) {
-        	argList.add("cmd.exe");
-        	argList.add("/c");
-        } else {
-        	argList.add("sh");
-        	argList.add("-c");
-        }
-        argList.add("echo " + bar);
-
-		ProcessBuilder pb = new ProcessBuilder(argList);
-
-		try {
-			Process p = pb.start();
-			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - java.lang.ProcessBuilder(java.util.List) Test Case");
-            throw new ServletException(e);
-		}
+ 		try {
+	        String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"
+	            + bar + "'";
+	
+			org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.execute(sql);
+			java.io.PrintWriter out = response.getWriter();
+	//		System.out.println("no results for query: " + sql + " because the Spring execute method doesn't return results.");
+			out.write("No results can be displayed for query: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(sql) + "<br>");
+			out.write(" because the Spring execute method doesn't return results.");
+		} catch (org.springframework.dao.DataAccessException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}		
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a89047 = param; //assign
-		StringBuilder b89047 = new StringBuilder(a89047);  // stick in stringbuilder
-		b89047.append(" SafeStuff"); // append some safe content
-		b89047.replace(b89047.length()-"Chars".length(),b89047.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map89047 = new java.util.HashMap<String,Object>();
-		map89047.put("key89047", b89047.toString()); // put in a collection
-		String c89047 = (String)map89047.get("key89047"); // get it back out
-		String d89047 = c89047.substring(0,c89047.length()-1); // extract most of it
-		String e89047 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d89047.getBytes() ) )); // B64 encode and decode it
-		String f89047 = e89047.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g89047 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g89047); // reflection
+		String bar = "alsosafe";
+		if (param != null) {
+			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+			valuesList.add("safe");
+			valuesList.add( param );
+			valuesList.add( "moresafe" );
+			
+			valuesList.remove(0); // remove the 1st safe value
+			
+			bar = valuesList.get(1); // get the last 'safe' value
+		}
 
             return bar;
         }

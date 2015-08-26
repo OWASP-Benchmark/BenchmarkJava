@@ -40,63 +40,49 @@ public class BenchmarkTest01935 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		javax.servlet.http.Cookie[] theCookies = request.getCookies();
-		
-		String param = null;
-		boolean foundit = false;
-		if (theCookies != null) {
-			for (javax.servlet.http.Cookie theCookie : theCookies) {
-				if (theCookie.getName().equals("vector")) {
-					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
-					foundit = true;
-				}
-			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
-		}
+		String param = request.getHeader("vector");
+		if (param == null) param = "";
 
 		String bar = doSomething(param);
 		
-		try {
-			java.io.FileInputStream file = new java.io.FileInputStream(org.owasp.benchmark.helpers.Utils.getFileFromClasspath("employees.xml", this.getClass().getClassLoader()));
-			javax.xml.parsers.DocumentBuilderFactory builderFactory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
-			javax.xml.parsers.DocumentBuilder builder = builderFactory.newDocumentBuilder();
-			org.w3c.dom.Document xmlDocument = builder.parse(file);
-			javax.xml.xpath.XPathFactory xpf = javax.xml.xpath.XPathFactory.newInstance();
-			javax.xml.xpath.XPath xp = xpf.newXPath();
-			
-			response.getWriter().println("Your query results are: <br/>"); 
-			String expression = "/Employees/Employee[@emplid='"+bar+"']";
-			response.getWriter().println(xp.evaluate(expression, xmlDocument) + "<br/>");
-			
-		} catch (javax.xml.xpath.XPathExpressionException e) {
-			// OK to swallow
-			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
-		} catch (javax.xml.parsers.ParserConfigurationException e) {
-			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
-		} catch (org.xml.sax.SAXException e) {
-			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
+		byte[] input = new byte[1000];
+		String str = "?";
+		Object inputParam = param;
+		if (inputParam instanceof String) str = ((String) inputParam);
+		if (inputParam instanceof java.io.InputStream) {
+			int i = ((java.io.InputStream) inputParam).read(input);
+			if (i == -1) {
+				response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+				return;
+			}			
+			str = new String(input, 0, i);
 		}
+		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie", str);
+		
+		cookie.setSecure(true);
+		
+		response.addCookie(cookie);
+
+		response.getWriter().println("Created cookie: SomeCookie: with value: '"
+		  + org.owasp.esapi.ESAPI.encoder().encodeForHTML(str) + "' and secure flag set to: true");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "";
-		if (param != null) {
-			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
-			valuesList.add("safe");
-			valuesList.add( param );
-			valuesList.add( "moresafe" );
-			
-			valuesList.remove(0); // remove the 1st safe value
-			
-			bar = valuesList.get(0); // get the param value
-		}
+		// Chain a bunch of propagators in sequence
+		String a99157 = param; //assign
+		StringBuilder b99157 = new StringBuilder(a99157);  // stick in stringbuilder
+		b99157.append(" SafeStuff"); // append some safe content
+		b99157.replace(b99157.length()-"Chars".length(),b99157.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map99157 = new java.util.HashMap<String,Object>();
+		map99157.put("key99157", b99157.toString()); // put in a collection
+		String c99157 = (String)map99157.get("key99157"); // get it back out
+		String d99157 = c99157.substring(0,c99157.length()-1); // extract most of it
+		String e99157 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d99157.getBytes() ) )); // B64 encode and decode it
+		String f99157 = e99157.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f99157); // reflection
 	
 		return bar;	
 	}

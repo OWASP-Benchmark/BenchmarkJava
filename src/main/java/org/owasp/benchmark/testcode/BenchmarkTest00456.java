@@ -40,31 +40,45 @@ public class BenchmarkTest00456 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String param = request.getParameter("vector");
-		if (param == null) param = "";
+		java.util.Map<String,String[]> map = request.getParameterMap();
+		String param = "";
+		if (!map.isEmpty()) {
+			String[] values = map.get("vector");
+			if (values != null) param = values[0];
+		}
 		
 		
-		String bar;
 		
-		// Simple if statement that assigns constant to bar on true condition
-		int num = 86;
-		if ( (7*42) - num > 200 )
-		   bar = "This_should_always_happen"; 
-		else bar = param;
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map66371 = new java.util.HashMap<String,Object>();
+		map66371.put("keyA-66371", "a Value"); // put some stuff in the collection
+		map66371.put("keyB-66371", param); // put it in a collection
+		map66371.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map66371.get("keyB-66371"); // get it back out
 		
 		
-		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
-				
+		String fileName = null;
+		java.io.FileInputStream fis = null;
+
 		try {
-			java.sql.Statement statement =  org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			statement.execute( sql, java.sql.Statement.RETURN_GENERATED_KEYS );
-            org.owasp.benchmark.helpers.DatabaseHelper.printResults(statement, sql, response);
-		} catch (java.sql.SQLException e) {
-			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
-        		return;
-        	}
-			else throw new ServletException(e);
+			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
+			fis = new java.io.FileInputStream(fileName);
+			byte[] b = new byte[1000];
+			int size = fis.read(b);
+			response.getWriter().write("The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n");
+			response.getWriter().write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size)));
+		} catch (Exception e) {
+			System.out.println("Couldn't open FileInputStream on file: '" + fileName + "'");
+//			System.out.println("File exception caught and swallowed: " + e.getMessage());
+		} finally {
+			if (fis != null) {
+				try {
+					fis.close();
+                    fis = null;
+				} catch (Exception e) {
+					// we tried...
+				}
+			}
 		}
 	}
 }

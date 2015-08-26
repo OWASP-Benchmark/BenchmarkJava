@@ -40,31 +40,57 @@ public class BenchmarkTest01413 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		java.util.Map<String,String[]> map = request.getParameterMap();
 		String param = "";
-		if (!map.isEmpty()) {
-			String[] values = map.get("vector");
-			if (values != null) param = values[0];
+		boolean flag = true;
+		java.util.Enumeration<String> names = request.getParameterNames();
+		while (names.hasMoreElements() && flag) {
+			String name = (String) names.nextElement();		    	
+			String[] values = request.getParameterValues(name);
+			if (values != null) {
+				for(int i=0;i<values.length && flag; i++){
+					String value = values[i];
+					if (value.equals("vector")) {
+						param = name;
+					    flag = false;
+					}
+				}
+			}
 		}
-		
 
 		String bar = new Test().doSomething(param);
 		
-		String sql = "SELECT * from USERS where USERNAME=? and PASSWORD='"+ bar +"'";
-				
 		try {
-			java.sql.Connection connection = org.owasp.benchmark.helpers.DatabaseHelper.getSqlConnection();
-			java.sql.PreparedStatement statement = connection.prepareStatement( sql, new String[] {"Column1","Column2"} );
-			statement.setString(1, "foo");
-			statement.execute();
-            org.owasp.benchmark.helpers.DatabaseHelper.printResults(statement, sql, response);
-		} catch (java.sql.SQLException e) {
-			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
-        		return;
-        	}
-			else throw new ServletException(e);
+			java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA-512", "SUN");
+			byte[] input = { (byte)'?' };
+			Object inputParam = bar;
+			if (inputParam instanceof String) input = ((String) inputParam).getBytes();
+			if (inputParam instanceof java.io.InputStream) {
+				byte[] strInput = new byte[1000];
+				int i = ((java.io.InputStream) inputParam).read(strInput);
+				if (i == -1) {
+					response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+					return;
+				}
+				input = java.util.Arrays.copyOf(strInput, i);
+			}			
+			md.update(input);
+			
+			byte[] result = md.digest();
+			java.io.File fileTarget = new java.io.File(
+					new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),"passwordFile.txt");
+			java.io.FileWriter fw = new java.io.FileWriter(fileTarget,true); //the true will append the new data
+			    fw.write("hash_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
+			fw.close();
+			response.getWriter().println("Sensitive value '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' hashed and stored<br/>");
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.lang.String)");
+            throw new ServletException(e);
+		} catch (java.security.NoSuchProviderException e) {
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.lang.String)");
+            throw new ServletException(e);
 		}
+
+		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.lang.String) executed");
 	}  // end doPost
 
     private class Test {
@@ -72,12 +98,25 @@ public class BenchmarkTest01413 extends HttpServlet {
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar;
+		String guess = "ABC";
+		char switchTarget = guess.charAt(2);
 		
-		// Simple ? condition that assigns param to bar on false condition
-		int num = 106;
-		
-		bar = (7*42) - num > 200 ? "This should never happen" : param;
-		
+		// Simple case statement that assigns param to bar on conditions 'A', 'C', or 'D'
+		switch (switchTarget) {
+		  case 'A':
+		        bar = param;
+		        break;
+		  case 'B': 
+		        bar = "bobs_your_uncle";
+		        break;
+		  case 'C':
+		  case 'D':        
+		        bar = param;
+		        break;
+		  default:
+		        bar = "bobs_your_uncle";
+		        break;
+		}
 
             return bar;
         }

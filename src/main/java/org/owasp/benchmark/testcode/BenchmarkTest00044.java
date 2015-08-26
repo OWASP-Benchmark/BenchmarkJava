@@ -42,23 +42,45 @@ public class BenchmarkTest00044 extends HttpServlet {
 		response.setContentType("text/html");
 		
 
-		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheParameter("vector");
-		if (param == null) param = "";
+		String[] values = request.getParameterValues("vector");
+		String param;
+		if (values != null && values.length > 0)
+		  param = values[0];
+		else param = "";
 
 		
-		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ param +"'";
-				
-		try {
-			java.sql.Statement statement =  org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			statement.execute( sql, java.sql.Statement.RETURN_GENERATED_KEYS );
-            org.owasp.benchmark.helpers.DatabaseHelper.printResults(statement, sql, response);
-		} catch (java.sql.SQLException e) {
-			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
-        		return;
-        	}
-			else throw new ServletException(e);
+	org.owasp.benchmark.helpers.LDAPManager ads = new org.owasp.benchmark.helpers.LDAPManager();
+	try {
+			response.setContentType("text/html");
+			javax.naming.directory.DirContext ctx = ads.getDirContext();
+			String base = "ou=users,ou=system";
+			javax.naming.directory.SearchControls sc = new javax.naming.directory.SearchControls();
+			sc.setSearchScope(javax.naming.directory.SearchControls.SUBTREE_SCOPE);
+			String filter = "(&(objectclass=person)(uid=" + param
+					+ "))";
+			System.out.println("Filter " + filter);
+			javax.naming.NamingEnumeration<javax.naming.directory.SearchResult> results = ctx.search(base, filter, sc);
+			while (results.hasMore()) {
+				javax.naming.directory.SearchResult sr = (javax.naming.directory.SearchResult) results.next();
+				javax.naming.directory.Attributes attrs = sr.getAttributes();
+
+				javax.naming.directory.Attribute attr = attrs.get("uid");
+				javax.naming.directory.Attribute attr2 = attrs.get("street");
+				if (attr != null){
+					response.getWriter().write("LDAP query results:<br>"
+							+ " Record found with name " + attr.get() + "<br>"
+									+ "Address: " + attr2.get()+ "<br>");
+					System.out.println("record found " + attr.get());
+				}
+			}
+	} catch (javax.naming.NamingException e) {
+		throw new ServletException(e);
+	}finally{
+    	try {
+    		ads.closeDirContext();
+		} catch (Exception e) {
+			throw new ServletException(e);
 		}
+    }
 	}
 }

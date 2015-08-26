@@ -46,14 +46,42 @@ public class BenchmarkTest00659 extends HttpServlet {
 		
 		
 		String bar;
+		String guess = "ABC";
+		char switchTarget = guess.charAt(1); // condition 'B', which is safe
 		
-		// Simple ? condition that assigns param to bar on false condition
-		int num = 106;
+		// Simple case statement that assigns param to bar on conditions 'A', 'C', or 'D'
+		switch (switchTarget) {
+		  case 'A':
+		        bar = param;
+		        break;
+		  case 'B': 
+		        bar = "bob";
+		        break;
+		  case 'C':
+		  case 'D':        
+		        bar = param;
+		        break;
+		  default:
+		        bar = "bob's your uncle";
+		        break;
+		}
 		
-		bar = (7*42) - num > 200 ? "This should never happen" : param;
 		
-		
-		
-		response.getWriter().write(bar);
+		String cmd = "";
+        String osName = System.getProperty("os.name");
+        if (osName.indexOf("Windows") != -1) {
+        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("echo");
+        }
+        
+		String[] argsEnv = { "Foo=bar" };
+		Runtime r = Runtime.getRuntime();
+
+		try {
+			Process p = r.exec(cmd + bar, argsEnv, new java.io.File(System.getProperty("user.dir")));
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - TestCase");
+            throw new ServletException(e);
+		}
 	}
 }

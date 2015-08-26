@@ -45,48 +45,33 @@ public class BenchmarkTest01064 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		double value = java.lang.Math.random();
-        String rememberMeKey = Double.toString(value).substring(2);  // Trim off the 0. at the front.
+		String cmd = "";
+        String osName = System.getProperty("os.name");
+        if (osName.indexOf("Windows") != -1) {
+        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("echo");
+        }
+        
+		Runtime r = Runtime.getRuntime();
 
-		String user = "Doug";
-		String fullClassName = this.getClass().getName();
-		String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
-		user+= testCaseNumber;
-		
-		String cookieName = "rememberMe" + testCaseNumber;
-		
-		boolean foundUser = false;
-		javax.servlet.http.Cookie[] cookies = request.getCookies();
-		for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-			javax.servlet.http.Cookie cookie = cookies[i];
-			if (cookieName.equals(cookie.getName())) {
-				if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-					foundUser = true;
-				}
-			}
+		try {
+			Process p = r.exec(cmd + bar);
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - TestCase");
+            throw new ServletException(e);
 		}
-		
-		if (foundUser) {
-			response.getWriter().println("Welcome back: " + user + "<br/>");			
-		} else {			
-			javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
-			rememberMe.setSecure(true);
-			request.getSession().setAttribute(cookieName, rememberMeKey);
-			response.addCookie(rememberMe);
-			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-					+ " whose value is: " + rememberMe.getValue() + "<br/>");
-		}
-		response.getWriter().println("Weak Randomness Test java.lang.Math.random() executed");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = param;
-		if (param != null && param.length() > 1) {
-		    bar = param.substring(0,param.length()-1);
-		}
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map88952 = new java.util.HashMap<String,Object>();
+		map88952.put("keyA-88952", "a Value"); // put some stuff in the collection
+		map88952.put("keyB-88952", param); // put it in a collection
+		map88952.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map88952.get("keyB-88952"); // get it back out
 
             return bar;
         }

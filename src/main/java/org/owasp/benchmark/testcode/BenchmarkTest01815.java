@@ -45,50 +45,32 @@ public class BenchmarkTest01815 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		int randNumber = new java.util.Random().nextInt(99);
-		String rememberMeKey = Integer.toString(randNumber);
-		
-		String user = "Inga";
-		String fullClassName = this.getClass().getName();
-		String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
-		user+= testCaseNumber;
-		
-		String cookieName = "rememberMe" + testCaseNumber;
-		
-		boolean foundUser = false;
-		javax.servlet.http.Cookie[] cookies = request.getCookies();
-		for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-			javax.servlet.http.Cookie cookie = cookies[i];
-			if (cookieName.equals(cookie.getName())) {
-				if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-					foundUser = true;
-				}
-			}
+		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
+				
+		try {
+			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			statement.addBatch( sql );
+			int[] counts = statement.executeBatch();
+            org.owasp.benchmark.helpers.DatabaseHelper.printResults(sql, counts, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
 		}
-		
-		if (foundUser) {
-			response.getWriter().println("Welcome back: " + user + "<br/>");			
-		} else {			
-			javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
-			rememberMe.setSecure(true);
-			request.getSession().setAttribute(cookieName, rememberMeKey);
-			response.addCookie(rememberMe);
-			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-					+ " whose value is: " + rememberMe.getValue() + "<br/>");
-		}
-		
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextInt(int) executed");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = param;
-		if (param != null && param.length() > 1) {
-		    StringBuilder sbxyz15355 = new StringBuilder(param);
-		    bar = sbxyz15355.replace(param.length()-"Z".length(), param.length(),"Z").toString();
-		}
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map80148 = new java.util.HashMap<String,Object>();
+		map80148.put("keyA-80148", "a Value"); // put some stuff in the collection
+		map80148.put("keyB-80148", param); // put it in a collection
+		map80148.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map80148.get("keyB-80148"); // get it back out
 
             return bar;
         }

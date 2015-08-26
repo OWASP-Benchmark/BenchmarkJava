@@ -59,24 +59,38 @@ public class BenchmarkTest01430 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		java.io.File fileTarget = new java.io.File(new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),bar);
-		response.getWriter().write("Access to file: '" + fileTarget + "' created." );
-		if (fileTarget.exists()) {
-			response.getWriter().write(" And file already exists.");
-		} else { response.getWriter().write(" But file doesn't exist yet."); }
+		String a1 = "";
+		String a2 = "";
+		String osName = System.getProperty("os.name");
+        if (osName.indexOf("Windows") != -1) {
+        	a1 = "cmd.exe";
+        	a2 = "/c";
+        } else {
+        	a1 = "sh";
+        	a2 = "-c";
+        }
+        String[] args = {a1, a2, "echo " + bar};
+
+		ProcessBuilder pb = new ProcessBuilder(args);
+		
+		try {
+			Process p = pb.start();
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - java.lang.ProcessBuilder(java.lang.String[]) Test Case");
+            throw new ServletException(e);
+		}
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map4037 = new java.util.HashMap<String,Object>();
-		map4037.put("keyA-4037", "a_Value"); // put some stuff in the collection
-		map4037.put("keyB-4037", param); // put it in a collection
-		map4037.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map4037.get("keyB-4037"); // get it back out
-		bar = (String)map4037.get("keyA-4037"); // get safe value back out
+		String bar = "";
+		if (param != null) {
+			bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    	new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
+		}
 
             return bar;
         }

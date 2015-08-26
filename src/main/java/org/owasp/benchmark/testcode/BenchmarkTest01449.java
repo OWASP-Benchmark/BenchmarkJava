@@ -59,15 +59,61 @@ public class BenchmarkTest01449 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		Object[] obj = { "a", "b" };
-		response.getWriter().format(java.util.Locale.US,bar,obj);
+		try {
+			java.util.Random numGen = java.security.SecureRandom.getInstance("SHA1PRNG");
+        	double rand = getNextNumber(numGen);
+			
+			String rememberMeKey = Double.toString(rand).substring(2); // Trim off the 0. at the front.
+			
+			String user = "SafeDonatella";
+			String fullClassName = this.getClass().getName();
+			String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
+			user+= testCaseNumber;
+			
+			String cookieName = "rememberMe" + testCaseNumber;
+			
+			boolean foundUser = false;
+			javax.servlet.http.Cookie[] cookies = request.getCookies();
+			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
+				javax.servlet.http.Cookie cookie = cookies[i];
+				if (cookieName.equals(cookie.getName())) {
+					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+						foundUser = true;
+					}
+				}
+			}
+			
+			if (foundUser) {
+				response.getWriter().println("Welcome back: " + user + "<br/>");			
+			} else {			
+				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
+				rememberMe.setSecure(true);
+				request.getSession().setAttribute(cookieName, rememberMeKey);
+				response.addCookie(rememberMe);
+				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
+						+ " whose value is: " + rememberMe.getValue() + "<br/>");
+			}
+
+	    } catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing SecureRandom.nextDouble() - TestCase");
+			throw new ServletException(e);
+	    }
+		
+		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextDouble() executed");
+	}
+		double getNextNumber(java.util.Random generator) {
+			return generator.nextDouble();
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = org.owasp.esapi.ESAPI.encoder().encodeForHTML(param);
+		String bar = "";
+		if (param != null) {
+			bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    	new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
+		}
 
             return bar;
         }

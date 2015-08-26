@@ -44,56 +44,38 @@ public class BenchmarkTest00201 extends HttpServlet {
 		if (param == null) param = "";
 		
 		
-		String bar = "";
-		if (param != null) {
-			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
-			valuesList.add("safe");
-			valuesList.add( param );
-			valuesList.add( "moresafe" );
-			
-			valuesList.remove(0); // remove the 1st safe value
-			
-			bar = valuesList.get(0); // get the param value
-		}
+		// Chain a bunch of propagators in sequence
+		String a82265 = param; //assign
+		StringBuilder b82265 = new StringBuilder(a82265);  // stick in stringbuilder
+		b82265.append(" SafeStuff"); // append some safe content
+		b82265.replace(b82265.length()-"Chars".length(),b82265.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map82265 = new java.util.HashMap<String,Object>();
+		map82265.put("key82265", b82265.toString()); // put in a collection
+		String c82265 = (String)map82265.get("key82265"); // get it back out
+		String d82265 = c82265.substring(0,c82265.length()-1); // extract most of it
+		String e82265 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d82265.getBytes() ) )); // B64 encode and decode it
+		String f82265 = e82265.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String g82265 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g82265); // reflection
 		
 		
 		try {
-			double stuff = java.security.SecureRandom.getInstance("SHA1PRNG").nextGaussian();
-			String rememberMeKey = Double.toString(stuff).substring(2); // Trim off the 0. at the front.
-			
-			String user = "SafeGayle";
-			String fullClassName = this.getClass().getName();
-			String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
-			user+= testCaseNumber;
-			
-			String cookieName = "rememberMe" + testCaseNumber;
-			
-			boolean foundUser = false;
-			javax.servlet.http.Cookie[] cookies = request.getCookies();
-			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-				javax.servlet.http.Cookie cookie = cookies[i];
-				if (cookieName.equals(cookie.getName())) {
-					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-						foundUser = true;
-					}
-				}
-			}
-			
-			if (foundUser) {
-				response.getWriter().println("Welcome back: " + user + "<br/>");			
-			} else {			
-				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
-				rememberMe.setSecure(true);
-				request.getSession().setAttribute(cookieName, rememberMeKey);
-				response.addCookie(rememberMe);
-				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-						+ " whose value is: " + rememberMe.getValue() + "<br/>");
-			}
-
-	    } catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing SecureRandom.nextGaussian() - TestCase");
-			throw new ServletException(e);
-	    }		
-		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextGaussian() executed");
+	        String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"
+	            + bar + "'";
+	
+			org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.batchUpdate(sql);
+			java.io.PrintWriter out = response.getWriter();
+	//		System.out.println("no results for query: " + sql + " because the Spring batchUpdate method doesn't return results.");
+			out.write("No results can be displayed for query: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(sql) + "<br>");
+			out.write(" because the Spring batchUpdate method doesn't return results.");
+		} catch (org.springframework.dao.DataAccessException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}
 }

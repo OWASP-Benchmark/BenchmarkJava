@@ -40,37 +40,55 @@ public class BenchmarkTest02112 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("vector");
-		if (headers.hasMoreElements()) {
-			param = headers.nextElement(); // just grab first element
-		}
+		String param = request.getParameter("vector");
+		if (param == null) param = "";
 
 		String bar = doSomething(param);
 		
-		String cmd = "";
-        String osName = System.getProperty("os.name");
-        if (osName.indexOf("Windows") != -1) {
-        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("echo");
-        }
-        
-		Runtime r = Runtime.getRuntime();
+		String fileName = null;
+		java.io.FileOutputStream fos = null;
 
 		try {
-			Process p = r.exec(cmd + bar);
-			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - TestCase");
-            throw new ServletException(e);
+			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
+	
+			fos = new java.io.FileOutputStream(fileName, false);
+	        response.getWriter().write("Now ready to write to file: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName));
+		} catch (Exception e) {
+			System.out.println("Couldn't open FileOutputStream on file: '" + fileName + "'");
+//			System.out.println("File exception caught and swallowed: " + e.getMessage());
+		} finally {
+			if (fos != null) {
+				try {
+					fos.close();
+                    fos = null;
+				} catch (Exception e) {
+					// we tried...
+				}
+			}
 		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "";
-		if (param != null) {
-			bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    	new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
+		String bar;
+		String guess = "ABC";
+		char switchTarget = guess.charAt(2);
+		
+		// Simple case statement that assigns param to bar on conditions 'A', 'C', or 'D'
+		switch (switchTarget) {
+		  case 'A':
+		        bar = param;
+		        break;
+		  case 'B': 
+		        bar = "bobs_your_uncle";
+		        break;
+		  case 'C':
+		  case 'D':        
+		        bar = param;
+		        break;
+		  default:
+		        bar = "bobs_your_uncle";
+		        break;
 		}
 	
 		return bar;	

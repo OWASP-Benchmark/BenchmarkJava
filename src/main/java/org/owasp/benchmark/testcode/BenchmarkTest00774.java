@@ -47,18 +47,40 @@ public class BenchmarkTest00774 extends HttpServlet {
 		else param = "";
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map92061 = new java.util.HashMap<String,Object>();
-		map92061.put("keyA-92061", "a Value"); // put some stuff in the collection
-		map92061.put("keyB-92061", param); // put it in a collection
-		map92061.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map92061.get("keyB-92061"); // get it back out
+		String bar;
+		String guess = "ABC";
+		char switchTarget = guess.charAt(1); // condition 'B', which is safe
+		
+		// Simple case statement that assigns param to bar on conditions 'A', 'C', or 'D'
+		switch (switchTarget) {
+		  case 'A':
+		        bar = param;
+		        break;
+		  case 'B': 
+		        bar = "bob";
+		        break;
+		  case 'C':
+		  case 'D':        
+		        bar = param;
+		        break;
+		  default:
+		        bar = "bob's your uncle";
+		        break;
+		}
 		
 		
-		// javax.servlet.http.HttpSession.putValue(java.lang.String,java.lang.Object^)
-		request.getSession().putValue( "userid", bar);
-		
-		response.getWriter().println("Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
-			+ "' saved in session.");
+		String sql = "INSERT INTO users (username, password) VALUES ('foo','"+ bar + "')";
+				
+		try {
+			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			int count = statement.executeUpdate( sql, java.sql.Statement.RETURN_GENERATED_KEYS );
+            org.owasp.benchmark.helpers.DatabaseHelper.outputUpdateComplete(sql, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}
 }

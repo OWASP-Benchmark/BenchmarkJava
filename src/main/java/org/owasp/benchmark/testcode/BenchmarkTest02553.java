@@ -40,58 +40,69 @@ public class BenchmarkTest02553 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		String[] values = request.getParameterValues("vector");
-		String param;
-		if (values != null && values.length > 0)
-		  param = values[0];
-		else param = "";
+		String queryString = request.getQueryString();
+		String paramval = "vector"+"=";
+		int paramLoc = -1;
+		if (queryString != null) paramLoc = queryString.indexOf(paramval);
+		if (paramLoc == -1) {
+			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "vector" + "' in query string.");
+			return;
+		}
+		
+		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "vector" param is last parameter in query string.
+		// And then check to see if its in the middle of the query string and if so, trim off what comes after.
+		int ampersandLoc = queryString.indexOf("&", paramLoc);
+		if (ampersandLoc != -1) {
+			param = queryString.substring(paramLoc + paramval.length(), ampersandLoc);
+		}
+		param = java.net.URLDecoder.decode(param, "UTF-8");
 
 		String bar = doSomething(param);
 		
-		double value = new java.util.Random().nextDouble();
-		String rememberMeKey = Double.toString(value).substring(2); // Trim off the 0. at the front.
-		
-		String user = "Donna";
-		String fullClassName = this.getClass().getName();
-		String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
-		user+= testCaseNumber;
-		
-		String cookieName = "rememberMe" + testCaseNumber;
-		
-		boolean foundUser = false;
-		javax.servlet.http.Cookie[] cookies = request.getCookies();
-		for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-			javax.servlet.http.Cookie cookie = cookies[i];
-			if (cookieName.equals(cookie.getName())) {
-				if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-					foundUser = true;
+	org.owasp.benchmark.helpers.LDAPManager ads = new org.owasp.benchmark.helpers.LDAPManager();
+	try {
+			response.setContentType("text/html");
+			javax.naming.directory.DirContext ctx = ads.getDirContext();
+			String base = "ou=users,ou=system";
+			javax.naming.directory.SearchControls sc = new javax.naming.directory.SearchControls();
+			sc.setSearchScope(javax.naming.directory.SearchControls.SUBTREE_SCOPE);
+			String filter = "(&(objectclass=person))(|(uid="+bar+")(street={0}))";
+			Object[] filters = new Object[]{"The streetz 4 Ms bar"};
+			System.out.println("Filter " + filter);
+			javax.naming.NamingEnumeration<javax.naming.directory.SearchResult> results = ctx.search(base, filter,filters, sc);
+			while (results.hasMore()) {
+				javax.naming.directory.SearchResult sr = (javax.naming.directory.SearchResult) results.next();
+				javax.naming.directory.Attributes attrs = sr.getAttributes();
+
+				javax.naming.directory.Attribute attr = attrs.get("uid");
+				javax.naming.directory.Attribute attr2 = attrs.get("street");
+				if (attr != null){
+					response.getWriter().write("LDAP query results:<br>"
+							+ " Record found with name " + attr.get() + "<br>"
+									+ "Address: " + attr2.get() + "<br>");
+					System.out.println("record found " + attr.get());
 				}
 			}
+	} catch (javax.naming.NamingException e) {
+		throw new ServletException(e);
+	}finally{
+    	try {
+    		ads.closeDirContext();
+		} catch (Exception e) {
+			throw new ServletException(e);
 		}
-		
-		if (foundUser) {
-			response.getWriter().println("Welcome back: " + user + "<br/>");			
-		} else {			
-			javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
-			rememberMe.setSecure(true);
-			request.getSession().setAttribute(cookieName, rememberMeKey);
-			response.addCookie(rememberMe);
-			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-					+ " whose value is: " + rememberMe.getValue() + "<br/>");
-		}
-		
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextDouble() executed");
+    }
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		
-		// Simple ? condition that assigns constant to bar on true condition
-		int num = 106;
-		
-		bar = (7*18) + num > 200 ? "This_should_always_happen" : param;
-		
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map45066 = new java.util.HashMap<String,Object>();
+		map45066.put("keyA-45066", "a_Value"); // put some stuff in the collection
+		map45066.put("keyB-45066", param); // put it in a collection
+		map45066.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map45066.get("keyB-45066"); // get it back out
+		bar = (String)map45066.get("keyA-45066"); // get safe value back out
 	
 		return bar;	
 	}

@@ -40,63 +40,30 @@ public class BenchmarkTest02126 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("vector");
-		if (headers.hasMoreElements()) {
-			param = headers.nextElement(); // just grab first element
-		}
+		String param = request.getParameter("vector");
+		if (param == null) param = "";
 
 		String bar = doSomething(param);
 		
-		try {
-			long l = java.security.SecureRandom.getInstance("SHA1PRNG").nextLong();
-			String rememberMeKey = Long.toString(l);
-			
-			String user = "SafeLogan";
-			String fullClassName = this.getClass().getName();
-			String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
-			user+= testCaseNumber;
-			
-			String cookieName = "rememberMe" + testCaseNumber;
-			
-			boolean foundUser = false;
-			javax.servlet.http.Cookie[] cookies = request.getCookies();
-			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-				javax.servlet.http.Cookie cookie = cookies[i];
-				if (cookieName.equals(cookie.getName())) {
-					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-						foundUser = true;
-					}
-				}
-			}
-			
-			if (foundUser) {
-				response.getWriter().println("Welcome back: " + user + "<br/>");			
-			} else {			
-				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
-				rememberMe.setSecure(true);
-				request.getSession().setAttribute(cookieName, rememberMeKey);
-				response.addCookie(rememberMe);
-				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-						+ " whose value is: " + rememberMe.getValue() + "<br/>");
-			}
-
-	    } catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing SecureRandom.nextLong() - TestCase");
-			throw new ServletException(e);
-	    }		
-		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextLong() executed");
+		response.getWriter().print(bar);
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		
-		// Simple ? condition that assigns constant to bar on true condition
-		int num = 106;
-		
-		bar = (7*18) + num > 200 ? "This_should_always_happen" : param;
-		
+		// Chain a bunch of propagators in sequence
+		String a30595 = param; //assign
+		StringBuilder b30595 = new StringBuilder(a30595);  // stick in stringbuilder
+		b30595.append(" SafeStuff"); // append some safe content
+		b30595.replace(b30595.length()-"Chars".length(),b30595.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map30595 = new java.util.HashMap<String,Object>();
+		map30595.put("key30595", b30595.toString()); // put in a collection
+		String c30595 = (String)map30595.get("key30595"); // get it back out
+		String d30595 = c30595.substring(0,c30595.length()-1); // extract most of it
+		String e30595 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d30595.getBytes() ) )); // B64 encode and decode it
+		String f30595 = e30595.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f30595); // reflection
 	
 		return bar;	
 	}

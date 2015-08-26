@@ -42,33 +42,45 @@ public class BenchmarkTest00118 extends HttpServlet {
 	
 		javax.servlet.http.Cookie[] theCookies = request.getCookies();
 		
-		String param = null;
-		boolean foundit = false;
+		String param = "";
 		if (theCookies != null) {
 			for (javax.servlet.http.Cookie theCookie : theCookies) {
 				if (theCookie.getName().equals("vector")) {
 					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
-					foundit = true;
+					break;
 				}
 			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
 		}
 		
 		
-		String bar = "";
-		if (param != null) bar = param.split(" ")[0];
+		String bar;
+		
+		// Simple if statement that assigns constant to bar on true condition
+		int num = 86;
+		if ( (7*42) - num > 200 )
+		   bar = "This_should_always_happen"; 
+		else bar = param;
 		
 		
-		// javax.servlet.http.HttpSession.setAttribute(java.lang.String,java.lang.Object^)
-		request.getSession().setAttribute( "userid", bar);
-				
-		response.getWriter().println("Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
-			+ "' saved in session.");
+		try {
+			java.io.FileInputStream file = new java.io.FileInputStream(org.owasp.benchmark.helpers.Utils.getFileFromClasspath("employees.xml", this.getClass().getClassLoader()));
+			javax.xml.parsers.DocumentBuilderFactory builderFactory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+			javax.xml.parsers.DocumentBuilder builder = builderFactory.newDocumentBuilder();
+			org.w3c.dom.Document xmlDocument = builder.parse(file);
+			javax.xml.xpath.XPathFactory xpf = javax.xml.xpath.XPathFactory.newInstance();
+			javax.xml.xpath.XPath xp = xpf.newXPath();
+			
+			response.getWriter().println("Your query results are: <br/>"); 
+			String expression = "/Employees/Employee[@emplid='"+bar+"']";
+			response.getWriter().println(xp.evaluate(expression, xmlDocument) + "<br/>");
+			
+		} catch (javax.xml.xpath.XPathExpressionException e) {
+			// OK to swallow
+			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
+		} catch (javax.xml.parsers.ParserConfigurationException e) {
+			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
+		} catch (org.xml.sax.SAXException e) {
+			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
+		}
 	}
 }

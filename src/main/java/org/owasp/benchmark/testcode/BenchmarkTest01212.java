@@ -48,10 +48,20 @@ public class BenchmarkTest01212 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		int length = 1;
-		if (bar != null) {
-			length = bar.length();
-			response.getWriter().write(bar, 0, length);
+		String sql = "SELECT * from USERS where USERNAME=? and PASSWORD='"+ bar +"'";
+				
+		try {
+			java.sql.Connection connection = org.owasp.benchmark.helpers.DatabaseHelper.getSqlConnection();
+			java.sql.PreparedStatement statement = connection.prepareStatement( sql, new int[] { 1, 2 } );
+			statement.setString(1, "foo");
+			statement.execute();
+            org.owasp.benchmark.helpers.DatabaseHelper.printResults(statement, sql, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
 		}
 	}  // end doPost
 
@@ -59,7 +69,17 @@ public class BenchmarkTest01212 extends HttpServlet {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = org.apache.commons.lang.StringEscapeUtils.escapeHtml(param);
+		String bar = "alsosafe";
+		if (param != null) {
+			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+			valuesList.add("safe");
+			valuesList.add( param );
+			valuesList.add( "moresafe" );
+			
+			valuesList.remove(0); // remove the 1st safe value
+			
+			bar = valuesList.get(1); // get the last 'safe' value
+		}
 
             return bar;
         }

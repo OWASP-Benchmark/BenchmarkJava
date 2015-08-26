@@ -41,64 +41,44 @@ public class BenchmarkTest01156 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		String param = "";
-		boolean flag = true;
-		java.util.Enumeration<String> names = request.getHeaderNames();
-		while (names.hasMoreElements() && flag) {
-			String name = (String) names.nextElement();
-			java.util.Enumeration<String> values = request.getHeaders(name);
-			if (values != null) {
-				while (values.hasMoreElements() && flag) {
-					String value = (String) values.nextElement();
-					if (value.equals("vector")) {
-						param = name;
-						flag = false;
-					}
-				}
-			}
+		java.util.Enumeration<String> headers = request.getHeaders("vector");
+		if (headers.hasMoreElements()) {
+			param = headers.nextElement(); // just grab first element
 		}
 
 		String bar = new Test().doSomething(param);
 		
+		// FILE URIs are tricky because they are different between Mac and Windows because of lack of standardization.
+		// Mac requires an extra slash for some reason.
+		String startURIslashes = "";
+        if (System.getProperty("os.name").indexOf("Windows") != -1)
+	        if (System.getProperty("os.name").indexOf("Windows") != -1)
+	        	startURIslashes = "/";
+	        else startURIslashes = "//";
+
 		try {
-			java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA-256");
-			byte[] input = { (byte)'?' };
-			Object inputParam = bar;
-			if (inputParam instanceof String) input = ((String) inputParam).getBytes();
-			if (inputParam instanceof java.io.InputStream) {
-				byte[] strInput = new byte[1000];
-				int i = ((java.io.InputStream) inputParam).read(strInput);
-				if (i == -1) {
-					response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
-					return;
-				}
-				input = java.util.Arrays.copyOf(strInput, i);
-			}			
-			md.update(input);
-			
-			byte[] result = md.digest();
-			java.io.File fileTarget = new java.io.File(
-					new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),"passwordFile.txt");
-			java.io.FileWriter fw = new java.io.FileWriter(fileTarget,true); //the true will append the new data
-			    fw.write("hash_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
-			fw.close();
-			response.getWriter().println("Sensitive value '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' hashed and stored<br/>");
-		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing hash - TestCase");
+			java.net.URI fileURI = new java.net.URI("file:" + startURIslashes 
+				+ org.owasp.benchmark.helpers.Utils.testfileDir.replace('\\', '/').replace(' ', '_') + bar);
+			java.io.File fileTarget = new java.io.File(fileURI);
+			response.getWriter().write("Access to file: '" + fileTarget + "' created." );
+			if (fileTarget.exists()) {
+				response.getWriter().write(" And file already exists.");
+			} else { response.getWriter().write(" But file doesn't exist yet."); }
+		} catch (java.net.URISyntaxException e) {
 			throw new ServletException(e);
 		}
-		
-		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String) executed");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "";
-		if (param != null) {
-			bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    	new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
-		}
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map82229 = new java.util.HashMap<String,Object>();
+		map82229.put("keyA-82229", "a Value"); // put some stuff in the collection
+		map82229.put("keyB-82229", param); // put it in a collection
+		map82229.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map82229.get("keyB-82229"); // get it back out
 
             return bar;
         }

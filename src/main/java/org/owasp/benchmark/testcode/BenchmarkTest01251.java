@@ -40,43 +40,23 @@ public class BenchmarkTest01251 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("vector");
-		if (headers.hasMoreElements()) {
-			param = headers.nextElement(); // just grab first element
-		}
+		String param = request.getParameter("vector");
+		if (param == null) param = "";
 
 		String bar = new Test().doSomething(param);
 		
-		try {
-			String sql = "SELECT TOP 1 userid from USERS where USERNAME='foo' and PASSWORD='"+ bar + "'";
-	
-			Long results = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.queryForLong(sql);
-			java.io.PrintWriter out = response.getWriter();
-			out.write("Your results are: ");
-	//		System.out.println("your results are");
-			out.write(results.toString());
-	//		System.out.println(results);
-		} catch (org.springframework.dao.DataAccessException e) {
-			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
-        		return;
-        	}
-			else throw new ServletException(e);
-		}
+		Object[] obj = { "a", bar };
+		java.io.PrintWriter out = response.getWriter();
+		out.write("<!DOCTYPE html>\n<html>\n<body>\n<p>");
+		out.format(java.util.Locale.US,"Formatted like: %1$s and %2$s.",obj);
+	    out.write("\n</p>\n</body>\n</html>");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		
-		// Simple if statement that assigns param to bar on true condition
-		int num = 196;
-		if ( (500/42) + num > 200 )
-		   bar = param;
-		else bar = "This should never happen"; 
+		String bar = org.owasp.esapi.ESAPI.encoder().encodeForHTML(param);
 
             return bar;
         }

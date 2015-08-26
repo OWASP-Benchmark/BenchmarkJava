@@ -40,54 +40,28 @@ public class BenchmarkTest01922 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		javax.servlet.http.Cookie[] theCookies = request.getCookies();
-		
-		String param = null;
-		boolean foundit = false;
-		if (theCookies != null) {
-			for (javax.servlet.http.Cookie theCookie : theCookies) {
-				if (theCookie.getName().equals("vector")) {
-					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
-					foundit = true;
-				}
-			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
-		}
+		String param = request.getHeader("vector");
+		if (param == null) param = "";
 
 		String bar = doSomething(param);
 		
-		String sql = "{call " + bar + "}";
-				
-		try {
-			java.sql.Connection connection = org.owasp.benchmark.helpers.DatabaseHelper.getSqlConnection();
-			java.sql.CallableStatement statement = connection.prepareCall( sql );
-		    java.sql.ResultSet rs = statement.executeQuery();
-            org.owasp.benchmark.helpers.DatabaseHelper.printResults(rs, sql, response);
-
-		} catch (java.sql.SQLException e) {
-			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
-        		return;
-        	}
-			else throw new ServletException(e);
-		}
+		Object[] obj = { "a", "b"};
+		response.getWriter().printf(bar,obj);
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map72446 = new java.util.HashMap<String,Object>();
-		map72446.put("keyA-72446", "a_Value"); // put some stuff in the collection
-		map72446.put("keyB-72446", param); // put it in a collection
-		map72446.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map72446.get("keyB-72446"); // get it back out
-		bar = (String)map72446.get("keyA-72446"); // get safe value back out
+		String bar = "";
+		if (param != null) {
+			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+			valuesList.add("safe");
+			valuesList.add( param );
+			valuesList.add( "moresafe" );
+			
+			valuesList.remove(0); // remove the 1st safe value
+			
+			bar = valuesList.get(0); // get the param value
+		}
 	
 		return bar;	
 	}

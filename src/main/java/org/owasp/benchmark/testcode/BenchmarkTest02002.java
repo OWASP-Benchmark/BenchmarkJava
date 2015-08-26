@@ -40,67 +40,69 @@ public class BenchmarkTest02002 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		String param = request.getHeader("vector");
-		if (param == null) param = "";
-
-		String bar = doSomething(param);
-		
-		try {
-			double stuff = java.security.SecureRandom.getInstance("SHA1PRNG").nextGaussian();
-			String rememberMeKey = Double.toString(stuff).substring(2); // Trim off the 0. at the front.
-			
-			String user = "SafeGayle";
-			String fullClassName = this.getClass().getName();
-			String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
-			user+= testCaseNumber;
-			
-			String cookieName = "rememberMe" + testCaseNumber;
-			
-			boolean foundUser = false;
-			javax.servlet.http.Cookie[] cookies = request.getCookies();
-			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-				javax.servlet.http.Cookie cookie = cookies[i];
-				if (cookieName.equals(cookie.getName())) {
-					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-						foundUser = true;
+		String param = "";
+		boolean flag = true;
+		java.util.Enumeration<String> names = request.getHeaderNames();
+		while (names.hasMoreElements() && flag) {
+			String name = (String) names.nextElement();
+			java.util.Enumeration<String> values = request.getHeaders(name);
+			if (values != null) {
+				while (values.hasMoreElements() && flag) {
+					String value = (String) values.nextElement();
+					if (value.equals("vector")) {
+						param = name;
+						flag = false;
 					}
 				}
 			}
-			
-			if (foundUser) {
-				response.getWriter().println("Welcome back: " + user + "<br/>");			
-			} else {			
-				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
-				rememberMe.setSecure(true);
-				request.getSession().setAttribute(cookieName, rememberMeKey);
-				response.addCookie(rememberMe);
-				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-						+ " whose value is: " + rememberMe.getValue() + "<br/>");
-			}
+		}
 
-	    } catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing SecureRandom.nextGaussian() - TestCase");
-			throw new ServletException(e);
-	    }		
-		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextGaussian() executed");
+		String bar = doSomething(param);
+		
+		int randNumber = new java.util.Random().nextInt(99);
+		String rememberMeKey = Integer.toString(randNumber);
+		
+		String user = "Inga";
+		String fullClassName = this.getClass().getName();
+		String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
+		user+= testCaseNumber;
+		
+		String cookieName = "rememberMe" + testCaseNumber;
+		
+		boolean foundUser = false;
+		javax.servlet.http.Cookie[] cookies = request.getCookies();
+		for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
+			javax.servlet.http.Cookie cookie = cookies[i];
+			if (cookieName.equals(cookie.getName())) {
+				if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+					foundUser = true;
+				}
+			}
+		}
+		
+		if (foundUser) {
+			response.getWriter().println("Welcome back: " + user + "<br/>");			
+		} else {			
+			javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
+			rememberMe.setSecure(true);
+			request.getSession().setAttribute(cookieName, rememberMeKey);
+			response.addCookie(rememberMe);
+			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
+					+ " whose value is: " + rememberMe.getValue() + "<br/>");
+		}
+		
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextInt(int) executed");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a4723 = param; //assign
-		StringBuilder b4723 = new StringBuilder(a4723);  // stick in stringbuilder
-		b4723.append(" SafeStuff"); // append some safe content
-		b4723.replace(b4723.length()-"Chars".length(),b4723.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map4723 = new java.util.HashMap<String,Object>();
-		map4723.put("key4723", b4723.toString()); // put in a collection
-		String c4723 = (String)map4723.get("key4723"); // get it back out
-		String d4723 = c4723.substring(0,c4723.length()-1); // extract most of it
-		String e4723 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d4723.getBytes() ) )); // B64 encode and decode it
-		String f4723 = e4723.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f4723); // reflection
+		String bar;
+		
+		// Simple if statement that assigns constant to bar on true condition
+		int num = 86;
+		if ( (7*42) - num > 200 )
+		   bar = "This_should_always_happen"; 
+		else bar = param;
 	
 		return bar;	
 	}

@@ -8,40 +8,13 @@
 </head>
 <body>
 <form action="/benchmark/BenchmarkTest02121" method="POST" id="FormBenchmarkTest02121">
-    <div><label>Please explain your answer:</label></div>
-    <br/>
-	<div><textarea rows="4" cols="50" id="vectorArea" name="vectorArea" value=""></textarea></div>
-	<div><label>Any additional note for the reviewer:</label></div>
-	<div><input type="text" id="answer" name="answer"></input></div>
-    <br/>
-    <div><label>An AJAX request will be sent with a header named vector and value:</label>
-    <input type="text" id="vector" name="vector" value="whatever" class="safe"></input></div>
-	<div><input type="button" id="login-btn" value="Login" /></div>
-</form>
-<div id="ajax-form-msg1"></div>
-<script>
-$('.safe').keypress(function (e) {
-  if (e.which == 13) {
-    $('#login-btn').trigger('click');
-    return false;
-  }
-});
-
-$("#login-btn").click(function(){
-    var formData = $("#FormBenchmarkTest02121").serializeArray();
-    var URL = $("#FormBenchmarkTest02121").attr("action");
-    var text = $("#FormBenchmarkTest02121 input[id=vector]").val();
-    $.ajax({
-        url : URL,
-        headers: { 'vector': text },
-        type: "POST",
-        data : formData,
-        success: function(data, textStatus, jqXHR){
-            $("#ajax-form-msg1").html('<pre><code class="prettyprint">'+data+'</code></pre>');
-        },
-        error: function (jqXHR, textStatus, errorThrown){ alert(errorThrown);}
-    });
-});
-</script>
+ <div><label>Select your habits and edit the parameter [name,value]:</label></div><br/>
+    <div><input type="checkbox" name="vector" value="someSecret" checked>Reading. [vector, someSecret]</div>
+    <div><input type="checkbox" name="vector" value="Movies">Movies. [vector, Movies]</div>
+    <div><input type="checkbox" name="vector" value="Writing">Writing. [vector, Writing]</div>
+    <div><input type="checkbox" name="vector" value="Singing">Singing. [vector, Singing]</div>
+    <div><label>Parameter foo, value:</label><input type="text" id="foo" name="foo" value="bar"></input></div><br/>
+    <div><input type="submit" value="Submit"></div>
+ </form>
 </body>
 </html>

@@ -58,48 +58,61 @@ public class BenchmarkTest00243 extends HttpServlet {
 		}
 		
 		
-		String bar;
-		String guess = "ABC";
-		char switchTarget = guess.charAt(2);
-		
-		// Simple case statement that assigns param to bar on conditions 'A', 'C', or 'D'
-		switch (switchTarget) {
-		  case 'A':
-		        bar = param;
-		        break;
-		  case 'B': 
-		        bar = "bobs_your_uncle";
-		        break;
-		  case 'C':
-		  case 'D':        
-		        bar = param;
-		        break;
-		  default:
-		        bar = "bobs_your_uncle";
-		        break;
-		}
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map69890 = new java.util.HashMap<String,Object>();
+		map69890.put("keyA-69890", "a Value"); // put some stuff in the collection
+		map69890.put("keyB-69890", param); // put it in a collection
+		map69890.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map69890.get("keyB-69890"); // get it back out
 		
 		
-		String fileName = null;
-		java.io.FileOutputStream fos = null;
-
-		try {
-			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
+	    try {
+		    java.util.Random numGen = java.security.SecureRandom.getInstance("SHA1PRNG");
+		
+		    // Get 40 random bytes
+		    byte[] randomBytes = new byte[40];
+		    getNextNumber(numGen, randomBytes);
+		    
+	        String rememberMeKey = org.owasp.esapi.ESAPI.encoder().encodeForBase64(randomBytes, true);
 	
-			fos = new java.io.FileOutputStream(fileName);
-	        response.getWriter().write("Now ready to write to file: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName));
-   		} catch (Exception e) {
-			System.out.println("Couldn't open FileOutputStream on file: '" + fileName + "'");
-//			System.out.println("File exception caught and swallowed: " + e.getMessage());
-		} finally {
-			if (fos != null) {
-				try {
-					fos.close();
-                    fos = null;
-				} catch (Exception e) {
-					// we tried...
+			String user = "SafeBystander";
+			String fullClassName = this.getClass().getName();
+			String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
+			user+= testCaseNumber;
+			
+			String cookieName = "rememberMe" + testCaseNumber;
+			
+			boolean foundUser = false;
+			javax.servlet.http.Cookie[] cookies = request.getCookies();
+			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
+				javax.servlet.http.Cookie cookie = cookies[i];
+				if (cookieName.equals(cookie.getName())) {
+					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+						foundUser = true;
+					}
 				}
 			}
-		}
+			
+			if (foundUser) {
+				response.getWriter().println("Welcome back: " + user + "<br/>");			
+			} else {			
+				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
+				rememberMe.setSecure(true);
+				request.getSession().setAttribute(cookieName, rememberMeKey);
+				response.addCookie(rememberMe);
+				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
+						+ " whose value is: " + rememberMe.getValue() + "<br/>");
+			}
+				    
+	    } catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing SecureRandom.nextBytes() - TestCase");
+			throw new ServletException(e);
+	    } finally {
+			response.getWriter().println("Randomness Test java.security.SecureRandom.nextBytes(byte[]) executed");	    
+	    }
+	}
+	    	
+	void getNextNumber(java.util.Random generator, byte[] barray) {
+		generator.nextBytes(barray);
 	}
 }

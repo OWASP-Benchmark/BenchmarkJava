@@ -45,18 +45,35 @@ public class BenchmarkTest02185 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		response.getWriter().print(bar);
+		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
+				
+		try {
+			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			statement.addBatch( sql );
+			int[] counts = statement.executeBatch();
+            org.owasp.benchmark.helpers.DatabaseHelper.printResults(sql, counts, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map89752 = new java.util.HashMap<String,Object>();
-		map89752.put("keyA-89752", "a_Value"); // put some stuff in the collection
-		map89752.put("keyB-89752", param); // put it in a collection
-		map89752.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map89752.get("keyB-89752"); // get it back out
-		bar = (String)map89752.get("keyA-89752"); // get safe value back out
+		String bar = "alsosafe";
+		if (param != null) {
+			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+			valuesList.add("safe");
+			valuesList.add( param );
+			valuesList.add( "moresafe" );
+			
+			valuesList.remove(0); // remove the 1st safe value
+			
+			bar = valuesList.get(1); // get the last 'safe' value
+		}
 	
 		return bar;	
 	}

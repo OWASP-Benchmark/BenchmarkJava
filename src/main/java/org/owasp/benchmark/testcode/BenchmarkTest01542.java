@@ -46,27 +46,56 @@ public class BenchmarkTest01542 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		response.getWriter().print(bar.toCharArray());
+		try {
+			float rand = java.security.SecureRandom.getInstance("SHA1PRNG").nextFloat();
+			String rememberMeKey = Float.toString(rand).substring(2); // Trim off the 0. at the front.
+			
+			String user = "SafeFloyd";
+			String fullClassName = this.getClass().getName();
+			String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
+			user+= testCaseNumber;
+			
+			String cookieName = "rememberMe" + testCaseNumber;
+			
+			boolean foundUser = false;
+			javax.servlet.http.Cookie[] cookies = request.getCookies();
+			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
+				javax.servlet.http.Cookie cookie = cookies[i];
+				if (cookieName.equals(cookie.getName())) {
+					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+						foundUser = true;
+					}
+				}
+			}
+			
+			if (foundUser) {
+				response.getWriter().println("Welcome back: " + user + "<br/>");			
+			} else {			
+				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
+				rememberMe.setSecure(true);
+				request.getSession().setAttribute(cookieName, rememberMeKey);
+				response.addCookie(rememberMe);
+				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
+						+ " whose value is: " + rememberMe.getValue() + "<br/>");
+			}
+
+	    } catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing SecureRandom.nextFloat() - TestCase");
+			throw new ServletException(e);
+	    }		
+		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextFloat() executed");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a81239 = param; //assign
-		StringBuilder b81239 = new StringBuilder(a81239);  // stick in stringbuilder
-		b81239.append(" SafeStuff"); // append some safe content
-		b81239.replace(b81239.length()-"Chars".length(),b81239.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map81239 = new java.util.HashMap<String,Object>();
-		map81239.put("key81239", b81239.toString()); // put in a collection
-		String c81239 = (String)map81239.get("key81239"); // get it back out
-		String d81239 = c81239.substring(0,c81239.length()-1); // extract most of it
-		String e81239 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d81239.getBytes() ) )); // B64 encode and decode it
-		String f81239 = e81239.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f81239); // reflection
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map52356 = new java.util.HashMap<String,Object>();
+		map52356.put("keyA-52356", "a Value"); // put some stuff in the collection
+		map52356.put("keyB-52356", param); // put it in a collection
+		map52356.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map52356.get("keyB-52356"); // get it back out
 
             return bar;
         }

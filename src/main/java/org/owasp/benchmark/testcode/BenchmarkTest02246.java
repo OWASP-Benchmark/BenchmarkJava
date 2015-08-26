@@ -40,43 +40,59 @@ public class BenchmarkTest02246 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		String param = request.getParameter("vector");
-		if (param == null) param = "";
+		java.util.Map<String,String[]> map = request.getParameterMap();
+		String param = "";
+		if (!map.isEmpty()) {
+			String[] values = map.get("vector");
+			if (values != null) param = values[0];
+		}
+		
 
 		String bar = doSomething(param);
 		
-		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
-				
-		try {
-			java.sql.Statement statement =  org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			statement.execute( sql, new String[] { "username", "password" } );
-            org.owasp.benchmark.helpers.DatabaseHelper.printResults(statement, sql, response);
-		} catch (java.sql.SQLException e) {
-			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
-        		return;
-        	}
-			else throw new ServletException(e);
+		int randNumber = new java.util.Random().nextInt(99);
+		String rememberMeKey = Integer.toString(randNumber);
+		
+		String user = "Inga";
+		String fullClassName = this.getClass().getName();
+		String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
+		user+= testCaseNumber;
+		
+		String cookieName = "rememberMe" + testCaseNumber;
+		
+		boolean foundUser = false;
+		javax.servlet.http.Cookie[] cookies = request.getCookies();
+		for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
+			javax.servlet.http.Cookie cookie = cookies[i];
+			if (cookieName.equals(cookie.getName())) {
+				if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+					foundUser = true;
+				}
+			}
 		}
+		
+		if (foundUser) {
+			response.getWriter().println("Welcome back: " + user + "<br/>");			
+		} else {			
+			javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
+			rememberMe.setSecure(true);
+			request.getSession().setAttribute(cookieName, rememberMeKey);
+			response.addCookie(rememberMe);
+			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
+					+ " whose value is: " + rememberMe.getValue() + "<br/>");
+		}
+		
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextInt(int) executed");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a56773 = param; //assign
-		StringBuilder b56773 = new StringBuilder(a56773);  // stick in stringbuilder
-		b56773.append(" SafeStuff"); // append some safe content
-		b56773.replace(b56773.length()-"Chars".length(),b56773.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map56773 = new java.util.HashMap<String,Object>();
-		map56773.put("key56773", b56773.toString()); // put in a collection
-		String c56773 = (String)map56773.get("key56773"); // get it back out
-		String d56773 = c56773.substring(0,c56773.length()-1); // extract most of it
-		String e56773 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d56773.getBytes() ) )); // B64 encode and decode it
-		String f56773 = e56773.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g56773 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g56773); // reflection
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map64759 = new java.util.HashMap<String,Object>();
+		map64759.put("keyA-64759", "a Value"); // put some stuff in the collection
+		map64759.put("keyB-64759", param); // put it in a collection
+		map64759.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map64759.get("keyB-64759"); // get it back out
 	
 		return bar;	
 	}

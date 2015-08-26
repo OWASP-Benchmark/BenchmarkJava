@@ -44,27 +44,20 @@ public class BenchmarkTest00377 extends HttpServlet {
 		if (param == null) param = "";
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a15058 = param; //assign
-		StringBuilder b15058 = new StringBuilder(a15058);  // stick in stringbuilder
-		b15058.append(" SafeStuff"); // append some safe content
-		b15058.replace(b15058.length()-"Chars".length(),b15058.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map15058 = new java.util.HashMap<String,Object>();
-		map15058.put("key15058", b15058.toString()); // put in a collection
-		String c15058 = (String)map15058.get("key15058"); // get it back out
-		String d15058 = c15058.substring(0,c15058.length()-1); // extract most of it
-		String e15058 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d15058.getBytes() ) )); // B64 encode and decode it
-		String f15058 = e15058.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g15058 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g15058); // reflection
+		String bar = "alsosafe";
+		if (param != null) {
+			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+			valuesList.add("safe");
+			valuesList.add( param );
+			valuesList.add( "moresafe" );
+			
+			valuesList.remove(0); // remove the 1st safe value
+			
+			bar = valuesList.get(1); // get the last 'safe' value
+		}
 		
 		
-		java.io.File fileTarget = new java.io.File(bar);
-		response.getWriter().write("Access to file: '" + fileTarget + "' created." );
-		if (fileTarget.exists()) {
-			response.getWriter().write(" And file already exists.");
-		} else { response.getWriter().write(" But file doesn't exist yet."); }
+		Object[] obj = { "a", bar };
+		response.getWriter().format("Formatted like: %1$s and %2$s.",obj);
 	}
 }

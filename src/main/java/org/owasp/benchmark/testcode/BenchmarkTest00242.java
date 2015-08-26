@@ -58,35 +58,38 @@ public class BenchmarkTest00242 extends HttpServlet {
 		}
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map90196 = new java.util.HashMap<String,Object>();
-		map90196.put("keyA-90196", "a_Value"); // put some stuff in the collection
-		map90196.put("keyB-90196", param); // put it in a collection
-		map90196.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map90196.get("keyB-90196"); // get it back out
-		bar = (String)map90196.get("keyA-90196"); // get safe value back out
-		
-		
-		String fileName = null;
-		java.io.FileOutputStream fos = null;
-
-		try {
-			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
-	
-			fos = new java.io.FileOutputStream(new java.io.File(fileName));
-	        response.getWriter().write("Now ready to write to file: " + fileName);
-		} catch (Exception e) {
-			System.out.println("Couldn't open FileOutputStream on file: '" + fileName + "'");
-//			System.out.println("File exception caught and swallowed: " + e.getMessage());
-		} finally {
-			if (fos != null) {
-				try {
-					fos.close();
-                    fos = null;
-				} catch (Exception e) {
-					// we tried...
-				}
-			}
+		String bar = "";
+		if (param != null) {
+			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+			valuesList.add("safe");
+			valuesList.add( param );
+			valuesList.add( "moresafe" );
+			
+			valuesList.remove(0); // remove the 1st safe value
+			
+			bar = valuesList.get(0); // get the param value
 		}
+		
+		
+		byte[] input = new byte[1000];
+		String str = "?";
+		Object inputParam = param;
+		if (inputParam instanceof String) str = ((String) inputParam);
+		if (inputParam instanceof java.io.InputStream) {
+			int i = ((java.io.InputStream) inputParam).read(input);
+			if (i == -1) {
+				response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+				return;
+			}			
+			str = new String(input, 0, i);
+		}
+		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie", str);
+		
+		cookie.setSecure(true);
+		
+		response.addCookie(cookie);
+
+		response.getWriter().println("Created cookie: SomeCookie: with value: '"
+		  + org.owasp.esapi.ESAPI.encoder().encodeForHTML(str) + "' and secure flag set to: true");
 	}
 }

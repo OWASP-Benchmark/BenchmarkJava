@@ -49,19 +49,27 @@ public class BenchmarkTest00519 extends HttpServlet {
 		
 		
 		
-		String bar;
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map57121 = new java.util.HashMap<String,Object>();
+		map57121.put("keyA-57121", "a_Value"); // put some stuff in the collection
+		map57121.put("keyB-57121", param); // put it in a collection
+		map57121.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map57121.get("keyB-57121"); // get it back out
+		bar = (String)map57121.get("keyA-57121"); // get safe value back out
 		
-		// Simple ? condition that assigns param to bar on false condition
-		int num = 106;
 		
-		bar = (7*42) - num > 200 ? "This should never happen" : param;
-		
-		
-		
-		// javax.servlet.http.HttpSession.setAttribute(java.lang.String^,java.lang.Object)
-		request.getSession().setAttribute( bar, "10340");
+		String sql = "INSERT INTO users (username, password) VALUES ('foo','"+ bar + "')";
 				
-		response.getWriter().println("Item: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
-			+ "' with value: '10340' saved in session.");
+		try {
+			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			int count = statement.executeUpdate( sql, new String[] {"USERNAME","PASSWORD"} );
+            org.owasp.benchmark.helpers.DatabaseHelper.outputUpdateComplete(sql, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}
 }

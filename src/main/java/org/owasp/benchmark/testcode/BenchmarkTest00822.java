@@ -58,11 +58,15 @@ public class BenchmarkTest00822 extends HttpServlet {
 		param = java.net.URLDecoder.decode(param, "UTF-8");
 		
 		
-		String bar = "";
-		if (param != null) bar = param.split(" ")[0];
+		String bar;
+		
+		// Simple if statement that assigns param to bar on true condition
+		int num = 196;
+		if ( (500/42) + num > 200 )
+		   bar = param;
+		else bar = "This should never happen"; 
 		
 		
-		Object[] obj = { "a", "b"};
-		response.getWriter().printf(bar,obj);
+		response.getWriter().write("Parameter value: " + bar);
 	}
 }

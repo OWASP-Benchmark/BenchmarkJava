@@ -8,40 +8,17 @@
 </head>
 <body>
 <form action="/benchmark/BenchmarkTest00349" method="POST" id="FormBenchmarkTest00349">
-    <div><label>Please explain your answer:</label></div>
-    <br/>
-	<div><textarea rows="4" cols="50" id="vectorArea" name="vectorArea" value=""></textarea></div>
-	<div><label>Any additional note for the reviewer:</label></div>
-	<div><input type="text" id="answer" name="answer"></input></div>
-    <br/>
-    <div><label>An AJAX request will be sent with a header named vector and value:</label>
-    <input type="text" id="vector" name="vector" value="verifyUserPassword('foo','bar')" class="safe"></input></div>
-	<div><input type="button" id="login-btn" value="Login" /></div>
+    <div><label>Please enter your details:</label></div>
+    <div><label>Is your information secure?:</label>
+	<input type="text" id="secure" name="secure"></input></div>
+    <div><label>Provide your product ID:</label>
+	<input type="text" id="productID" name="productID"></input></div>
+	<div><label>Do you even foo?</label>
+    <input type="text" id="foo" name="foo" value="foo"></input></div>
+    <div><label>Parameter: vector <BR> Value:</label>
+	<input type="text" id="vector" name="vector" value="whatever"></input></div>
+    <div>
+	<input type="submit" value="Post it" /></div>
 </form>
-<div id="ajax-form-msg1"></div>
-<script>
-$('.safe').keypress(function (e) {
-  if (e.which == 13) {
-    $('#login-btn').trigger('click');
-    return false;
-  }
-});
-
-$("#login-btn").click(function(){
-    var formData = $("#FormBenchmarkTest00349").serializeArray();
-    var URL = $("#FormBenchmarkTest00349").attr("action");
-    var text = $("#FormBenchmarkTest00349 input[id=vector]").val();
-    $.ajax({
-        url : URL,
-        headers: { 'vector': text },
-        type: "POST",
-        data : formData,
-        success: function(data, textStatus, jqXHR){
-            $("#ajax-form-msg1").html('<pre><code class="prettyprint">'+data+'</code></pre>');
-        },
-        error: function (jqXHR, textStatus, errorThrown){ alert(errorThrown);}
-    });
-});
-</script>
 </body>
 </html>

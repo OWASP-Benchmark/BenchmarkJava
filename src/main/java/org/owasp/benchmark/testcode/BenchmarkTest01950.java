@@ -45,54 +45,54 @@ public class BenchmarkTest01950 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		String fileName = null;
-        java.io.FileInputStream fis = null;
+		try {
+			float rand = java.security.SecureRandom.getInstance("SHA1PRNG").nextFloat();
+			String rememberMeKey = Float.toString(rand).substring(2); // Trim off the 0. at the front.
+			
+			String user = "SafeFloyd";
+			String fullClassName = this.getClass().getName();
+			String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
+			user+= testCaseNumber;
+			
+			String cookieName = "rememberMe" + testCaseNumber;
+			
+			boolean foundUser = false;
+			javax.servlet.http.Cookie[] cookies = request.getCookies();
+			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
+				javax.servlet.http.Cookie cookie = cookies[i];
+				if (cookieName.equals(cookie.getName())) {
+					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+						foundUser = true;
+					}
+				}
+			}
+			
+			if (foundUser) {
+				response.getWriter().println("Welcome back: " + user + "<br/>");			
+			} else {			
+				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
+				rememberMe.setSecure(true);
+				request.getSession().setAttribute(cookieName, rememberMeKey);
+				response.addCookie(rememberMe);
+				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
+						+ " whose value is: " + rememberMe.getValue() + "<br/>");
+			}
 
-        try {
-			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
-			fis = new java.io.FileInputStream(new java.io.File(fileName));
-			byte[] b = new byte[1000];
-			int size = fis.read(b);
-			response.getWriter().write("The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n");
-			response.getWriter().write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size)));
-		} catch (Exception e) {
-            System.out.println("Couldn't open FileInputStream on file: '" + fileName + "'");
-			response.getWriter().write("Problem getting FileInputStream: " 
-				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage()));
-        } finally {
-			if (fis != null) {
-                try {
-                    fis.close();
-                    fis = null;
-                } catch (Exception e) {
-                    // we tried...
-                }
-            }
-        }
+	    } catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing SecureRandom.nextFloat() - TestCase");
+			throw new ServletException(e);
+	    }		
+		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextFloat() executed");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		String guess = "ABC";
-		char switchTarget = guess.charAt(2);
-		
-		// Simple case statement that assigns param to bar on conditions 'A', 'C', or 'D'
-		switch (switchTarget) {
-		  case 'A':
-		        bar = param;
-		        break;
-		  case 'B': 
-		        bar = "bobs_your_uncle";
-		        break;
-		  case 'C':
-		  case 'D':        
-		        bar = param;
-		        break;
-		  default:
-		        bar = "bobs_your_uncle";
-		        break;
-		}
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map77438 = new java.util.HashMap<String,Object>();
+		map77438.put("keyA-77438", "a Value"); // put some stuff in the collection
+		map77438.put("keyB-77438", param); // put it in a collection
+		map77438.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map77438.get("keyB-77438"); // get it back out
 	
 		return bar;	
 	}

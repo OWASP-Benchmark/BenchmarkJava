@@ -58,40 +58,62 @@ public class BenchmarkTest00244 extends HttpServlet {
 		}
 		
 		
-		String bar = param;
+		String bar;
+		
+		// Simple if statement that assigns param to bar on true condition
+		int num = 196;
+		if ( (500/42) + num > 200 )
+		   bar = param;
+		else bar = "This should never happen"; 
 		
 		
-		double value = java.lang.Math.random();
-        String rememberMeKey = Double.toString(value).substring(2);  // Trim off the 0. at the front.
-
-		String user = "Doug";
-		String fullClassName = this.getClass().getName();
-		String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
-		user+= testCaseNumber;
+	    try {
+		    java.util.Random numGen = java.security.SecureRandom.getInstance("SHA1PRNG");
 		
-		String cookieName = "rememberMe" + testCaseNumber;
-		
-		boolean foundUser = false;
-		javax.servlet.http.Cookie[] cookies = request.getCookies();
-		for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-			javax.servlet.http.Cookie cookie = cookies[i];
-			if (cookieName.equals(cookie.getName())) {
-				if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-					foundUser = true;
+		    // Get 40 random bytes
+		    byte[] randomBytes = new byte[40];
+		    getNextNumber(numGen, randomBytes);
+		    
+	        String rememberMeKey = org.owasp.esapi.ESAPI.encoder().encodeForBase64(randomBytes, true);
+	
+			String user = "SafeBystander";
+			String fullClassName = this.getClass().getName();
+			String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
+			user+= testCaseNumber;
+			
+			String cookieName = "rememberMe" + testCaseNumber;
+			
+			boolean foundUser = false;
+			javax.servlet.http.Cookie[] cookies = request.getCookies();
+			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
+				javax.servlet.http.Cookie cookie = cookies[i];
+				if (cookieName.equals(cookie.getName())) {
+					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+						foundUser = true;
+					}
 				}
 			}
-		}
-		
-		if (foundUser) {
-			response.getWriter().println("Welcome back: " + user + "<br/>");			
-		} else {			
-			javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
-			rememberMe.setSecure(true);
-			request.getSession().setAttribute(cookieName, rememberMeKey);
-			response.addCookie(rememberMe);
-			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-					+ " whose value is: " + rememberMe.getValue() + "<br/>");
-		}
-		response.getWriter().println("Weak Randomness Test java.lang.Math.random() executed");
+			
+			if (foundUser) {
+				response.getWriter().println("Welcome back: " + user + "<br/>");			
+			} else {			
+				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
+				rememberMe.setSecure(true);
+				request.getSession().setAttribute(cookieName, rememberMeKey);
+				response.addCookie(rememberMe);
+				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
+						+ " whose value is: " + rememberMe.getValue() + "<br/>");
+			}
+				    
+	    } catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing SecureRandom.nextBytes() - TestCase");
+			throw new ServletException(e);
+	    } finally {
+			response.getWriter().println("Randomness Test java.security.SecureRandom.nextBytes(byte[]) executed");	    
+	    }
+	}
+	    	
+	void getNextNumber(java.util.Random generator, byte[] barray) {
+		generator.nextBytes(barray);
 	}
 }

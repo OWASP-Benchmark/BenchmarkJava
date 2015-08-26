@@ -40,38 +40,79 @@ public class BenchmarkTest02102 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("vector");
-		if (headers.hasMoreElements()) {
-			param = headers.nextElement(); // just grab first element
-		}
+		String param = request.getParameter("vector");
+		if (param == null) param = "";
 
 		String bar = doSomething(param);
 		
-		int length = 1;
-		if (bar != null) {
-			length = bar.length();
-			response.getWriter().write(bar, 0, length);
+		// Code based on example from:
+		// http://examples.javacodegeeks.com/core-java/crypto/encrypt-decrypt-file-stream-with-des/
+
+		try {
+			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("RSA/ECB/PKCS1Padding", "SunJCE");
+            // Prepare the cipher to encrypt
+            java.security.KeyPairGenerator keyGen = java.security.KeyPairGenerator.getInstance("RSA");
+            keyGen.initialize(1024);
+            java.security.PublicKey publicKey= keyGen.genKeyPair().getPublic();
+            c.init(javax.crypto.Cipher.ENCRYPT_MODE, publicKey);
+			
+			// encrypt and store the results
+			byte[] input = { (byte)'?' };
+			Object inputParam = bar;
+			if (inputParam instanceof String) input = ((String) inputParam).getBytes();
+			if (inputParam instanceof java.io.InputStream) {
+				byte[] strInput = new byte[1000];
+				int i = ((java.io.InputStream) inputParam).read(strInput);
+				if (i == -1) {
+					response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+					return;
+				}
+				input = java.util.Arrays.copyOf(strInput, i);
+			}
+			byte[] result = c.doFinal(input);
+			
+			java.io.File fileTarget = new java.io.File(
+					new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),"passwordFile.txt");
+			java.io.FileWriter fw = new java.io.FileWriter(fileTarget,true); //the true will append the new data
+			    fw.write("secret_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
+			fw.close();
+			response.getWriter().println("Sensitive value: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' encrypted and stored<br/>");
+			
+		} catch (java.security.NoSuchAlgorithmException e) {
+			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
+			e.printStackTrace(response.getWriter());
+			throw new ServletException(e);
+		} catch (java.security.NoSuchProviderException e) {
+			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
+			e.printStackTrace(response.getWriter());
+			throw new ServletException(e);
+		} catch (javax.crypto.NoSuchPaddingException e) {
+			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
+			e.printStackTrace(response.getWriter());
+			throw new ServletException(e);
+		} catch (javax.crypto.IllegalBlockSizeException e) {
+			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
+			e.printStackTrace(response.getWriter());
+			throw new ServletException(e);
+		} catch (javax.crypto.BadPaddingException e) {
+			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
+			e.printStackTrace(response.getWriter());
+			throw new ServletException(e);
+		} catch (java.security.InvalidKeyException e) {
+			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
+			e.printStackTrace(response.getWriter());
+			throw new ServletException(e);
 		}
+		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String,java.lang.String) executed");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a6339 = param; //assign
-		StringBuilder b6339 = new StringBuilder(a6339);  // stick in stringbuilder
-		b6339.append(" SafeStuff"); // append some safe content
-		b6339.replace(b6339.length()-"Chars".length(),b6339.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map6339 = new java.util.HashMap<String,Object>();
-		map6339.put("key6339", b6339.toString()); // put in a collection
-		String c6339 = (String)map6339.get("key6339"); // get it back out
-		String d6339 = c6339.substring(0,c6339.length()-1); // extract most of it
-		String e6339 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d6339.getBytes() ) )); // B64 encode and decode it
-		String f6339 = e6339.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g6339 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g6339); // reflection
+		String bar = param;
+		if (param != null && param.length() > 1) {
+		    StringBuilder sbxyz14767 = new StringBuilder(param);
+		    bar = sbxyz14767.replace(param.length()-"Z".length(), param.length(),"Z").toString();
+		}
 	
 		return bar;	
 	}

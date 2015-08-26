@@ -40,78 +40,30 @@ public class BenchmarkTest01493 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String param = "";
-		boolean flag = true;
-		java.util.Enumeration<String> names = request.getParameterNames();
-		while (names.hasMoreElements() && flag) {
-			String name = (String) names.nextElement();		    	
-			String[] values = request.getParameterValues(name);
-			if (values != null) {
-				for(int i=0;i<values.length && flag; i++){
-					String value = values[i];
-					if (value.equals("vector")) {
-						param = name;
-					    flag = false;
-					}
-				}
-			}
-		}
+		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
+		String param = scr.getTheParameter("vector");
+		if (param == null) param = "";
 
 		String bar = new Test().doSomething(param);
 		
-		try {
-			double rand = java.security.SecureRandom.getInstance("SHA1PRNG").nextDouble();
-			
-			String rememberMeKey = Double.toString(rand).substring(2); // Trim off the 0. at the front.
-			
-			String user = "SafeDonna";
-			String fullClassName = this.getClass().getName();
-			String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
-			user+= testCaseNumber;
-			
-			String cookieName = "rememberMe" + testCaseNumber;
-			
-			boolean foundUser = false;
-			javax.servlet.http.Cookie[] cookies = request.getCookies();
-			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-				javax.servlet.http.Cookie cookie = cookies[i];
-				if (cookieName.equals(cookie.getName())) {
-					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-						foundUser = true;
-					}
-				}
-			}
-			
-			if (foundUser) {
-				response.getWriter().println("Welcome back: " + user + "<br/>");			
-			} else {			
-				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
-				rememberMe.setSecure(true);
-				request.getSession().setAttribute(cookieName, rememberMeKey);
-				response.addCookie(rememberMe);
-				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-						+ " whose value is: " + rememberMe.getValue() + "<br/>");
-			}
-
-	    } catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing SecureRandom.nextDouble() - TestCase");
-			throw new ServletException(e);
-	    }
-		
-		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextDouble() executed");
+		java.io.File fileTarget = new java.io.File(new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),bar);
+		response.getWriter().write("Access to file: '" + fileTarget + "' created." );
+		if (fileTarget.exists()) {
+			response.getWriter().write(" And file already exists.");
+		} else { response.getWriter().write(" But file doesn't exist yet."); }
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		
-		// Simple if statement that assigns constant to bar on true condition
-		int num = 86;
-		if ( (7*42) - num > 200 )
-		   bar = "This_should_always_happen"; 
-		else bar = param;
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map75601 = new java.util.HashMap<String,Object>();
+		map75601.put("keyA-75601", "a_Value"); // put some stuff in the collection
+		map75601.put("keyB-75601", param); // put it in a collection
+		map75601.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map75601.get("keyB-75601"); // get it back out
+		bar = (String)map75601.get("keyA-75601"); // get safe value back out
 
             return bar;
         }

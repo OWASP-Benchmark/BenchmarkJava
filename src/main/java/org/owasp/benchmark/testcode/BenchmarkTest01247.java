@@ -40,51 +40,50 @@ public class BenchmarkTest01247 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("vector");
-		if (headers.hasMoreElements()) {
-			param = headers.nextElement(); // just grab first element
-		}
+		String param = request.getParameter("vector");
+		if (param == null) param = "";
 
 		String bar = new Test().doSomething(param);
 		
 		try {
-	        String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"
-	            + bar + "'";
-	
-			org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.batchUpdate(sql);
-			java.io.PrintWriter out = response.getWriter();
-	//		System.out.println("no results for query: " + sql + " because the Spring batchUpdate method doesn't return results.");
-			out.write("No results can be displayed for query: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(sql) + "<br>");
-			out.write(" because the Spring batchUpdate method doesn't return results.");
-		} catch (org.springframework.dao.DataAccessException e) {
-			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
-        		return;
-        	}
-			else throw new ServletException(e);
+			java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
+			byte[] input = { (byte)'?' };
+			Object inputParam = bar;
+			if (inputParam instanceof String) input = ((String) inputParam).getBytes();
+			if (inputParam instanceof java.io.InputStream) {
+				byte[] strInput = new byte[1000];
+				int i = ((java.io.InputStream) inputParam).read(strInput);
+				if (i == -1) {
+					response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+					return;
+				}
+				input = java.util.Arrays.copyOf(strInput, i);
+			}			
+			md.update(input);
+			
+			byte[] result = md.digest();
+			java.io.File fileTarget = new java.io.File(
+					new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),"passwordFile.txt");
+			java.io.FileWriter fw = new java.io.FileWriter(fileTarget,true); //the true will append the new data
+			    fw.write("hash_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
+			fw.close();
+			response.getWriter().println("Sensitive value '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' hashed and stored<br/>");
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing hash - TestCase");
+			throw new ServletException(e);
 		}
+		
+		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String) executed");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a19016 = param; //assign
-		StringBuilder b19016 = new StringBuilder(a19016);  // stick in stringbuilder
-		b19016.append(" SafeStuff"); // append some safe content
-		b19016.replace(b19016.length()-"Chars".length(),b19016.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map19016 = new java.util.HashMap<String,Object>();
-		map19016.put("key19016", b19016.toString()); // put in a collection
-		String c19016 = (String)map19016.get("key19016"); // get it back out
-		String d19016 = c19016.substring(0,c19016.length()-1); // extract most of it
-		String e19016 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d19016.getBytes() ) )); // B64 encode and decode it
-		String f19016 = e19016.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g19016 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g19016); // reflection
+		String bar = param;
+		if (param != null && param.length() > 1) {
+		    bar = param.substring(0,param.length()-1);
+		}
 
             return bar;
         }

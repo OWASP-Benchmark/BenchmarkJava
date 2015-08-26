@@ -40,40 +40,33 @@ public class BenchmarkTest01420 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		java.util.Map<String,String[]> map = request.getParameterMap();
 		String param = "";
-		if (!map.isEmpty()) {
-			String[] values = map.get("vector");
-			if (values != null) param = values[0];
+		boolean flag = true;
+		java.util.Enumeration<String> names = request.getParameterNames();
+		while (names.hasMoreElements() && flag) {
+			String name = (String) names.nextElement();		    	
+			String[] values = request.getParameterValues(name);
+			if (values != null) {
+				for(int i=0;i<values.length && flag; i++){
+					String value = values[i];
+					if (value.equals("vector")) {
+						param = name;
+					    flag = false;
+					}
+				}
+			}
 		}
-		
 
 		String bar = new Test().doSomething(param);
 		
-		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
-				
-		try {
-			java.sql.Statement statement =  org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			statement.execute( sql, java.sql.Statement.RETURN_GENERATED_KEYS );
-            org.owasp.benchmark.helpers.DatabaseHelper.printResults(statement, sql, response);
-		} catch (java.sql.SQLException e) {
-			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
-        		return;
-        	}
-			else throw new ServletException(e);
-		}
+		response.getWriter().print(bar.toCharArray());
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "";
-		if (param != null) {
-			bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    	new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
-		}
+		String bar = org.owasp.esapi.ESAPI.encoder().encodeForHTML(param);
 
             return bar;
         }

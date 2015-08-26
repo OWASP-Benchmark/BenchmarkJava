@@ -50,81 +50,18 @@ public class BenchmarkTest01351 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		// Code based on example from:
-		// http://examples.javacodegeeks.com/core-java/crypto/encrypt-decrypt-file-stream-with-des/
-		
-		try {
-			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("DESEDE/ECB/PKCS5Padding");
-			
-            // Prepare the cipher to encrypt
-            javax.crypto.SecretKey key = javax.crypto.KeyGenerator.getInstance("DESEDE").generateKey();
-            c.init(javax.crypto.Cipher.ENCRYPT_MODE, key);
-			
-			// encrypt and store the results
-			byte[] input = { (byte)'?' };
-			Object inputParam = bar;
-			if (inputParam instanceof String) input = ((String) inputParam).getBytes();
-			if (inputParam instanceof java.io.InputStream) {
-				byte[] strInput = new byte[1000];
-				int i = ((java.io.InputStream) inputParam).read(strInput);
-				if (i == -1) {
-					response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
-					return;
-				}
-				input = java.util.Arrays.copyOf(strInput, i);
-			}
-			byte[] result = c.doFinal(input);
-			
-			java.io.File fileTarget = new java.io.File(
-					new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),"passwordFile.txt");
-			java.io.FileWriter fw = new java.io.FileWriter(fileTarget,true); //the true will append the new data
-			    fw.write("secret_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
-			fw.close();
-			response.getWriter().println("Sensitive value: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' encrypted and stored<br/>");
-			
-		} catch (java.security.NoSuchAlgorithmException e) {
-			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			e.printStackTrace(response.getWriter());
-			throw new ServletException(e);
-		} catch (javax.crypto.NoSuchPaddingException e) {
-			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			e.printStackTrace(response.getWriter());
-			throw new ServletException(e);
-		} catch (javax.crypto.IllegalBlockSizeException e) {
-			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			e.printStackTrace(response.getWriter());
-			throw new ServletException(e);
-		} catch (javax.crypto.BadPaddingException e) {
-			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			e.printStackTrace(response.getWriter());
-			throw new ServletException(e);
-		} catch (java.security.InvalidKeyException e) {
-			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			e.printStackTrace(response.getWriter());
-			throw new ServletException(e);
+		int length = 1;
+		if (bar != null) {
+			length = bar.length();
+			response.getWriter().write(bar.toCharArray(),0,length);
 		}
-
-		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String) executed");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a12856 = param; //assign
-		StringBuilder b12856 = new StringBuilder(a12856);  // stick in stringbuilder
-		b12856.append(" SafeStuff"); // append some safe content
-		b12856.replace(b12856.length()-"Chars".length(),b12856.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map12856 = new java.util.HashMap<String,Object>();
-		map12856.put("key12856", b12856.toString()); // put in a collection
-		String c12856 = (String)map12856.get("key12856"); // get it back out
-		String d12856 = c12856.substring(0,c12856.length()-1); // extract most of it
-		String e12856 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d12856.getBytes() ) )); // B64 encode and decode it
-		String f12856 = e12856.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f12856); // reflection
+		String bar = org.springframework.web.util.HtmlUtils.htmlEscape(param);
 
             return bar;
         }

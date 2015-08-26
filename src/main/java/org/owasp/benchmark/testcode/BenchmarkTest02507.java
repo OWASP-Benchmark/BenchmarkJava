@@ -40,36 +40,45 @@ public class BenchmarkTest02507 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheParameter("vector");
-		if (param == null) param = "";
+		String[] values = request.getParameterValues("vector");
+		String param;
+		if (values != null && values.length > 0)
+		  param = values[0];
+		else param = "";
 
 		String bar = doSomething(param);
 		
-		String sql = "INSERT INTO users (username, password) VALUES ('foo','"+ bar + "')";
-				
-		try {
-			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			int count = statement.executeUpdate( sql, new String[] {"USERNAME","PASSWORD"} );
-            org.owasp.benchmark.helpers.DatabaseHelper.outputUpdateComplete(sql, response);
-		} catch (java.sql.SQLException e) {
-			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
-        		return;
-        	}
-			else throw new ServletException(e);
+		byte[] input = new byte[1000];
+		String str = "?";
+		Object inputParam = param;
+		if (inputParam instanceof String) str = ((String) inputParam);
+		if (inputParam instanceof java.io.InputStream) {
+			int i = ((java.io.InputStream) inputParam).read(input);
+			if (i == -1) {
+				response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+				return;
+			}			
+			str = new String(input, 0, i);
 		}
+		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie", str);
+		
+		cookie.setSecure(false);
+		
+		response.addCookie(cookie);
+
+        response.getWriter().println("Created cookie: 'SomeCookie': with value: '"
+          + org.owasp.esapi.ESAPI.encoder().encodeForHTML(str) + "' and secure flag set to: false");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map91974 = new java.util.HashMap<String,Object>();
-		map91974.put("keyA-91974", "a_Value"); // put some stuff in the collection
-		map91974.put("keyB-91974", param); // put it in a collection
-		map91974.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map91974.get("keyB-91974"); // get it back out
-		bar = (String)map91974.get("keyA-91974"); // get safe value back out
+		String bar;
+		
+		// Simple ? condition that assigns param to bar on false condition
+		int num = 106;
+		
+		bar = (7*42) - num > 200 ? "This should never happen" : param;
+		
 	
 		return bar;	
 	}

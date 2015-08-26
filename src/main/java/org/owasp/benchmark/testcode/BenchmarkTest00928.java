@@ -44,38 +44,30 @@ public class BenchmarkTest00928 extends HttpServlet {
 		String param = scr.getTheValue("vector");
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a59970 = param; //assign
-		StringBuilder b59970 = new StringBuilder(a59970);  // stick in stringbuilder
-		b59970.append(" SafeStuff"); // append some safe content
-		b59970.replace(b59970.length()-"Chars".length(),b59970.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map59970 = new java.util.HashMap<String,Object>();
-		map59970.put("key59970", b59970.toString()); // put in a collection
-		String c59970 = (String)map59970.get("key59970"); // get it back out
-		String d59970 = c59970.substring(0,c59970.length()-1); // extract most of it
-		String e59970 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d59970.getBytes() ) )); // B64 encode and decode it
-		String f59970 = e59970.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g59970 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g59970); // reflection
+		String bar;
+		
+		// Simple ? condition that assigns param to bar on false condition
+		int num = 106;
+		
+		bar = (7*42) - num > 200 ? "This should never happen" : param;
 		
 		
-		String cmd = "";
-        String osName = System.getProperty("os.name");
-        if (osName.indexOf("Windows") != -1) {
-        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("echo");
-        }
-        
-		String[] argsEnv = { "Foo=bar" };
-		Runtime r = Runtime.getRuntime();
-
+		
+		String sql = "SELECT * from USERS where USERNAME=? and PASSWORD='"+ bar +"'";
+				
 		try {
-			Process p = r.exec(cmd + bar, argsEnv);
-			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - TestCase");
-            throw new ServletException(e);
+			java.sql.Connection connection = org.owasp.benchmark.helpers.DatabaseHelper.getSqlConnection();
+			java.sql.PreparedStatement statement = connection.prepareStatement( sql, 
+			    java.sql.Statement.RETURN_GENERATED_KEYS );
+			    statement.setString(1, "foo");
+			statement.execute();
+            org.owasp.benchmark.helpers.DatabaseHelper.printResults(statement, sql, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
 		}
 	}
 }

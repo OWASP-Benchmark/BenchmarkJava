@@ -48,33 +48,45 @@ public class BenchmarkTest01628 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		byte[] input = new byte[1000];
-		String str = "?";
-		Object inputParam = param;
-		if (inputParam instanceof String) str = ((String) inputParam);
-		if (inputParam instanceof java.io.InputStream) {
-			int i = ((java.io.InputStream) inputParam).read(input);
-			if (i == -1) {
-				response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
-				return;
-			}			
-			str = new String(input, 0, i);
+		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
+				
+		try {
+			java.sql.Statement statement =  org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			statement.execute( sql, new String[] { "username", "password" } );
+            org.owasp.benchmark.helpers.DatabaseHelper.printResults(statement, sql, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
 		}
-		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie", str);
-		
-		cookie.setSecure(false);
-		
-		response.addCookie(cookie);
-
-        response.getWriter().println("Created cookie: 'SomeCookie': with value: '"
-          + org.owasp.esapi.ESAPI.encoder().encodeForHTML(str) + "' and secure flag set to: false");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = org.springframework.web.util.HtmlUtils.htmlEscape(param);
+		String bar;
+		String guess = "ABC";
+		char switchTarget = guess.charAt(1); // condition 'B', which is safe
+		
+		// Simple case statement that assigns param to bar on conditions 'A', 'C', or 'D'
+		switch (switchTarget) {
+		  case 'A':
+		        bar = param;
+		        break;
+		  case 'B': 
+		        bar = "bob";
+		        break;
+		  case 'C':
+		  case 'D':        
+		        bar = param;
+		        break;
+		  default:
+		        bar = "bob's your uncle";
+		        break;
+		}
 
             return bar;
         }

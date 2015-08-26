@@ -48,25 +48,29 @@ public class BenchmarkTest00272 extends HttpServlet {
 		
 		
 		String bar;
+		String guess = "ABC";
+		char switchTarget = guess.charAt(2);
 		
-		// Simple ? condition that assigns constant to bar on true condition
-		int num = 106;
+		// Simple case statement that assigns param to bar on conditions 'A', 'C', or 'D'
+		switch (switchTarget) {
+		  case 'A':
+		        bar = param;
+		        break;
+		  case 'B': 
+		        bar = "bobs_your_uncle";
+		        break;
+		  case 'C':
+		  case 'D':        
+		        bar = param;
+		        break;
+		  default:
+		        bar = "bobs_your_uncle";
+		        break;
+		}
 		
-		bar = (7*18) + num > 200 ? "This_should_always_happen" : param;
-		
-		
-		
-		// Code based on example from:
-		// http://examples.javacodegeeks.com/core-java/crypto/encrypt-decrypt-file-stream-with-des/
 		
 		try {
-			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("DESEDE/ECB/PKCS5Padding");
-			
-            // Prepare the cipher to encrypt
-            javax.crypto.SecretKey key = javax.crypto.KeyGenerator.getInstance("DESEDE").generateKey();
-            c.init(javax.crypto.Cipher.ENCRYPT_MODE, key);
-			
-			// encrypt and store the results
+			java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
 			byte[] input = { (byte)'?' };
 			Object inputParam = bar;
 			if (inputParam instanceof String) input = ((String) inputParam).getBytes();
@@ -78,38 +82,21 @@ public class BenchmarkTest00272 extends HttpServlet {
 					return;
 				}
 				input = java.util.Arrays.copyOf(strInput, i);
-			}
-			byte[] result = c.doFinal(input);
+			}			
+			md.update(input);
 			
+			byte[] result = md.digest();
 			java.io.File fileTarget = new java.io.File(
 					new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),"passwordFile.txt");
 			java.io.FileWriter fw = new java.io.FileWriter(fileTarget,true); //the true will append the new data
-			    fw.write("secret_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
+			    fw.write("hash_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
 			fw.close();
-			response.getWriter().println("Sensitive value: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' encrypted and stored<br/>");
-			
+			response.getWriter().println("Sensitive value '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' hashed and stored<br/>");
 		} catch (java.security.NoSuchAlgorithmException e) {
-			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			e.printStackTrace(response.getWriter());
-			throw new ServletException(e);
-		} catch (javax.crypto.NoSuchPaddingException e) {
-			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			e.printStackTrace(response.getWriter());
-			throw new ServletException(e);
-		} catch (javax.crypto.IllegalBlockSizeException e) {
-			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			e.printStackTrace(response.getWriter());
-			throw new ServletException(e);
-		} catch (javax.crypto.BadPaddingException e) {
-			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			e.printStackTrace(response.getWriter());
-			throw new ServletException(e);
-		} catch (java.security.InvalidKeyException e) {
-			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			e.printStackTrace(response.getWriter());
+			System.out.println("Problem executing hash - TestCase");
 			throw new ServletException(e);
 		}
-
-		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String) executed");
+		
+		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String) executed");
 	}
 }

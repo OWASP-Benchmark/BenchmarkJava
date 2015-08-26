@@ -42,55 +42,34 @@ public class BenchmarkTest00099 extends HttpServlet {
 	
 		javax.servlet.http.Cookie[] theCookies = request.getCookies();
 		
-		String param = null;
-		boolean foundit = false;
+		String param = "";
 		if (theCookies != null) {
 			for (javax.servlet.http.Cookie theCookie : theCookies) {
 				if (theCookie.getName().equals("vector")) {
 					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
-					foundit = true;
+					break;
 				}
 			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
 		}
 		
 		
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(param);
-		
-		
-		String cmd = "";	
-		String a1 = "";
-		String a2 = "";
-		String[] args = null;
-		String osName = System.getProperty("os.name");
-		
-		if (osName.indexOf("Windows") != -1) {
-        	a1 = "cmd.exe";
-        	a2 = "/c";
-        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("echo");
-        	args = new String[]{a1, a2, cmd, bar};
-        } else {
-        	a1 = "sh";
-        	a2 = "-c";
-        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("ping -c1");
-        	args = new String[]{a1, a2,cmd + bar};
-        }
-		
-		Runtime r = Runtime.getRuntime();
-
-		try {
-			Process p = r.exec(args);
-			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - TestCase");
-            throw new ServletException(e);
+		String bar = "alsosafe";
+		if (param != null) {
+			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+			valuesList.add("safe");
+			valuesList.add( param );
+			valuesList.add( "moresafe" );
+			
+			valuesList.remove(0); // remove the 1st safe value
+			
+			bar = valuesList.get(1); // get the last 'safe' value
 		}
+		
+		
+		// javax.servlet.http.HttpSession.setAttribute(java.lang.String,java.lang.Object^)
+		request.getSession().setAttribute( "userid", bar);
+				
+		response.getWriter().println("Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
+			+ "' saved in session.");
 	}
 }

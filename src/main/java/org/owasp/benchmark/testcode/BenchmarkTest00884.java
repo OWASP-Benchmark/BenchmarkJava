@@ -44,44 +44,16 @@ public class BenchmarkTest00884 extends HttpServlet {
 		String param = scr.getTheValue("vector");
 		
 		
-		String bar;
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map67853 = new java.util.HashMap<String,Object>();
+		map67853.put("keyA-67853", "a_Value"); // put some stuff in the collection
+		map67853.put("keyB-67853", param); // put it in a collection
+		map67853.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map67853.get("keyB-67853"); // get it back out
+		bar = (String)map67853.get("keyA-67853"); // get safe value back out
 		
-		// Simple if statement that assigns constant to bar on true condition
-		int num = 86;
-		if ( (7*42) - num > 200 )
-		   bar = "This_should_always_happen"; 
-		else bar = param;
 		
-		
-		String fileName = null;
-		java.io.FileOutputStream fos = null;
-
-		try {
-			// Create the file first so the test won't throw an exception if it doesn't exist.
-			// Note: Don't actually do this because this method signature could cause a tool to find THIS file constructor 
-			// as a vuln, rather than the File signature we are trying to actually test.
-			// If necessary, just run the benchmark twice. The 1st run should create all the necessary files.
-			//new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir + bar).createNewFile();
-			
-			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
-	
-	
-	        java.io.FileInputStream fileInputStream = new java.io.FileInputStream(fileName);
-	        java.io.FileDescriptor fd = fileInputStream.getFD();
-	        fos = new java.io.FileOutputStream(fd);
-	        response.getWriter().write("Now ready to write to file: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName));
-		} catch (Exception e) {
-			System.out.println("Couldn't open FileOutputStream on file: '" + fileName + "'");
-//			System.out.println("File exception caught and swallowed: " + e.getMessage());
-		} finally {
-			if (fos != null) {
-				try {
-					fos.close();
-                    fos = null;
-				} catch (Exception e) {
-					// we tried...
-				}
-			}
-		}
+		Object[] obj = { "a", bar};
+		response.getWriter().printf(java.util.Locale.US,"Formatted like: %1$s and %2$s.",obj);
 	}
 }

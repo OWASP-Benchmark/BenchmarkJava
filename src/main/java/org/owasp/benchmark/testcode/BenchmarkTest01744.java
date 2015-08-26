@@ -40,75 +40,37 @@ public class BenchmarkTest01744 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String queryString = request.getQueryString();
-		String paramval = "vector"+"=";
-		int paramLoc = -1;
-		if (queryString != null) paramLoc = queryString.indexOf(paramval);
-		if (paramLoc == -1) {
-			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "vector" + "' in query string.");
-			return;
-		}
-		
-		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "vector" param is last parameter in query string.
-		// And then check to see if its in the middle of the query string and if so, trim off what comes after.
-		int ampersandLoc = queryString.indexOf("&", paramLoc);
-		if (ampersandLoc != -1) {
-			param = queryString.substring(paramLoc + paramval.length(), ampersandLoc);
-		}
-		param = java.net.URLDecoder.decode(param, "UTF-8");
+		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
+		String param = scr.getTheValue("vector");
 
 		String bar = new Test().doSomething(param);
 		
-		try {
-			float rand = java.security.SecureRandom.getInstance("SHA1PRNG").nextFloat();
-			String rememberMeKey = Float.toString(rand).substring(2); // Trim off the 0. at the front.
-			
-			String user = "SafeFloyd";
-			String fullClassName = this.getClass().getName();
-			String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
-			user+= testCaseNumber;
-			
-			String cookieName = "rememberMe" + testCaseNumber;
-			
-			boolean foundUser = false;
-			javax.servlet.http.Cookie[] cookies = request.getCookies();
-			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-				javax.servlet.http.Cookie cookie = cookies[i];
-				if (cookieName.equals(cookie.getName())) {
-					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-						foundUser = true;
-					}
-				}
-			}
-			
-			if (foundUser) {
-				response.getWriter().println("Welcome back: " + user + "<br/>");			
-			} else {			
-				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
-				rememberMe.setSecure(true);
-				request.getSession().setAttribute(cookieName, rememberMeKey);
-				response.addCookie(rememberMe);
-				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-						+ " whose value is: " + rememberMe.getValue() + "<br/>");
-			}
-
-	    } catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing SecureRandom.nextFloat() - TestCase");
-			throw new ServletException(e);
-	    }		
-		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextFloat() executed");
+		java.io.File fileTarget = new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir, bar);
+		response.getWriter().write("Access to file: '" + fileTarget + "' created." );
+		if (fileTarget.exists()) {
+			response.getWriter().write(" And file already exists.");
+		} else { response.getWriter().write(" But file doesn't exist yet."); }
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map51395 = new java.util.HashMap<String,Object>();
-		map51395.put("keyA-51395", "a Value"); // put some stuff in the collection
-		map51395.put("keyB-51395", param); // put it in a collection
-		map51395.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map51395.get("keyB-51395"); // get it back out
+		// Chain a bunch of propagators in sequence
+		String a3857 = param; //assign
+		StringBuilder b3857 = new StringBuilder(a3857);  // stick in stringbuilder
+		b3857.append(" SafeStuff"); // append some safe content
+		b3857.replace(b3857.length()-"Chars".length(),b3857.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map3857 = new java.util.HashMap<String,Object>();
+		map3857.put("key3857", b3857.toString()); // put in a collection
+		String c3857 = (String)map3857.get("key3857"); // get it back out
+		String d3857 = c3857.substring(0,c3857.length()-1); // extract most of it
+		String e3857 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d3857.getBytes() ) )); // B64 encode and decode it
+		String f3857 = e3857.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String g3857 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g3857); // reflection
 
             return bar;
         }

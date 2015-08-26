@@ -45,17 +45,37 @@ public class BenchmarkTest02175 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		Object[] obj = { "a", bar };
-		java.io.PrintWriter out = response.getWriter();
-		out.write("<!DOCTYPE html>\n<html>\n<body>\n<p>");
-		out.format(java.util.Locale.US,"Formatted like: %1$s and %2$s.",obj);
-	    out.write("\n</p>\n</body>\n</html>");
+ 		try {
+	        String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"
+	            + bar + "'";
+	
+			org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.execute(sql);
+			java.io.PrintWriter out = response.getWriter();
+	//		System.out.println("no results for query: " + sql + " because the Spring execute method doesn't return results.");
+			out.write("No results can be displayed for query: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(sql) + "<br>");
+			out.write(" because the Spring execute method doesn't return results.");
+		} catch (org.springframework.dao.DataAccessException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}		
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		StringBuilder sbxyz59487 = new StringBuilder(param);
-		String bar = sbxyz59487.append("_SafeStuff").toString();
+		String bar = "alsosafe";
+		if (param != null) {
+			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+			valuesList.add("safe");
+			valuesList.add( param );
+			valuesList.add( "moresafe" );
+			
+			valuesList.remove(0); // remove the 1st safe value
+			
+			bar = valuesList.get(1); // get the last 'safe' value
+		}
 	
 		return bar;	
 	}

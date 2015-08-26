@@ -59,18 +59,29 @@ public class BenchmarkTest02644 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		response.getWriter().print(bar.toCharArray());
+		try {
+			String sql = "SELECT  * from USERS where USERNAME='foo' and PASSWORD='"+ bar + "'" ;
+	
+	        org.springframework.jdbc.support.rowset.SqlRowSet results = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.queryForRowSet(sql);
+	        java.io.PrintWriter out = response.getWriter();
+			out.write("Your results are: ");
+	//		System.out.println("Your results are");
+			while(results.next()) {
+	            out.write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(results.getString("USERNAME")) + " ");
+	//			System.out.println(results.getString("USERNAME"));
+			}
+		} catch (org.springframework.dao.DataAccessException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		
-		// Simple if statement that assigns param to bar on true condition
-		int num = 196;
-		if ( (500/42) + num > 200 )
-		   bar = param;
-		else bar = "This should never happen"; 
+		String bar = param;
 	
 		return bar;	
 	}

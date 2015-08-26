@@ -40,40 +40,51 @@ public class BenchmarkTest00346 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("vector");
-		if (headers.hasMoreElements()) {
-			param = headers.nextElement(); // just grab first element
-		}
+		java.io.InputStream param = request.getInputStream();
 		
 		
-		String bar = "alsosafe";
-		if (param != null) {
-			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
-			valuesList.add("safe");
-			valuesList.add( param );
-			valuesList.add( "moresafe" );
-			
-			valuesList.remove(0); // remove the 1st safe value
-			
-			bar = valuesList.get(1); // get the last 'safe' value
-		}
+		java.io.InputStream bar = param;
 		
 		
-		String sql = "{call " + bar + "}";
-				
-		try {
-			java.sql.Connection connection = org.owasp.benchmark.helpers.DatabaseHelper.getSqlConnection();
-			java.sql.CallableStatement statement = connection.prepareCall( sql );
-		    java.sql.ResultSet rs = statement.executeQuery();
-            org.owasp.benchmark.helpers.DatabaseHelper.printResults(rs, sql, response);
+		java.security.Provider[] provider = java.security.Security.getProviders();
+		java.security.MessageDigest md;
 
-		} catch (java.sql.SQLException e) {
-			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
-        		return;
-        	}
-			else throw new ServletException(e);
+		try {
+			if (provider.length > 1) {
+
+				md = java.security.MessageDigest.getInstance("SHA1", provider[0]);
+			} else {
+				md = java.security.MessageDigest.getInstance("SHA1", "SUN");
+			}
+			byte[] input = { (byte)'?' };
+			Object inputParam = bar;
+			if (inputParam instanceof String) input = ((String) inputParam).getBytes();
+			if (inputParam instanceof java.io.InputStream) {
+				byte[] strInput = new byte[1000];
+				int i = ((java.io.InputStream) inputParam).read(strInput);
+				if (i == -1) {
+					response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+					return;
+				}
+				input = java.util.Arrays.copyOf(strInput, i);
+			}
+			md.update(input);
+			
+			byte[] result = md.digest();
+			java.io.File fileTarget = new java.io.File(
+					new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),"passwordFile.txt");
+			java.io.FileWriter fw = new java.io.FileWriter(fileTarget,true); //the true will append the new data
+			    fw.write("hash_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
+			fw.close();
+			response.getWriter().println("Sensitive value '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' hashed and stored<br/>");
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider)");
+            throw new ServletException(e);
+		} catch (java.security.NoSuchProviderException e) {
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider)");
+            throw new ServletException(e);
 		}
+
+		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider) executed");
 	}
 }

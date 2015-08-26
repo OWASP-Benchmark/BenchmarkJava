@@ -51,18 +51,10 @@ public class BenchmarkTest00031 extends HttpServlet {
 		
 
 		
-		String cmd = org.owasp.benchmark.helpers.Utils.getInsecureOSCommandString(this.getClass().getClassLoader());
-		String[] args = {cmd};
-        String[] argsEnv = { param };
-        
-		Runtime r = Runtime.getRuntime();
-
-		try {
-			Process p = r.exec(args, argsEnv);
-			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - TestCase");
-            throw new ServletException(e);
-		}
+		// javax.servlet.http.HttpSession.putValue(java.lang.String,java.lang.Object^)
+		request.getSession().putValue( "userid", param);
+		
+		response.getWriter().println("Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(param)
+			+ "' saved in session.");
 	}
 }

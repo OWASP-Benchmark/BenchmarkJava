@@ -48,35 +48,43 @@ public class BenchmarkTest01185 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		String fileName = null;
-		java.io.FileOutputStream fos = null;
-
-		try {
-			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
-	
-			fos = new java.io.FileOutputStream(fileName);
-	        response.getWriter().write("Now ready to write to file: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName));
-   		} catch (Exception e) {
-			System.out.println("Couldn't open FileOutputStream on file: '" + fileName + "'");
-//			System.out.println("File exception caught and swallowed: " + e.getMessage());
-		} finally {
-			if (fos != null) {
-				try {
-					fos.close();
-                    fos = null;
-				} catch (Exception e) {
-					// we tried...
-				}
-			}
+		byte[] input = new byte[1000];
+		String str = "?";
+		Object inputParam = param;
+		if (inputParam instanceof String) str = ((String) inputParam);
+		if (inputParam instanceof java.io.InputStream) {
+			int i = ((java.io.InputStream) inputParam).read(input);
+			if (i == -1) {
+				response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+				return;
+			}			
+			str = new String(input, 0, i);
 		}
+		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie", str);
+		
+		cookie.setSecure(false);
+		
+		response.addCookie(cookie);
+
+        response.getWriter().println("Created cookie: 'SomeCookie': with value: '"
+          + org.owasp.esapi.ESAPI.encoder().encodeForHTML(str) + "' and secure flag set to: false");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(param);
+		String bar = "";
+		if (param != null) {
+			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+			valuesList.add("safe");
+			valuesList.add( param );
+			valuesList.add( "moresafe" );
+			
+			valuesList.remove(0); // remove the 1st safe value
+			
+			bar = valuesList.get(0); // get the param value
+		}
 
             return bar;
         }

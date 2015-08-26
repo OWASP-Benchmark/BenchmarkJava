@@ -41,59 +41,69 @@ public class BenchmarkTest02040 extends HttpServlet {
 		response.setContentType("text/html");
 
 		String param = "";
-		boolean flag = true;
-		java.util.Enumeration<String> names = request.getHeaderNames();
-		while (names.hasMoreElements() && flag) {
-			String name = (String) names.nextElement();
-			java.util.Enumeration<String> values = request.getHeaders(name);
-			if (values != null) {
-				while (values.hasMoreElements() && flag) {
-					String value = (String) values.nextElement();
-					if (value.equals("vector")) {
-						param = name;
-						flag = false;
-					}
-				}
-			}
+		java.util.Enumeration<String> headers = request.getHeaders("vector");
+		if (headers.hasMoreElements()) {
+			param = headers.nextElement(); // just grab first element
 		}
 
 		String bar = doSomething(param);
 		
-		String fileName = null;
-        java.io.FileInputStream fis = null;
+		double value = java.lang.Math.random();
+        String rememberMeKey = Double.toString(value).substring(2);  // Trim off the 0. at the front.
 
-        try {
-			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
-			fis = new java.io.FileInputStream(new java.io.File(fileName));
-			byte[] b = new byte[1000];
-			int size = fis.read(b);
-			response.getWriter().write("The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n");
-			response.getWriter().write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size)));
-		} catch (Exception e) {
-            System.out.println("Couldn't open FileInputStream on file: '" + fileName + "'");
-			response.getWriter().write("Problem getting FileInputStream: " 
-				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage()));
-        } finally {
-			if (fis != null) {
-                try {
-                    fis.close();
-                    fis = null;
-                } catch (Exception e) {
-                    // we tried...
-                }
-            }
-        }
+		String user = "Doug";
+		String fullClassName = this.getClass().getName();
+		String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
+		user+= testCaseNumber;
+		
+		String cookieName = "rememberMe" + testCaseNumber;
+		
+		boolean foundUser = false;
+		javax.servlet.http.Cookie[] cookies = request.getCookies();
+		for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
+			javax.servlet.http.Cookie cookie = cookies[i];
+			if (cookieName.equals(cookie.getName())) {
+				if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+					foundUser = true;
+				}
+			}
+		}
+		
+		if (foundUser) {
+			response.getWriter().println("Welcome back: " + user + "<br/>");			
+		} else {			
+			javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
+			rememberMe.setSecure(true);
+			request.getSession().setAttribute(cookieName, rememberMeKey);
+			response.addCookie(rememberMe);
+			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
+					+ " whose value is: " + rememberMe.getValue() + "<br/>");
+		}
+		response.getWriter().println("Weak Randomness Test java.lang.Math.random() executed");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar;
+		String guess = "ABC";
+		char switchTarget = guess.charAt(1); // condition 'B', which is safe
 		
-		// Simple if statement that assigns param to bar on true condition
-		int num = 196;
-		if ( (500/42) + num > 200 )
-		   bar = param;
-		else bar = "This should never happen"; 
+		// Simple case statement that assigns param to bar on conditions 'A', 'C', or 'D'
+		switch (switchTarget) {
+		  case 'A':
+		        bar = param;
+		        break;
+		  case 'B': 
+		        bar = "bob";
+		        break;
+		  case 'C':
+		  case 'D':        
+		        bar = param;
+		        break;
+		  default:
+		        bar = "bob's your uncle";
+		        break;
+		}
 	
 		return bar;	
 	}

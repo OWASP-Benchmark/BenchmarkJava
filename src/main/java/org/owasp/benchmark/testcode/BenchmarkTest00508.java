@@ -49,41 +49,14 @@ public class BenchmarkTest00508 extends HttpServlet {
 		
 		
 		
-		String bar;
-		
-		// Simple if statement that assigns param to bar on true condition
-		int num = 196;
-		if ( (500/42) + num > 200 )
-		   bar = param;
-		else bar = "This should never happen"; 
+		StringBuilder sbxyz89691 = new StringBuilder(param);
+		String bar = sbxyz89691.append("_SafeStuff").toString();
 		
 		
-		String cmd = "";	
-		String a1 = "";
-		String a2 = "";
-		String[] args = null;
-		String osName = System.getProperty("os.name");
-		
-		if (osName.indexOf("Windows") != -1) {
-        	a1 = "cmd.exe";
-        	a2 = "/c";
-        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("echo");
-        	args = new String[]{a1, a2, cmd, bar};
-        } else {
-        	a1 = "sh";
-        	a2 = "-c";
-        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("ping -c1");
-        	args = new String[]{a1, a2,cmd + bar};
-        }
-		
-		Runtime r = Runtime.getRuntime();
-
-		try {
-			Process p = r.exec(args);
-			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - TestCase");
-            throw new ServletException(e);
-		}
+		// javax.servlet.http.HttpSession.setAttribute(java.lang.String,java.lang.Object^)
+		request.getSession().setAttribute( "userid", bar);
+				
+		response.getWriter().println("Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
+			+ "' saved in session.");
 	}
 }

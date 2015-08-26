@@ -40,92 +40,51 @@ public class BenchmarkTest02387 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		String param = "";
-		boolean flag = true;
-		java.util.Enumeration<String> names = request.getParameterNames();
-		while (names.hasMoreElements() && flag) {
-			String name = (String) names.nextElement();		    	
-			String[] values = request.getParameterValues(name);
-			if (values != null) {
-				for(int i=0;i<values.length && flag; i++){
-					String value = values[i];
-					if (value.equals("vector")) {
-						param = name;
-					    flag = false;
-					}
-				}
-			}
-		}
+		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
+		String param = scr.getTheParameter("vector");
+		if (param == null) param = "";
 
 		String bar = doSomething(param);
 		
-	    try {
-		    java.util.Random numGen = java.security.SecureRandom.getInstance("SHA1PRNG");
-		
-		    // Get 40 random bytes
-		    byte[] randomBytes = new byte[40];
-		    getNextNumber(numGen, randomBytes);
-		    
-	        String rememberMeKey = org.owasp.esapi.ESAPI.encoder().encodeForBase64(randomBytes, true);
-	
-			String user = "SafeBystander";
-			String fullClassName = this.getClass().getName();
-			String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
-			user+= testCaseNumber;
-			
-			String cookieName = "rememberMe" + testCaseNumber;
-			
-			boolean foundUser = false;
-			javax.servlet.http.Cookie[] cookies = request.getCookies();
-			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-				javax.servlet.http.Cookie cookie = cookies[i];
-				if (cookieName.equals(cookie.getName())) {
-					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-						foundUser = true;
-					}
+		try {
+			java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
+			byte[] input = { (byte)'?' };
+			Object inputParam = bar;
+			if (inputParam instanceof String) input = ((String) inputParam).getBytes();
+			if (inputParam instanceof java.io.InputStream) {
+				byte[] strInput = new byte[1000];
+				int i = ((java.io.InputStream) inputParam).read(strInput);
+				if (i == -1) {
+					response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+					return;
 				}
-			}
+				input = java.util.Arrays.copyOf(strInput, i);
+			}			
+			md.update(input);
 			
-			if (foundUser) {
-				response.getWriter().println("Welcome back: " + user + "<br/>");			
-			} else {			
-				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
-				rememberMe.setSecure(true);
-				request.getSession().setAttribute(cookieName, rememberMeKey);
-				response.addCookie(rememberMe);
-				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-						+ " whose value is: " + rememberMe.getValue() + "<br/>");
-			}
-				    
-	    } catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing SecureRandom.nextBytes() - TestCase");
+			byte[] result = md.digest();
+			java.io.File fileTarget = new java.io.File(
+					new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),"passwordFile.txt");
+			java.io.FileWriter fw = new java.io.FileWriter(fileTarget,true); //the true will append the new data
+			    fw.write("hash_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
+			fw.close();
+			response.getWriter().println("Sensitive value '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' hashed and stored<br/>");
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing hash - TestCase");
 			throw new ServletException(e);
-	    } finally {
-			response.getWriter().println("Randomness Test java.security.SecureRandom.nextBytes(byte[]) executed");	    
-	    }
-	}
-	    	
-	void getNextNumber(java.util.Random generator, byte[] barray) {
-		generator.nextBytes(barray);
+		}
+		
+		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String) executed");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a61498 = param; //assign
-		StringBuilder b61498 = new StringBuilder(a61498);  // stick in stringbuilder
-		b61498.append(" SafeStuff"); // append some safe content
-		b61498.replace(b61498.length()-"Chars".length(),b61498.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map61498 = new java.util.HashMap<String,Object>();
-		map61498.put("key61498", b61498.toString()); // put in a collection
-		String c61498 = (String)map61498.get("key61498"); // get it back out
-		String d61498 = c61498.substring(0,c61498.length()-1); // extract most of it
-		String e61498 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d61498.getBytes() ) )); // B64 encode and decode it
-		String f61498 = e61498.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g61498 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g61498); // reflection
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map15682 = new java.util.HashMap<String,Object>();
+		map15682.put("keyA-15682", "a Value"); // put some stuff in the collection
+		map15682.put("keyB-15682", param); // put it in a collection
+		map15682.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map15682.get("keyB-15682"); // get it back out
 	
 		return bar;	
 	}

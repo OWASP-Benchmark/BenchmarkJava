@@ -48,16 +48,24 @@ public class BenchmarkTest01205 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		Object[] obj = { "a", "b"};
-		response.getWriter().printf(bar,obj);
+		// javax.servlet.http.HttpSession.putValue(java.lang.String,java.lang.Object^)
+		request.getSession().putValue( "userid", bar);
+		
+		response.getWriter().println("Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
+			+ "' saved in session.");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "";
-		if (param != null) bar = param.split(" ")[0];
+		String bar;
+		
+		// Simple ? condition that assigns constant to bar on true condition
+		int num = 106;
+		
+		bar = (7*18) + num > 200 ? "This_should_always_happen" : param;
+		
 
             return bar;
         }

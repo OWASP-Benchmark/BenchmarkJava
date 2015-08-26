@@ -40,60 +40,73 @@ public class BenchmarkTest02303 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		java.util.Map<String,String[]> map = request.getParameterMap();
 		String param = "";
-		if (!map.isEmpty()) {
-			String[] values = map.get("vector");
-			if (values != null) param = values[0];
-		}
-		
-
-		String bar = doSomething(param);
-		
-		long l = new java.util.Random().nextLong();
-		String rememberMeKey = Long.toString(l);
-		
-		String user = "Logan";
-		String fullClassName = this.getClass().getName();
-		String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
-		user+= testCaseNumber;
-		
-		String cookieName = "rememberMe" + testCaseNumber;
-		
-		boolean foundUser = false;
-		javax.servlet.http.Cookie[] cookies = request.getCookies();
-		for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-			javax.servlet.http.Cookie cookie = cookies[i];
-			if (cookieName.equals(cookie.getName())) {
-				if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-					foundUser = true;
+		boolean flag = true;
+		java.util.Enumeration<String> names = request.getParameterNames();
+		while (names.hasMoreElements() && flag) {
+			String name = (String) names.nextElement();		    	
+			String[] values = request.getParameterValues(name);
+			if (values != null) {
+				for(int i=0;i<values.length && flag; i++){
+					String value = values[i];
+					if (value.equals("vector")) {
+						param = name;
+					    flag = false;
+					}
 				}
 			}
 		}
+
+		String bar = doSomething(param);
 		
-		if (foundUser) {
-			response.getWriter().println("Welcome back: " + user + "<br/>");			
-		} else {			
-			javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
-			rememberMe.setSecure(true);
-			request.getSession().setAttribute(cookieName, rememberMeKey);
-			response.addCookie(rememberMe);
-			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-					+ " whose value is: " + rememberMe.getValue() + "<br/>");
-		}
-				
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextLong() executed");
+		String fileName = null;
+        java.io.FileInputStream fis = null;
+
+        try {
+			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
+			fis = new java.io.FileInputStream(new java.io.File(fileName));
+			byte[] b = new byte[1000];
+			int size = fis.read(b);
+			response.getWriter().write("The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n");
+			response.getWriter().write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size)));
+		} catch (Exception e) {
+            System.out.println("Couldn't open FileInputStream on file: '" + fileName + "'");
+			response.getWriter().write("Problem getting FileInputStream: " 
+				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage()));
+        } finally {
+			if (fis != null) {
+                try {
+                    fis.close();
+                    fis = null;
+                } catch (Exception e) {
+                    // we tried...
+                }
+            }
+        }
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar;
+		String guess = "ABC";
+		char switchTarget = guess.charAt(2);
 		
-		// Simple if statement that assigns param to bar on true condition
-		int num = 196;
-		if ( (500/42) + num > 200 )
-		   bar = param;
-		else bar = "This should never happen"; 
+		// Simple case statement that assigns param to bar on conditions 'A', 'C', or 'D'
+		switch (switchTarget) {
+		  case 'A':
+		        bar = param;
+		        break;
+		  case 'B': 
+		        bar = "bobs_your_uncle";
+		        break;
+		  case 'C':
+		  case 'D':        
+		        bar = param;
+		        break;
+		  default:
+		        bar = "bobs_your_uncle";
+		        break;
+		}
 	
 		return bar;	
 	}

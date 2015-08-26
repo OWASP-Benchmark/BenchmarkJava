@@ -40,55 +40,43 @@ public class BenchmarkTest02383 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		String param = "";
-		boolean flag = true;
-		java.util.Enumeration<String> names = request.getParameterNames();
-		while (names.hasMoreElements() && flag) {
-			String name = (String) names.nextElement();		    	
-			String[] values = request.getParameterValues(name);
-			if (values != null) {
-				for(int i=0;i<values.length && flag; i++){
-					String value = values[i];
-					if (value.equals("vector")) {
-						param = name;
-					    flag = false;
-					}
-				}
-			}
-		}
+		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
+		String param = scr.getTheParameter("vector");
+		if (param == null) param = "";
 
 		String bar = doSomething(param);
 		
-		String cmd = "";
-        String osName = System.getProperty("os.name");
-        if (osName.indexOf("Windows") != -1) {
-        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("echo");
-        }
-        
-		Runtime r = Runtime.getRuntime();
+		String fileName = null;
+		java.io.FileOutputStream fos = null;
 
 		try {
-			Process p = r.exec(cmd + bar);
-			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - TestCase");
-            throw new ServletException(e);
+			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
+	
+			fos = new java.io.FileOutputStream(fileName);
+	        response.getWriter().write("Now ready to write to file: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName));
+   		} catch (Exception e) {
+			System.out.println("Couldn't open FileOutputStream on file: '" + fileName + "'");
+//			System.out.println("File exception caught and swallowed: " + e.getMessage());
+		} finally {
+			if (fos != null) {
+				try {
+					fos.close();
+                    fos = null;
+				} catch (Exception e) {
+					// we tried...
+				}
+			}
 		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "alsosafe";
-		if (param != null) {
-			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
-			valuesList.add("safe");
-			valuesList.add( param );
-			valuesList.add( "moresafe" );
-			
-			valuesList.remove(0); // remove the 1st safe value
-			
-			bar = valuesList.get(1); // get the last 'safe' value
-		}
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map74285 = new java.util.HashMap<String,Object>();
+		map74285.put("keyA-74285", "a Value"); // put some stuff in the collection
+		map74285.put("keyB-74285", param); // put it in a collection
+		map74285.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map74285.get("keyB-74285"); // get it back out
 	
 		return bar;	
 	}

@@ -48,81 +48,60 @@ public class BenchmarkTest02071 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		// Code based on example from:
-		// http://examples.javacodegeeks.com/core-java/crypto/encrypt-decrypt-file-stream-with-des/
-	    // 8-byte initialization vector
-	    byte[] iv = {
-	    	(byte)0xB2, (byte)0x12, (byte)0xD5, (byte)0xB2,
-	    	(byte)0x44, (byte)0x21, (byte)0xC3, (byte)0xC3033
-	    };
+	    try {
+		    java.security.SecureRandom secureRandomGenerator = java.security.SecureRandom.getInstance("SHA1PRNG");
 		
-		try {
-		    java.util.Properties benchmarkprops = new java.util.Properties();
-		    benchmarkprops.load(this.getClass().getClassLoader().getResourceAsStream("benchmark.properties"));
-			String algorithm = benchmarkprops.getProperty("cryptoAlg2", "AES/ECB/PKCS5Padding");
-			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance(algorithm);
-
-            // Prepare the cipher to encrypt
-            javax.crypto.SecretKey key = javax.crypto.KeyGenerator.getInstance("DESede").generateKey();
-            java.security.spec.AlgorithmParameterSpec paramSpec = new javax.crypto.spec.IvParameterSpec(iv);
-//            c.init(javax.crypto.Cipher.ENCRYPT_MODE, key, paramSpec);
-            c.init(javax.crypto.Cipher.ENCRYPT_MODE, key);
+		    // Get 40 random bytes
+		    byte[] randomBytes = new byte[40];
+		    secureRandomGenerator.nextBytes(randomBytes);
+		    
+	        String rememberMeKey = org.owasp.esapi.ESAPI.encoder().encodeForBase64(randomBytes, true);
+	
+			String user = "SafeByron";
+			String fullClassName = this.getClass().getName();
+			String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
+			user+= testCaseNumber;
 			
-			// encrypt and store the results
-			byte[] input = { (byte)'?' };
-			Object inputParam = bar;
-			if (inputParam instanceof String) input = ((String) inputParam).getBytes();
-			if (inputParam instanceof java.io.InputStream) {
-				byte[] strInput = new byte[1000];
-				int i = ((java.io.InputStream) inputParam).read(strInput);
-				if (i == -1) {
-					response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
-					return;
+			String cookieName = "rememberMe" + testCaseNumber;
+			
+			boolean foundUser = false;
+			javax.servlet.http.Cookie[] cookies = request.getCookies();
+			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
+				javax.servlet.http.Cookie cookie = cookies[i];
+				if (cookieName.equals(cookie.getName())) {
+					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+						foundUser = true;
+					}
 				}
-				input = java.util.Arrays.copyOf(strInput, i);
 			}
-			byte[] result = c.doFinal(input);
 			
-			java.io.File fileTarget = new java.io.File(
-					new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),"passwordFile.txt");
-			java.io.FileWriter fw = new java.io.FileWriter(fileTarget,true); //the true will append the new data
-			    fw.write("secret_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
-			fw.close();
-			response.getWriter().println("Sensitive value: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' encrypted and stored<br/>");
-			
-		} catch (java.security.NoSuchAlgorithmException e) {
-			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			e.printStackTrace(response.getWriter());
+			if (foundUser) {
+				response.getWriter().println("Welcome back: " + user + "<br/>");			
+			} else {			
+				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
+				rememberMe.setSecure(true);
+				request.getSession().setAttribute(cookieName, rememberMeKey);
+				response.addCookie(rememberMe);
+				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
+						+ " whose value is: " + rememberMe.getValue() + "<br/>");
+			}
+				    
+	    } catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing SecureRandom.nextBytes() - TestCase");
 			throw new ServletException(e);
-		} catch (javax.crypto.NoSuchPaddingException e) {
-			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			e.printStackTrace(response.getWriter());
-			throw new ServletException(e);
-		} catch (javax.crypto.IllegalBlockSizeException e) {
-			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			e.printStackTrace(response.getWriter());
-			throw new ServletException(e);
-		} catch (javax.crypto.BadPaddingException e) {
-			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			e.printStackTrace(response.getWriter());
-			throw new ServletException(e);
-		} catch (java.security.InvalidKeyException e) {
-			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			e.printStackTrace(response.getWriter());
-			throw new ServletException(e);
-//		} catch (java.security.InvalidAlgorithmParameterException e) {
-//			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-//			e.printStackTrace(response.getWriter());
-//			throw new ServletException(e);
-		}
-		
-		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String) executed");
+	    } finally {
+			response.getWriter().println("Randomness Test java.security.SecureRandom.nextBytes(byte[]) executed");	    
+	    }
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		StringBuilder sbxyz8064 = new StringBuilder(param);
-		String bar = sbxyz8064.append("_SafeStuff").toString();
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map3606 = new java.util.HashMap<String,Object>();
+		map3606.put("keyA-3606", "a Value"); // put some stuff in the collection
+		map3606.put("keyB-3606", param); // put it in a collection
+		map3606.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map3606.get("keyB-3606"); // get it back out
 	
 		return bar;	
 	}

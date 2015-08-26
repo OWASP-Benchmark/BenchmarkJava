@@ -42,64 +42,57 @@ public class BenchmarkTest00066 extends HttpServlet {
 	
 		javax.servlet.http.Cookie[] theCookies = request.getCookies();
 		
-		String param = null;
-		boolean foundit = false;
+		String param = "";
 		if (theCookies != null) {
 			for (javax.servlet.http.Cookie theCookie : theCookies) {
 				if (theCookie.getName().equals("vector")) {
 					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
-					foundit = true;
+					break;
 				}
 			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
 		}
 		
 		
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(param);
+		String bar;
+		
+		// Simple if statement that assigns constant to bar on true condition
+		int num = 86;
+		if ( (7*42) - num > 200 )
+		   bar = "This_should_always_happen"; 
+		else bar = param;
 		
 		
-	org.owasp.benchmark.helpers.LDAPManager ads = new org.owasp.benchmark.helpers.LDAPManager();
-	try {
-		response.setContentType("text/html");
-		String base = "ou=users,ou=system";
-		javax.naming.directory.SearchControls sc = new javax.naming.directory.SearchControls();
-		sc.setSearchScope(javax.naming.directory.SearchControls.SUBTREE_SCOPE);
-		String filter = "(&(objectclass=person)(uid=" + bar
-				+ "))";
-		
-		javax.naming.directory.DirContext ctx = ads.getDirContext();
-		javax.naming.directory.InitialDirContext idc = (javax.naming.directory.InitialDirContext) ctx;
-		javax.naming.NamingEnumeration<javax.naming.directory.SearchResult> results = 
-				idc.search(base, filter, sc);
-		
-		while (results.hasMore()) {
-			javax.naming.directory.SearchResult sr = (javax.naming.directory.SearchResult) results.next();
-			javax.naming.directory.Attributes attrs = sr.getAttributes();
+		double value = java.lang.Math.random();
+        String rememberMeKey = Double.toString(value).substring(2);  // Trim off the 0. at the front.
 
-			javax.naming.directory.Attribute attr = attrs.get("uid");
-			javax.naming.directory.Attribute attr2 = attrs.get("street");
-			if (attr != null){
-				response.getWriter().write("LDAP query results:<br>"
-						+ " Record found with name " + attr.get() + "<br>"
-								+ "Address: " + attr2.get()+ "<br>");
-				System.out.println("record found " + attr.get());
+		String user = "Doug";
+		String fullClassName = this.getClass().getName();
+		String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
+		user+= testCaseNumber;
+		
+		String cookieName = "rememberMe" + testCaseNumber;
+		
+		boolean foundUser = false;
+		javax.servlet.http.Cookie[] cookies = request.getCookies();
+		for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
+			javax.servlet.http.Cookie cookie = cookies[i];
+			if (cookieName.equals(cookie.getName())) {
+				if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+					foundUser = true;
+				}
 			}
 		}
-	} catch (javax.naming.NamingException e) {
-		throw new ServletException(e);
-	}finally{
-    	try {
-    		ads.closeDirContext();
-		} catch (Exception e) {
-			throw new ServletException(e);
+		
+		if (foundUser) {
+			response.getWriter().println("Welcome back: " + user + "<br/>");			
+		} else {			
+			javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
+			rememberMe.setSecure(true);
+			request.getSession().setAttribute(cookieName, rememberMeKey);
+			response.addCookie(rememberMe);
+			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
+					+ " whose value is: " + rememberMe.getValue() + "<br/>");
 		}
-    }
+		response.getWriter().println("Weak Randomness Test java.lang.Math.random() executed");
 	}
 }

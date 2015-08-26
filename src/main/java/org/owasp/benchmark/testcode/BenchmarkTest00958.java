@@ -12,7 +12,7 @@
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details.
 *
-* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
 */
 
@@ -40,31 +40,61 @@ public class BenchmarkTest00958 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheValue("vector");
+		javax.servlet.http.Cookie[] theCookies = request.getCookies();
 		
-		
-		String bar;
-		
-		// Simple if statement that assigns param to bar on true condition
-		int num = 196;
-		if ( (500/42) + num > 200 )
-		   bar = param;
-		else bar = "This should never happen"; 
-		
-		
-		String sql = "INSERT INTO users (username, password) VALUES ('foo','"+ bar + "')";
-				
-		try {
-			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			int count = statement.executeUpdate( sql, new int[] {1,2} );
-            org.owasp.benchmark.helpers.DatabaseHelper.outputUpdateComplete(sql, response);
-		} catch (java.sql.SQLException e) {
-			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
-        		return;
-        	}
-			else throw new ServletException(e);
+		String param = "";
+		if (theCookies != null) {
+			for (javax.servlet.http.Cookie theCookie : theCookies) {
+				if (theCookie.getName().equals("vector")) {
+					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
+					break;
+				}
+			}
 		}
-	}
-}
+
+		String bar = new Test().doSomething(param);
+		
+		String fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
+        java.io.InputStream is = null;
+        
+		try {	
+			java.nio.file.Path path = java.nio.file.Paths.get(fileName);
+			is = java.nio.file.Files.newInputStream(path, java.nio.file.StandardOpenOption.READ);
+			byte[] b = new byte[1000];
+			int size = is.read(b);
+			response.getWriter().write("The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n");
+			response.getWriter().write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size)));
+			is.close();
+		} catch (Exception e) {
+            System.out.println("Couldn't open InputStream on file: '" + fileName + "'");
+			response.getWriter().write("Problem getting InputStream: " 
+				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage()));
+        } finally {
+			if (is != null) {
+                try {
+                    is.close();
+                    is = null;
+                } catch (Exception e) {
+                    // we tried...
+                }
+            }
+        }
+	}  // end doPost
+
+    private class Test {
+
+        public String doSomething(String param) throws ServletException, IOException {
+
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map99229 = new java.util.HashMap<String,Object>();
+		map99229.put("keyA-99229", "a_Value"); // put some stuff in the collection
+		map99229.put("keyB-99229", param); // put it in a collection
+		map99229.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map99229.get("keyB-99229"); // get it back out
+		bar = (String)map99229.get("keyA-99229"); // get safe value back out
+
+            return bar;
+        }
+    } // end innerclass Test
+
+} // end DataflowThruInnerClass

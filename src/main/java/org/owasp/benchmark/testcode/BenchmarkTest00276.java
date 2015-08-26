@@ -47,36 +47,15 @@ public class BenchmarkTest00276 extends HttpServlet {
 		}
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map22803 = new java.util.HashMap<String,Object>();
-		map22803.put("keyA-22803", "a Value"); // put some stuff in the collection
-		map22803.put("keyB-22803", param); // put it in a collection
-		map22803.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map22803.get("keyB-22803"); // get it back out
+		String bar;
+		
+		// Simple ? condition that assigns param to bar on false condition
+		int num = 106;
+		
+		bar = (7*42) - num > 200 ? "This should never happen" : param;
 		
 		
-		String fileName = null;
-		java.io.FileInputStream fis = null;
-
-		try {
-			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
-			fis = new java.io.FileInputStream(fileName);
-			byte[] b = new byte[1000];
-			int size = fis.read(b);
-			response.getWriter().write("The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n");
-			response.getWriter().write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size)));
-		} catch (Exception e) {
-			System.out.println("Couldn't open FileInputStream on file: '" + fileName + "'");
-//			System.out.println("File exception caught and swallowed: " + e.getMessage());
-		} finally {
-			if (fis != null) {
-				try {
-					fis.close();
-                    fis = null;
-				} catch (Exception e) {
-					// we tried...
-				}
-			}
-		}
+		
+		response.getWriter().print(bar);
 	}
 }

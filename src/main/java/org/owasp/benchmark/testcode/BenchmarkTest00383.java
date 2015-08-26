@@ -44,35 +44,23 @@ public class BenchmarkTest00383 extends HttpServlet {
 		if (param == null) param = "";
 		
 		
-		String bar;
+		// Chain a bunch of propagators in sequence
+		String a36814 = param; //assign
+		StringBuilder b36814 = new StringBuilder(a36814);  // stick in stringbuilder
+		b36814.append(" SafeStuff"); // append some safe content
+		b36814.replace(b36814.length()-"Chars".length(),b36814.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map36814 = new java.util.HashMap<String,Object>();
+		map36814.put("key36814", b36814.toString()); // put in a collection
+		String c36814 = (String)map36814.get("key36814"); // get it back out
+		String d36814 = c36814.substring(0,c36814.length()-1); // extract most of it
+		String e36814 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d36814.getBytes() ) )); // B64 encode and decode it
+		String f36814 = e36814.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f36814); // reflection
 		
-		// Simple if statement that assigns param to bar on true condition
-		int num = 196;
-		if ( (500/42) + num > 200 )
-		   bar = param;
-		else bar = "This should never happen"; 
 		
-		
-		String fileName = null;
-		java.io.FileOutputStream fos = null;
-
-		try {
-			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
-	
-			fos = new java.io.FileOutputStream(fileName, false);
-	        response.getWriter().write("Now ready to write to file: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName));
-		} catch (Exception e) {
-			System.out.println("Couldn't open FileOutputStream on file: '" + fileName + "'");
-//			System.out.println("File exception caught and swallowed: " + e.getMessage());
-		} finally {
-			if (fos != null) {
-				try {
-					fos.close();
-                    fos = null;
-				} catch (Exception e) {
-					// we tried...
-				}
-			}
-		}
+		Object[] obj = { "a", "b"};
+		response.getWriter().printf(java.util.Locale.US,bar,obj);
 	}
 }

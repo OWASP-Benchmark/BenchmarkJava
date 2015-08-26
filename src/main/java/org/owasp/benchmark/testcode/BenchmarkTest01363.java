@@ -50,55 +50,29 @@ public class BenchmarkTest01363 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
+		String cmd = org.owasp.benchmark.helpers.Utils.getInsecureOSCommandString(this.getClass().getClassLoader());
+        
+		String[] argsEnv = { bar };
+		Runtime r = Runtime.getRuntime();
+
 		try {
-			java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
-			byte[] input = { (byte)'?' };
-			Object inputParam = bar;
-			if (inputParam instanceof String) input = ((String) inputParam).getBytes();
-			if (inputParam instanceof java.io.InputStream) {
-				byte[] strInput = new byte[1000];
-				int i = ((java.io.InputStream) inputParam).read(strInput);
-				if (i == -1) {
-					response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
-					return;
-				}
-				input = java.util.Arrays.copyOf(strInput, i);
-			}			
-			md.update(input);
-			
-			byte[] result = md.digest();
-			java.io.File fileTarget = new java.io.File(
-					new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),"passwordFile.txt");
-			java.io.FileWriter fw = new java.io.FileWriter(fileTarget,true); //the true will append the new data
-			    fw.write("hash_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
-			fw.close();
-			response.getWriter().println("Sensitive value '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' hashed and stored<br/>");
-		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing hash - TestCase");
-			throw new ServletException(e);
+			Process p = r.exec(cmd, argsEnv);
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - TestCase");
+            throw new ServletException(e);
 		}
-		
-		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String) executed");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a1792 = param; //assign
-		StringBuilder b1792 = new StringBuilder(a1792);  // stick in stringbuilder
-		b1792.append(" SafeStuff"); // append some safe content
-		b1792.replace(b1792.length()-"Chars".length(),b1792.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map1792 = new java.util.HashMap<String,Object>();
-		map1792.put("key1792", b1792.toString()); // put in a collection
-		String c1792 = (String)map1792.get("key1792"); // get it back out
-		String d1792 = c1792.substring(0,c1792.length()-1); // extract most of it
-		String e1792 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d1792.getBytes() ) )); // B64 encode and decode it
-		String f1792 = e1792.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f1792); // reflection
+		String bar = "";
+		if (param != null) {
+			bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    	new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
+		}
 
             return bar;
         }

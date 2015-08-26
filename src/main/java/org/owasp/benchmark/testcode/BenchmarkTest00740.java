@@ -47,13 +47,26 @@ public class BenchmarkTest00740 extends HttpServlet {
 		else param = "";
 		
 		
-		String bar = param;
-		if (param != null && param.length() > 1) {
-		    StringBuilder sbxyz91951 = new StringBuilder(param);
-		    bar = sbxyz91951.replace(param.length()-"Z".length(), param.length(),"Z").toString();
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map32305 = new java.util.HashMap<String,Object>();
+		map32305.put("keyA-32305", "a Value"); // put some stuff in the collection
+		map32305.put("keyB-32305", param); // put it in a collection
+		map32305.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map32305.get("keyB-32305"); // get it back out
+		
+		
+		String cmd = org.owasp.benchmark.helpers.Utils.getInsecureOSCommandString(this.getClass().getClassLoader());
+		String[] args = {cmd};
+        String[] argsEnv = { bar };
+        
+		Runtime r = Runtime.getRuntime();
+
+		try {
+			Process p = r.exec(args, argsEnv);
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - TestCase");
+            throw new ServletException(e);
 		}
-		
-		
-		response.getWriter().println(bar);
 	}
 }

@@ -59,18 +59,28 @@ public class BenchmarkTest00800 extends HttpServlet {
 		
 		
 		String bar;
+		String guess = "ABC";
+		char switchTarget = guess.charAt(2);
 		
-		// Simple if statement that assigns constant to bar on true condition
-		int num = 86;
-		if ( (7*42) - num > 200 )
-		   bar = "This_should_always_happen"; 
-		else bar = param;
+		// Simple case statement that assigns param to bar on conditions 'A', 'C', or 'D'
+		switch (switchTarget) {
+		  case 'A':
+		        bar = param;
+		        break;
+		  case 'B': 
+		        bar = "bobs_your_uncle";
+		        break;
+		  case 'C':
+		  case 'D':        
+		        bar = param;
+		        break;
+		  default:
+		        bar = "bobs_your_uncle";
+		        break;
+		}
 		
 		
-		java.io.File fileTarget = new java.io.File(bar, "/Test.txt");
-		response.getWriter().write("Access to file: '" + fileTarget + "' created." );
-		if (fileTarget.exists()) {
-			response.getWriter().write(" And file already exists.");
-		} else { response.getWriter().write(" But file doesn't exist yet."); }
+		Object[] obj = { "a", bar };
+		response.getWriter().format("Formatted like: %1$s and %2$s.",obj);
 	}
 }

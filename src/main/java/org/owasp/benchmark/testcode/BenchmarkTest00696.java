@@ -40,35 +40,39 @@ public class BenchmarkTest00696 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheParameter("vector");
-		if (param == null) param = "";
+		String[] values = request.getParameterValues("vector");
+		String param;
+		if (values != null && values.length > 0)
+		  param = values[0];
+		else param = "";
 		
 		
 		String bar;
+		String guess = "ABC";
+		char switchTarget = guess.charAt(2);
 		
-		// Simple ? condition that assigns param to bar on false condition
-		int num = 106;
-		
-		bar = (7*42) - num > 200 ? "This should never happen" : param;
-		
-		
-		
-		try {
-			String sql = "SELECT TOP 1 USERNAME from USERS where USERNAME='foo' and PASSWORD='"+ bar + "'";
-	
-	        Object results = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.queryForObject(sql,new Object[]{}, String.class);
-			java.io.PrintWriter out = response.getWriter();
-			out.write("Your results are: ");
-	//		System.out.println("Your results are");
-			out.write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(results.toString()));
-	//		System.out.println(results.toString());
-		} catch (org.springframework.dao.DataAccessException e) {
-			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
-        		return;
-        	}
-			else throw new ServletException(e);
+		// Simple case statement that assigns param to bar on conditions 'A', 'C', or 'D'
+		switch (switchTarget) {
+		  case 'A':
+		        bar = param;
+		        break;
+		  case 'B': 
+		        bar = "bobs_your_uncle";
+		        break;
+		  case 'C':
+		  case 'D':        
+		        bar = param;
+		        break;
+		  default:
+		        bar = "bobs_your_uncle";
+		        break;
 		}
+		
+		
+		java.io.File fileTarget = new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir, bar);
+		response.getWriter().write("Access to file: '" + fileTarget + "' created." );
+		if (fileTarget.exists()) {
+			response.getWriter().write(" And file already exists.");
+		} else { response.getWriter().write(" But file doesn't exist yet."); }
 	}
 }

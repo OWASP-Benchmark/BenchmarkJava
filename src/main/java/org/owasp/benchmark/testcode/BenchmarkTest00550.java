@@ -58,54 +58,19 @@ public class BenchmarkTest00550 extends HttpServlet {
 		}
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a72560 = param; //assign
-		StringBuilder b72560 = new StringBuilder(a72560);  // stick in stringbuilder
-		b72560.append(" SafeStuff"); // append some safe content
-		b72560.replace(b72560.length()-"Chars".length(),b72560.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map72560 = new java.util.HashMap<String,Object>();
-		map72560.put("key72560", b72560.toString()); // put in a collection
-		String c72560 = (String)map72560.get("key72560"); // get it back out
-		String d72560 = c72560.substring(0,c72560.length()-1); // extract most of it
-		String e72560 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d72560.getBytes() ) )); // B64 encode and decode it
-		String f72560 = e72560.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g72560 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g72560); // reflection
-		
-		
-		double value = java.lang.Math.random();
-        String rememberMeKey = Double.toString(value).substring(2);  // Trim off the 0. at the front.
-
-		String user = "Doug";
-		String fullClassName = this.getClass().getName();
-		String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
-		user+= testCaseNumber;
-		
-		String cookieName = "rememberMe" + testCaseNumber;
-		
-		boolean foundUser = false;
-		javax.servlet.http.Cookie[] cookies = request.getCookies();
-		for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-			javax.servlet.http.Cookie cookie = cookies[i];
-			if (cookieName.equals(cookie.getName())) {
-				if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-					foundUser = true;
-				}
-			}
+		String bar = "alsosafe";
+		if (param != null) {
+			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+			valuesList.add("safe");
+			valuesList.add( param );
+			valuesList.add( "moresafe" );
+			
+			valuesList.remove(0); // remove the 1st safe value
+			
+			bar = valuesList.get(1); // get the last 'safe' value
 		}
 		
-		if (foundUser) {
-			response.getWriter().println("Welcome back: " + user + "<br/>");			
-		} else {			
-			javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
-			rememberMe.setSecure(true);
-			request.getSession().setAttribute(cookieName, rememberMeKey);
-			response.addCookie(rememberMe);
-			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-					+ " whose value is: " + rememberMe.getValue() + "<br/>");
-		}
-		response.getWriter().println("Weak Randomness Test java.lang.Math.random() executed");
+		
+		response.getWriter().println(bar.toCharArray());
 	}
 }

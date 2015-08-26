@@ -45,31 +45,36 @@ public class BenchmarkTest02734 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		Object[] obj = { "a", bar };
-		response.getWriter().format("Formatted like: %1$s and %2$s.",obj);
+		try {
+			String sql = "SELECT TOP 1 userid from USERS where USERNAME='foo' and PASSWORD='"+ bar + "'";
+	
+			Long results = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.queryForLong(sql);
+			java.io.PrintWriter out = response.getWriter();
+			out.write("Your results are: ");
+	//		System.out.println("your results are");
+			out.write(results.toString());
+	//		System.out.println(results);
+		} catch (org.springframework.dao.DataAccessException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		String guess = "ABC";
-		char switchTarget = guess.charAt(2);
-		
-		// Simple case statement that assigns param to bar on conditions 'A', 'C', or 'D'
-		switch (switchTarget) {
-		  case 'A':
-		        bar = param;
-		        break;
-		  case 'B': 
-		        bar = "bobs_your_uncle";
-		        break;
-		  case 'C':
-		  case 'D':        
-		        bar = param;
-		        break;
-		  default:
-		        bar = "bobs_your_uncle";
-		        break;
+		String bar = "";
+		if (param != null) {
+			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+			valuesList.add("safe");
+			valuesList.add( param );
+			valuesList.add( "moresafe" );
+			
+			valuesList.remove(0); // remove the 1st safe value
+			
+			bar = valuesList.get(0); // get the param value
 		}
 	
 		return bar;	

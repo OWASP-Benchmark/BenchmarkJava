@@ -58,59 +58,32 @@ public class BenchmarkTest00847 extends HttpServlet {
 		param = java.net.URLDecoder.decode(param, "UTF-8");
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a89999 = param; //assign
-		StringBuilder b89999 = new StringBuilder(a89999);  // stick in stringbuilder
-		b89999.append(" SafeStuff"); // append some safe content
-		b89999.replace(b89999.length()-"Chars".length(),b89999.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map89999 = new java.util.HashMap<String,Object>();
-		map89999.put("key89999", b89999.toString()); // put in a collection
-		String c89999 = (String)map89999.get("key89999"); // get it back out
-		String d89999 = c89999.substring(0,c89999.length()-1); // extract most of it
-		String e89999 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d89999.getBytes() ) )); // B64 encode and decode it
-		String f89999 = e89999.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f89999); // reflection
+		String bar = "";
+		if (param != null) {
+			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+			valuesList.add("safe");
+			valuesList.add( param );
+			valuesList.add( "moresafe" );
+			
+			valuesList.remove(0); // remove the 1st safe value
+			
+			bar = valuesList.get(0); // get the param value
+		}
 		
 		
+		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
+				
 		try {
-			double stuff = java.security.SecureRandom.getInstance("SHA1PRNG").nextGaussian();
-			String rememberMeKey = Double.toString(stuff).substring(2); // Trim off the 0. at the front.
-			
-			String user = "SafeGayle";
-			String fullClassName = this.getClass().getName();
-			String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
-			user+= testCaseNumber;
-			
-			String cookieName = "rememberMe" + testCaseNumber;
-			
-			boolean foundUser = false;
-			javax.servlet.http.Cookie[] cookies = request.getCookies();
-			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-				javax.servlet.http.Cookie cookie = cookies[i];
-				if (cookieName.equals(cookie.getName())) {
-					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-						foundUser = true;
-					}
-				}
-			}
-			
-			if (foundUser) {
-				response.getWriter().println("Welcome back: " + user + "<br/>");			
-			} else {			
-				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
-				rememberMe.setSecure(true);
-				request.getSession().setAttribute(cookieName, rememberMeKey);
-				response.addCookie(rememberMe);
-				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-						+ " whose value is: " + rememberMe.getValue() + "<br/>");
-			}
-
-	    } catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing SecureRandom.nextGaussian() - TestCase");
-			throw new ServletException(e);
-	    }		
-		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextGaussian() executed");
+			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			statement.addBatch( sql );
+			int[] counts = statement.executeBatch();
+            org.owasp.benchmark.helpers.DatabaseHelper.printResults(sql, counts, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}
 }

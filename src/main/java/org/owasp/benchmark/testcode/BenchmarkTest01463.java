@@ -59,28 +59,34 @@ public class BenchmarkTest01463 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		response.getWriter().write(bar.toCharArray());
+		String sql = "{call " + bar + "}";
+				
+		try {
+			java.sql.Connection connection = org.owasp.benchmark.helpers.DatabaseHelper.getSqlConnection();
+			java.sql.CallableStatement statement = connection.prepareCall( sql, java.sql.ResultSet.TYPE_FORWARD_ONLY, 
+							java.sql.ResultSet.CONCUR_READ_ONLY, java.sql.ResultSet.CLOSE_CURSORS_AT_COMMIT );
+			java.sql.ResultSet rs = statement.executeQuery();
+            org.owasp.benchmark.helpers.DatabaseHelper.printResults(rs, sql, response);
+        } catch (java.sql.SQLException e) {
+        	if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a26650 = param; //assign
-		StringBuilder b26650 = new StringBuilder(a26650);  // stick in stringbuilder
-		b26650.append(" SafeStuff"); // append some safe content
-		b26650.replace(b26650.length()-"Chars".length(),b26650.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map26650 = new java.util.HashMap<String,Object>();
-		map26650.put("key26650", b26650.toString()); // put in a collection
-		String c26650 = (String)map26650.get("key26650"); // get it back out
-		String d26650 = c26650.substring(0,c26650.length()-1); // extract most of it
-		String e26650 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d26650.getBytes() ) )); // B64 encode and decode it
-		String f26650 = e26650.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g26650 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g26650); // reflection
+		String bar;
+		
+		// Simple ? condition that assigns param to bar on false condition
+		int num = 106;
+		
+		bar = (7*42) - num > 200 ? "This should never happen" : param;
+		
 
             return bar;
         }

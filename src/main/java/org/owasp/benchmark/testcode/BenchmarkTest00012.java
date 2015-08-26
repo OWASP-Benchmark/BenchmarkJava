@@ -49,60 +49,40 @@ public class BenchmarkTest00012 extends HttpServlet {
 		}
 
 		
-		// Code based on example from:
-		// http://examples.javacodegeeks.com/core-java/crypto/encrypt-decrypt-file-stream-with-des/
+	org.owasp.benchmark.helpers.LDAPManager ads = new org.owasp.benchmark.helpers.LDAPManager();
+	try {
+		response.setContentType("text/html");
+		String base = "ou=users,ou=system";
+		javax.naming.directory.SearchControls sc = new javax.naming.directory.SearchControls();
+		sc.setSearchScope(javax.naming.directory.SearchControls.SUBTREE_SCOPE);
+		String filter = "(&(objectclass=person))(|(uid="+param+")(street={0}))";
+		Object[] filters = new Object[]{"The streetz 4 Ms bar"};
 		
-		try {
-			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("DESEDE/ECB/PKCS5Padding");
-			
-            // Prepare the cipher to encrypt
-            javax.crypto.SecretKey key = javax.crypto.KeyGenerator.getInstance("DESEDE").generateKey();
-            c.init(javax.crypto.Cipher.ENCRYPT_MODE, key);
-			
-			// encrypt and store the results
-			byte[] input = { (byte)'?' };
-			Object inputParam = param;
-			if (inputParam instanceof String) input = ((String) inputParam).getBytes();
-			if (inputParam instanceof java.io.InputStream) {
-				byte[] strInput = new byte[1000];
-				int i = ((java.io.InputStream) inputParam).read(strInput);
-				if (i == -1) {
-					response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
-					return;
-				}
-				input = java.util.Arrays.copyOf(strInput, i);
+		javax.naming.directory.DirContext ctx = ads.getDirContext();
+		javax.naming.directory.InitialDirContext idc = (javax.naming.directory.InitialDirContext) ctx;
+		javax.naming.NamingEnumeration<javax.naming.directory.SearchResult> results = 
+				idc.search(base, filter,filters, sc);
+		while (results.hasMore()) {
+			javax.naming.directory.SearchResult sr = (javax.naming.directory.SearchResult) results.next();
+			javax.naming.directory.Attributes attrs = sr.getAttributes();
+
+			javax.naming.directory.Attribute attr = attrs.get("uid");
+			javax.naming.directory.Attribute attr2 = attrs.get("street");
+			if (attr != null){
+				response.getWriter().write("LDAP query results:<br>"
+						+ " Record found with name " + attr.get() + "<br>"
+								+ "Address: " + attr2.get()+ "<br>");
+				System.out.println("record found " + attr.get());
 			}
-			byte[] result = c.doFinal(input);
-			
-			java.io.File fileTarget = new java.io.File(
-					new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),"passwordFile.txt");
-			java.io.FileWriter fw = new java.io.FileWriter(fileTarget,true); //the true will append the new data
-			    fw.write("secret_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
-			fw.close();
-			response.getWriter().println("Sensitive value: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' encrypted and stored<br/>");
-			
-		} catch (java.security.NoSuchAlgorithmException e) {
-			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			e.printStackTrace(response.getWriter());
-			throw new ServletException(e);
-		} catch (javax.crypto.NoSuchPaddingException e) {
-			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			e.printStackTrace(response.getWriter());
-			throw new ServletException(e);
-		} catch (javax.crypto.IllegalBlockSizeException e) {
-			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			e.printStackTrace(response.getWriter());
-			throw new ServletException(e);
-		} catch (javax.crypto.BadPaddingException e) {
-			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			e.printStackTrace(response.getWriter());
-			throw new ServletException(e);
-		} catch (java.security.InvalidKeyException e) {
-			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			e.printStackTrace(response.getWriter());
+		}
+	} catch (javax.naming.NamingException e) {
+		throw new ServletException(e);
+	}finally{
+    	try {
+    		ads.closeDirContext();
+		} catch (Exception e) {
 			throw new ServletException(e);
 		}
-
-		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String) executed");
+    }
 	}
 }

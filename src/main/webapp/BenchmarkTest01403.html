@@ -7,18 +7,50 @@
 <title>BenchmarkTest01403</title>
 </head>
 <body>
-<form action="/benchmark/BenchmarkTest01403" method="GET" id="FormBenchmarkTest01403">
-    <div><label>Please enter your details:</label></div>
+<form action="/benchmark/BenchmarkTest01403" method="POST" id="FormBenchmarkTest01403">
+    <div><label>Please explain your answer:</label></div>
     <br/>
-	<div><label>Username:</label></div>
-	<div><input type="text" id="username" name="username"></input></div>
-	<div><label>Password:</label></div>
-	<div><input type="text" id="password" name="password" value=""></input></div>
-    <div>&nbsp</div>
-    <div><label>Parameter: vector <BR> Value:</label>
-	<input type="text" id="vector" name="vector" value="whatever"></input></div>
+    <div><textarea rows="4" cols="50" id="vectorArea" name="vectorArea" value=""></textarea></div>
+    <div><label>Any additional note for the reviewer:</label></div>
+    <div><input type="text" id="answer" name="answer"></input></div>
     <br/>
-	<div><input type="submit" value="Login" /></div>
+    <div><label>An AJAX request will be sent with a parameter value 'vector' and name:</label>
+    <input type="text" id="vector" name="vector" value="FileName" class="safe"></input></div>
+    <div><input type="button" id="login-btn" value="Login" /></div>
 </form>
+<div id="ajax-form-msg1"></div>
+<script>
+$('.safe').keypress(function (e) {
+  if (e.which == 13) {
+    $('#login-btn').trigger('click');
+    return false;
+  }
+});
+
+$("#login-btn").click(function(){
+	var text = $("#FormBenchmarkTest01403 input[id=vector]").val();
+	
+	$("input.headerClass").remove();
+	
+	$("<input type='hidden' value='vector' />")
+     .attr("id", text)
+     .attr("name", text)
+     .addClass("headerClass")
+     .appendTo("#FormBenchmarkTest01403");
+
+    var formData = $("#FormBenchmarkTest01403").serializeArray();
+    var URL = $("#FormBenchmarkTest01403").attr("action");
+
+    $.ajax({
+        url : URL,
+        type: "POST",
+        data : formData,
+        success: function(data, textStatus, jqXHR){
+            $("#ajax-form-msg1").html('<pre><code class="prettyprint">'+data+'</code></pre>');
+        },
+         error: function (jqXHR, textStatus, errorThrown){ alert(errorThrown);}
+    });
+});
+</script>
 </body>
 </html>

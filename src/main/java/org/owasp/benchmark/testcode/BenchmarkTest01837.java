@@ -12,7 +12,7 @@
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details.
 *
-* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
 */
 
@@ -39,60 +39,52 @@ public class BenchmarkTest01837 extends HttpServlet {
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
-	
-		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheValue("vector");
 
-		String bar = new Test().doSomething(param);
+		javax.servlet.http.Cookie[] theCookies = request.getCookies();
 		
-		try {
-			int randNumber = java.security.SecureRandom.getInstance("SHA1PRNG").nextInt(99);
-			String rememberMeKey = Integer.toString(randNumber);
-			
-			String user = "SafeInga";
-			String fullClassName = this.getClass().getName();
-			String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
-			user+= testCaseNumber;
-			
-			String cookieName = "rememberMe" + testCaseNumber;
-			
-			boolean foundUser = false;
-			javax.servlet.http.Cookie[] cookies = request.getCookies();
-			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-				javax.servlet.http.Cookie cookie = cookies[i];
-				if (cookieName.equals(cookie.getName())) {
-					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-						foundUser = true;
-					}
+		String param = "";
+		if (theCookies != null) {
+			for (javax.servlet.http.Cookie theCookie : theCookies) {
+				if (theCookie.getName().equals("vector")) {
+					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
+					break;
 				}
 			}
-			
-			if (foundUser) {
-				response.getWriter().println("Welcome back: " + user + "<br/>");			
-			} else {			
-				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
-				rememberMe.setSecure(true);
-				request.getSession().setAttribute(cookieName, rememberMeKey);
-				response.addCookie(rememberMe);
-				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-						+ " whose value is: " + rememberMe.getValue() + "<br/>");
-			}
+		}
 
-	    } catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing SecureRandom.nextInt(int) - TestCase");
+		String bar = doSomething(param);
+		
+		// FILE URIs are tricky because they are different between Mac and Windows because of lack of standardization.
+		// Mac requires an extra slash for some reason.
+		String startURIslashes = "";
+        if (System.getProperty("os.name").indexOf("Windows") != -1)
+	        if (System.getProperty("os.name").indexOf("Windows") != -1)
+	        	startURIslashes = "/";
+	        else startURIslashes = "//";
+
+		try {
+			java.net.URI fileURI = new java.net.URI("file", null, startURIslashes 
+				+ org.owasp.benchmark.helpers.Utils.testfileDir.replace('\\', java.io.File.separatorChar).replace(' ', '_') + bar, null, null);
+			java.io.File fileTarget = new java.io.File(fileURI);
+            response.getWriter().write("Access to file: '" + fileTarget + "' created." );
+            if (fileTarget.exists()) {
+            response.getWriter().write(" And file already exists.");
+            } else { response.getWriter().write(" But file doesn't exist yet."); }
+		} catch (java.net.URISyntaxException e) {
 			throw new ServletException(e);
-	    }		
-		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextInt(int) executed");
+		}
 	}  // end doPost
+	
+	private static String doSomething(String param) throws ServletException, IOException {
 
-    private class Test {
-
-        public String doSomething(String param) throws ServletException, IOException {
-
-		String bar = org.apache.commons.lang.StringEscapeUtils.escapeHtml(param);
-
-            return bar;
-        }
-    } // end innerclass Test
-
-} // end DataflowThruInnerClass
+		String bar;
+		
+		// Simple ? condition that assigns constant to bar on true condition
+		int num = 106;
+		
+		bar = (7*18) + num > 200 ? "This_should_always_happen" : param;
+		
+	
+		return bar;	
+	}
+}

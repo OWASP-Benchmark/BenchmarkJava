@@ -48,24 +48,19 @@ public class BenchmarkTest01618 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		response.getWriter().println(bar);
+		// javax.servlet.http.HttpSession.setAttribute(java.lang.String,java.lang.Object^)
+		request.getSession().setAttribute( "userid", bar);
+				
+		response.getWriter().println("Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
+			+ "' saved in session.");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "alsosafe";
-		if (param != null) {
-			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
-			valuesList.add("safe");
-			valuesList.add( param );
-			valuesList.add( "moresafe" );
-			
-			valuesList.remove(0); // remove the 1st safe value
-			
-			bar = valuesList.get(1); // get the last 'safe' value
-		}
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(param);
 
             return bar;
         }

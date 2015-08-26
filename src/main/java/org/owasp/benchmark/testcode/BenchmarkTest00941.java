@@ -44,14 +44,36 @@ public class BenchmarkTest00941 extends HttpServlet {
 		String param = scr.getTheValue("vector");
 		
 		
-		StringBuilder sbxyz30594 = new StringBuilder(param);
-		String bar = sbxyz30594.append("_SafeStuff").toString();
+		String bar = "";
+		if (param != null) {
+			bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    	new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
+		}
 		
 		
-		// javax.servlet.http.HttpSession.setAttribute(java.lang.String^,java.lang.Object)
-		request.getSession().setAttribute( bar, "10340");
-				
-		response.getWriter().println("Item: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
-			+ "' with value: '10340' saved in session.");
+		try {
+			java.io.FileInputStream file = new java.io.FileInputStream(org.owasp.benchmark.helpers.Utils.getFileFromClasspath("employees.xml", this.getClass().getClassLoader()));
+			javax.xml.parsers.DocumentBuilderFactory builderFactory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+			javax.xml.parsers.DocumentBuilder builder = builderFactory.newDocumentBuilder();
+			org.w3c.dom.Document xmlDocument = builder.parse(file);
+			javax.xml.xpath.XPathFactory xpf = javax.xml.xpath.XPathFactory.newInstance();
+			javax.xml.xpath.XPath xp = xpf.newXPath();
+			
+			String expression = "/Employees/Employee[@emplid='"+bar+"']";
+			
+			response.getWriter().println("Your query results are: <br/>"); 
+			org.w3c.dom.NodeList nodeList = (org.w3c.dom.NodeList) xp.compile(expression).evaluate(xmlDocument, javax.xml.xpath.XPathConstants.NODESET);
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				org.w3c.dom.Element value = (org.w3c.dom.Element) nodeList.item(i);
+				response.getWriter().println(value.getTextContent() + "<br/>");
+			}
+		} catch (javax.xml.xpath.XPathExpressionException e) {
+			// OK to swallow
+			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
+		} catch (javax.xml.parsers.ParserConfigurationException e) {
+			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
+		} catch (org.xml.sax.SAXException e) {
+			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
+		}
 	}
 }

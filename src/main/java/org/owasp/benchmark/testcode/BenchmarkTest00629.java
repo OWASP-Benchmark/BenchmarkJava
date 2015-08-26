@@ -40,44 +40,44 @@ public class BenchmarkTest00629 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String param = "";
-		boolean flag = true;
-		java.util.Enumeration<String> names = request.getParameterNames();
-		while (names.hasMoreElements() && flag) {
-			String name = (String) names.nextElement();		    	
-			String[] values = request.getParameterValues(name);
-			if (values != null) {
-				for(int i=0;i<values.length && flag; i++){
-					String value = values[i];
-					if (value.equals("vector")) {
-						param = name;
-					    flag = false;
-					}
-				}
-			}
-		}
+		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
+		String param = scr.getTheParameter("vector");
+		if (param == null) param = "";
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map81921 = new java.util.HashMap<String,Object>();
-		map81921.put("keyA-81921", "a Value"); // put some stuff in the collection
-		map81921.put("keyB-81921", param); // put it in a collection
-		map81921.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map81921.get("keyB-81921"); // get it back out
+		String bar;
+		
+		// Simple if statement that assigns param to bar on true condition
+		int num = 196;
+		if ( (500/42) + num > 200 )
+		   bar = param;
+		else bar = "This should never happen"; 
 		
 		
-		String sql = "INSERT INTO users (username, password) VALUES ('foo','"+ bar + "')";
-				
-		try {
-			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			int count = statement.executeUpdate( sql, new String[] {"USERNAME","PASSWORD"} );
-            org.owasp.benchmark.helpers.DatabaseHelper.outputUpdateComplete(sql, response);
-		} catch (java.sql.SQLException e) {
-			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
-        		return;
-        	}
-			else throw new ServletException(e);
-		}
+		String fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
+        java.io.InputStream is = null;
+        
+		try {	
+			java.nio.file.Path path = java.nio.file.Paths.get(fileName);
+			is = java.nio.file.Files.newInputStream(path, java.nio.file.StandardOpenOption.READ);
+			byte[] b = new byte[1000];
+			int size = is.read(b);
+			response.getWriter().write("The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n");
+			response.getWriter().write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size)));
+			is.close();
+		} catch (Exception e) {
+            System.out.println("Couldn't open InputStream on file: '" + fileName + "'");
+			response.getWriter().write("Problem getting InputStream: " 
+				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage()));
+        } finally {
+			if (is != null) {
+                try {
+                    is.close();
+                    is = null;
+                } catch (Exception e) {
+                    // we tried...
+                }
+            }
+        }
 	}
 }

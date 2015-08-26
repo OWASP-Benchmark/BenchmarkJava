@@ -44,19 +44,42 @@ public class BenchmarkTest00163 extends HttpServlet {
 		if (param == null) param = "";
 		
 		
-		String bar = "alsosafe";
-		if (param != null) {
-			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
-			valuesList.add("safe");
-			valuesList.add( param );
-			valuesList.add( "moresafe" );
-			
-			valuesList.remove(0); // remove the 1st safe value
-			
-			bar = valuesList.get(1); // get the last 'safe' value
+		StringBuilder sbxyz32536 = new StringBuilder(param);
+		String bar = sbxyz32536.append("_SafeStuff").toString();
+		
+		
+		double stuff = new java.util.Random().nextGaussian();
+		String rememberMeKey = Double.toString(stuff).substring(2); // Trim off the 0. at the front.
+		
+		String user = "Gayle";
+		String fullClassName = this.getClass().getName();
+		String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
+		user+= testCaseNumber;
+		
+		String cookieName = "rememberMe" + testCaseNumber;
+		
+		boolean foundUser = false;
+		javax.servlet.http.Cookie[] cookies = request.getCookies();
+		for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
+			javax.servlet.http.Cookie cookie = cookies[i];
+			if (cookieName.equals(cookie.getName())) {
+				if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+					foundUser = true;
+				}
+			}
 		}
 		
-		
-		response.getWriter().print(bar.toCharArray());
+		if (foundUser) {
+			response.getWriter().println("Welcome back: " + user + "<br/>");			
+		} else {			
+			javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
+			rememberMe.setSecure(true);
+			request.getSession().setAttribute(cookieName, rememberMeKey);
+			response.addCookie(rememberMe);
+			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
+					+ " whose value is: " + rememberMe.getValue() + "<br/>");
+		}
+			
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextGaussian() executed");
 	}
 }

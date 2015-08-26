@@ -48,20 +48,24 @@ public class BenchmarkTest01207 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		response.getWriter().println(bar.toCharArray());
+		// javax.servlet.http.HttpSession.setAttribute(java.lang.String^,java.lang.Object)
+		request.getSession().setAttribute( bar, "10340");
+				
+		response.getWriter().println("Item: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
+			+ "' with value: '10340' saved in session.");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		
-		// Simple if statement that assigns constant to bar on true condition
-		int num = 86;
-		if ( (7*42) - num > 200 )
-		   bar = "This_should_always_happen"; 
-		else bar = param;
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map84297 = new java.util.HashMap<String,Object>();
+		map84297.put("keyA-84297", "a_Value"); // put some stuff in the collection
+		map84297.put("keyB-84297", param); // put it in a collection
+		map84297.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map84297.get("keyB-84297"); // get it back out
+		bar = (String)map84297.get("keyA-84297"); // get safe value back out
 
             return bar;
         }

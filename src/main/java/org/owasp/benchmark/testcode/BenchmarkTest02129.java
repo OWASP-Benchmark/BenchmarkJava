@@ -40,30 +40,19 @@ public class BenchmarkTest02129 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("vector");
-		if (headers.hasMoreElements()) {
-			param = headers.nextElement(); // just grab first element
-		}
+		String param = request.getParameter("vector");
+		if (param == null) param = "";
 
 		String bar = doSomething(param);
 		
-		// javax.servlet.http.HttpSession.putValue(java.lang.String,java.lang.Object^)
-		request.getSession().putValue( "userid", bar);
-		
-		response.getWriter().println("Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
-			+ "' saved in session.");
+		Object[] obj = { "a", bar};
+		response.getWriter().printf(java.util.Locale.US,"Formatted like: %1$s and %2$s.",obj);
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		
-		// Simple if statement that assigns param to bar on true condition
-		int num = 196;
-		if ( (500/42) + num > 200 )
-		   bar = param;
-		else bar = "This should never happen"; 
+		String bar = "";
+		if (param != null) bar = param.split(" ")[0];
 	
 		return bar;	
 	}

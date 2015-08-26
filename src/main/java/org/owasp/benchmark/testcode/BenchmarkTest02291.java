@@ -40,28 +40,111 @@ public class BenchmarkTest02291 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		java.util.Map<String,String[]> map = request.getParameterMap();
 		String param = "";
-		if (!map.isEmpty()) {
-			String[] values = map.get("vector");
-			if (values != null) param = values[0];
+		boolean flag = true;
+		java.util.Enumeration<String> names = request.getParameterNames();
+		while (names.hasMoreElements() && flag) {
+			String name = (String) names.nextElement();		    	
+			String[] values = request.getParameterValues(name);
+			if (values != null) {
+				for(int i=0;i<values.length && flag; i++){
+					String value = values[i];
+					if (value.equals("vector")) {
+						param = name;
+					    flag = false;
+					}
+				}
+			}
 		}
-		
 
 		String bar = doSomething(param);
 		
-		response.getWriter().write(bar);
+		// Code based on example from:
+		// http://examples.javacodegeeks.com/core-java/crypto/encrypt-decrypt-file-stream-with-des/
+	    // 8-byte initialization vector
+	    byte[] iv = {
+	    	(byte)0xB2, (byte)0x12, (byte)0xD5, (byte)0xB2,
+	    	(byte)0x44, (byte)0x21, (byte)0xC3, (byte)0xC3033
+	    };
+	    
+		try {
+			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("DES/CBC/PKCS5Padding", "SunJCE");
+            // Prepare the cipher to encrypt
+            javax.crypto.SecretKey key = javax.crypto.KeyGenerator.getInstance("DES").generateKey();
+            java.security.spec.AlgorithmParameterSpec paramSpec = new javax.crypto.spec.IvParameterSpec(iv);
+            c.init(javax.crypto.Cipher.ENCRYPT_MODE, key, paramSpec);
+			
+			// encrypt and store the results
+			byte[] input = { (byte)'?' };
+			Object inputParam = bar;
+			if (inputParam instanceof String) input = ((String) inputParam).getBytes();
+			if (inputParam instanceof java.io.InputStream) {
+				byte[] strInput = new byte[1000];
+				int i = ((java.io.InputStream) inputParam).read(strInput);
+				if (i == -1) {
+					response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+					return;
+				}
+				input = java.util.Arrays.copyOf(strInput, i);
+			}
+			byte[] result = c.doFinal(input);
+			
+			java.io.File fileTarget = new java.io.File(
+					new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),"passwordFile.txt");
+			java.io.FileWriter fw = new java.io.FileWriter(fileTarget,true); //the true will append the new data
+			    fw.write("secret_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
+			fw.close();
+			response.getWriter().println("Sensitive value: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' encrypted and stored<br/>");
+			
+		} catch (java.security.NoSuchAlgorithmException e) {
+			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
+			e.printStackTrace(response.getWriter());
+			throw new ServletException(e);
+		} catch (java.security.NoSuchProviderException e) {
+			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
+			e.printStackTrace(response.getWriter());
+			throw new ServletException(e);
+		} catch (javax.crypto.NoSuchPaddingException e) {
+			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
+			e.printStackTrace(response.getWriter());
+			throw new ServletException(e);
+		} catch (javax.crypto.IllegalBlockSizeException e) {
+			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
+			e.printStackTrace(response.getWriter());
+			throw new ServletException(e);
+		} catch (javax.crypto.BadPaddingException e) {
+			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
+			e.printStackTrace(response.getWriter());
+			throw new ServletException(e);
+		} catch (java.security.InvalidKeyException e) {
+			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
+			e.printStackTrace(response.getWriter());
+			throw new ServletException(e);
+		} catch (java.security.InvalidAlgorithmParameterException e) {
+			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
+			e.printStackTrace(response.getWriter());
+			throw new ServletException(e);
+		}
+		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String,java.lang.String) executed");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		
-		// Simple ? condition that assigns param to bar on false condition
-		int num = 106;
-		
-		bar = (7*42) - num > 200 ? "This should never happen" : param;
-		
+		// Chain a bunch of propagators in sequence
+		String a64175 = param; //assign
+		StringBuilder b64175 = new StringBuilder(a64175);  // stick in stringbuilder
+		b64175.append(" SafeStuff"); // append some safe content
+		b64175.replace(b64175.length()-"Chars".length(),b64175.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map64175 = new java.util.HashMap<String,Object>();
+		map64175.put("key64175", b64175.toString()); // put in a collection
+		String c64175 = (String)map64175.get("key64175"); // get it back out
+		String d64175 = c64175.substring(0,c64175.length()-1); // extract most of it
+		String e64175 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d64175.getBytes() ) )); // B64 encode and decode it
+		String f64175 = e64175.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String g64175 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g64175); // reflection
 	
 		return bar;	
 	}

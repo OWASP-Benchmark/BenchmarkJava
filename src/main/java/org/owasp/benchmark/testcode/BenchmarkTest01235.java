@@ -40,62 +40,42 @@ public class BenchmarkTest01235 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("vector");
-		if (headers.hasMoreElements()) {
-			param = headers.nextElement(); // just grab first element
-		}
+		String param = request.getParameter("vector");
+		if (param == null) param = "";
 
 		String bar = new Test().doSomething(param);
 		
-		try {
-			double stuff = java.security.SecureRandom.getInstance("SHA1PRNG").nextGaussian();
-			String rememberMeKey = Double.toString(stuff).substring(2); // Trim off the 0. at the front.
-			
-			String user = "SafeGayle";
-			String fullClassName = this.getClass().getName();
-			String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
-			user+= testCaseNumber;
-			
-			String cookieName = "rememberMe" + testCaseNumber;
-			
-			boolean foundUser = false;
-			javax.servlet.http.Cookie[] cookies = request.getCookies();
-			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-				javax.servlet.http.Cookie cookie = cookies[i];
-				if (cookieName.equals(cookie.getName())) {
-					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-						foundUser = true;
-					}
-				}
-			}
-			
-			if (foundUser) {
-				response.getWriter().println("Welcome back: " + user + "<br/>");			
-			} else {			
-				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
-				rememberMe.setSecure(true);
-				request.getSession().setAttribute(cookieName, rememberMeKey);
-				response.addCookie(rememberMe);
-				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-						+ " whose value is: " + rememberMe.getValue() + "<br/>");
-			}
+		// FILE URIs are tricky because they are different between Mac and Windows because of lack of standardization.
+		// Mac requires an extra slash for some reason.
+		String startURIslashes = "";
+        if (System.getProperty("os.name").indexOf("Windows") != -1)
+	        if (System.getProperty("os.name").indexOf("Windows") != -1)
+	        	startURIslashes = "/";
+	        else startURIslashes = "//";
 
-	    } catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing SecureRandom.nextGaussian() - TestCase");
+		try {
+			java.net.URI fileURI = new java.net.URI("file:" + startURIslashes 
+				+ org.owasp.benchmark.helpers.Utils.testfileDir.replace('\\', '/').replace(' ', '_') + bar);
+			java.io.File fileTarget = new java.io.File(fileURI);
+			response.getWriter().write("Access to file: '" + fileTarget + "' created." );
+			if (fileTarget.exists()) {
+				response.getWriter().write(" And file already exists.");
+			} else { response.getWriter().write(" But file doesn't exist yet."); }
+		} catch (java.net.URISyntaxException e) {
 			throw new ServletException(e);
-	    }		
-		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextGaussian() executed");
+		}
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = param;
-		if (param != null && param.length() > 1) {
-		    bar = param.substring(0,param.length()-1);
-		}
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map38992 = new java.util.HashMap<String,Object>();
+		map38992.put("keyA-38992", "a Value"); // put some stuff in the collection
+		map38992.put("keyB-38992", param); // put it in a collection
+		map38992.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map38992.get("keyB-38992"); // get it back out
 
             return bar;
         }

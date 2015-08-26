@@ -42,57 +42,42 @@ public class BenchmarkTest00056 extends HttpServlet {
 	
 		javax.servlet.http.Cookie[] theCookies = request.getCookies();
 		
-		String param = null;
-		boolean foundit = false;
+		String param = "";
 		if (theCookies != null) {
 			for (javax.servlet.http.Cookie theCookie : theCookies) {
 				if (theCookie.getName().equals("vector")) {
 					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
-					foundit = true;
+					break;
 				}
 			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
 		}
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a22167 = param; //assign
-		StringBuilder b22167 = new StringBuilder(a22167);  // stick in stringbuilder
-		b22167.append(" SafeStuff"); // append some safe content
-		b22167.replace(b22167.length()-"Chars".length(),b22167.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map22167 = new java.util.HashMap<String,Object>();
-		map22167.put("key22167", b22167.toString()); // put in a collection
-		String c22167 = (String)map22167.get("key22167"); // get it back out
-		String d22167 = c22167.substring(0,c22167.length()-1); // extract most of it
-		String e22167 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d22167.getBytes() ) )); // B64 encode and decode it
-		String f22167 = e22167.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g22167 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g22167); // reflection
+		String bar = "alsosafe";
+		if (param != null) {
+			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+			valuesList.add("safe");
+			valuesList.add( param );
+			valuesList.add( "moresafe" );
+			
+			valuesList.remove(0); // remove the 1st safe value
+			
+			bar = valuesList.get(1); // get the last 'safe' value
+		}
 		
 		
 		// Code based on example from:
 		// http://examples.javacodegeeks.com/core-java/crypto/encrypt-decrypt-file-stream-with-des/
-	    // 16-byte initialization vector
+	    // 8-byte initialization vector
 	    byte[] iv = {
 	    	(byte)0xB2, (byte)0x12, (byte)0xD5, (byte)0xB2,
-	    	(byte)0x44, (byte)0x21, (byte)0xC3, (byte)0xC3,
-	    	(byte)0xF3, (byte)0x3C, (byte)0x23, (byte)0xB9,
-	    	(byte)0x9E, (byte)0xC5, (byte)0x77, (byte)0x0B033
+	    	(byte)0x44, (byte)0x21, (byte)0xC3, (byte)0xC3033
 	    };
 	    
 		try {
-			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("AES/CBC/PKCS5PADDING", java.security.Security.getProvider("SunJCE"));
-            
+			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("DES/CBC/PKCS5Padding", "SunJCE");
             // Prepare the cipher to encrypt
-            javax.crypto.SecretKey key = javax.crypto.KeyGenerator.getInstance("AES").generateKey();
+            javax.crypto.SecretKey key = javax.crypto.KeyGenerator.getInstance("DES").generateKey();
             java.security.spec.AlgorithmParameterSpec paramSpec = new javax.crypto.spec.IvParameterSpec(iv);
             c.init(javax.crypto.Cipher.ENCRYPT_MODE, key, paramSpec);
 			
@@ -122,6 +107,10 @@ public class BenchmarkTest00056 extends HttpServlet {
 			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
 			e.printStackTrace(response.getWriter());
 			throw new ServletException(e);
+		} catch (java.security.NoSuchProviderException e) {
+			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
+			e.printStackTrace(response.getWriter());
+			throw new ServletException(e);
 		} catch (javax.crypto.NoSuchPaddingException e) {
 			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
 			e.printStackTrace(response.getWriter());
@@ -143,6 +132,6 @@ public class BenchmarkTest00056 extends HttpServlet {
 			e.printStackTrace(response.getWriter());
 			throw new ServletException(e);
 		}
-		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) executed");
+		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String,java.lang.String) executed");
 	}
 }

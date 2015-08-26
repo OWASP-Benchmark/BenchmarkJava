@@ -42,41 +42,40 @@ public class BenchmarkTest00993 extends HttpServlet {
 	
 		javax.servlet.http.Cookie[] theCookies = request.getCookies();
 		
-		String param = null;
-		boolean foundit = false;
+		String param = "";
 		if (theCookies != null) {
 			for (javax.servlet.http.Cookie theCookie : theCookies) {
 				if (theCookie.getName().equals("vector")) {
 					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
-					foundit = true;
+					break;
 				}
 			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
 		}
 
 		String bar = new Test().doSomething(param);
 		
-		Object[] obj = { "a", "b"};
-		response.getWriter().printf(bar,obj);
+		// javax.servlet.http.HttpSession.putValue(java.lang.String,java.lang.Object^)
+		request.getSession().putValue( "userid", bar);
+		
+		response.getWriter().println("Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
+			+ "' saved in session.");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map28266 = new java.util.HashMap<String,Object>();
-		map28266.put("keyA-28266", "a_Value"); // put some stuff in the collection
-		map28266.put("keyB-28266", param); // put it in a collection
-		map28266.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map28266.get("keyB-28266"); // get it back out
-		bar = (String)map28266.get("keyA-28266"); // get safe value back out
+		String bar = "alsosafe";
+		if (param != null) {
+			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+			valuesList.add("safe");
+			valuesList.add( param );
+			valuesList.add( "moresafe" );
+			
+			valuesList.remove(0); // remove the 1st safe value
+			
+			bar = valuesList.get(1); // get the last 'safe' value
+		}
 
             return bar;
         }

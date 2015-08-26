@@ -45,60 +45,20 @@ public class BenchmarkTest01955 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-	org.owasp.benchmark.helpers.LDAPManager ads = new org.owasp.benchmark.helpers.LDAPManager();
-	try {
-		response.setContentType("text/html");
-		String base = "ou=users,ou=system";
-		javax.naming.directory.SearchControls sc = new javax.naming.directory.SearchControls();
-		sc.setSearchScope(javax.naming.directory.SearchControls.SUBTREE_SCOPE);
-		String filter = "(&(objectclass=person))(|(uid="+bar+")(street={0}))";
-		Object[] filters = new Object[]{"The streetz 4 Ms bar"};
+		// javax.servlet.http.HttpSession.putValue(java.lang.String^,java.lang.Object)
+		request.getSession().putValue( bar, "10340");
 		
-		javax.naming.directory.DirContext ctx = ads.getDirContext();
-		javax.naming.directory.InitialDirContext idc = (javax.naming.directory.InitialDirContext) ctx;
-		javax.naming.NamingEnumeration<javax.naming.directory.SearchResult> results = 
-				idc.search(base, filter,filters, sc);
-		while (results.hasMore()) {
-			javax.naming.directory.SearchResult sr = (javax.naming.directory.SearchResult) results.next();
-			javax.naming.directory.Attributes attrs = sr.getAttributes();
-
-			javax.naming.directory.Attribute attr = attrs.get("uid");
-			javax.naming.directory.Attribute attr2 = attrs.get("street");
-			if (attr != null){
-				response.getWriter().write("LDAP query results:<br>"
-						+ " Record found with name " + attr.get() + "<br>"
-								+ "Address: " + attr2.get()+ "<br>");
-				System.out.println("record found " + attr.get());
-			}
-		}
-	} catch (javax.naming.NamingException e) {
-		throw new ServletException(e);
-	}finally{
-    	try {
-    		ads.closeDirContext();
-		} catch (Exception e) {
-			throw new ServletException(e);
-		}
-    }
+		response.getWriter().println("Item: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
+			+ "' with value: 10340 saved in session.");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a62457 = param; //assign
-		StringBuilder b62457 = new StringBuilder(a62457);  // stick in stringbuilder
-		b62457.append(" SafeStuff"); // append some safe content
-		b62457.replace(b62457.length()-"Chars".length(),b62457.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map62457 = new java.util.HashMap<String,Object>();
-		map62457.put("key62457", b62457.toString()); // put in a collection
-		String c62457 = (String)map62457.get("key62457"); // get it back out
-		String d62457 = c62457.substring(0,c62457.length()-1); // extract most of it
-		String e62457 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d62457.getBytes() ) )); // B64 encode and decode it
-		String f62457 = e62457.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g62457 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g62457); // reflection
+		String bar = "";
+		if (param != null) {
+			bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    	new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
+		}
 	
 		return bar;	
 	}

@@ -45,25 +45,35 @@ public class BenchmarkTest02737 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		response.getWriter().print(bar);
+		try {
+			String sql = "SELECT  * from USERS where USERNAME='foo' and PASSWORD='"+ bar + "'" ;
+	
+	        org.springframework.jdbc.support.rowset.SqlRowSet results = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.queryForRowSet(sql);
+	        java.io.PrintWriter out = response.getWriter();
+			out.write("Your results are: ");
+	//		System.out.println("Your results are");
+			while(results.next()) {
+	            out.write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(results.getString("USERNAME")) + " ");
+	//			System.out.println(results.getString("USERNAME"));
+			}
+		} catch (org.springframework.dao.DataAccessException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a80898 = param; //assign
-		StringBuilder b80898 = new StringBuilder(a80898);  // stick in stringbuilder
-		b80898.append(" SafeStuff"); // append some safe content
-		b80898.replace(b80898.length()-"Chars".length(),b80898.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map80898 = new java.util.HashMap<String,Object>();
-		map80898.put("key80898", b80898.toString()); // put in a collection
-		String c80898 = (String)map80898.get("key80898"); // get it back out
-		String d80898 = c80898.substring(0,c80898.length()-1); // extract most of it
-		String e80898 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d80898.getBytes() ) )); // B64 encode and decode it
-		String f80898 = e80898.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f80898); // reflection
+		String bar;
+		
+		// Simple if statement that assigns constant to bar on true condition
+		int num = 86;
+		if ( (7*42) - num > 200 )
+		   bar = "This_should_always_happen"; 
+		else bar = param;
 	
 		return bar;	
 	}

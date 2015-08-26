@@ -58,38 +58,54 @@ public class BenchmarkTest00239 extends HttpServlet {
 		}
 		
 		
-		String bar;
+		// Chain a bunch of propagators in sequence
+		String a531 = param; //assign
+		StringBuilder b531 = new StringBuilder(a531);  // stick in stringbuilder
+		b531.append(" SafeStuff"); // append some safe content
+		b531.replace(b531.length()-"Chars".length(),b531.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map531 = new java.util.HashMap<String,Object>();
+		map531.put("key531", b531.toString()); // put in a collection
+		String c531 = (String)map531.get("key531"); // get it back out
+		String d531 = c531.substring(0,c531.length()-1); // extract most of it
+		String e531 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d531.getBytes() ) )); // B64 encode and decode it
+		String f531 = e531.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f531); // reflection
 		
-		// Simple ? condition that assigns constant to bar on true condition
-		int num = 106;
 		
-		bar = (7*18) + num > 200 ? "This_should_always_happen" : param;
+		long l = new java.util.Random().nextLong();
+		String rememberMeKey = Long.toString(l);
 		
+		String user = "Logan";
+		String fullClassName = this.getClass().getName();
+		String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
+		user+= testCaseNumber;
 		
+		String cookieName = "rememberMe" + testCaseNumber;
 		
-		String fileName = null;
-        java.io.FileInputStream fis = null;
-
-        try {
-			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
-			fis = new java.io.FileInputStream(new java.io.File(fileName));
-			byte[] b = new byte[1000];
-			int size = fis.read(b);
-			response.getWriter().write("The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n");
-			response.getWriter().write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size)));
-		} catch (Exception e) {
-            System.out.println("Couldn't open FileInputStream on file: '" + fileName + "'");
-			response.getWriter().write("Problem getting FileInputStream: " 
-				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage()));
-        } finally {
-			if (fis != null) {
-                try {
-                    fis.close();
-                    fis = null;
-                } catch (Exception e) {
-                    // we tried...
-                }
-            }
-        }
+		boolean foundUser = false;
+		javax.servlet.http.Cookie[] cookies = request.getCookies();
+		for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
+			javax.servlet.http.Cookie cookie = cookies[i];
+			if (cookieName.equals(cookie.getName())) {
+				if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+					foundUser = true;
+				}
+			}
+		}
+		
+		if (foundUser) {
+			response.getWriter().println("Welcome back: " + user + "<br/>");			
+		} else {			
+			javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
+			rememberMe.setSecure(true);
+			request.getSession().setAttribute(cookieName, rememberMeKey);
+			response.addCookie(rememberMe);
+			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
+					+ " whose value is: " + rememberMe.getValue() + "<br/>");
+		}
+				
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextLong() executed");
 	}
 }

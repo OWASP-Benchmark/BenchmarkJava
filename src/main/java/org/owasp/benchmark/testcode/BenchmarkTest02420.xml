@@ -1,7 +1,7 @@
 <test-metadata>
   <benchmark-version>1.2beta</benchmark-version>
-  <category>sqli</category>
+  <category>weakrand</category>
   <test-number>02420</test-number>
   <vulnerability>true</vulnerability>
-  <cwe>89</cwe>
+  <cwe>330</cwe>
 </test-metadata>

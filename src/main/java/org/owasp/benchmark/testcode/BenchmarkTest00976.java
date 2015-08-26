@@ -42,72 +42,61 @@ public class BenchmarkTest00976 extends HttpServlet {
 	
 		javax.servlet.http.Cookie[] theCookies = request.getCookies();
 		
-		String param = null;
-		boolean foundit = false;
+		String param = "";
 		if (theCookies != null) {
 			for (javax.servlet.http.Cookie theCookie : theCookies) {
 				if (theCookie.getName().equals("vector")) {
 					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
-					foundit = true;
+					break;
 				}
 			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
 		}
 
 		String bar = new Test().doSomething(param);
 		
-		String fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
-        java.io.InputStream is = null;
-        
-		try {	
-			java.nio.file.Path path = java.nio.file.Paths.get(fileName);
-			is = java.nio.file.Files.newInputStream(path, java.nio.file.StandardOpenOption.READ);
-			byte[] b = new byte[1000];
-			int size = is.read(b);
-			response.getWriter().write("The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n");
-			response.getWriter().write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size)));
-			is.close();
-		} catch (Exception e) {
-            System.out.println("Couldn't open InputStream on file: '" + fileName + "'");
-			response.getWriter().write("Problem getting InputStream: " 
-				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage()));
-        } finally {
-			if (is != null) {
-                try {
-                    is.close();
-                    is = null;
-                } catch (Exception e) {
-                    // we tried...
-                }
-            }
-        }
+		long l = new java.util.Random().nextLong();
+		String rememberMeKey = Long.toString(l);
+		
+		String user = "Logan";
+		String fullClassName = this.getClass().getName();
+		String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
+		user+= testCaseNumber;
+		
+		String cookieName = "rememberMe" + testCaseNumber;
+		
+		boolean foundUser = false;
+		javax.servlet.http.Cookie[] cookies = request.getCookies();
+		for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
+			javax.servlet.http.Cookie cookie = cookies[i];
+			if (cookieName.equals(cookie.getName())) {
+				if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+					foundUser = true;
+				}
+			}
+		}
+		
+		if (foundUser) {
+			response.getWriter().println("Welcome back: " + user + "<br/>");			
+		} else {			
+			javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
+			rememberMe.setSecure(true);
+			request.getSession().setAttribute(cookieName, rememberMeKey);
+			response.addCookie(rememberMe);
+			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
+					+ " whose value is: " + rememberMe.getValue() + "<br/>");
+		}
+				
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextLong() executed");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a32608 = param; //assign
-		StringBuilder b32608 = new StringBuilder(a32608);  // stick in stringbuilder
-		b32608.append(" SafeStuff"); // append some safe content
-		b32608.replace(b32608.length()-"Chars".length(),b32608.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map32608 = new java.util.HashMap<String,Object>();
-		map32608.put("key32608", b32608.toString()); // put in a collection
-		String c32608 = (String)map32608.get("key32608"); // get it back out
-		String d32608 = c32608.substring(0,c32608.length()-1); // extract most of it
-		String e32608 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d32608.getBytes() ) )); // B64 encode and decode it
-		String f32608 = e32608.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g32608 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g32608); // reflection
+		String bar = param;
+		if (param != null && param.length() > 1) {
+		    bar = param.substring(0,param.length()-1);
+		}
 
             return bar;
         }

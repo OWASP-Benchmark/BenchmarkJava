@@ -40,52 +40,32 @@ public class BenchmarkTest00621 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String param = "";
-		boolean flag = true;
-		java.util.Enumeration<String> names = request.getParameterNames();
-		while (names.hasMoreElements() && flag) {
-			String name = (String) names.nextElement();		    	
-			String[] values = request.getParameterValues(name);
-			if (values != null) {
-				for(int i=0;i<values.length && flag; i++){
-					String value = values[i];
-					if (value.equals("vector")) {
-						param = name;
-					    flag = false;
-					}
-				}
-			}
-		}
+		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
+		String param = scr.getTheParameter("vector");
+		if (param == null) param = "";
 		
 		
-		String bar = "";
-		if (param != null) {
-			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
-			valuesList.add("safe");
-			valuesList.add( param );
-			valuesList.add( "moresafe" );
-			
-			valuesList.remove(0); // remove the 1st safe value
-			
-			bar = valuesList.get(0); // get the param value
-		}
+		// Chain a bunch of propagators in sequence
+		String a59200 = param; //assign
+		StringBuilder b59200 = new StringBuilder(a59200);  // stick in stringbuilder
+		b59200.append(" SafeStuff"); // append some safe content
+		b59200.replace(b59200.length()-"Chars".length(),b59200.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map59200 = new java.util.HashMap<String,Object>();
+		map59200.put("key59200", b59200.toString()); // put in a collection
+		String c59200 = (String)map59200.get("key59200"); // get it back out
+		String d59200 = c59200.substring(0,c59200.length()-1); // extract most of it
+		String e59200 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d59200.getBytes() ) )); // B64 encode and decode it
+		String f59200 = e59200.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String g59200 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g59200); // reflection
 		
 		
-		try {
-			String sql = "SELECT TOP 1 userid from USERS where USERNAME='foo' and PASSWORD='"+ bar + "'" ;
-	
-	        java.util.Map results = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.queryForMap(sql);
-			java.io.PrintWriter out = response.getWriter();
-	        out.write("Your results are: ");
-	//		System.out.println("Your results are");
-			out.write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(results.toString()));
-	//		System.out.println(results.toString());
-		} catch (org.springframework.dao.DataAccessException e) {
-			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
-        		return;
-        	}
-			else throw new ServletException(e);
-		}
+		java.io.File fileTarget = new java.io.File(new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),bar);
+		response.getWriter().write("Access to file: '" + fileTarget + "' created." );
+		if (fileTarget.exists()) {
+			response.getWriter().write(" And file already exists.");
+		} else { response.getWriter().write(" But file doesn't exist yet."); }
 	}
 }

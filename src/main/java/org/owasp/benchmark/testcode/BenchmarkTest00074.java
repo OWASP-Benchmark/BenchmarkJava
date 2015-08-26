@@ -42,31 +42,30 @@ public class BenchmarkTest00074 extends HttpServlet {
 	
 		javax.servlet.http.Cookie[] theCookies = request.getCookies();
 		
-		String param = null;
-		boolean foundit = false;
+		String param = "";
 		if (theCookies != null) {
 			for (javax.servlet.http.Cookie theCookie : theCookies) {
 				if (theCookie.getName().equals("vector")) {
 					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
-					foundit = true;
+					break;
 				}
 			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
 		}
 		
 		
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(param);
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map36265 = new java.util.HashMap<String,Object>();
+		map36265.put("keyA-36265", "a Value"); // put some stuff in the collection
+		map36265.put("keyB-36265", param); // put it in a collection
+		map36265.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map36265.get("keyB-36265"); // get it back out
 		
 		
 		try {
-			java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA-256");
+		    java.util.Properties benchmarkprops = new java.util.Properties();
+		    benchmarkprops.load(this.getClass().getClassLoader().getResourceAsStream("benchmark.properties"));
+			String algorithm = benchmarkprops.getProperty("hashAlg1", "SHA512");
+			java.security.MessageDigest md = java.security.MessageDigest.getInstance(algorithm);
 			byte[] input = { (byte)'?' };
 			Object inputParam = bar;
 			if (inputParam instanceof String) input = ((String) inputParam).getBytes();

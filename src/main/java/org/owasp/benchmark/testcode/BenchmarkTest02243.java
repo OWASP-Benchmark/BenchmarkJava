@@ -40,38 +40,47 @@ public class BenchmarkTest02243 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		String param = request.getParameter("vector");
-		if (param == null) param = "";
+		java.util.Map<String,String[]> map = request.getParameterMap();
+		String param = "";
+		if (!map.isEmpty()) {
+			String[] values = map.get("vector");
+			if (values != null) param = values[0];
+		}
+		
 
 		String bar = doSomething(param);
 		
+		java.util.List<String> argList = new java.util.ArrayList<String>();
+		
+		String osName = System.getProperty("os.name");
+        if (osName.indexOf("Windows") != -1) {
+        	argList.add("cmd.exe");
+        	argList.add("/c");
+        } else {
+        	argList.add("sh");
+        	argList.add("-c");
+        }
+        argList.add("echo " + bar);
+
+		ProcessBuilder pb = new ProcessBuilder(argList);
+
 		try {
-			String sql = "SELECT TOP 1 userid from USERS where USERNAME='foo' and PASSWORD='"+ bar + "'" ;
-	
-	        java.util.Map results = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.queryForMap(sql);
-			java.io.PrintWriter out = response.getWriter();
-	        out.write("Your results are: ");
-	//		System.out.println("Your results are");
-			out.write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(results.toString()));
-	//		System.out.println(results.toString());
-		} catch (org.springframework.dao.DataAccessException e) {
-			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
-        		return;
-        	}
-			else throw new ServletException(e);
+			Process p = pb.start();
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - java.lang.ProcessBuilder(java.util.List) Test Case");
+            throw new ServletException(e);
 		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		
-		// Simple ? condition that assigns param to bar on false condition
-		int num = 106;
-		
-		bar = (7*42) - num > 200 ? "This should never happen" : param;
-		
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map23054 = new java.util.HashMap<String,Object>();
+		map23054.put("keyA-23054", "a Value"); // put some stuff in the collection
+		map23054.put("keyB-23054", param); // put it in a collection
+		map23054.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map23054.get("keyB-23054"); // get it back out
 	
 		return bar;	
 	}

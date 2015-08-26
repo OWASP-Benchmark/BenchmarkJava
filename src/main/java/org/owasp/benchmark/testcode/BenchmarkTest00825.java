@@ -58,13 +58,22 @@ public class BenchmarkTest00825 extends HttpServlet {
 		param = java.net.URLDecoder.decode(param, "UTF-8");
 		
 		
-		String bar = "";
-		if (param != null) {
-			bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    	new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(param);
+		
+		
+		String cmd = org.owasp.benchmark.helpers.Utils.getInsecureOSCommandString(this.getClass().getClassLoader());
+		String[] args = {cmd};
+        String[] argsEnv = { bar };
+        
+		Runtime r = Runtime.getRuntime();
+
+		try {
+			Process p = r.exec(args, argsEnv, new java.io.File(System.getProperty("user.dir")));
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - TestCase");
+            throw new ServletException(e);
 		}
-		
-		
-		response.getWriter().write(bar.toCharArray());
 	}
 }

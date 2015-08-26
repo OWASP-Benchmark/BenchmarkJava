@@ -40,64 +40,49 @@ public class BenchmarkTest02313 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		java.util.Map<String,String[]> map = request.getParameterMap();
 		String param = "";
-		if (!map.isEmpty()) {
-			String[] values = map.get("vector");
-			if (values != null) param = values[0];
-		}
-		
-
-		String bar = doSomething(param);
-		
-		try {
-			double rand = java.security.SecureRandom.getInstance("SHA1PRNG").nextDouble();
-			
-			String rememberMeKey = Double.toString(rand).substring(2); // Trim off the 0. at the front.
-			
-			String user = "SafeDonna";
-			String fullClassName = this.getClass().getName();
-			String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
-			user+= testCaseNumber;
-			
-			String cookieName = "rememberMe" + testCaseNumber;
-			
-			boolean foundUser = false;
-			javax.servlet.http.Cookie[] cookies = request.getCookies();
-			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-				javax.servlet.http.Cookie cookie = cookies[i];
-				if (cookieName.equals(cookie.getName())) {
-					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-						foundUser = true;
+		boolean flag = true;
+		java.util.Enumeration<String> names = request.getParameterNames();
+		while (names.hasMoreElements() && flag) {
+			String name = (String) names.nextElement();		    	
+			String[] values = request.getParameterValues(name);
+			if (values != null) {
+				for(int i=0;i<values.length && flag; i++){
+					String value = values[i];
+					if (value.equals("vector")) {
+						param = name;
+					    flag = false;
 					}
 				}
 			}
-			
-			if (foundUser) {
-				response.getWriter().println("Welcome back: " + user + "<br/>");			
-			} else {			
-				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
-				rememberMe.setSecure(true);
-				request.getSession().setAttribute(cookieName, rememberMeKey);
-				response.addCookie(rememberMe);
-				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-						+ " whose value is: " + rememberMe.getValue() + "<br/>");
-			}
+		}
 
-	    } catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing SecureRandom.nextDouble() - TestCase");
-			throw new ServletException(e);
-	    }
+		String bar = doSomething(param);
 		
-		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextDouble() executed");
+		Object[] obj = { "a", bar };
+		java.io.PrintWriter out = response.getWriter();
+		out.write("<!DOCTYPE html>\n<html>\n<body>\n<p>");
+		out.format(java.util.Locale.US,"Formatted like: %1$s and %2$s.",obj);
+	    out.write("\n</p>\n</body>\n</html>");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = param;
-		if (param != null && param.length() > 1) {
-		    bar = param.substring(0,param.length()-1);
-		}
+		// Chain a bunch of propagators in sequence
+		String a72681 = param; //assign
+		StringBuilder b72681 = new StringBuilder(a72681);  // stick in stringbuilder
+		b72681.append(" SafeStuff"); // append some safe content
+		b72681.replace(b72681.length()-"Chars".length(),b72681.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map72681 = new java.util.HashMap<String,Object>();
+		map72681.put("key72681", b72681.toString()); // put in a collection
+		String c72681 = (String)map72681.get("key72681"); // get it back out
+		String d72681 = c72681.substring(0,c72681.length()-1); // extract most of it
+		String e72681 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d72681.getBytes() ) )); // B64 encode and decode it
+		String f72681 = e72681.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String g72681 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g72681); // reflection
 	
 		return bar;	
 	}

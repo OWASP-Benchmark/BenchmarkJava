@@ -40,31 +40,23 @@ public class BenchmarkTest02228 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		String param = request.getParameter("vector");
-		if (param == null) param = "";
+		java.util.Map<String,String[]> map = request.getParameterMap();
+		String param = "";
+		if (!map.isEmpty()) {
+			String[] values = map.get("vector");
+			if (values != null) param = values[0];
+		}
+		
 
 		String bar = doSomething(param);
 		
-		// javax.servlet.http.HttpSession.putValue(java.lang.String,java.lang.Object^)
-		request.getSession().putValue( "userid", bar);
-		
-		response.getWriter().println("Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
-			+ "' saved in session.");
+		response.getWriter().print(bar);
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "";
-		if (param != null) {
-			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
-			valuesList.add("safe");
-			valuesList.add( param );
-			valuesList.add( "moresafe" );
-			
-			valuesList.remove(0); // remove the 1st safe value
-			
-			bar = valuesList.get(0); // get the param value
-		}
+		StringBuilder sbxyz28529 = new StringBuilder(param);
+		String bar = sbxyz28529.append("_SafeStuff").toString();
 	
 		return bar;	
 	}

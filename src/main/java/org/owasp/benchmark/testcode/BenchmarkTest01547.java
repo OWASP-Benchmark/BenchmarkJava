@@ -46,15 +46,19 @@ public class BenchmarkTest01547 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		Object[] obj = { "a", "b"};
-		response.getWriter().printf(bar,obj);
+		// javax.servlet.http.HttpSession.putValue(java.lang.String,java.lang.Object^)
+		request.getSession().putValue( "userid", bar);
+		
+		response.getWriter().println("Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
+			+ "' saved in session.");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = org.springframework.web.util.HtmlUtils.htmlEscape(param);
+		String bar = "";
+		if (param != null) bar = param.split(" ")[0];
 
             return bar;
         }

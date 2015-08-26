@@ -42,39 +42,59 @@ public class BenchmarkTest00077 extends HttpServlet {
 	
 		javax.servlet.http.Cookie[] theCookies = request.getCookies();
 		
-		String param = null;
-		boolean foundit = false;
+		String param = "";
 		if (theCookies != null) {
 			for (javax.servlet.http.Cookie theCookie : theCookies) {
 				if (theCookie.getName().equals("vector")) {
 					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
-					foundit = true;
+					break;
 				}
 			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
 		}
 		
 		
-		String bar = "";
-		if (param != null) {
-			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
-			valuesList.add("safe");
-			valuesList.add( param );
-			valuesList.add( "moresafe" );
-			
-			valuesList.remove(0); // remove the 1st safe value
-			
-			bar = valuesList.get(0); // get the param value
+		String bar;
+		String guess = "ABC";
+		char switchTarget = guess.charAt(2);
+		
+		// Simple case statement that assigns param to bar on conditions 'A', 'C', or 'D'
+		switch (switchTarget) {
+		  case 'A':
+		        bar = param;
+		        break;
+		  case 'B': 
+		        bar = "bobs_your_uncle";
+		        break;
+		  case 'C':
+		  case 'D':        
+		        bar = param;
+		        break;
+		  default:
+		        bar = "bobs_your_uncle";
+		        break;
 		}
 		
 		
-		Object[] obj = { "a", "b" };
-		response.getWriter().format(java.util.Locale.US,bar,obj);
+		java.util.List<String> argList = new java.util.ArrayList<String>();
+		
+		String osName = System.getProperty("os.name");
+        if (osName.indexOf("Windows") != -1) {
+        	argList.add("cmd.exe");
+        	argList.add("/c");
+        } else {
+        	argList.add("sh");
+        	argList.add("-c");
+        }
+        argList.add("echo " + bar);
+
+		ProcessBuilder pb = new ProcessBuilder(argList);
+
+		try {
+			Process p = pb.start();
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - java.lang.ProcessBuilder(java.util.List) Test Case");
+            throw new ServletException(e);
+		}
 	}
 }

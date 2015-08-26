@@ -48,15 +48,53 @@ public class BenchmarkTest02100 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		response.getWriter().println(bar);
+		try {
+			java.io.FileInputStream file = new java.io.FileInputStream(org.owasp.benchmark.helpers.Utils.getFileFromClasspath("employees.xml", this.getClass().getClassLoader()));
+			javax.xml.parsers.DocumentBuilderFactory builderFactory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+			javax.xml.parsers.DocumentBuilder builder = builderFactory.newDocumentBuilder();
+			org.w3c.dom.Document xmlDocument = builder.parse(file);
+			javax.xml.xpath.XPathFactory xpf = javax.xml.xpath.XPathFactory.newInstance();
+			javax.xml.xpath.XPath xp = xpf.newXPath();
+			
+			String expression = "/Employees/Employee[@emplid='"+bar+"']";
+			
+			response.getWriter().println("Your query results are: <br/>"); 
+			org.w3c.dom.NodeList nodeList = (org.w3c.dom.NodeList) xp.compile(expression).evaluate(xmlDocument, javax.xml.xpath.XPathConstants.NODESET);
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				org.w3c.dom.Element value = (org.w3c.dom.Element) nodeList.item(i);
+				response.getWriter().println(value.getTextContent() + "<br/>");
+			}
+		} catch (javax.xml.xpath.XPathExpressionException e) {
+			// OK to swallow
+			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
+		} catch (javax.xml.parsers.ParserConfigurationException e) {
+			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
+		} catch (org.xml.sax.SAXException e) {
+			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
+		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "";
-		if (param != null) {
-			bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    	new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
+		String bar;
+		String guess = "ABC";
+		char switchTarget = guess.charAt(2);
+		
+		// Simple case statement that assigns param to bar on conditions 'A', 'C', or 'D'
+		switch (switchTarget) {
+		  case 'A':
+		        bar = param;
+		        break;
+		  case 'B': 
+		        bar = "bobs_your_uncle";
+		        break;
+		  case 'C':
+		  case 'D':        
+		        bar = param;
+		        break;
+		  default:
+		        bar = "bobs_your_uncle";
+		        break;
 		}
 	
 		return bar;	

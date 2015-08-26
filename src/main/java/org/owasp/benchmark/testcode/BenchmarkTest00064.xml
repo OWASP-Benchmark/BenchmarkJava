@@ -2,6 +2,6 @@
   <benchmark-version>1.2beta</benchmark-version>
   <category>pathtraver</category>
   <test-number>00064</test-number>
-  <vulnerability>true</vulnerability>
+  <vulnerability>false</vulnerability>
   <cwe>22</cwe>
 </test-metadata>

@@ -49,27 +49,29 @@ public class BenchmarkTest00509 extends HttpServlet {
 		
 		
 		
-		String bar;
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map52013 = new java.util.HashMap<String,Object>();
+		map52013.put("keyA-52013", "a_Value"); // put some stuff in the collection
+		map52013.put("keyB-52013", param); // put it in a collection
+		map52013.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map52013.get("keyB-52013"); // get it back out
+		bar = (String)map52013.get("keyA-52013"); // get safe value back out
 		
-		// Simple if statement that assigns param to bar on true condition
-		int num = 196;
-		if ( (500/42) + num > 200 )
-		   bar = param;
-		else bar = "This should never happen"; 
 		
-		
-		String cmd = org.owasp.benchmark.helpers.Utils.getInsecureOSCommandString(this.getClass().getClassLoader());
-		String[] args = {cmd};
-        String[] argsEnv = { bar };
-        
-		Runtime r = Runtime.getRuntime();
-
+		String sql = "{call " + bar + "}";
+						
 		try {
-			Process p = r.exec(args, argsEnv);
-			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - TestCase");
-            throw new ServletException(e);
+			java.sql.Connection connection = org.owasp.benchmark.helpers.DatabaseHelper.getSqlConnection();
+			java.sql.CallableStatement statement = connection.prepareCall( sql, java.sql.ResultSet.TYPE_FORWARD_ONLY, 
+							java.sql.ResultSet.CONCUR_READ_ONLY );
+			java.sql.ResultSet rs = statement.executeQuery();
+            org.owasp.benchmark.helpers.DatabaseHelper.printResults(rs, sql, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
 		}
 	}
 }

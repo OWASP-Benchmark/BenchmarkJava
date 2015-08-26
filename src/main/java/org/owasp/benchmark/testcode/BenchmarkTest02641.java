@@ -59,17 +59,41 @@ public class BenchmarkTest02641 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		Object[] obj = { "a", "b" };
-		response.getWriter().format(java.util.Locale.US,bar,obj);
+ 		try {
+	        String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='" + bar + "'";
+	
+			java.util.List<String> results = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.query(sql,  new org.springframework.jdbc.core.RowMapper<String>() {
+	            public String mapRow(java.sql.ResultSet rs, int rowNum) throws java.sql.SQLException {
+	                try {
+	                	return rs.getString("USERNAME");
+	                } catch (java.sql.SQLException e) {
+	                	if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+	        				return "Error processing query.";
+	        			}
+						else throw e;
+					}
+	            }
+	        });
+			java.io.PrintWriter out = response.getWriter();
+			
+			out.write("Your results are: ");
+	//		System.out.println("Your results are");
+			for(String s : results){
+				out.write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(s) + "<br>");
+	//			System.out.println(s);
+			}
+		} catch (org.springframework.dao.DataAccessException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "";
-		if (param != null) {
-			bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    	new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
-		}
+		String bar = param;
 	
 		return bar;	
 	}

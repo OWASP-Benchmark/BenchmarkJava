@@ -45,21 +45,28 @@ public class BenchmarkTest01080 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		Object[] obj = { bar, "b"};
-		response.getWriter().printf("Formatted like: %1$s and %2$s.",obj);
+		// javax.servlet.http.HttpSession.putValue(java.lang.String^,java.lang.Object)
+		request.getSession().putValue( bar, "10340");
+		
+		response.getWriter().println("Item: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
+			+ "' with value: 10340 saved in session.");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map29745 = new java.util.HashMap<String,Object>();
-		map29745.put("keyA-29745", "a_Value"); // put some stuff in the collection
-		map29745.put("keyB-29745", param); // put it in a collection
-		map29745.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map29745.get("keyB-29745"); // get it back out
-		bar = (String)map29745.get("keyA-29745"); // get safe value back out
+		String bar = "alsosafe";
+		if (param != null) {
+			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+			valuesList.add("safe");
+			valuesList.add( param );
+			valuesList.add( "moresafe" );
+			
+			valuesList.remove(0); // remove the 1st safe value
+			
+			bar = valuesList.get(1); // get the last 'safe' value
+		}
 
             return bar;
         }

@@ -42,44 +42,28 @@ public class BenchmarkTest00070 extends HttpServlet {
 	
 		javax.servlet.http.Cookie[] theCookies = request.getCookies();
 		
-		String param = null;
-		boolean foundit = false;
+		String param = "";
 		if (theCookies != null) {
 			for (javax.servlet.http.Cookie theCookie : theCookies) {
 				if (theCookie.getName().equals("vector")) {
 					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
-					foundit = true;
+					break;
 				}
 			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
 		}
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map3008 = new java.util.HashMap<String,Object>();
-		map3008.put("keyA-3008", "a_Value"); // put some stuff in the collection
-		map3008.put("keyB-3008", param); // put it in a collection
-		map3008.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map3008.get("keyB-3008"); // get it back out
-		bar = (String)map3008.get("keyA-3008"); // get safe value back out
+		String bar;
+		
+		// Simple ? condition that assigns param to bar on false condition
+		int num = 106;
+		
+		bar = (7*42) - num > 200 ? "This should never happen" : param;
 		
 		
-		java.security.Provider[] provider = java.security.Security.getProviders();
-		java.security.MessageDigest md;
-
+		
 		try {
-			if (provider.length > 1) {
-
-				md = java.security.MessageDigest.getInstance("sha-384", provider[0]);
-			} else {
-				md = java.security.MessageDigest.getInstance("sha-384","SUN");
-			}
+			java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA1", "SUN");
 			byte[] input = { (byte)'?' };
 			Object inputParam = bar;
 			if (inputParam instanceof String) input = ((String) inputParam).getBytes();
@@ -91,7 +75,7 @@ public class BenchmarkTest00070 extends HttpServlet {
 					return;
 				}
 				input = java.util.Arrays.copyOf(strInput, i);
-			}			
+			}		
 			md.update(input);
 			
 			byte[] result = md.digest();
@@ -102,13 +86,13 @@ public class BenchmarkTest00070 extends HttpServlet {
 			fw.close();
 			response.getWriter().println("Sensitive value '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' hashed and stored<br/>");
 		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider)");
-            throw new ServletException(e);
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.lang.String)");
+			throw new ServletException(e);			
 		} catch (java.security.NoSuchProviderException e) {
-			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider)");
-            throw new ServletException(e);
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.lang.String)");
+			throw new ServletException(e);
 		}
 
-		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider) executed");
+		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.lang.String) executed");
 	}
 }

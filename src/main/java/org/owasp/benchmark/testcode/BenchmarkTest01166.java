@@ -41,52 +41,56 @@ public class BenchmarkTest01166 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		String param = "";
-		boolean flag = true;
-		java.util.Enumeration<String> names = request.getHeaderNames();
-		while (names.hasMoreElements() && flag) {
-			String name = (String) names.nextElement();
-			java.util.Enumeration<String> values = request.getHeaders(name);
-			if (values != null) {
-				while (values.hasMoreElements() && flag) {
-					String value = (String) values.nextElement();
-					if (value.equals("vector")) {
-						param = name;
-						flag = false;
-					}
-				}
-			}
+		java.util.Enumeration<String> headers = request.getHeaders("vector");
+		if (headers.hasMoreElements()) {
+			param = headers.nextElement(); // just grab first element
 		}
 
 		String bar = new Test().doSomething(param);
 		
-		byte[] input = new byte[1000];
-		String str = "?";
-		Object inputParam = param;
-		if (inputParam instanceof String) str = ((String) inputParam);
-		if (inputParam instanceof java.io.InputStream) {
-			int i = ((java.io.InputStream) inputParam).read(input);
-			if (i == -1) {
-				response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
-				return;
-			}			
-			str = new String(input, 0, i);
+		try {
+			java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA1", "SUN");
+			byte[] input = { (byte)'?' };
+			Object inputParam = bar;
+			if (inputParam instanceof String) input = ((String) inputParam).getBytes();
+			if (inputParam instanceof java.io.InputStream) {
+				byte[] strInput = new byte[1000];
+				int i = ((java.io.InputStream) inputParam).read(strInput);
+				if (i == -1) {
+					response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+					return;
+				}
+				input = java.util.Arrays.copyOf(strInput, i);
+			}		
+			md.update(input);
+			
+			byte[] result = md.digest();
+			java.io.File fileTarget = new java.io.File(
+					new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),"passwordFile.txt");
+			java.io.FileWriter fw = new java.io.FileWriter(fileTarget,true); //the true will append the new data
+			    fw.write("hash_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
+			fw.close();
+			response.getWriter().println("Sensitive value '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' hashed and stored<br/>");
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.lang.String)");
+			throw new ServletException(e);			
+		} catch (java.security.NoSuchProviderException e) {
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.lang.String)");
+			throw new ServletException(e);
 		}
-		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie", str);
-		
-		cookie.setSecure(true);
-		
-		response.addCookie(cookie);
 
-		response.getWriter().println("Created cookie: SomeCookie: with value: '"
-		  + org.owasp.esapi.ESAPI.encoder().encodeForHTML(str) + "' and secure flag set to: true");
+		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.lang.String) executed");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(param);
+		String bar = param;
+		if (param != null && param.length() > 1) {
+		    StringBuilder sbxyz7651 = new StringBuilder(param);
+		    bar = sbxyz7651.replace(param.length()-"Z".length(), param.length(),"Z").toString();
+		}
 
             return bar;
         }

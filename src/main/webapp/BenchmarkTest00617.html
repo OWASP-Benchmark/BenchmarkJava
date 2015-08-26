@@ -8,49 +8,13 @@
 </head>
 <body>
 <form action="/benchmark/BenchmarkTest00617" method="POST" id="FormBenchmarkTest00617">
-    <div><label>Please explain your answer:</label></div>
-    <br/>
-    <div><textarea rows="4" cols="50" id="vectorArea" name="vectorArea" value=""></textarea></div>
-    <div><label>Any additional note for the reviewer:</label></div>
-    <div><input type="text" id="answer" name="answer"></input></div>
-    <br/>
-    <div><label>An AJAX request will be sent with a parameter value 'vector' and name:</label>
-    <input type="text" id="vector" name="vector" value="bar" class="safe"></input></div>
-    <div><input type="button" id="login-btn" value="Login" /></div>
-</form>
-<div id="ajax-form-msg1"></div>
-<script>
-$('.safe').keypress(function (e) {
-  if (e.which == 13) {
-    $('#login-btn').trigger('click');
-    return false;
-  }
-});
-
-$("#login-btn").click(function(){
-	var text = $("#FormBenchmarkTest00617 input[id=vector]").val();
-	
-	$("input.headerClass").remove();
-	
-	$("<input type='hidden' value='vector' />")
-     .attr("id", text)
-     .attr("name", text)
-     .addClass("headerClass")
-     .appendTo("#FormBenchmarkTest00617");
-
-    var formData = $("#FormBenchmarkTest00617").serializeArray();
-    var URL = $("#FormBenchmarkTest00617").attr("action");
-
-    $.ajax({
-        url : URL,
-        type: "POST",
-        data : formData,
-        success: function(data, textStatus, jqXHR){
-            $("#ajax-form-msg1").html('<pre><code class="prettyprint">'+data+'</code></pre>');
-        },
-         error: function (jqXHR, textStatus, errorThrown){ alert(errorThrown);}
-    });
-});
-</script>
+ <div><label>Select your habits and edit the parameter [name,value]:</label></div><br/>
+    <div><input type="checkbox" name="vector" value="someSecret" checked>Reading. [vector, someSecret]</div>
+    <div><input type="checkbox" name="vector" value="Movies">Movies. [vector, Movies]</div>
+    <div><input type="checkbox" name="vector" value="Writing">Writing. [vector, Writing]</div>
+    <div><input type="checkbox" name="vector" value="Singing">Singing. [vector, Singing]</div>
+    <div><label>Parameter foo, value:</label><input type="text" id="foo" name="foo" value="bar"></input></div><br/>
+    <div><input type="submit" value="Submit"></div>
+ </form>
 </body>
 </html>

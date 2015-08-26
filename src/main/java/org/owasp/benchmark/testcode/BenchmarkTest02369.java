@@ -59,18 +59,30 @@ public class BenchmarkTest02369 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		response.getWriter().println(bar.toCharArray());
+		String sql = "INSERT INTO users (username, password) VALUES ('foo','"+ bar + "')";
+				
+		try {
+			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			int count = statement.executeUpdate( sql, new int[] {1,2} );
+            org.owasp.benchmark.helpers.DatabaseHelper.outputUpdateComplete(sql, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map69572 = new java.util.HashMap<String,Object>();
-		map69572.put("keyA-69572", "a_Value"); // put some stuff in the collection
-		map69572.put("keyB-69572", param); // put it in a collection
-		map69572.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map69572.get("keyB-69572"); // get it back out
-		bar = (String)map69572.get("keyA-69572"); // get safe value back out
+		String bar;
+		
+		// Simple ? condition that assigns param to bar on false condition
+		int num = 106;
+		
+		bar = (7*42) - num > 200 ? "This should never happen" : param;
+		
 	
 		return bar;	
 	}

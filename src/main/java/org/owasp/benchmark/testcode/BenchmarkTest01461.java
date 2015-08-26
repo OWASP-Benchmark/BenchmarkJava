@@ -59,24 +59,34 @@ public class BenchmarkTest01461 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		response.getWriter().write(bar.toCharArray());
+		String sql = "{call " + bar + "}";
+						
+		try {
+			java.sql.Connection connection = org.owasp.benchmark.helpers.DatabaseHelper.getSqlConnection();
+			java.sql.CallableStatement statement = connection.prepareCall( sql, java.sql.ResultSet.TYPE_FORWARD_ONLY, 
+							java.sql.ResultSet.CONCUR_READ_ONLY );
+			java.sql.ResultSet rs = statement.executeQuery();
+            org.owasp.benchmark.helpers.DatabaseHelper.printResults(rs, sql, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "";
-		if (param != null) {
-			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
-			valuesList.add("safe");
-			valuesList.add( param );
-			valuesList.add( "moresafe" );
-			
-			valuesList.remove(0); // remove the 1st safe value
-			
-			bar = valuesList.get(0); // get the param value
-		}
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map16783 = new java.util.HashMap<String,Object>();
+		map16783.put("keyA-16783", "a_Value"); // put some stuff in the collection
+		map16783.put("keyB-16783", param); // put it in a collection
+		map16783.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map16783.get("keyB-16783"); // get it back out
+		bar = (String)map16783.get("keyA-16783"); // get safe value back out
 
             return bar;
         }

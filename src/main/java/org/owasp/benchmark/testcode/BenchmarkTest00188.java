@@ -44,34 +44,52 @@ public class BenchmarkTest00188 extends HttpServlet {
 		if (param == null) param = "";
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map95625 = new java.util.HashMap<String,Object>();
-		map95625.put("keyA-95625", "a_Value"); // put some stuff in the collection
-		map95625.put("keyB-95625", param); // put it in a collection
-		map95625.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map95625.get("keyB-95625"); // get it back out
-		bar = (String)map95625.get("keyA-95625"); // get safe value back out
+		String bar;
+		
+		// Simple if statement that assigns param to bar on true condition
+		int num = 196;
+		if ( (500/42) + num > 200 )
+		   bar = param;
+		else bar = "This should never happen"; 
 		
 		
-		byte[] input = new byte[1000];
-		String str = "?";
-		Object inputParam = param;
-		if (inputParam instanceof String) str = ((String) inputParam);
-		if (inputParam instanceof java.io.InputStream) {
-			int i = ((java.io.InputStream) inputParam).read(input);
-			if (i == -1) {
-				response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
-				return;
-			}			
-			str = new String(input, 0, i);
-		}
-		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie", str);
-		
-		cookie.setSecure(false);
-		
-		response.addCookie(cookie);
+		try {
+			long l = java.security.SecureRandom.getInstance("SHA1PRNG").nextLong();
+			String rememberMeKey = Long.toString(l);
+			
+			String user = "SafeLogan";
+			String fullClassName = this.getClass().getName();
+			String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
+			user+= testCaseNumber;
+			
+			String cookieName = "rememberMe" + testCaseNumber;
+			
+			boolean foundUser = false;
+			javax.servlet.http.Cookie[] cookies = request.getCookies();
+			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
+				javax.servlet.http.Cookie cookie = cookies[i];
+				if (cookieName.equals(cookie.getName())) {
+					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+						foundUser = true;
+					}
+				}
+			}
+			
+			if (foundUser) {
+				response.getWriter().println("Welcome back: " + user + "<br/>");			
+			} else {			
+				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
+				rememberMe.setSecure(true);
+				request.getSession().setAttribute(cookieName, rememberMeKey);
+				response.addCookie(rememberMe);
+				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
+						+ " whose value is: " + rememberMe.getValue() + "<br/>");
+			}
 
-        response.getWriter().println("Created cookie: 'SomeCookie': with value: '"
-          + org.owasp.esapi.ESAPI.encoder().encodeForHTML(str) + "' and secure flag set to: false");
+	    } catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing SecureRandom.nextLong() - TestCase");
+			throw new ServletException(e);
+	    }		
+		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextLong() executed");
 	}
 }

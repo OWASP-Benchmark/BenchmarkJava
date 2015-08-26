@@ -45,52 +45,36 @@ public class BenchmarkTest01282 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		String fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
-        java.io.InputStream is = null;
-        
-		try {	
-			java.nio.file.Path path = java.nio.file.Paths.get(fileName);
-			is = java.nio.file.Files.newInputStream(path, java.nio.file.StandardOpenOption.READ);
-			byte[] b = new byte[1000];
-			int size = is.read(b);
-			response.getWriter().write("The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n");
-			response.getWriter().write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size)));
-			is.close();
-		} catch (Exception e) {
-            System.out.println("Couldn't open InputStream on file: '" + fileName + "'");
-			response.getWriter().write("Problem getting InputStream: " 
-				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage()));
-        } finally {
-			if (is != null) {
-                try {
-                    is.close();
-                    is = null;
-                } catch (Exception e) {
-                    // we tried...
-                }
-            }
-        }
+		byte[] input = new byte[1000];
+		String str = "?";
+		Object inputParam = param;
+		if (inputParam instanceof String) str = ((String) inputParam);
+		if (inputParam instanceof java.io.InputStream) {
+			int i = ((java.io.InputStream) inputParam).read(input);
+			if (i == -1) {
+				response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+				return;
+			}			
+			str = new String(input, 0, i);
+		}
+		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie", str);
+		
+		cookie.setSecure(false);
+		
+		response.addCookie(cookie);
+
+        response.getWriter().println("Created cookie: 'SomeCookie': with value: '"
+          + org.owasp.esapi.ESAPI.encoder().encodeForHTML(str) + "' and secure flag set to: false");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a81937 = param; //assign
-		StringBuilder b81937 = new StringBuilder(a81937);  // stick in stringbuilder
-		b81937.append(" SafeStuff"); // append some safe content
-		b81937.replace(b81937.length()-"Chars".length(),b81937.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map81937 = new java.util.HashMap<String,Object>();
-		map81937.put("key81937", b81937.toString()); // put in a collection
-		String c81937 = (String)map81937.get("key81937"); // get it back out
-		String d81937 = c81937.substring(0,c81937.length()-1); // extract most of it
-		String e81937 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d81937.getBytes() ) )); // B64 encode and decode it
-		String f81937 = e81937.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g81937 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g81937); // reflection
+		String bar = param;
+		if (param != null && param.length() > 1) {
+		    bar = param.substring(0,param.length()-1);
+		}
 
             return bar;
         }

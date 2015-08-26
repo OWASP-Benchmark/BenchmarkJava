@@ -40,40 +40,32 @@ public class BenchmarkTest01254 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("vector");
-		if (headers.hasMoreElements()) {
-			param = headers.nextElement(); // just grab first element
-		}
+		String param = request.getParameter("vector");
+		if (param == null) param = "";
 
 		String bar = new Test().doSomething(param);
 		
-		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
-				
-		try {
-			java.sql.Statement statement =  org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			statement.execute( sql, java.sql.Statement.RETURN_GENERATED_KEYS );
-            org.owasp.benchmark.helpers.DatabaseHelper.printResults(statement, sql, response);
-		} catch (java.sql.SQLException e) {
-			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
-        		return;
-        	}
-			else throw new ServletException(e);
-		}
+		response.getWriter().print(bar.toCharArray());
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		
-		// Simple ? condition that assigns param to bar on false condition
-		int num = 106;
-		
-		bar = (7*42) - num > 200 ? "This should never happen" : param;
-		
+		// Chain a bunch of propagators in sequence
+		String a43352 = param; //assign
+		StringBuilder b43352 = new StringBuilder(a43352);  // stick in stringbuilder
+		b43352.append(" SafeStuff"); // append some safe content
+		b43352.replace(b43352.length()-"Chars".length(),b43352.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map43352 = new java.util.HashMap<String,Object>();
+		map43352.put("key43352", b43352.toString()); // put in a collection
+		String c43352 = (String)map43352.get("key43352"); // get it back out
+		String d43352 = c43352.substring(0,c43352.length()-1); // extract most of it
+		String e43352 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d43352.getBytes() ) )); // B64 encode and decode it
+		String f43352 = e43352.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f43352); // reflection
 
             return bar;
         }

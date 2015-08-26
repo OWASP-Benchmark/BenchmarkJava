@@ -40,32 +40,74 @@ public class BenchmarkTest02208 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		String param = request.getParameter("vector");
-		if (param == null) param = "";
+		java.util.Map<String,String[]> map = request.getParameterMap();
+		String param = "";
+		if (!map.isEmpty()) {
+			String[] values = map.get("vector");
+			if (values != null) param = values[0];
+		}
+		
 
 		String bar = doSomething(param);
 		
-		String cmd = org.owasp.benchmark.helpers.Utils.getInsecureOSCommandString(this.getClass().getClassLoader());
-		String[] args = {cmd};
-        String[] argsEnv = { bar };
-        
-		Runtime r = Runtime.getRuntime();
+	org.owasp.benchmark.helpers.LDAPManager ads = new org.owasp.benchmark.helpers.LDAPManager();
+	try {
+		response.setContentType("text/html");
+		String base = "ou=users,ou=system";
+		javax.naming.directory.SearchControls sc = new javax.naming.directory.SearchControls();
+		sc.setSearchScope(javax.naming.directory.SearchControls.SUBTREE_SCOPE);
+		String filter = "(&(objectclass=person))(|(uid="+bar+")(street={0}))";
+		Object[] filters = new Object[]{"The streetz 4 Ms bar"};
+		
+		javax.naming.directory.DirContext ctx = ads.getDirContext();
+		javax.naming.directory.InitialDirContext idc = (javax.naming.directory.InitialDirContext) ctx;
+		javax.naming.NamingEnumeration<javax.naming.directory.SearchResult> results = 
+				idc.search(base, filter,filters, sc);
+		while (results.hasMore()) {
+			javax.naming.directory.SearchResult sr = (javax.naming.directory.SearchResult) results.next();
+			javax.naming.directory.Attributes attrs = sr.getAttributes();
 
-		try {
-			Process p = r.exec(args, argsEnv);
-			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - TestCase");
-            throw new ServletException(e);
+			javax.naming.directory.Attribute attr = attrs.get("uid");
+			javax.naming.directory.Attribute attr2 = attrs.get("street");
+			if (attr != null){
+				response.getWriter().write("LDAP query results:<br>"
+						+ " Record found with name " + attr.get() + "<br>"
+								+ "Address: " + attr2.get()+ "<br>");
+				System.out.println("record found " + attr.get());
+			}
 		}
+	} catch (javax.naming.NamingException e) {
+		throw new ServletException(e);
+	}finally{
+    	try {
+    		ads.closeDirContext();
+		} catch (Exception e) {
+			throw new ServletException(e);
+		}
+    }
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "";
-		if (param != null) {
-			bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    	new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
+		String bar;
+		String guess = "ABC";
+		char switchTarget = guess.charAt(2);
+		
+		// Simple case statement that assigns param to bar on conditions 'A', 'C', or 'D'
+		switch (switchTarget) {
+		  case 'A':
+		        bar = param;
+		        break;
+		  case 'B': 
+		        bar = "bobs_your_uncle";
+		        break;
+		  case 'C':
+		  case 'D':        
+		        bar = param;
+		        break;
+		  default:
+		        bar = "bobs_your_uncle";
+		        break;
 		}
 	
 		return bar;	

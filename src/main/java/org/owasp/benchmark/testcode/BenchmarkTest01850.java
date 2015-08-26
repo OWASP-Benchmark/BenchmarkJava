@@ -12,7 +12,7 @@
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details.
 *
-* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
 * @created 2015
 */
 
@@ -39,57 +39,54 @@ public class BenchmarkTest01850 extends HttpServlet {
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
-	
-		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheValue("vector");
 
-		String bar = new Test().doSomething(param);
+		javax.servlet.http.Cookie[] theCookies = request.getCookies();
 		
+		String param = "";
+		if (theCookies != null) {
+			for (javax.servlet.http.Cookie theCookie : theCookies) {
+				if (theCookie.getName().equals("vector")) {
+					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
+					break;
+				}
+			}
+		}
+
+		String bar = doSomething(param);
+		
+		java.util.List<String> argList = new java.util.ArrayList<String>();
+		
+		String osName = System.getProperty("os.name");
+        if (osName.indexOf("Windows") != -1) {
+        	argList.add("cmd.exe");
+        	argList.add("/c");
+        } else {
+        	argList.add("sh");
+        	argList.add("-c");
+        }
+        argList.add("echo " + bar);
+
+		ProcessBuilder pb = new ProcessBuilder(argList);
+
 		try {
-			String sql = "SELECT TOP 1 USERNAME from USERS where USERNAME='foo' and PASSWORD='"+ bar + "'";
-	
-	        Object results = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.queryForObject(sql,new Object[]{}, String.class);
-			java.io.PrintWriter out = response.getWriter();
-			out.write("Your results are: ");
-	//		System.out.println("Your results are");
-			out.write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(results.toString()));
-	//		System.out.println(results.toString());
-		} catch (org.springframework.dao.DataAccessException e) {
-			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
-        		return;
-        	}
-			else throw new ServletException(e);
+			Process p = pb.start();
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - java.lang.ProcessBuilder(java.util.List) Test Case");
+            throw new ServletException(e);
 		}
 	}  // end doPost
-
-    private class Test {
-
-        public String doSomething(String param) throws ServletException, IOException {
+	
+	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar;
-		String guess = "ABC";
-		char switchTarget = guess.charAt(2);
 		
-		// Simple case statement that assigns param to bar on conditions 'A', 'C', or 'D'
-		switch (switchTarget) {
-		  case 'A':
-		        bar = param;
-		        break;
-		  case 'B': 
-		        bar = "bobs_your_uncle";
-		        break;
-		  case 'C':
-		  case 'D':        
-		        bar = param;
-		        break;
-		  default:
-		        bar = "bobs_your_uncle";
-		        break;
-		}
-
-            return bar;
-        }
-    } // end innerclass Test
-
-} // end DataflowThruInnerClass
+		// Simple ? condition that assigns param to bar on false condition
+		int num = 106;
+		
+		bar = (7*42) - num > 200 ? "This should never happen" : param;
+		
+	
+		return bar;	
+	}
+}

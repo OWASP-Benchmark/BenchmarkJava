@@ -40,53 +40,36 @@ public class BenchmarkTest02144 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("vector");
-		if (headers.hasMoreElements()) {
-			param = headers.nextElement(); // just grab first element
-		}
+		String param = request.getParameter("vector");
+		if (param == null) param = "";
 
 		String bar = doSomething(param);
 		
-		try {
-			java.io.FileInputStream file = new java.io.FileInputStream(org.owasp.benchmark.helpers.Utils.getFileFromClasspath("employees.xml", this.getClass().getClassLoader()));
-			javax.xml.parsers.DocumentBuilderFactory builderFactory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
-			javax.xml.parsers.DocumentBuilder builder = builderFactory.newDocumentBuilder();
-			org.w3c.dom.Document xmlDocument = builder.parse(file);
-			javax.xml.xpath.XPathFactory xpf = javax.xml.xpath.XPathFactory.newInstance();
-			javax.xml.xpath.XPath xp = xpf.newXPath();
-			
-			response.getWriter().println("Your query results are: <br/>"); 
-			String expression = "/Employees/Employee[@emplid='"+bar+"']";
-			response.getWriter().println(xp.evaluate(expression, xmlDocument) + "<br/>");
-			
-		} catch (javax.xml.xpath.XPathExpressionException e) {
-			// OK to swallow
-			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
-		} catch (javax.xml.parsers.ParserConfigurationException e) {
-			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
-		} catch (org.xml.sax.SAXException e) {
-			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
+		byte[] input = new byte[1000];
+		String str = "?";
+		Object inputParam = param;
+		if (inputParam instanceof String) str = ((String) inputParam);
+		if (inputParam instanceof java.io.InputStream) {
+			int i = ((java.io.InputStream) inputParam).read(input);
+			if (i == -1) {
+				response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+				return;
+			}			
+			str = new String(input, 0, i);
 		}
+		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie", str);
+		
+		cookie.setSecure(true);
+		
+		response.addCookie(cookie);
+
+		response.getWriter().println("Created cookie: SomeCookie: with value: '"
+		  + org.owasp.esapi.ESAPI.encoder().encodeForHTML(str) + "' and secure flag set to: true");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a45492 = param; //assign
-		StringBuilder b45492 = new StringBuilder(a45492);  // stick in stringbuilder
-		b45492.append(" SafeStuff"); // append some safe content
-		b45492.replace(b45492.length()-"Chars".length(),b45492.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map45492 = new java.util.HashMap<String,Object>();
-		map45492.put("key45492", b45492.toString()); // put in a collection
-		String c45492 = (String)map45492.get("key45492"); // get it back out
-		String d45492 = c45492.substring(0,c45492.length()-1); // extract most of it
-		String e45492 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d45492.getBytes() ) )); // B64 encode and decode it
-		String f45492 = e45492.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g45492 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g45492); // reflection
+		String bar = org.springframework.web.util.HtmlUtils.htmlEscape(param);
 	
 		return bar;	
 	}

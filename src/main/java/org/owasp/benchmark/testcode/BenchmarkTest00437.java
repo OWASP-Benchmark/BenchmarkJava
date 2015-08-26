@@ -44,60 +44,27 @@ public class BenchmarkTest00437 extends HttpServlet {
 		if (param == null) param = "";
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a23687 = param; //assign
-		StringBuilder b23687 = new StringBuilder(a23687);  // stick in stringbuilder
-		b23687.append(" SafeStuff"); // append some safe content
-		b23687.replace(b23687.length()-"Chars".length(),b23687.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map23687 = new java.util.HashMap<String,Object>();
-		map23687.put("key23687", b23687.toString()); // put in a collection
-		String c23687 = (String)map23687.get("key23687"); // get it back out
-		String d23687 = c23687.substring(0,c23687.length()-1); // extract most of it
-		String e23687 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d23687.getBytes() ) )); // B64 encode and decode it
-		String f23687 = e23687.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g23687 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g23687); // reflection
+		String bar;
+		
+		// Simple if statement that assigns constant to bar on true condition
+		int num = 86;
+		if ( (7*42) - num > 200 )
+		   bar = "This_should_always_happen"; 
+		else bar = param;
 		
 		
+		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
+				
 		try {
-			int r = java.security.SecureRandom.getInstance("SHA1PRNG").nextInt();
-			String rememberMeKey = Integer.toString(r);
-			
-			String user = "SafeIngrid";
-			String fullClassName = this.getClass().getName();
-			String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
-			user+= testCaseNumber;
-			
-			String cookieName = "rememberMe" + testCaseNumber;
-			
-			boolean foundUser = false;
-			javax.servlet.http.Cookie[] cookies = request.getCookies();
-			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-				javax.servlet.http.Cookie cookie = cookies[i];
-				if (cookieName.equals(cookie.getName())) {
-					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-						foundUser = true;
-					}
-				}
-			}
-			
-			if (foundUser) {
-				response.getWriter().println("Welcome back: " + user + "<br/>");			
-			} else {			
-				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
-				rememberMe.setSecure(true);
-				request.getSession().setAttribute(cookieName, rememberMeKey);
-				response.addCookie(rememberMe);
-				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-						+ " whose value is: " + rememberMe.getValue() + "<br/>");
-			}
-
-		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing SecureRandom.nextInt() - TestCase");
-			throw new ServletException(e);
-	    }
-		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextInt() executed");
+			java.sql.Statement statement =  org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			statement.execute( sql, new int[] { 1, 2 } );
+            org.owasp.benchmark.helpers.DatabaseHelper.printResults(statement, sql, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}
 }

@@ -45,46 +45,31 @@ public class BenchmarkTest01093 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		long l = new java.util.Random().nextLong();
-		String rememberMeKey = Long.toString(l);
-		
-		String user = "Logan";
-		String fullClassName = this.getClass().getName();
-		String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
-		user+= testCaseNumber;
-		
-		String cookieName = "rememberMe" + testCaseNumber;
-		
-		boolean foundUser = false;
-		javax.servlet.http.Cookie[] cookies = request.getCookies();
-		for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-			javax.servlet.http.Cookie cookie = cookies[i];
-			if (cookieName.equals(cookie.getName())) {
-				if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-					foundUser = true;
-				}
-			}
-		}
-		
-		if (foundUser) {
-			response.getWriter().println("Welcome back: " + user + "<br/>");			
-		} else {			
-			javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
-			rememberMe.setSecure(true);
-			request.getSession().setAttribute(cookieName, rememberMeKey);
-			response.addCookie(rememberMe);
-			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-					+ " whose value is: " + rememberMe.getValue() + "<br/>");
-		}
+		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
 				
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextLong() executed");
+		try {
+			java.sql.Statement statement =  org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			statement.execute( sql, new int[] { 1, 2 } );
+            org.owasp.benchmark.helpers.DatabaseHelper.printResults(statement, sql, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = org.springframework.web.util.HtmlUtils.htmlEscape(param);
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map41610 = new java.util.HashMap<String,Object>();
+		map41610.put("keyA-41610", "a Value"); // put some stuff in the collection
+		map41610.put("keyB-41610", param); // put it in a collection
+		map41610.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map41610.get("keyB-41610"); // get it back out
 
             return bar;
         }

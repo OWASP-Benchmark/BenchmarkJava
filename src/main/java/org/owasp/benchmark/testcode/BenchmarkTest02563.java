@@ -40,49 +40,65 @@ public class BenchmarkTest02563 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		String[] values = request.getParameterValues("vector");
-		String param;
-		if (values != null && values.length > 0)
-		  param = values[0];
-		else param = "";
+		String queryString = request.getQueryString();
+		String paramval = "vector"+"=";
+		int paramLoc = -1;
+		if (queryString != null) paramLoc = queryString.indexOf(paramval);
+		if (paramLoc == -1) {
+			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "vector" + "' in query string.");
+			return;
+		}
+		
+		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "vector" param is last parameter in query string.
+		// And then check to see if its in the middle of the query string and if so, trim off what comes after.
+		int ampersandLoc = queryString.indexOf("&", paramLoc);
+		if (ampersandLoc != -1) {
+			param = queryString.substring(paramLoc + paramval.length(), ampersandLoc);
+		}
+		param = java.net.URLDecoder.decode(param, "UTF-8");
 
 		String bar = doSomething(param);
 		
-		byte[] input = new byte[1000];
-		String str = "?";
-		Object inputParam = param;
-		if (inputParam instanceof String) str = ((String) inputParam);
-		if (inputParam instanceof java.io.InputStream) {
-			int i = ((java.io.InputStream) inputParam).read(input);
-			if (i == -1) {
-				response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
-				return;
-			}			
-			str = new String(input, 0, i);
-		}
-		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie", str);
-		
-		cookie.setSecure(true);
-		
-		response.addCookie(cookie);
+		String fileName = null;
+		java.io.FileOutputStream fos = null;
 
-		response.getWriter().println("Created cookie: SomeCookie: with value: '"
-		  + org.owasp.esapi.ESAPI.encoder().encodeForHTML(str) + "' and secure flag set to: true");
+		try {
+			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
+	
+			fos = new java.io.FileOutputStream(new java.io.File(fileName),false);
+ 	       response.getWriter().write("Now ready to write to file: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName));
+		} catch (Exception e) {
+			System.out.println("Couldn't open FileOutputStream on file: '" + fileName + "'");
+//			System.out.println("File exception caught and swallowed: " + e.getMessage());
+		} finally {
+			if (fos != null) {
+				try {
+					fos.close();
+                    fos = null;
+				} catch (Exception e) {
+					// we tried...
+				}
+			}
+		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "";
-		if (param != null) {
-			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
-			valuesList.add("safe");
-			valuesList.add( param );
-			valuesList.add( "moresafe" );
-			
-			valuesList.remove(0); // remove the 1st safe value
-			
-			bar = valuesList.get(0); // get the param value
-		}
+		// Chain a bunch of propagators in sequence
+		String a97151 = param; //assign
+		StringBuilder b97151 = new StringBuilder(a97151);  // stick in stringbuilder
+		b97151.append(" SafeStuff"); // append some safe content
+		b97151.replace(b97151.length()-"Chars".length(),b97151.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map97151 = new java.util.HashMap<String,Object>();
+		map97151.put("key97151", b97151.toString()); // put in a collection
+		String c97151 = (String)map97151.get("key97151"); // get it back out
+		String d97151 = c97151.substring(0,c97151.length()-1); // extract most of it
+		String e97151 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d97151.getBytes() ) )); // B64 encode and decode it
+		String f97151 = e97151.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String g97151 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g97151); // reflection
 	
 		return bar;	
 	}

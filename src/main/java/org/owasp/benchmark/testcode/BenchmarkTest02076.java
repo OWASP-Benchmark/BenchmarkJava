@@ -48,21 +48,60 @@ public class BenchmarkTest02076 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		java.io.File fileTarget = new java.io.File(bar);
-		response.getWriter().write("Access to file: '" + fileTarget + "' created." );
-		if (fileTarget.exists()) {
-			response.getWriter().write(" And file already exists.");
-		} else { response.getWriter().write(" But file doesn't exist yet."); }
+		try {
+			java.util.Random numGen = java.security.SecureRandom.getInstance("SHA1PRNG");
+        	double rand = getNextNumber(numGen);
+			
+			String rememberMeKey = Double.toString(rand).substring(2); // Trim off the 0. at the front.
+			
+			String user = "SafeDonatella";
+			String fullClassName = this.getClass().getName();
+			String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
+			user+= testCaseNumber;
+			
+			String cookieName = "rememberMe" + testCaseNumber;
+			
+			boolean foundUser = false;
+			javax.servlet.http.Cookie[] cookies = request.getCookies();
+			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
+				javax.servlet.http.Cookie cookie = cookies[i];
+				if (cookieName.equals(cookie.getName())) {
+					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+						foundUser = true;
+					}
+				}
+			}
+			
+			if (foundUser) {
+				response.getWriter().println("Welcome back: " + user + "<br/>");			
+			} else {			
+				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
+				rememberMe.setSecure(true);
+				request.getSession().setAttribute(cookieName, rememberMeKey);
+				response.addCookie(rememberMe);
+				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
+						+ " whose value is: " + rememberMe.getValue() + "<br/>");
+			}
+
+	    } catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing SecureRandom.nextDouble() - TestCase");
+			throw new ServletException(e);
+	    }
+		
+		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextDouble() executed");
+	}
+		double getNextNumber(java.util.Random generator) {
+			return generator.nextDouble();
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map8639 = new java.util.HashMap<String,Object>();
-		map8639.put("keyA-8639", "a Value"); // put some stuff in the collection
-		map8639.put("keyB-8639", param); // put it in a collection
-		map8639.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map8639.get("keyB-8639"); // get it back out
+		java.util.HashMap<String,Object> map16085 = new java.util.HashMap<String,Object>();
+		map16085.put("keyA-16085", "a Value"); // put some stuff in the collection
+		map16085.put("keyB-16085", param); // put it in a collection
+		map16085.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map16085.get("keyB-16085"); // get it back out
 	
 		return bar;	
 	}

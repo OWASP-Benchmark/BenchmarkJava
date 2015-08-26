@@ -40,42 +40,66 @@ public class BenchmarkTest00224 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String param = request.getHeader("vector");
-		if (param == null) param = "";
-		
-		
-		String bar;
-		
-		// Simple if statement that assigns constant to bar on true condition
-		int num = 86;
-		if ( (7*42) - num > 200 )
-		   bar = "This_should_always_happen"; 
-		else bar = param;
-		
-		
-		try {
-			java.io.FileInputStream file = new java.io.FileInputStream(org.owasp.benchmark.helpers.Utils.getFileFromClasspath("employees.xml", this.getClass().getClassLoader()));
-			javax.xml.parsers.DocumentBuilderFactory builderFactory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
-			javax.xml.parsers.DocumentBuilder builder = builderFactory.newDocumentBuilder();
-			org.w3c.dom.Document xmlDocument = builder.parse(file);
-			javax.xml.xpath.XPathFactory xpf = javax.xml.xpath.XPathFactory.newInstance();
-			javax.xml.xpath.XPath xp = xpf.newXPath();
-			
-			String expression = "/Employees/Employee[@emplid='"+bar+"']";
-			
-			response.getWriter().println("Your query results are: <br/>"); 
-			org.w3c.dom.NodeList nodeList = (org.w3c.dom.NodeList) xp.compile(expression).evaluate(xmlDocument, javax.xml.xpath.XPathConstants.NODESET);
-			for (int i = 0; i < nodeList.getLength(); i++) {
-				org.w3c.dom.Element value = (org.w3c.dom.Element) nodeList.item(i);
-				response.getWriter().println(value.getTextContent() + "<br/>");
+		String param = "";
+		boolean flag = true;
+		java.util.Enumeration<String> names = request.getHeaderNames();
+		while (names.hasMoreElements() && flag) {
+			String name = (String) names.nextElement();
+			java.util.Enumeration<String> values = request.getHeaders(name);
+			if (values != null) {
+				while (values.hasMoreElements() && flag) {
+					String value = (String) values.nextElement();
+					if (value.equals("vector")) {
+						param = name;
+						flag = false;
+					}
+				}
 			}
-		} catch (javax.xml.xpath.XPathExpressionException e) {
-			// OK to swallow
-			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
-		} catch (javax.xml.parsers.ParserConfigurationException e) {
-			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
-		} catch (org.xml.sax.SAXException e) {
-			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
 		}
+		
+		
+		String bar = param;
+		
+		
+		java.security.Provider[] provider = java.security.Security.getProviders();
+		java.security.MessageDigest md;
+
+		try {
+			if (provider.length > 1) {
+
+				md = java.security.MessageDigest.getInstance("sha-384", provider[0]);
+			} else {
+				md = java.security.MessageDigest.getInstance("sha-384","SUN");
+			}
+			byte[] input = { (byte)'?' };
+			Object inputParam = bar;
+			if (inputParam instanceof String) input = ((String) inputParam).getBytes();
+			if (inputParam instanceof java.io.InputStream) {
+				byte[] strInput = new byte[1000];
+				int i = ((java.io.InputStream) inputParam).read(strInput);
+				if (i == -1) {
+					response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+					return;
+				}
+				input = java.util.Arrays.copyOf(strInput, i);
+			}			
+			md.update(input);
+			
+			byte[] result = md.digest();
+			java.io.File fileTarget = new java.io.File(
+					new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),"passwordFile.txt");
+			java.io.FileWriter fw = new java.io.FileWriter(fileTarget,true); //the true will append the new data
+			    fw.write("hash_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
+			fw.close();
+			response.getWriter().println("Sensitive value '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' hashed and stored<br/>");
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider)");
+            throw new ServletException(e);
+		} catch (java.security.NoSuchProviderException e) {
+			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider)");
+            throw new ServletException(e);
+		}
+
+		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider) executed");
 	}
 }

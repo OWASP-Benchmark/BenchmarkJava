@@ -59,59 +59,34 @@ public class BenchmarkTest01684 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-	org.owasp.benchmark.helpers.LDAPManager ads = new org.owasp.benchmark.helpers.LDAPManager();
-	try {
-		response.setContentType("text/html");
-		String base = "ou=users,ou=system";
-		javax.naming.directory.SearchControls sc = new javax.naming.directory.SearchControls();
-		sc.setSearchScope(javax.naming.directory.SearchControls.SUBTREE_SCOPE);
-		String filter = "(&(objectclass=person)(uid=" + bar
-				+ "))";
+		byte[] input = new byte[1000];
+		String str = "?";
+		Object inputParam = param;
+		if (inputParam instanceof String) str = ((String) inputParam);
+		if (inputParam instanceof java.io.InputStream) {
+			int i = ((java.io.InputStream) inputParam).read(input);
+			if (i == -1) {
+				response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+				return;
+			}			
+			str = new String(input, 0, i);
+		}
+		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie", str);
 		
-		javax.naming.directory.DirContext ctx = ads.getDirContext();
-		javax.naming.directory.InitialDirContext idc = (javax.naming.directory.InitialDirContext) ctx;
-		javax.naming.NamingEnumeration<javax.naming.directory.SearchResult> results = 
-				idc.search(base, filter, sc);
+		cookie.setSecure(true);
 		
-		while (results.hasMore()) {
-			javax.naming.directory.SearchResult sr = (javax.naming.directory.SearchResult) results.next();
-			javax.naming.directory.Attributes attrs = sr.getAttributes();
+		response.addCookie(cookie);
 
-			javax.naming.directory.Attribute attr = attrs.get("uid");
-			javax.naming.directory.Attribute attr2 = attrs.get("street");
-			if (attr != null){
-				response.getWriter().write("LDAP query results:<br>"
-						+ " Record found with name " + attr.get() + "<br>"
-								+ "Address: " + attr2.get()+ "<br>");
-				System.out.println("record found " + attr.get());
-			}
-		}
-	} catch (javax.naming.NamingException e) {
-		throw new ServletException(e);
-	}finally{
-    	try {
-    		ads.closeDirContext();
-		} catch (Exception e) {
-			throw new ServletException(e);
-		}
-    }
+		response.getWriter().println("Created cookie: SomeCookie: with value: '"
+		  + org.owasp.esapi.ESAPI.encoder().encodeForHTML(str) + "' and secure flag set to: true");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "";
-		if (param != null) {
-			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
-			valuesList.add("safe");
-			valuesList.add( param );
-			valuesList.add( "moresafe" );
-			
-			valuesList.remove(0); // remove the 1st safe value
-			
-			bar = valuesList.get(0); // get the param value
-		}
+		StringBuilder sbxyz13607 = new StringBuilder(param);
+		String bar = sbxyz13607.append("_SafeStuff").toString();
 
             return bar;
         }

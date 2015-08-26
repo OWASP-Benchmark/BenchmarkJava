@@ -58,53 +58,9 @@ public class BenchmarkTest00551 extends HttpServlet {
 		}
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map43586 = new java.util.HashMap<String,Object>();
-		map43586.put("keyA-43586", "a Value"); // put some stuff in the collection
-		map43586.put("keyB-43586", param); // put it in a collection
-		map43586.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map43586.get("keyB-43586"); // get it back out
+		String bar = param;
 		
 		
-		java.security.Provider[] provider = java.security.Security.getProviders();
-		java.security.MessageDigest md;
-
-		try {
-			if (provider.length > 1) {
-
-				md = java.security.MessageDigest.getInstance("SHA1", provider[0]);
-			} else {
-				md = java.security.MessageDigest.getInstance("SHA1", "SUN");
-			}
-			byte[] input = { (byte)'?' };
-			Object inputParam = bar;
-			if (inputParam instanceof String) input = ((String) inputParam).getBytes();
-			if (inputParam instanceof java.io.InputStream) {
-				byte[] strInput = new byte[1000];
-				int i = ((java.io.InputStream) inputParam).read(strInput);
-				if (i == -1) {
-					response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
-					return;
-				}
-				input = java.util.Arrays.copyOf(strInput, i);
-			}
-			md.update(input);
-			
-			byte[] result = md.digest();
-			java.io.File fileTarget = new java.io.File(
-					new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),"passwordFile.txt");
-			java.io.FileWriter fw = new java.io.FileWriter(fileTarget,true); //the true will append the new data
-			    fw.write("hash_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
-			fw.close();
-			response.getWriter().println("Sensitive value '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' hashed and stored<br/>");
-		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider)");
-            throw new ServletException(e);
-		} catch (java.security.NoSuchProviderException e) {
-			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider)");
-            throw new ServletException(e);
-		}
-
-		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider) executed");
+		response.getWriter().println(bar);
 	}
 }

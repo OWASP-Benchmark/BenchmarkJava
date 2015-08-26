@@ -40,47 +40,24 @@ public class BenchmarkTest02494 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheParameter("vector");
-		if (param == null) param = "";
+		String[] values = request.getParameterValues("vector");
+		String param;
+		if (values != null && values.length > 0)
+		  param = values[0];
+		else param = "";
 
 		String bar = doSomething(param);
 		
- 		try {
-	        String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='" + bar + "'";
-	
-			java.util.List<String> results = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.query(sql,  new org.springframework.jdbc.core.RowMapper<String>() {
-	            public String mapRow(java.sql.ResultSet rs, int rowNum) throws java.sql.SQLException {
-	                try {
-	                	return rs.getString("USERNAME");
-	                } catch (java.sql.SQLException e) {
-	                	if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-	        				return "Error processing query.";
-	        			}
-						else throw e;
-					}
-	            }
-	        });
-			java.io.PrintWriter out = response.getWriter();
-			
-			out.write("Your results are: ");
-	//		System.out.println("Your results are");
-			for(String s : results){
-				out.write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(s) + "<br>");
-	//			System.out.println(s);
-			}
-		} catch (org.springframework.dao.DataAccessException e) {
-			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
-        		return;
-        	}
-			else throw new ServletException(e);
-		}
+		response.getWriter().write(bar);
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar = param;
+		if (param != null && param.length() > 1) {
+		    StringBuilder sbxyz9122 = new StringBuilder(param);
+		    bar = sbxyz9122.replace(param.length()-"Z".length(), param.length(),"Z").toString();
+		}
 	
 		return bar;	
 	}

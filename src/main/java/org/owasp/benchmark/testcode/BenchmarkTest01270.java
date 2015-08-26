@@ -45,32 +45,40 @@ public class BenchmarkTest01270 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		java.io.File fileTarget = new java.io.File(new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),bar);
-		response.getWriter().write("Access to file: '" + fileTarget + "' created." );
-		if (fileTarget.exists()) {
-			response.getWriter().write(" And file already exists.");
-		} else { response.getWriter().write(" But file doesn't exist yet."); }
+		String a1 = "";
+		String a2 = "";
+		String osName = System.getProperty("os.name");
+        if (osName.indexOf("Windows") != -1) {
+        	a1 = "cmd.exe";
+        	a2 = "/c";
+        } else {
+        	a1 = "sh";
+        	a2 = "-c";
+        }
+        String[] args = {a1, a2, "echo " + bar};
+
+		ProcessBuilder pb = new ProcessBuilder(args);
+		
+		try {
+			Process p = pb.start();
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - java.lang.ProcessBuilder(java.lang.String[]) Test Case");
+            throw new ServletException(e);
+		}
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a12702 = param; //assign
-		StringBuilder b12702 = new StringBuilder(a12702);  // stick in stringbuilder
-		b12702.append(" SafeStuff"); // append some safe content
-		b12702.replace(b12702.length()-"Chars".length(),b12702.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map12702 = new java.util.HashMap<String,Object>();
-		map12702.put("key12702", b12702.toString()); // put in a collection
-		String c12702 = (String)map12702.get("key12702"); // get it back out
-		String d12702 = c12702.substring(0,c12702.length()-1); // extract most of it
-		String e12702 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d12702.getBytes() ) )); // B64 encode and decode it
-		String f12702 = e12702.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g12702 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g12702); // reflection
+		String bar;
+		
+		// Simple ? condition that assigns param to bar on false condition
+		int num = 106;
+		
+		bar = (7*42) - num > 200 ? "This should never happen" : param;
+		
 
             return bar;
         }

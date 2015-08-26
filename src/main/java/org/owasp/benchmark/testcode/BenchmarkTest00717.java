@@ -47,44 +47,24 @@ public class BenchmarkTest00717 extends HttpServlet {
 		else param = "";
 		
 		
-		String bar;
+		// Chain a bunch of propagators in sequence
+		String a53433 = param; //assign
+		StringBuilder b53433 = new StringBuilder(a53433);  // stick in stringbuilder
+		b53433.append(" SafeStuff"); // append some safe content
+		b53433.replace(b53433.length()-"Chars".length(),b53433.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map53433 = new java.util.HashMap<String,Object>();
+		map53433.put("key53433", b53433.toString()); // put in a collection
+		String c53433 = (String)map53433.get("key53433"); // get it back out
+		String d53433 = c53433.substring(0,c53433.length()-1); // extract most of it
+		String e53433 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d53433.getBytes() ) )); // B64 encode and decode it
+		String f53433 = e53433.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String g53433 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g53433); // reflection
 		
-		// Simple ? condition that assigns constant to bar on true condition
-		int num = 106;
 		
-		bar = (7*18) + num > 200 ? "This_should_always_happen" : param;
-		
-		
-		
-		String fileName = null;
-		java.io.FileOutputStream fos = null;
-
-		try {
-			// Create the file first so the test won't throw an exception if it doesn't exist.
-			// Note: Don't actually do this because this method signature could cause a tool to find THIS file constructor 
-			// as a vuln, rather than the File signature we are trying to actually test.
-			// If necessary, just run the benchmark twice. The 1st run should create all the necessary files.
-			//new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir + bar).createNewFile();
-			
-			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
-	
-	
-	        java.io.FileInputStream fileInputStream = new java.io.FileInputStream(fileName);
-	        java.io.FileDescriptor fd = fileInputStream.getFD();
-	        fos = new java.io.FileOutputStream(fd);
-	        response.getWriter().write("Now ready to write to file: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName));
-		} catch (Exception e) {
-			System.out.println("Couldn't open FileOutputStream on file: '" + fileName + "'");
-//			System.out.println("File exception caught and swallowed: " + e.getMessage());
-		} finally {
-			if (fos != null) {
-				try {
-					fos.close();
-                    fos = null;
-				} catch (Exception e) {
-					// we tried...
-				}
-			}
-		}
+		Object[] obj = { "a", bar};
+		response.getWriter().printf(java.util.Locale.US,"Formatted like: %1$s and %2$s.",obj);
 	}
 }

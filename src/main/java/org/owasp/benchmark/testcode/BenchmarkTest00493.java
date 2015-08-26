@@ -49,14 +49,15 @@ public class BenchmarkTest00493 extends HttpServlet {
 		
 		
 		
-		String bar = "";
-		if (param != null) {
-			bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    	new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
-		}
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map16240 = new java.util.HashMap<String,Object>();
+		map16240.put("keyA-16240", "a_Value"); // put some stuff in the collection
+		map16240.put("keyB-16240", param); // put it in a collection
+		map16240.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map16240.get("keyB-16240"); // get it back out
+		bar = (String)map16240.get("keyA-16240"); // get safe value back out
 		
 		
-		Object[] obj = { "a", "b"};
-		response.getWriter().printf(bar,obj);
+		response.getWriter().write("Parameter value: " + bar);
 	}
 }

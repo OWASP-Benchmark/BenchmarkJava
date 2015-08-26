@@ -60,6 +60,6 @@ public class BenchmarkTest00049 extends HttpServlet {
 		param = java.net.URLDecoder.decode(param, "UTF-8");
 
 		
-		response.getWriter().println(param);
+		response.getWriter().write("Parameter value: " + param);
 	}
 }

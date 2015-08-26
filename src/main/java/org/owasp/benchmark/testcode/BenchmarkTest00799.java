@@ -58,47 +58,23 @@ public class BenchmarkTest00799 extends HttpServlet {
 		param = java.net.URLDecoder.decode(param, "UTF-8");
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map55554 = new java.util.HashMap<String,Object>();
-		map55554.put("keyA-55554", "a_Value"); // put some stuff in the collection
-		map55554.put("keyB-55554", param); // put it in a collection
-		map55554.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map55554.get("keyB-55554"); // get it back out
-		bar = (String)map55554.get("keyA-55554"); // get safe value back out
-		
-		
-	org.owasp.benchmark.helpers.LDAPManager ads = new org.owasp.benchmark.helpers.LDAPManager();
-	try {
-			response.setContentType("text/html");
-			javax.naming.directory.DirContext ctx = ads.getDirContext();
-			String base = "ou=users,ou=system";
-			javax.naming.directory.SearchControls sc = new javax.naming.directory.SearchControls();
-			sc.setSearchScope(javax.naming.directory.SearchControls.SUBTREE_SCOPE);
-			String filter = "(&(objectclass=person)(uid=" + bar
-					+ "))";
-			System.out.println("Filter " + filter);
-			javax.naming.NamingEnumeration<javax.naming.directory.SearchResult> results = ctx.search(base, filter, sc);
-			while (results.hasMore()) {
-				javax.naming.directory.SearchResult sr = (javax.naming.directory.SearchResult) results.next();
-				javax.naming.directory.Attributes attrs = sr.getAttributes();
-
-				javax.naming.directory.Attribute attr = attrs.get("uid");
-				javax.naming.directory.Attribute attr2 = attrs.get("street");
-				if (attr != null){
-					response.getWriter().write("LDAP query results:<br>"
-							+ " Record found with name " + attr.get() + "<br>"
-									+ "Address: " + attr2.get()+ "<br>");
-					System.out.println("record found " + attr.get());
-				}
-			}
-	} catch (javax.naming.NamingException e) {
-		throw new ServletException(e);
-	}finally{
-    	try {
-    		ads.closeDirContext();
-		} catch (Exception e) {
-			throw new ServletException(e);
+		String bar = "alsosafe";
+		if (param != null) {
+			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+			valuesList.add("safe");
+			valuesList.add( param );
+			valuesList.add( "moresafe" );
+			
+			valuesList.remove(0); // remove the 1st safe value
+			
+			bar = valuesList.get(1); // get the last 'safe' value
 		}
-    }
+		
+		
+		Object[] obj = { "a", bar };
+		java.io.PrintWriter out = response.getWriter();
+		out.write("<!DOCTYPE html>\n<html>\n<body>\n<p>");
+		out.format(java.util.Locale.US,"Formatted like: %1$s and %2$s.",obj);
+	    out.write("\n</p>\n</body>\n</html>");
 	}
 }

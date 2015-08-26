@@ -44,17 +44,16 @@ public class BenchmarkTest00879 extends HttpServlet {
 		String param = scr.getTheValue("vector");
 		
 		
-		String bar = "";
-		if (param != null) {
-			bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    	new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
-		}
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map41394 = new java.util.HashMap<String,Object>();
+		map41394.put("keyA-41394", "a_Value"); // put some stuff in the collection
+		map41394.put("keyB-41394", param); // put it in a collection
+		map41394.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map41394.get("keyB-41394"); // get it back out
+		bar = (String)map41394.get("keyA-41394"); // get safe value back out
 		
 		
-		java.io.File fileTarget = new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir, bar);
-		response.getWriter().write("Access to file: '" + fileTarget + "' created." );
-		if (fileTarget.exists()) {
-			response.getWriter().write(" And file already exists.");
-		} else { response.getWriter().write(" But file doesn't exist yet."); }
+		Object[] obj = { "a", "b" };
+		response.getWriter().format(java.util.Locale.US,bar,obj);
 	}
 }

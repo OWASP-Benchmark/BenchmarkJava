@@ -47,37 +47,19 @@ public class BenchmarkTest00326 extends HttpServlet {
 		}
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a95561 = param; //assign
-		StringBuilder b95561 = new StringBuilder(a95561);  // stick in stringbuilder
-		b95561.append(" SafeStuff"); // append some safe content
-		b95561.replace(b95561.length()-"Chars".length(),b95561.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map95561 = new java.util.HashMap<String,Object>();
-		map95561.put("key95561", b95561.toString()); // put in a collection
-		String c95561 = (String)map95561.get("key95561"); // get it back out
-		String d95561 = c95561.substring(0,c95561.length()-1); // extract most of it
-		String e95561 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d95561.getBytes() ) )); // B64 encode and decode it
-		String f95561 = e95561.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g95561 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g95561); // reflection
+		String bar;
+		
+		// Simple if statement that assigns param to bar on true condition
+		int num = 196;
+		if ( (500/42) + num > 200 )
+		   bar = param;
+		else bar = "This should never happen"; 
 		
 		
-		String cmd = "";
-        String osName = System.getProperty("os.name");
-        if (osName.indexOf("Windows") != -1) {
-        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("echo");
-        }
-        
-		Runtime r = Runtime.getRuntime();
-
-		try {
-			Process p = r.exec(cmd + bar);
-			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - TestCase");
-            throw new ServletException(e);
-		}
+		// javax.servlet.http.HttpSession.setAttribute(java.lang.String^,java.lang.Object)
+		request.getSession().setAttribute( bar, "10340");
+				
+		response.getWriter().println("Item: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
+			+ "' with value: '10340' saved in session.");
 	}
 }

@@ -49,28 +49,7 @@ public class BenchmarkTest00013 extends HttpServlet {
 		}
 
 		
-		String fileName = null;
-		java.io.FileInputStream fis = null;
-
-		try {
-			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + param;
-			fis = new java.io.FileInputStream(fileName);
-			byte[] b = new byte[1000];
-			int size = fis.read(b);
-			response.getWriter().write("The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n");
-			response.getWriter().write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size)));
-		} catch (Exception e) {
-			System.out.println("Couldn't open FileInputStream on file: '" + fileName + "'");
-//			System.out.println("File exception caught and swallowed: " + e.getMessage());
-		} finally {
-			if (fis != null) {
-				try {
-					fis.close();
-                    fis = null;
-				} catch (Exception e) {
-					// we tried...
-				}
-			}
-		}
+		Object[] obj = { "a", "b" };
+		response.getWriter().format(java.util.Locale.US,param,obj);
 	}
 }

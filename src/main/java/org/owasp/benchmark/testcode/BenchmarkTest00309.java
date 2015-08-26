@@ -47,19 +47,26 @@ public class BenchmarkTest00309 extends HttpServlet {
 		}
 		
 		
-		String bar;
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map95142 = new java.util.HashMap<String,Object>();
+		map95142.put("keyA-95142", "a_Value"); // put some stuff in the collection
+		map95142.put("keyB-95142", param); // put it in a collection
+		map95142.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map95142.get("keyB-95142"); // get it back out
+		bar = (String)map95142.get("keyA-95142"); // get safe value back out
 		
-		// Simple if statement that assigns constant to bar on true condition
-		int num = 86;
-		if ( (7*42) - num > 200 )
-		   bar = "This_should_always_happen"; 
-		else bar = param;
 		
-		
-		int length = 1;
-		if (bar != null) {
-			length = bar.length();
-			response.getWriter().write(bar.toCharArray(),0,length);
+		String cmd = org.owasp.benchmark.helpers.Utils.getInsecureOSCommandString(this.getClass().getClassLoader());
+        
+		String[] argsEnv = { bar };
+		Runtime r = Runtime.getRuntime();
+
+		try {
+			Process p = r.exec(cmd, argsEnv);
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - TestCase");
+            throw new ServletException(e);
 		}
 	}
 }

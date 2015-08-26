@@ -47,15 +47,13 @@ public class BenchmarkTest00325 extends HttpServlet {
 		}
 		
 		
-		String bar;
-		
-		// Simple ? condition that assigns param to bar on false condition
-		int num = 106;
-		
-		bar = (7*42) - num > 200 ? "This should never happen" : param;
+		String bar = org.apache.commons.lang.StringEscapeUtils.escapeHtml(param);
 		
 		
+		// javax.servlet.http.HttpSession.putValue(java.lang.String,java.lang.Object^)
+		request.getSession().putValue( "userid", bar);
 		
-		response.getWriter().write("Parameter value: " + bar);
+		response.getWriter().println("Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
+			+ "' saved in session.");
 	}
 }

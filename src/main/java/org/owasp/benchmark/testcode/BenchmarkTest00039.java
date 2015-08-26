@@ -60,10 +60,21 @@ public class BenchmarkTest00039 extends HttpServlet {
 		}
 
 		
-		// javax.servlet.http.HttpSession.putValue(java.lang.String^,java.lang.Object)
-		request.getSession().putValue( param, "10340");
-		
-		response.getWriter().println("Item: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(param)
-			+ "' with value: 10340 saved in session.");
+		try {
+			String sql = "SELECT TOP 1 userid from USERS where USERNAME='foo' and PASSWORD='"+ param + "'" ;
+	
+	        java.util.Map results = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.queryForMap(sql);
+			java.io.PrintWriter out = response.getWriter();
+	        out.write("Your results are: ");
+	//		System.out.println("Your results are");
+			out.write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(results.toString()));
+	//		System.out.println(results.toString());
+		} catch (org.springframework.dao.DataAccessException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}
 }

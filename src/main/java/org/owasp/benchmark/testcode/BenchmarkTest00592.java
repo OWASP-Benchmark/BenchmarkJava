@@ -58,28 +58,39 @@ public class BenchmarkTest00592 extends HttpServlet {
 		}
 		
 		
-		String bar = "";
-		if (param != null) {
-			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
-			valuesList.add("safe");
-			valuesList.add( param );
-			valuesList.add( "moresafe" );
-			
-			valuesList.remove(0); // remove the 1st safe value
-			
-			bar = valuesList.get(0); // get the param value
-		}
+		// Chain a bunch of propagators in sequence
+		String a38067 = param; //assign
+		StringBuilder b38067 = new StringBuilder(a38067);  // stick in stringbuilder
+		b38067.append(" SafeStuff"); // append some safe content
+		b38067.replace(b38067.length()-"Chars".length(),b38067.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map38067 = new java.util.HashMap<String,Object>();
+		map38067.put("key38067", b38067.toString()); // put in a collection
+		String c38067 = (String)map38067.get("key38067"); // get it back out
+		String d38067 = c38067.substring(0,c38067.length()-1); // extract most of it
+		String e38067 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d38067.getBytes() ) )); // B64 encode and decode it
+		String f38067 = e38067.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String g38067 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g38067); // reflection
 		
 		
-		String cmd = org.owasp.benchmark.helpers.Utils.getInsecureOSCommandString(this.getClass().getClassLoader());
-		String[] argsEnv = { bar };
-		Runtime r = Runtime.getRuntime();
+		String sql = "SELECT * from USERS where USERNAME=? and PASSWORD='"+ bar +"'";
+				
 		try {
-			Process p = r.exec(cmd, argsEnv, new java.io.File(System.getProperty("user.dir")));
-			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - TestCase");
-            throw new ServletException(e);
+			java.sql.Connection connection = org.owasp.benchmark.helpers.DatabaseHelper.getSqlConnection();
+			java.sql.PreparedStatement statement = connection.prepareStatement( sql,
+				java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY, 
+				java.sql.ResultSet.CLOSE_CURSORS_AT_COMMIT );
+				statement.setString(1, "foo");
+			statement.execute();
+            org.owasp.benchmark.helpers.DatabaseHelper.printResults(statement, sql, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
 		}
 	}
 }

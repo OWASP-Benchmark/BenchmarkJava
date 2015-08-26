@@ -58,35 +58,22 @@ public class BenchmarkTest00805 extends HttpServlet {
 		param = java.net.URLDecoder.decode(param, "UTF-8");
 		
 		
-		String bar;
+		// Chain a bunch of propagators in sequence
+		String a82377 = param; //assign
+		StringBuilder b82377 = new StringBuilder(a82377);  // stick in stringbuilder
+		b82377.append(" SafeStuff"); // append some safe content
+		b82377.replace(b82377.length()-"Chars".length(),b82377.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map82377 = new java.util.HashMap<String,Object>();
+		map82377.put("key82377", b82377.toString()); // put in a collection
+		String c82377 = (String)map82377.get("key82377"); // get it back out
+		String d82377 = c82377.substring(0,c82377.length()-1); // extract most of it
+		String e82377 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d82377.getBytes() ) )); // B64 encode and decode it
+		String f82377 = e82377.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f82377); // reflection
 		
-		// Simple ? condition that assigns constant to bar on true condition
-		int num = 106;
 		
-		bar = (7*18) + num > 200 ? "This_should_always_happen" : param;
-		
-		
-		
-		String fileName = null;
-		java.io.FileOutputStream fos = null;
-
-		try {
-			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
-	
-			fos = new java.io.FileOutputStream(new java.io.File(fileName),false);
- 	       response.getWriter().write("Now ready to write to file: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName));
-		} catch (Exception e) {
-			System.out.println("Couldn't open FileOutputStream on file: '" + fileName + "'");
-//			System.out.println("File exception caught and swallowed: " + e.getMessage());
-		} finally {
-			if (fos != null) {
-				try {
-					fos.close();
-                    fos = null;
-				} catch (Exception e) {
-					// we tried...
-				}
-			}
-		}
+		response.getWriter().print(bar);
 	}
 }

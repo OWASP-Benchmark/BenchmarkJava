@@ -41,28 +41,17 @@ public class BenchmarkTest01163 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		String param = "";
-		boolean flag = true;
-		java.util.Enumeration<String> names = request.getHeaderNames();
-		while (names.hasMoreElements() && flag) {
-			String name = (String) names.nextElement();
-			java.util.Enumeration<String> values = request.getHeaders(name);
-			if (values != null) {
-				while (values.hasMoreElements() && flag) {
-					String value = (String) values.nextElement();
-					if (value.equals("vector")) {
-						param = name;
-						flag = false;
-					}
-				}
-			}
+		java.util.Enumeration<String> headers = request.getHeaders("vector");
+		if (headers.hasMoreElements()) {
+			param = headers.nextElement(); // just grab first element
 		}
 
 		String bar = new Test().doSomething(param);
 		
-		int r = new java.util.Random().nextInt();
-		String rememberMeKey = Integer.toString(r);
-		
-		String user = "Ingrid";
+		double value = java.lang.Math.random();
+        String rememberMeKey = Double.toString(value).substring(2);  // Trim off the 0. at the front.
+
+		String user = "Doug";
 		String fullClassName = this.getClass().getName();
 		String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
 		user+= testCaseNumber;
@@ -90,29 +79,20 @@ public class BenchmarkTest01163 extends HttpServlet {
 			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
 					+ " whose value is: " + rememberMe.getValue() + "<br/>");
 		}
-				
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextInt() executed");
+		response.getWriter().println("Weak Randomness Test java.lang.Math.random() executed");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a32322 = param; //assign
-		StringBuilder b32322 = new StringBuilder(a32322);  // stick in stringbuilder
-		b32322.append(" SafeStuff"); // append some safe content
-		b32322.replace(b32322.length()-"Chars".length(),b32322.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map32322 = new java.util.HashMap<String,Object>();
-		map32322.put("key32322", b32322.toString()); // put in a collection
-		String c32322 = (String)map32322.get("key32322"); // get it back out
-		String d32322 = c32322.substring(0,c32322.length()-1); // extract most of it
-		String e32322 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d32322.getBytes() ) )); // B64 encode and decode it
-		String f32322 = e32322.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g32322 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g32322); // reflection
+		String bar;
+		
+		// Simple if statement that assigns param to bar on true condition
+		int num = 196;
+		if ( (500/42) + num > 200 )
+		   bar = param;
+		else bar = "This should never happen"; 
 
             return bar;
         }

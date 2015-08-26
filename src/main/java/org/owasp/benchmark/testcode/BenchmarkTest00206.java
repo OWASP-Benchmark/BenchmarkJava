@@ -44,23 +44,35 @@ public class BenchmarkTest00206 extends HttpServlet {
 		if (param == null) param = "";
 		
 		
-		String bar = "alsosafe";
-		if (param != null) {
-			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
-			valuesList.add("safe");
-			valuesList.add( param );
-			valuesList.add( "moresafe" );
-			
-			valuesList.remove(0); // remove the 1st safe value
-			
-			bar = valuesList.get(1); // get the last 'safe' value
-		}
+		// Chain a bunch of propagators in sequence
+		String a72255 = param; //assign
+		StringBuilder b72255 = new StringBuilder(a72255);  // stick in stringbuilder
+		b72255.append(" SafeStuff"); // append some safe content
+		b72255.replace(b72255.length()-"Chars".length(),b72255.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map72255 = new java.util.HashMap<String,Object>();
+		map72255.put("key72255", b72255.toString()); // put in a collection
+		String c72255 = (String)map72255.get("key72255"); // get it back out
+		String d72255 = c72255.substring(0,c72255.length()-1); // extract most of it
+		String e72255 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d72255.getBytes() ) )); // B64 encode and decode it
+		String f72255 = e72255.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String g72255 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g72255); // reflection
 		
 		
-		// javax.servlet.http.HttpSession.setAttribute(java.lang.String^,java.lang.Object)
-		request.getSession().setAttribute( bar, "10340");
+		String sql = "INSERT INTO users (username, password) VALUES ('foo','"+ bar + "')";
 				
-		response.getWriter().println("Item: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
-			+ "' with value: '10340' saved in session.");
+		try {
+			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			int count = statement.executeUpdate( sql, new String[] {"USERNAME","PASSWORD"} );
+            org.owasp.benchmark.helpers.DatabaseHelper.outputUpdateComplete(sql, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}
 }

@@ -7,14 +7,18 @@
 <title>BenchmarkTest02557</title>
 </head>
 <body>
-<form action="/benchmark/BenchmarkTest02557" method="POST" id="FormBenchmarkTest02557">
- <div><label>Select your habits and edit the parameter [name,value]:</label></div><br/>
-    <div><input type="checkbox" name="vector" value="whatever" checked>Reading. [vector, whatever]</div>
-    <div><input type="checkbox" name="vector" value="Movies">Movies. [vector, Movies]</div>
-    <div><input type="checkbox" name="vector" value="Writing">Writing. [vector, Writing]</div>
-    <div><input type="checkbox" name="vector" value="Singing">Singing. [vector, Singing]</div>
-    <div><label>Parameter foo, value:</label><input type="text" id="foo" name="foo" value="bar"></input></div><br/>
-    <div><input type="submit" value="Submit"></div>
- </form>
+<form action="/benchmark/BenchmarkTest02557" method="GET" id="FormBenchmarkTest02557">
+    <div><label>Please enter your details:</label></div>
+    <br/>
+	<div><label>Username:</label></div>
+	<div><input type="text" id="username" name="username"></input></div>
+	<div><label>Password:</label></div>
+	<div><input type="text" id="password" name="password" value=""></input></div>
+    <div>&nbsp</div>
+    <div><label>Parameter: vector <BR> Value:</label>
+	<input type="text" id="vector" name="vector" value="FileName"></input></div>
+    <br/>
+	<div><input type="submit" value="Login" /></div>
+</form>
 </body>
 </html>

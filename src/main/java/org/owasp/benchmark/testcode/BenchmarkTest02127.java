@@ -40,37 +40,23 @@ public class BenchmarkTest02127 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("vector");
-		if (headers.hasMoreElements()) {
-			param = headers.nextElement(); // just grab first element
-		}
+		String param = request.getParameter("vector");
+		if (param == null) param = "";
 
 		String bar = doSomething(param);
 		
-		// javax.servlet.http.HttpSession.putValue(java.lang.String^,java.lang.Object)
-		request.getSession().putValue( bar, "10340");
-		
-		response.getWriter().println("Item: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
-			+ "' with value: 10340 saved in session.");
+		response.getWriter().print(bar);
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a95083 = param; //assign
-		StringBuilder b95083 = new StringBuilder(a95083);  // stick in stringbuilder
-		b95083.append(" SafeStuff"); // append some safe content
-		b95083.replace(b95083.length()-"Chars".length(),b95083.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map95083 = new java.util.HashMap<String,Object>();
-		map95083.put("key95083", b95083.toString()); // put in a collection
-		String c95083 = (String)map95083.get("key95083"); // get it back out
-		String d95083 = c95083.substring(0,c95083.length()-1); // extract most of it
-		String e95083 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d95083.getBytes() ) )); // B64 encode and decode it
-		String f95083 = e95083.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f95083); // reflection
+		String bar;
+		
+		// Simple if statement that assigns param to bar on true condition
+		int num = 196;
+		if ( (500/42) + num > 200 )
+		   bar = param;
+		else bar = "This should never happen"; 
 	
 		return bar;	
 	}

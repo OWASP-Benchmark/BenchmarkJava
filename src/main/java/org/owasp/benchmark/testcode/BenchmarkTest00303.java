@@ -47,15 +47,39 @@ public class BenchmarkTest00303 extends HttpServlet {
 		}
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map38292 = new java.util.HashMap<String,Object>();
-		map38292.put("keyA-38292", "a_Value"); // put some stuff in the collection
-		map38292.put("keyB-38292", param); // put it in a collection
-		map38292.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map38292.get("keyB-38292"); // get it back out
-		bar = (String)map38292.get("keyA-38292"); // get safe value back out
+		String bar = "";
+		if (param != null) {
+			bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    	new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
+		}
 		
 		
-		response.getWriter().println(bar.toCharArray());
+		String cmd = "";	
+		String a1 = "";
+		String a2 = "";
+		String[] args = null;
+		String osName = System.getProperty("os.name");
+		
+		if (osName.indexOf("Windows") != -1) {
+        	a1 = "cmd.exe";
+        	a2 = "/c";
+        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("echo");
+        	args = new String[]{a1, a2, cmd, bar};
+        } else {
+        	a1 = "sh";
+        	a2 = "-c";
+        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("ping -c1");
+        	args = new String[]{a1, a2,cmd + bar};
+        }
+		
+		Runtime r = Runtime.getRuntime();
+
+		try {
+			Process p = r.exec(args);
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - TestCase");
+            throw new ServletException(e);
+		}
 	}
 }

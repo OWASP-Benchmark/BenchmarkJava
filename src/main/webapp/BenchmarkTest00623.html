@@ -8,49 +8,14 @@
 </head>
 <body>
 <form action="/benchmark/BenchmarkTest00623" method="POST" id="FormBenchmarkTest00623">
-    <div><label>Please explain your answer:</label></div>
-    <br/>
-    <div><textarea rows="4" cols="50" id="vectorArea" name="vectorArea" value=""></textarea></div>
-    <div><label>Any additional note for the reviewer:</label></div>
-    <div><input type="text" id="answer" name="answer"></input></div>
-    <br/>
-    <div><label>An AJAX request will be sent with a parameter value 'vector' and name:</label>
-    <input type="text" id="vector" name="vector" value="bar" class="safe"></input></div>
-    <div><input type="button" id="login-btn" value="Login" /></div>
-</form>
-<div id="ajax-form-msg1"></div>
-<script>
-$('.safe').keypress(function (e) {
-  if (e.which == 13) {
-    $('#login-btn').trigger('click');
-    return false;
-  }
-});
-
-$("#login-btn").click(function(){
-	var text = $("#FormBenchmarkTest00623 input[id=vector]").val();
-	
-	$("input.headerClass").remove();
-	
-	$("<input type='hidden' value='vector' />")
-     .attr("id", text)
-     .attr("name", text)
-     .addClass("headerClass")
-     .appendTo("#FormBenchmarkTest00623");
-
-    var formData = $("#FormBenchmarkTest00623").serializeArray();
-    var URL = $("#FormBenchmarkTest00623").attr("action");
-
-    $.ajax({
-        url : URL,
-        type: "POST",
-        data : formData,
-        success: function(data, textStatus, jqXHR){
-            $("#ajax-form-msg1").html('<pre><code class="prettyprint">'+data+'</code></pre>');
-        },
-         error: function (jqXHR, textStatus, errorThrown){ alert(errorThrown);}
-    });
-});
-</script>
+    <p>Please make your car selection, and edit the value to be sent [value]:</p>
+	<select name="vector" multiple>
+	    <option value="FileName" selected>Audi. [FileName]</option>
+	    <option value="Ford">Ford. [Ford]</option>
+	    <option value="Opel">Opel. [Opel]</option>
+        <option value="Subaru">Subaru. [Subaru]</option>
+	</select><br/><br/>
+    <input type="submit" value="Submit">
+ </form>
 </body>
 </html>

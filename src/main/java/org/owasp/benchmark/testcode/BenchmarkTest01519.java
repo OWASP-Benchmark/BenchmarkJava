@@ -46,46 +46,50 @@ public class BenchmarkTest01519 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		// FILE URIs are tricky because they are different between Mac and Windows because of lack of standardization.
-		// Mac requires an extra slash for some reason.
-		String startURIslashes = "";
-        if (System.getProperty("os.name").indexOf("Windows") != -1)
-	        if (System.getProperty("os.name").indexOf("Windows") != -1)
-	        	startURIslashes = "/";
-	        else startURIslashes = "//";
-
-		try {
-			java.net.URI fileURI = new java.net.URI("file", null, startURIslashes 
-				+ org.owasp.benchmark.helpers.Utils.testfileDir.replace('\\', java.io.File.separatorChar).replace(' ', '_') + bar, null, null);
-			java.io.File fileTarget = new java.io.File(fileURI);
-            response.getWriter().write("Access to file: '" + fileTarget + "' created." );
-            if (fileTarget.exists()) {
-            response.getWriter().write(" And file already exists.");
-            } else { response.getWriter().write(" But file doesn't exist yet."); }
-		} catch (java.net.URISyntaxException e) {
-			throw new ServletException(e);
+		float rand = new java.util.Random().nextFloat();
+		String rememberMeKey = Float.toString(rand).substring(2); // Trim off the 0. at the front.
+		
+		String user = "Floyd";
+		String fullClassName = this.getClass().getName();
+		String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
+		user+= testCaseNumber;
+		
+		String cookieName = "rememberMe" + testCaseNumber;
+		
+		boolean foundUser = false;
+		javax.servlet.http.Cookie[] cookies = request.getCookies();
+		for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
+			javax.servlet.http.Cookie cookie = cookies[i];
+			if (cookieName.equals(cookie.getName())) {
+				if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+					foundUser = true;
+				}
+			}
 		}
+		
+		if (foundUser) {
+			response.getWriter().println("Welcome back: " + user + "<br/>");			
+		} else {			
+			javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
+			rememberMe.setSecure(true);
+			request.getSession().setAttribute(cookieName, rememberMeKey);
+			response.addCookie(rememberMe);
+			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
+					+ " whose value is: " + rememberMe.getValue() + "<br/>");
+		}
+		
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextFloat() executed");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a86803 = param; //assign
-		StringBuilder b86803 = new StringBuilder(a86803);  // stick in stringbuilder
-		b86803.append(" SafeStuff"); // append some safe content
-		b86803.replace(b86803.length()-"Chars".length(),b86803.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map86803 = new java.util.HashMap<String,Object>();
-		map86803.put("key86803", b86803.toString()); // put in a collection
-		String c86803 = (String)map86803.get("key86803"); // get it back out
-		String d86803 = c86803.substring(0,c86803.length()-1); // extract most of it
-		String e86803 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d86803.getBytes() ) )); // B64 encode and decode it
-		String f86803 = e86803.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g86803 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g86803); // reflection
+		String bar = param;
+		if (param != null && param.length() > 1) {
+		    StringBuilder sbxyz49799 = new StringBuilder(param);
+		    bar = sbxyz49799.replace(param.length()-"Z".length(), param.length(),"Z").toString();
+		}
 
             return bar;
         }

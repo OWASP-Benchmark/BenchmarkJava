@@ -45,17 +45,24 @@ public class BenchmarkTest01972 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		Object[] obj = { "a", "b"};
-		response.getWriter().printf(java.util.Locale.US,bar,obj);
+		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
+				
+		try {
+			java.sql.Statement statement =  org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			statement.execute( sql, new String[] { "username", "password" } );
+            org.owasp.benchmark.helpers.DatabaseHelper.printResults(statement, sql, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar = param;
-		if (param != null && param.length() > 1) {
-		    StringBuilder sbxyz20114 = new StringBuilder(param);
-		    bar = sbxyz20114.replace(param.length()-"Z".length(), param.length(),"Z").toString();
-		}
 	
 		return bar;	
 	}

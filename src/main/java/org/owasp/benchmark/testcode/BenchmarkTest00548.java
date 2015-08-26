@@ -58,39 +58,24 @@ public class BenchmarkTest00548 extends HttpServlet {
 		}
 		
 		
-		String bar;
+		// Chain a bunch of propagators in sequence
+		String a45559 = param; //assign
+		StringBuilder b45559 = new StringBuilder(a45559);  // stick in stringbuilder
+		b45559.append(" SafeStuff"); // append some safe content
+		b45559.replace(b45559.length()-"Chars".length(),b45559.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map45559 = new java.util.HashMap<String,Object>();
+		map45559.put("key45559", b45559.toString()); // put in a collection
+		String c45559 = (String)map45559.get("key45559"); // get it back out
+		String d45559 = c45559.substring(0,c45559.length()-1); // extract most of it
+		String e45559 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d45559.getBytes() ) )); // B64 encode and decode it
+		String f45559 = e45559.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String g45559 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g45559); // reflection
 		
-		// Simple if statement that assigns param to bar on true condition
-		int num = 196;
-		if ( (500/42) + num > 200 )
-		   bar = param;
-		else bar = "This should never happen"; 
 		
-		
-		String fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
-        java.io.InputStream is = null;
-        
-		try {	
-			java.nio.file.Path path = java.nio.file.Paths.get(fileName);
-			is = java.nio.file.Files.newInputStream(path, java.nio.file.StandardOpenOption.READ);
-			byte[] b = new byte[1000];
-			int size = is.read(b);
-			response.getWriter().write("The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n");
-			response.getWriter().write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size)));
-			is.close();
-		} catch (Exception e) {
-            System.out.println("Couldn't open InputStream on file: '" + fileName + "'");
-			response.getWriter().write("Problem getting InputStream: " 
-				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage()));
-        } finally {
-			if (is != null) {
-                try {
-                    is.close();
-                    is = null;
-                } catch (Exception e) {
-                    // we tried...
-                }
-            }
-        }
+		Object[] obj = { bar, "b"};
+		response.getWriter().printf("Formatted like: %1$s and %2$s.",obj);
 	}
 }

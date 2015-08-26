@@ -47,26 +47,35 @@ public class BenchmarkTest00295 extends HttpServlet {
 		}
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a9188 = param; //assign
-		StringBuilder b9188 = new StringBuilder(a9188);  // stick in stringbuilder
-		b9188.append(" SafeStuff"); // append some safe content
-		b9188.replace(b9188.length()-"Chars".length(),b9188.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map9188 = new java.util.HashMap<String,Object>();
-		map9188.put("key9188", b9188.toString()); // put in a collection
-		String c9188 = (String)map9188.get("key9188"); // get it back out
-		String d9188 = c9188.substring(0,c9188.length()-1); // extract most of it
-		String e9188 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d9188.getBytes() ) )); // B64 encode and decode it
-		String f9188 = e9188.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f9188); // reflection
+		String bar;
+		
+		// Simple ? condition that assigns param to bar on false condition
+		int num = 106;
+		
+		bar = (7*42) - num > 200 ? "This should never happen" : param;
 		
 		
-		Object[] obj = { "a", bar };
-		java.io.PrintWriter out = response.getWriter();
-		out.write("<!DOCTYPE html>\n<html>\n<body>\n<p>");
-		out.format(java.util.Locale.US,"Formatted like: %1$s and %2$s.",obj);
-	    out.write("\n</p>\n</body>\n</html>");
+		
+		String a1 = "";
+		String a2 = "";
+		String osName = System.getProperty("os.name");
+        if (osName.indexOf("Windows") != -1) {
+        	a1 = "cmd.exe";
+        	a2 = "/c";
+        } else {
+        	a1 = "sh";
+        	a2 = "-c";
+        }
+        String[] args = {a1, a2, "echo " + bar};
+
+		ProcessBuilder pb = new ProcessBuilder(args);
+		
+		try {
+			Process p = pb.start();
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - java.lang.ProcessBuilder(java.lang.String[]) Test Case");
+            throw new ServletException(e);
+		}
 	}
 }

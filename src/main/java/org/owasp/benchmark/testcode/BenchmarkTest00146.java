@@ -44,27 +44,14 @@ public class BenchmarkTest00146 extends HttpServlet {
 		if (param == null) param = "";
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a62575 = param; //assign
-		StringBuilder b62575 = new StringBuilder(a62575);  // stick in stringbuilder
-		b62575.append(" SafeStuff"); // append some safe content
-		b62575.replace(b62575.length()-"Chars".length(),b62575.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map62575 = new java.util.HashMap<String,Object>();
-		map62575.put("key62575", b62575.toString()); // put in a collection
-		String c62575 = (String)map62575.get("key62575"); // get it back out
-		String d62575 = c62575.substring(0,c62575.length()-1); // extract most of it
-		String e62575 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d62575.getBytes() ) )); // B64 encode and decode it
-		String f62575 = e62575.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g62575 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g62575); // reflection
+		String bar = param;
+		if (param != null && param.length() > 1) {
+		    StringBuilder sbxyz84656 = new StringBuilder(param);
+		    bar = sbxyz84656.replace(param.length()-"Z".length(), param.length(),"Z").toString();
+		}
 		
 		
-		java.io.File fileTarget = new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir, bar);
-		response.getWriter().write("Access to file: '" + fileTarget + "' created." );
-		if (fileTarget.exists()) {
-			response.getWriter().write(" And file already exists.");
-		} else { response.getWriter().write(" But file doesn't exist yet."); }
+		Object[] obj = { "a", "b" };
+		response.getWriter().format(java.util.Locale.US,bar,obj);
 	}
 }

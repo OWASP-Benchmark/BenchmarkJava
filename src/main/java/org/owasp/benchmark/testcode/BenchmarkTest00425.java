@@ -44,14 +44,14 @@ public class BenchmarkTest00425 extends HttpServlet {
 		if (param == null) param = "";
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map15973 = new java.util.HashMap<String,Object>();
-		map15973.put("keyA-15973", "a Value"); // put some stuff in the collection
-		map15973.put("keyB-15973", param); // put it in a collection
-		map15973.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map15973.get("keyB-15973"); // get it back out
+		StringBuilder sbxyz64104 = new StringBuilder(param);
+		String bar = sbxyz64104.append("_SafeStuff").toString();
 		
 		
-		response.getWriter().write("Parameter value: " + bar);
+		// javax.servlet.http.HttpSession.putValue(java.lang.String,java.lang.Object^)
+		request.getSession().putValue( "userid", bar);
+		
+		response.getWriter().println("Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
+			+ "' saved in session.");
 	}
 }

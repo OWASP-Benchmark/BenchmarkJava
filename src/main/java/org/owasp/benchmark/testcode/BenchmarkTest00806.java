@@ -58,35 +58,20 @@ public class BenchmarkTest00806 extends HttpServlet {
 		param = java.net.URLDecoder.decode(param, "UTF-8");
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map13743 = new java.util.HashMap<String,Object>();
-		map13743.put("keyA-13743", "a_Value"); // put some stuff in the collection
-		map13743.put("keyB-13743", param); // put it in a collection
-		map13743.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map13743.get("keyB-13743"); // get it back out
-		bar = (String)map13743.get("keyA-13743"); // get safe value back out
-		
-		
-		String fileName = null;
-		java.io.FileOutputStream fos = null;
-
-		try {
-			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
-	
-			fos = new java.io.FileOutputStream(fileName, false);
-	        response.getWriter().write("Now ready to write to file: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName));
-		} catch (Exception e) {
-			System.out.println("Couldn't open FileOutputStream on file: '" + fileName + "'");
-//			System.out.println("File exception caught and swallowed: " + e.getMessage());
-		} finally {
-			if (fos != null) {
-				try {
-					fos.close();
-                    fos = null;
-				} catch (Exception e) {
-					// we tried...
-				}
-			}
+		String bar = "";
+		if (param != null) {
+			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+			valuesList.add("safe");
+			valuesList.add( param );
+			valuesList.add( "moresafe" );
+			
+			valuesList.remove(0); // remove the 1st safe value
+			
+			bar = valuesList.get(0); // get the param value
 		}
+		
+		
+		Object[] obj = { "a", "b"};
+		response.getWriter().printf(java.util.Locale.US,bar,obj);
 	}
 }

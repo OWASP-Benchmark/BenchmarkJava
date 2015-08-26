@@ -7,41 +7,18 @@
 <title>BenchmarkTest00352</title>
 </head>
 <body>
-<form action="/benchmark/BenchmarkTest00352" method="POST" id="FormBenchmarkTest00352">
-    <div><label>Please explain your answer:</label></div>
+<form action="/benchmark/BenchmarkTest00352" method="GET" id="FormBenchmarkTest00352">
+    <div><label>Please enter your details:</label></div>
     <br/>
-	<div><textarea rows="4" cols="50" id="vectorArea" name="vectorArea" value=""></textarea></div>
-	<div><label>Any additional note for the reviewer:</label></div>
-	<div><input type="text" id="answer" name="answer"></input></div>
+	<div><label>Username:</label></div>
+	<div><input type="text" id="username" name="username"></input></div>
+	<div><label>Password:</label></div>
+	<div><input type="text" id="password" name="password" value=""></input></div>
+    <div>&nbsp</div>
+    <div><label>Parameter: vector <BR> Value:</label>
+	<input type="text" id="vector" name="vector" value="someSecret"></input></div>
     <br/>
-    <div><label>An AJAX request will be sent with a header named vector and value:</label>
-    <input type="text" id="vector" name="vector" value="bar" class="safe"></input></div>
-	<div><input type="button" id="login-btn" value="Login" /></div>
+	<div><input type="submit" value="Login" /></div>
 </form>
-<div id="ajax-form-msg1"></div>
-<script>
-$('.safe').keypress(function (e) {
-  if (e.which == 13) {
-    $('#login-btn').trigger('click');
-    return false;
-  }
-});
-
-$("#login-btn").click(function(){
-    var formData = $("#FormBenchmarkTest00352").serializeArray();
-    var URL = $("#FormBenchmarkTest00352").attr("action");
-    var text = $("#FormBenchmarkTest00352 input[id=vector]").val();
-    $.ajax({
-        url : URL,
-        headers: { 'vector': text },
-        type: "POST",
-        data : formData,
-        success: function(data, textStatus, jqXHR){
-            $("#ajax-form-msg1").html('<pre><code class="prettyprint">'+data+'</code></pre>');
-        },
-        error: function (jqXHR, textStatus, errorThrown){ alert(errorThrown);}
-    });
-});
-</script>
 </body>
 </html>

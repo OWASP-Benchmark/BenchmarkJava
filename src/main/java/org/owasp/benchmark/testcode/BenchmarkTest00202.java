@@ -44,17 +44,35 @@ public class BenchmarkTest00202 extends HttpServlet {
 		if (param == null) param = "";
 		
 		
-		String bar = param;
-		if (param != null && param.length() > 1) {
-		    StringBuilder sbxyz85160 = new StringBuilder(param);
-		    bar = sbxyz85160.replace(param.length()-"Z".length(), param.length(),"Z").toString();
+		// Chain a bunch of propagators in sequence
+		String a54821 = param; //assign
+		StringBuilder b54821 = new StringBuilder(a54821);  // stick in stringbuilder
+		b54821.append(" SafeStuff"); // append some safe content
+		b54821.replace(b54821.length()-"Chars".length(),b54821.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map54821 = new java.util.HashMap<String,Object>();
+		map54821.put("key54821", b54821.toString()); // put in a collection
+		String c54821 = (String)map54821.get("key54821"); // get it back out
+		String d54821 = c54821.substring(0,c54821.length()-1); // extract most of it
+		String e54821 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d54821.getBytes() ) )); // B64 encode and decode it
+		String f54821 = e54821.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String g54821 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g54821); // reflection
+		
+		
+		String sql = "INSERT INTO users (username, password) VALUES ('foo','"+ bar + "')";
+				
+		try {
+			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			int count = statement.executeUpdate( sql, new int[] {1,2} );
+            org.owasp.benchmark.helpers.DatabaseHelper.outputUpdateComplete(sql, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
 		}
-		
-		
-		// javax.servlet.http.HttpSession.putValue(java.lang.String,java.lang.Object^)
-		request.getSession().putValue( "userid", bar);
-		
-		response.getWriter().println("Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
-			+ "' saved in session.");
 	}
 }

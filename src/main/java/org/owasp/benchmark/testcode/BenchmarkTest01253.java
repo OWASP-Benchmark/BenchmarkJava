@@ -40,49 +40,25 @@ public class BenchmarkTest01253 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("vector");
-		if (headers.hasMoreElements()) {
-			param = headers.nextElement(); // just grab first element
-		}
+		String param = request.getParameter("vector");
+		if (param == null) param = "";
 
 		String bar = new Test().doSomething(param);
 		
-		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
-				
-		try {
-			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			statement.addBatch( sql );
-			int[] counts = statement.executeBatch();
-            org.owasp.benchmark.helpers.DatabaseHelper.printResults(sql, counts, response);
-		} catch (java.sql.SQLException e) {
-			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
-        		return;
-        	}
-			else throw new ServletException(e);
-		}
+		Object[] obj = { "a", "b" };
+		response.getWriter().format(bar,obj);
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a58057 = param; //assign
-		StringBuilder b58057 = new StringBuilder(a58057);  // stick in stringbuilder
-		b58057.append(" SafeStuff"); // append some safe content
-		b58057.replace(b58057.length()-"Chars".length(),b58057.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map58057 = new java.util.HashMap<String,Object>();
-		map58057.put("key58057", b58057.toString()); // put in a collection
-		String c58057 = (String)map58057.get("key58057"); // get it back out
-		String d58057 = c58057.substring(0,c58057.length()-1); // extract most of it
-		String e58057 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d58057.getBytes() ) )); // B64 encode and decode it
-		String f58057 = e58057.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g58057 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g58057); // reflection
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map52552 = new java.util.HashMap<String,Object>();
+		map52552.put("keyA-52552", "a Value"); // put some stuff in the collection
+		map52552.put("keyB-52552", param); // put it in a collection
+		map52552.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map52552.get("keyB-52552"); // get it back out
 
             return bar;
         }

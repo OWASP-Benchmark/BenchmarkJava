@@ -44,23 +44,34 @@ public class BenchmarkTest00403 extends HttpServlet {
 		if (param == null) param = "";
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a5970 = param; //assign
-		StringBuilder b5970 = new StringBuilder(a5970);  // stick in stringbuilder
-		b5970.append(" SafeStuff"); // append some safe content
-		b5970.replace(b5970.length()-"Chars".length(),b5970.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map5970 = new java.util.HashMap<String,Object>();
-		map5970.put("key5970", b5970.toString()); // put in a collection
-		String c5970 = (String)map5970.get("key5970"); // get it back out
-		String d5970 = c5970.substring(0,c5970.length()-1); // extract most of it
-		String e5970 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d5970.getBytes() ) )); // B64 encode and decode it
-		String f5970 = e5970.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f5970); // reflection
+		String bar;
+		
+		// Simple ? condition that assigns constant to bar on true condition
+		int num = 106;
+		
+		bar = (7*18) + num > 200 ? "This_should_always_happen" : param;
 		
 		
-		Object[] obj = { "a", "b"};
-		response.getWriter().printf(java.util.Locale.US,bar,obj);
+		
+		byte[] input = new byte[1000];
+		String str = "?";
+		Object inputParam = param;
+		if (inputParam instanceof String) str = ((String) inputParam);
+		if (inputParam instanceof java.io.InputStream) {
+			int i = ((java.io.InputStream) inputParam).read(input);
+			if (i == -1) {
+				response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+				return;
+			}			
+			str = new String(input, 0, i);
+		}
+		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie", str);
+		
+		cookie.setSecure(false);
+		
+		response.addCookie(cookie);
+
+        response.getWriter().println("Created cookie: 'SomeCookie': with value: '"
+          + org.owasp.esapi.ESAPI.encoder().encodeForHTML(str) + "' and secure flag set to: false");
 	}
 }

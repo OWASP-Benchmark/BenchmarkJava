@@ -58,24 +58,44 @@ public class BenchmarkTest00818 extends HttpServlet {
 		param = java.net.URLDecoder.decode(param, "UTF-8");
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a79372 = param; //assign
-		StringBuilder b79372 = new StringBuilder(a79372);  // stick in stringbuilder
-		b79372.append(" SafeStuff"); // append some safe content
-		b79372.replace(b79372.length()-"Chars".length(),b79372.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map79372 = new java.util.HashMap<String,Object>();
-		map79372.put("key79372", b79372.toString()); // put in a collection
-		String c79372 = (String)map79372.get("key79372"); // get it back out
-		String d79372 = c79372.substring(0,c79372.length()-1); // extract most of it
-		String e79372 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d79372.getBytes() ) )); // B64 encode and decode it
-		String f79372 = e79372.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g79372 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g79372); // reflection
+		String bar = param;
+		if (param != null && param.length() > 1) {
+		    bar = param.substring(0,param.length()-1);
+		}
 		
 		
-		Object[] obj = { "a", "b" };
-		response.getWriter().format(bar,obj);
+		float rand = new java.util.Random().nextFloat();
+		String rememberMeKey = Float.toString(rand).substring(2); // Trim off the 0. at the front.
+		
+		String user = "Floyd";
+		String fullClassName = this.getClass().getName();
+		String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
+		user+= testCaseNumber;
+		
+		String cookieName = "rememberMe" + testCaseNumber;
+		
+		boolean foundUser = false;
+		javax.servlet.http.Cookie[] cookies = request.getCookies();
+		for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
+			javax.servlet.http.Cookie cookie = cookies[i];
+			if (cookieName.equals(cookie.getName())) {
+				if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+					foundUser = true;
+				}
+			}
+		}
+		
+		if (foundUser) {
+			response.getWriter().println("Welcome back: " + user + "<br/>");			
+		} else {			
+			javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
+			rememberMe.setSecure(true);
+			request.getSession().setAttribute(cookieName, rememberMeKey);
+			response.addCookie(rememberMe);
+			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
+					+ " whose value is: " + rememberMe.getValue() + "<br/>");
+		}
+		
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextFloat() executed");
 	}
 }

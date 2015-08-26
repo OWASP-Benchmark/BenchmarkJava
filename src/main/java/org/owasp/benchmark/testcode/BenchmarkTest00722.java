@@ -47,50 +47,16 @@ public class BenchmarkTest00722 extends HttpServlet {
 		else param = "";
 		
 		
-		String bar;
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map2224 = new java.util.HashMap<String,Object>();
+		map2224.put("keyA-2224", "a_Value"); // put some stuff in the collection
+		map2224.put("keyB-2224", param); // put it in a collection
+		map2224.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map2224.get("keyB-2224"); // get it back out
+		bar = (String)map2224.get("keyA-2224"); // get safe value back out
 		
-		// Simple ? condition that assigns param to bar on false condition
-		int num = 106;
 		
-		bar = (7*42) - num > 200 ? "This should never happen" : param;
-		
-		
-		
-	org.owasp.benchmark.helpers.LDAPManager ads = new org.owasp.benchmark.helpers.LDAPManager();
-	try {
-		response.setContentType("text/html");
-		String base = "ou=users,ou=system";
-		javax.naming.directory.SearchControls sc = new javax.naming.directory.SearchControls();
-		sc.setSearchScope(javax.naming.directory.SearchControls.SUBTREE_SCOPE);
-		String filter = "(&(objectclass=person)(uid=" + bar
-				+ "))";
-		
-		javax.naming.directory.DirContext ctx = ads.getDirContext();
-		javax.naming.directory.InitialDirContext idc = (javax.naming.directory.InitialDirContext) ctx;
-		javax.naming.NamingEnumeration<javax.naming.directory.SearchResult> results = 
-				idc.search(base, filter, sc);
-		
-		while (results.hasMore()) {
-			javax.naming.directory.SearchResult sr = (javax.naming.directory.SearchResult) results.next();
-			javax.naming.directory.Attributes attrs = sr.getAttributes();
-
-			javax.naming.directory.Attribute attr = attrs.get("uid");
-			javax.naming.directory.Attribute attr2 = attrs.get("street");
-			if (attr != null){
-				response.getWriter().write("LDAP query results:<br>"
-						+ " Record found with name " + attr.get() + "<br>"
-								+ "Address: " + attr2.get()+ "<br>");
-				System.out.println("record found " + attr.get());
-			}
-		}
-	} catch (javax.naming.NamingException e) {
-		throw new ServletException(e);
-	}finally{
-    	try {
-    		ads.closeDirContext();
-		} catch (Exception e) {
-			throw new ServletException(e);
-		}
-    }
+		Object[] obj = { "a", "b"};
+		response.getWriter().printf(bar,obj);
 	}
 }

@@ -59,29 +59,24 @@ public class BenchmarkTest01454 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		Object[] obj = { "a", "b"};
-		response.getWriter().printf(bar,obj);
+		// javax.servlet.http.HttpSession.putValue(java.lang.String,java.lang.Object^)
+		request.getSession().putValue( "userid", bar);
+		
+		response.getWriter().println("Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
+			+ "' saved in session.");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a69778 = param; //assign
-		StringBuilder b69778 = new StringBuilder(a69778);  // stick in stringbuilder
-		b69778.append(" SafeStuff"); // append some safe content
-		b69778.replace(b69778.length()-"Chars".length(),b69778.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map69778 = new java.util.HashMap<String,Object>();
-		map69778.put("key69778", b69778.toString()); // put in a collection
-		String c69778 = (String)map69778.get("key69778"); // get it back out
-		String d69778 = c69778.substring(0,c69778.length()-1); // extract most of it
-		String e69778 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d69778.getBytes() ) )); // B64 encode and decode it
-		String f69778 = e69778.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g69778 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g69778); // reflection
+		String bar;
+		
+		// Simple if statement that assigns constant to bar on true condition
+		int num = 86;
+		if ( (7*42) - num > 200 )
+		   bar = "This_should_always_happen"; 
+		else bar = param;
 
             return bar;
         }

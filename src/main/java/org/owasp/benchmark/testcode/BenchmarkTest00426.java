@@ -44,9 +44,19 @@ public class BenchmarkTest00426 extends HttpServlet {
 		if (param == null) param = "";
 		
 		
-		String bar = org.apache.commons.lang.StringEscapeUtils.escapeHtml(param);
+		String bar;
+		
+		// Simple ? condition that assigns param to bar on false condition
+		int num = 106;
+		
+		bar = (7*42) - num > 200 ? "This should never happen" : param;
 		
 		
-		response.getWriter().write("Parameter value: " + bar);
+		
+		// javax.servlet.http.HttpSession.setAttribute(java.lang.String^,java.lang.Object)
+		request.getSession().setAttribute( bar, "10340");
+				
+		response.getWriter().println("Item: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
+			+ "' with value: '10340' saved in session.");
 	}
 }

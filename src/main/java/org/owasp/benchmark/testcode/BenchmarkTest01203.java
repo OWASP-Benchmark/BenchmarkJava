@@ -48,28 +48,23 @@ public class BenchmarkTest01203 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		Object[] obj = { "a", "b"};
-		response.getWriter().printf(bar,obj);
+		// javax.servlet.http.HttpSession.putValue(java.lang.String,java.lang.Object^)
+		request.getSession().putValue( "userid", bar);
+		
+		response.getWriter().println("Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
+			+ "' saved in session.");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a28656 = param; //assign
-		StringBuilder b28656 = new StringBuilder(a28656);  // stick in stringbuilder
-		b28656.append(" SafeStuff"); // append some safe content
-		b28656.replace(b28656.length()-"Chars".length(),b28656.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map28656 = new java.util.HashMap<String,Object>();
-		map28656.put("key28656", b28656.toString()); // put in a collection
-		String c28656 = (String)map28656.get("key28656"); // get it back out
-		String d28656 = c28656.substring(0,c28656.length()-1); // extract most of it
-		String e28656 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d28656.getBytes() ) )); // B64 encode and decode it
-		String f28656 = e28656.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f28656); // reflection
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map88064 = new java.util.HashMap<String,Object>();
+		map88064.put("keyA-88064", "a Value"); // put some stuff in the collection
+		map88064.put("keyB-88064", param); // put it in a collection
+		map88064.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map88064.get("keyB-88064"); // get it back out
 
             return bar;
         }

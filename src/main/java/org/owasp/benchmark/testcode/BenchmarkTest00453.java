@@ -40,32 +40,40 @@ public class BenchmarkTest00453 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String param = request.getParameter("vector");
-		if (param == null) param = "";
+		java.util.Map<String,String[]> map = request.getParameterMap();
+		String param = "";
+		if (!map.isEmpty()) {
+			String[] values = map.get("vector");
+			if (values != null) param = values[0];
+		}
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map79458 = new java.util.HashMap<String,Object>();
-		map79458.put("keyA-79458", "a_Value"); // put some stuff in the collection
-		map79458.put("keyB-79458", param); // put it in a collection
-		map79458.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map79458.get("keyB-79458"); // get it back out
-		bar = (String)map79458.get("keyA-79458"); // get safe value back out
+		
+		String bar = "";
+		if (param != null) {
+			bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    	new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
+		}
 		
 		
-		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
-				
+		// FILE URIs are tricky because they are different between Mac and Windows because of lack of standardization.
+		// Mac requires an extra slash for some reason.
+		String startURIslashes = "";
+        if (System.getProperty("os.name").indexOf("Windows") != -1)
+	        if (System.getProperty("os.name").indexOf("Windows") != -1)
+	        	startURIslashes = "/";
+	        else startURIslashes = "//";
+
 		try {
-			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			statement.addBatch( sql );
-			int[] counts = statement.executeBatch();
-            org.owasp.benchmark.helpers.DatabaseHelper.printResults(sql, counts, response);
-		} catch (java.sql.SQLException e) {
-			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
-        		return;
-        	}
-			else throw new ServletException(e);
+			java.net.URI fileURI = new java.net.URI("file", null, startURIslashes 
+				+ org.owasp.benchmark.helpers.Utils.testfileDir.replace('\\', java.io.File.separatorChar).replace(' ', '_') + bar, null, null);
+			java.io.File fileTarget = new java.io.File(fileURI);
+            response.getWriter().write("Access to file: '" + fileTarget + "' created." );
+            if (fileTarget.exists()) {
+            response.getWriter().write(" And file already exists.");
+            } else { response.getWriter().write(" But file doesn't exist yet."); }
+		} catch (java.net.URISyntaxException e) {
+			throw new ServletException(e);
 		}
 	}
 }

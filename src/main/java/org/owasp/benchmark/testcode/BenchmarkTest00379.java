@@ -44,42 +44,23 @@ public class BenchmarkTest00379 extends HttpServlet {
 		if (param == null) param = "";
 		
 		
-		String bar = "";
-		if (param != null) {
-			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
-			valuesList.add("safe");
-			valuesList.add( param );
-			valuesList.add( "moresafe" );
-			
-			valuesList.remove(0); // remove the 1st safe value
-			
-			bar = valuesList.get(0); // get the param value
-		}
+		// Chain a bunch of propagators in sequence
+		String a91648 = param; //assign
+		StringBuilder b91648 = new StringBuilder(a91648);  // stick in stringbuilder
+		b91648.append(" SafeStuff"); // append some safe content
+		b91648.replace(b91648.length()-"Chars".length(),b91648.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map91648 = new java.util.HashMap<String,Object>();
+		map91648.put("key91648", b91648.toString()); // put in a collection
+		String c91648 = (String)map91648.get("key91648"); // get it back out
+		String d91648 = c91648.substring(0,c91648.length()-1); // extract most of it
+		String e91648 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d91648.getBytes() ) )); // B64 encode and decode it
+		String f91648 = e91648.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String g91648 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g91648); // reflection
 		
 		
-		String fileName = null;
-        java.io.FileInputStream fis = null;
-
-        try {
-			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
-			fis = new java.io.FileInputStream(new java.io.File(fileName));
-			byte[] b = new byte[1000];
-			int size = fis.read(b);
-			response.getWriter().write("The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n");
-			response.getWriter().write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size)));
-		} catch (Exception e) {
-            System.out.println("Couldn't open FileInputStream on file: '" + fileName + "'");
-			response.getWriter().write("Problem getting FileInputStream: " 
-				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage()));
-        } finally {
-			if (fis != null) {
-                try {
-                    fis.close();
-                    fis = null;
-                } catch (Exception e) {
-                    // we tried...
-                }
-            }
-        }
+		response.getWriter().print(bar.toCharArray());
 	}
 }

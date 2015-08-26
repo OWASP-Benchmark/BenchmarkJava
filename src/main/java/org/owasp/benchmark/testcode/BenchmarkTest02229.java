@@ -40,25 +40,29 @@ public class BenchmarkTest02229 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		String param = request.getParameter("vector");
-		if (param == null) param = "";
+		java.util.Map<String,String[]> map = request.getParameterMap();
+		String param = "";
+		if (!map.isEmpty()) {
+			String[] values = map.get("vector");
+			if (values != null) param = values[0];
+		}
+		
 
 		String bar = doSomething(param);
 		
-		// javax.servlet.http.HttpSession.putValue(java.lang.String,java.lang.Object^)
-		request.getSession().putValue( "userid", bar);
-		
-		response.getWriter().println("Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
-			+ "' saved in session.");
+		Object[] obj = { "a", bar};
+		response.getWriter().printf(java.util.Locale.US,"Formatted like: %1$s and %2$s.",obj);
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = param;
-		if (param != null && param.length() > 1) {
-		    StringBuilder sbxyz46495 = new StringBuilder(param);
-		    bar = sbxyz46495.replace(param.length()-"Z".length(), param.length(),"Z").toString();
-		}
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map74153 = new java.util.HashMap<String,Object>();
+		map74153.put("keyA-74153", "a_Value"); // put some stuff in the collection
+		map74153.put("keyB-74153", param); // put it in a collection
+		map74153.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map74153.get("keyB-74153"); // get it back out
+		bar = (String)map74153.get("keyA-74153"); // get safe value back out
 	
 		return bar;	
 	}

@@ -45,61 +45,42 @@ public class BenchmarkTest00677 extends HttpServlet {
 		if (param == null) param = "";
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a7772 = param; //assign
-		StringBuilder b7772 = new StringBuilder(a7772);  // stick in stringbuilder
-		b7772.append(" SafeStuff"); // append some safe content
-		b7772.replace(b7772.length()-"Chars".length(),b7772.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map7772 = new java.util.HashMap<String,Object>();
-		map7772.put("key7772", b7772.toString()); // put in a collection
-		String c7772 = (String)map7772.get("key7772"); // get it back out
-		String d7772 = c7772.substring(0,c7772.length()-1); // extract most of it
-		String e7772 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d7772.getBytes() ) )); // B64 encode and decode it
-		String f7772 = e7772.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f7772); // reflection
+		String bar = "";
+		if (param != null) {
+			bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    	new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
+		}
 		
 		
-		try {
-			double rand = java.security.SecureRandom.getInstance("SHA1PRNG").nextDouble();
-			
-			String rememberMeKey = Double.toString(rand).substring(2); // Trim off the 0. at the front.
-			
-			String user = "SafeDonna";
-			String fullClassName = this.getClass().getName();
-			String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
-			user+= testCaseNumber;
-			
-			String cookieName = "rememberMe" + testCaseNumber;
-			
-			boolean foundUser = false;
-			javax.servlet.http.Cookie[] cookies = request.getCookies();
-			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-				javax.servlet.http.Cookie cookie = cookies[i];
-				if (cookieName.equals(cookie.getName())) {
-					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-						foundUser = true;
+ 		try {
+	        String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='" + bar + "'";
+	
+			java.util.List<String> results = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.query(sql,  new org.springframework.jdbc.core.RowMapper<String>() {
+	            public String mapRow(java.sql.ResultSet rs, int rowNum) throws java.sql.SQLException {
+	                try {
+	                	return rs.getString("USERNAME");
+	                } catch (java.sql.SQLException e) {
+	                	if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+	        				return "Error processing query.";
+	        			}
+						else throw e;
 					}
-				}
-			}
+	            }
+	        });
+			java.io.PrintWriter out = response.getWriter();
 			
-			if (foundUser) {
-				response.getWriter().println("Welcome back: " + user + "<br/>");			
-			} else {			
-				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
-				rememberMe.setSecure(true);
-				request.getSession().setAttribute(cookieName, rememberMeKey);
-				response.addCookie(rememberMe);
-				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-						+ " whose value is: " + rememberMe.getValue() + "<br/>");
+			out.write("Your results are: ");
+	//		System.out.println("Your results are");
+			for(String s : results){
+				out.write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(s) + "<br>");
+	//			System.out.println(s);
 			}
-
-	    } catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing SecureRandom.nextDouble() - TestCase");
-			throw new ServletException(e);
-	    }
-		
-		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextDouble() executed");
+		} catch (org.springframework.dao.DataAccessException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}
 }

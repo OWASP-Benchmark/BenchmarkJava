@@ -1,7 +1,7 @@
 <test-metadata>
   <benchmark-version>1.2beta</benchmark-version>
-  <category>cmdi</category>
+  <category>xpathi</category>
   <test-number>01316</test-number>
   <vulnerability>true</vulnerability>
-  <cwe>78</cwe>
+  <cwe>643</cwe>
 </test-metadata>

@@ -58,13 +58,28 @@ public class BenchmarkTest00565 extends HttpServlet {
 		}
 		
 		
-		String bar = param;
-		if (param != null && param.length() > 1) {
-		    bar = param.substring(0,param.length()-1);
+		String bar = org.owasp.esapi.ESAPI.encoder().encodeForHTML(param);
+		
+		
+		byte[] input = new byte[1000];
+		String str = "?";
+		Object inputParam = param;
+		if (inputParam instanceof String) str = ((String) inputParam);
+		if (inputParam instanceof java.io.InputStream) {
+			int i = ((java.io.InputStream) inputParam).read(input);
+			if (i == -1) {
+				response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+				return;
+			}			
+			str = new String(input, 0, i);
 		}
+		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie", str);
 		
+		cookie.setSecure(false);
 		
-		Object[] obj = { "a", bar};
-		response.getWriter().printf(java.util.Locale.US,"Formatted like: %1$s and %2$s.",obj);
+		response.addCookie(cookie);
+
+        response.getWriter().println("Created cookie: 'SomeCookie': with value: '"
+          + org.owasp.esapi.ESAPI.encoder().encodeForHTML(str) + "' and secure flag set to: false");
 	}
 }

@@ -44,15 +44,43 @@ public class BenchmarkTest00171 extends HttpServlet {
 		if (param == null) param = "";
 		
 		
-		String bar;
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map64956 = new java.util.HashMap<String,Object>();
+		map64956.put("keyA-64956", "a_Value"); // put some stuff in the collection
+		map64956.put("keyB-64956", param); // put it in a collection
+		map64956.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map64956.get("keyB-64956"); // get it back out
+		bar = (String)map64956.get("keyA-64956"); // get safe value back out
 		
-		// Simple ? condition that assigns constant to bar on true condition
-		int num = 106;
 		
-		bar = (7*18) + num > 200 ? "This_should_always_happen" : param;
+		String cmd = "";	
+		String a1 = "";
+		String a2 = "";
+		String[] args = null;
+		String osName = System.getProperty("os.name");
 		
-		
-		
-		response.getWriter().println(bar);
+		if (osName.indexOf("Windows") != -1) {
+        	a1 = "cmd.exe";
+        	a2 = "/c";
+        	cmd = "echo ";
+        	args = new String[]{a1, a2, cmd, bar};
+        } else {
+        	a1 = "sh";
+        	a2 = "-c";
+        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("ls");
+        	args = new String[]{a1, a2,cmd + bar};
+        }
+        
+        String[] argsEnv = { "foo=bar" };
+        
+		Runtime r = Runtime.getRuntime();
+
+		try {
+			Process p = r.exec(args, argsEnv, new java.io.File(System.getProperty("user.dir")));
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - TestCase");
+            throw new ServletException(e);
+		}
 	}
 }

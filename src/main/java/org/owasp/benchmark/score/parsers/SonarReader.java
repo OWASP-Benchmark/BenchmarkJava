@@ -40,7 +40,7 @@ public class SonarReader extends Reader {
         String fixed = "<sonar>" + new String(bytes, "UTF-8") + "</sonar>";
         InputSource is = new InputSource(new ByteArrayInputStream( fixed.getBytes() ) );
         Document doc = docBuilder.parse(is);
- 
+
         TestResults tr = new TestResults( "SonarQube" ,false,TestResults.ToolType.SAST);
 
         NodeList rootList = doc.getDocumentElement().getChildNodes();
@@ -55,32 +55,32 @@ public class SonarReader extends Reader {
         }
         return tr;
     }
-    
+
     private TestCaseResult parseSonarIssue(Node flaw) {
         TestCaseResult tcr = new TestCaseResult();
         String rule = getNamedChild("rule", flaw).getTextContent();
         tcr.setCWE( cweLookup( rule.substring( "squid:".length() ) ) );
-        
+
         String cat = getNamedChild("message", flaw).getTextContent();
         tcr.setCategory( cat );
- 
+
         tcr.setConfidence( 5 );
 
         tcr.setEvidence( cat );
 
         String testfile = getNamedChild("component", flaw).getTextContent().trim();
         testfile = testfile.substring( testfile.lastIndexOf('/') +1 );
-        if ( testfile.startsWith( "Benchmark" ) ) {
+        if ( testfile.matches( "BenchmarkTest\\d+.java" ) ) {
             String testno = testfile.substring( "BenchmarkTest".length(), testfile.length() -5 );
             tcr.setNumber( Integer.parseInt( testno ) );
-            return tcr;       
+            return tcr;
         }
         return null;
     }
 
 
-    private int cweLookup(String squidNumber) {        
-        switch( squidNumber ) {       
+    private int cweLookup(String squidNumber) {
+        switch( squidNumber ) {
         case "S00105" : return 0000; //S00105-Replace all tab characters in this file by sequences of white-spaces.
         case "S106" : return 0000; //S00106-Replace this usage of System.out or System.err by a logger.
         case "S00112" : return 397; //S00112-Generic exceptions should never be thrown
@@ -130,7 +130,6 @@ public class SonarReader extends Reader {
         // System.out.println( "Failed to translate " + squidNumber );
         return -1;
     }
-    
+
 }
-    
-    
+

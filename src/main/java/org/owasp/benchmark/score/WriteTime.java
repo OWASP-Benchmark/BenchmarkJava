@@ -15,6 +15,7 @@ import java.util.Properties;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.XML;
 import org.owasp.benchmark.helpers.PropertiesManager;
@@ -227,9 +228,27 @@ class WriteFiles {
 	}
 
 	public void writeSonarResults() {
+
+		int page = 1;
+		int total = 1;
+		JSONArray issues = new JSONArray();
+		JSONObject json = null;
+
 		try {
-			JSONObject json = new JSONObject(
-					getSonarResults("http://localhost:9000"));
+
+			while (issues.length() < total) {
+				json = new JSONObject(getSonarResults("http://localhost:9000", page));
+				total = (int) json.get("total");
+
+				JSONArray issueSubset = json.getJSONArray("issues");
+				for (int i = 0; i < issueSubset.length(); i++) {
+					issues.put(issueSubset.get(i));
+				}
+				page++;
+			}
+
+			json.put("issues", issues);
+
 			String xml = XML.toString(json);
 			java.io.FileWriter fw = new java.io.FileWriter(SONAR_FILE);
 			fw.write(xml);
@@ -240,10 +259,10 @@ class WriteFiles {
 		}
 	}
 
-	public static String getSonarResults(String sonarURL) {
+	public static String getSonarResults(String sonarURL, int page) {
 		StringBuffer response = new StringBuffer();
 		try {
-			String url = sonarURL + "/api/issues/search?resolved=false";
+			String url = sonarURL + "/api/issues/search?resolved=false&ps=500&p=" + page;
 			URL obj = new URL(url);
 			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 			con.setRequestMethod("GET");

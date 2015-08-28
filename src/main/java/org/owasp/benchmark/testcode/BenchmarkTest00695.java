@@ -48,11 +48,11 @@ public class BenchmarkTest00695 extends HttpServlet {
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map4197 = new java.util.HashMap<String,Object>();
-		map4197.put("keyA-4197", "a Value"); // put some stuff in the collection
-		map4197.put("keyB-4197", param); // put it in a collection
-		map4197.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map4197.get("keyB-4197"); // get it back out
+		java.util.HashMap<String,Object> map3229 = new java.util.HashMap<String,Object>();
+		map3229.put("keyA-3229", "a Value"); // put some stuff in the collection
+		map3229.put("keyB-3229", param); // put it in a collection
+		map3229.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map3229.get("keyB-3229"); // get it back out
 		
 		
 	org.owasp.benchmark.helpers.LDAPManager ads = new org.owasp.benchmark.helpers.LDAPManager();

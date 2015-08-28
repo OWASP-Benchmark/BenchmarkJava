@@ -76,12 +76,12 @@ public class BenchmarkTest01574 extends HttpServlet {
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map40332 = new java.util.HashMap<String,Object>();
-		map40332.put("keyA-40332", "a_Value"); // put some stuff in the collection
-		map40332.put("keyB-40332", param); // put it in a collection
-		map40332.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map40332.get("keyB-40332"); // get it back out
-		bar = (String)map40332.get("keyA-40332"); // get safe value back out
+		java.util.HashMap<String,Object> map13069 = new java.util.HashMap<String,Object>();
+		map13069.put("keyA-13069", "a_Value"); // put some stuff in the collection
+		map13069.put("keyB-13069", param); // put it in a collection
+		map13069.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map13069.get("keyB-13069"); // get it back out
+		bar = (String)map13069.get("keyA-13069"); // get safe value back out
 
             return bar;
         }

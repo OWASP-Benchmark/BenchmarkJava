@@ -65,8 +65,8 @@ public class BenchmarkTest02580 extends HttpServlet {
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		StringBuilder sbxyz81703 = new StringBuilder(param);
-		String bar = sbxyz81703.append("_SafeStuff").toString();
+		StringBuilder sbxyz67149 = new StringBuilder(param);
+		String bar = sbxyz67149.append("_SafeStuff").toString();
 	
 		return bar;	
 	}

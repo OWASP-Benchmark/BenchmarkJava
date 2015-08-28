@@ -58,8 +58,8 @@ public class BenchmarkTest00810 extends HttpServlet {
 		param = java.net.URLDecoder.decode(param, "UTF-8");
 		
 		
-		StringBuilder sbxyz78360 = new StringBuilder(param);
-		String bar = sbxyz78360.append("_SafeStuff").toString();
+		StringBuilder sbxyz67019 = new StringBuilder(param);
+		String bar = sbxyz67019.append("_SafeStuff").toString();
 		
 		
 		response.getWriter().println(bar.toCharArray());

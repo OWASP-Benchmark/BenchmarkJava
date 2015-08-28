@@ -45,19 +45,19 @@ public class BenchmarkTest00385 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a78392 = param; //assign
-		StringBuilder b78392 = new StringBuilder(a78392);  // stick in stringbuilder
-		b78392.append(" SafeStuff"); // append some safe content
-		b78392.replace(b78392.length()-"Chars".length(),b78392.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map78392 = new java.util.HashMap<String,Object>();
-		map78392.put("key78392", b78392.toString()); // put in a collection
-		String c78392 = (String)map78392.get("key78392"); // get it back out
-		String d78392 = c78392.substring(0,c78392.length()-1); // extract most of it
-		String e78392 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d78392.getBytes() ) )); // B64 encode and decode it
-		String f78392 = e78392.split(" ")[0]; // split it on a space
+		String a47646 = param; //assign
+		StringBuilder b47646 = new StringBuilder(a47646);  // stick in stringbuilder
+		b47646.append(" SafeStuff"); // append some safe content
+		b47646.replace(b47646.length()-"Chars".length(),b47646.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map47646 = new java.util.HashMap<String,Object>();
+		map47646.put("key47646", b47646.toString()); // put in a collection
+		String c47646 = (String)map47646.get("key47646"); // get it back out
+		String d47646 = c47646.substring(0,c47646.length()-1); // extract most of it
+		String e47646 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d47646.getBytes() ) )); // B64 encode and decode it
+		String f47646 = e47646.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f78392); // reflection
+		String bar = thing.doSomething(f47646); // reflection
 		
 		
 		Object[] obj = { bar, "b"};

@@ -59,19 +59,19 @@ public class BenchmarkTest00239 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a78365 = param; //assign
-		StringBuilder b78365 = new StringBuilder(a78365);  // stick in stringbuilder
-		b78365.append(" SafeStuff"); // append some safe content
-		b78365.replace(b78365.length()-"Chars".length(),b78365.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map78365 = new java.util.HashMap<String,Object>();
-		map78365.put("key78365", b78365.toString()); // put in a collection
-		String c78365 = (String)map78365.get("key78365"); // get it back out
-		String d78365 = c78365.substring(0,c78365.length()-1); // extract most of it
-		String e78365 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d78365.getBytes() ) )); // B64 encode and decode it
-		String f78365 = e78365.split(" ")[0]; // split it on a space
+		String a66745 = param; //assign
+		StringBuilder b66745 = new StringBuilder(a66745);  // stick in stringbuilder
+		b66745.append(" SafeStuff"); // append some safe content
+		b66745.replace(b66745.length()-"Chars".length(),b66745.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map66745 = new java.util.HashMap<String,Object>();
+		map66745.put("key66745", b66745.toString()); // put in a collection
+		String c66745 = (String)map66745.get("key66745"); // get it back out
+		String d66745 = c66745.substring(0,c66745.length()-1); // extract most of it
+		String e66745 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d66745.getBytes() ) )); // B64 encode and decode it
+		String f66745 = e66745.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f78365); // reflection
+		String bar = thing.doSomething(f66745); // reflection
 		
 		
 		long l = new java.util.Random().nextLong();

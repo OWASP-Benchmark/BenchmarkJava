@@ -71,11 +71,13 @@ public class BenchmarkTest01992 extends HttpServlet {
 		
 		boolean foundUser = false;
 		javax.servlet.http.Cookie[] cookies = request.getCookies();
-		for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-			javax.servlet.http.Cookie cookie = cookies[i];
-			if (cookieName.equals(cookie.getName())) {
-				if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-					foundUser = true;
+		if (cookies != null) {
+			for (int i = 0; !foundUser && i < cookies.length; i++) {
+				javax.servlet.http.Cookie cookie = cookies[i];
+				if (cookieName.equals(cookie.getName())) {
+					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+						foundUser = true;
+					}
 				}
 			}
 		}
@@ -97,19 +99,19 @@ public class BenchmarkTest01992 extends HttpServlet {
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a34989 = param; //assign
-		StringBuilder b34989 = new StringBuilder(a34989);  // stick in stringbuilder
-		b34989.append(" SafeStuff"); // append some safe content
-		b34989.replace(b34989.length()-"Chars".length(),b34989.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map34989 = new java.util.HashMap<String,Object>();
-		map34989.put("key34989", b34989.toString()); // put in a collection
-		String c34989 = (String)map34989.get("key34989"); // get it back out
-		String d34989 = c34989.substring(0,c34989.length()-1); // extract most of it
-		String e34989 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d34989.getBytes() ) )); // B64 encode and decode it
-		String f34989 = e34989.split(" ")[0]; // split it on a space
+		String a83655 = param; //assign
+		StringBuilder b83655 = new StringBuilder(a83655);  // stick in stringbuilder
+		b83655.append(" SafeStuff"); // append some safe content
+		b83655.replace(b83655.length()-"Chars".length(),b83655.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map83655 = new java.util.HashMap<String,Object>();
+		map83655.put("key83655", b83655.toString()); // put in a collection
+		String c83655 = (String)map83655.get("key83655"); // get it back out
+		String d83655 = c83655.substring(0,c83655.length()-1); // extract most of it
+		String e83655 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d83655.getBytes() ) )); // B64 encode and decode it
+		String f83655 = e83655.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f34989); // reflection
+		String bar = thing.doSomething(f83655); // reflection
 	
 		return bar;	
 	}

@@ -103,19 +103,19 @@ public class BenchmarkTest00989 extends HttpServlet {
         public String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a59400 = param; //assign
-		StringBuilder b59400 = new StringBuilder(a59400);  // stick in stringbuilder
-		b59400.append(" SafeStuff"); // append some safe content
-		b59400.replace(b59400.length()-"Chars".length(),b59400.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map59400 = new java.util.HashMap<String,Object>();
-		map59400.put("key59400", b59400.toString()); // put in a collection
-		String c59400 = (String)map59400.get("key59400"); // get it back out
-		String d59400 = c59400.substring(0,c59400.length()-1); // extract most of it
-		String e59400 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d59400.getBytes() ) )); // B64 encode and decode it
-		String f59400 = e59400.split(" ")[0]; // split it on a space
+		String a86570 = param; //assign
+		StringBuilder b86570 = new StringBuilder(a86570);  // stick in stringbuilder
+		b86570.append(" SafeStuff"); // append some safe content
+		b86570.replace(b86570.length()-"Chars".length(),b86570.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map86570 = new java.util.HashMap<String,Object>();
+		map86570.put("key86570", b86570.toString()); // put in a collection
+		String c86570 = (String)map86570.get("key86570"); // get it back out
+		String d86570 = c86570.substring(0,c86570.length()-1); // extract most of it
+		String e86570 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d86570.getBytes() ) )); // B64 encode and decode it
+		String f86570 = e86570.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f59400); // reflection
+		String bar = thing.doSomething(f86570); // reflection
 
             return bar;
         }

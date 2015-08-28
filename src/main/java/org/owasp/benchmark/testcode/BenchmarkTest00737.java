@@ -48,19 +48,19 @@ public class BenchmarkTest00737 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a78240 = param; //assign
-		StringBuilder b78240 = new StringBuilder(a78240);  // stick in stringbuilder
-		b78240.append(" SafeStuff"); // append some safe content
-		b78240.replace(b78240.length()-"Chars".length(),b78240.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map78240 = new java.util.HashMap<String,Object>();
-		map78240.put("key78240", b78240.toString()); // put in a collection
-		String c78240 = (String)map78240.get("key78240"); // get it back out
-		String d78240 = c78240.substring(0,c78240.length()-1); // extract most of it
-		String e78240 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d78240.getBytes() ) )); // B64 encode and decode it
-		String f78240 = e78240.split(" ")[0]; // split it on a space
+		String a17364 = param; //assign
+		StringBuilder b17364 = new StringBuilder(a17364);  // stick in stringbuilder
+		b17364.append(" SafeStuff"); // append some safe content
+		b17364.replace(b17364.length()-"Chars".length(),b17364.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map17364 = new java.util.HashMap<String,Object>();
+		map17364.put("key17364", b17364.toString()); // put in a collection
+		String c17364 = (String)map17364.get("key17364"); // get it back out
+		String d17364 = c17364.substring(0,c17364.length()-1); // extract most of it
+		String e17364 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d17364.getBytes() ) )); // B64 encode and decode it
+		String f17364 = e17364.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f78240); // reflection
+		String bar = thing.doSomething(f17364); // reflection
 		
 		
 		response.getWriter().write("Parameter value: " + bar);

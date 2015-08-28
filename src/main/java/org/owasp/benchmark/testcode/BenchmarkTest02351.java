@@ -106,19 +106,19 @@ public class BenchmarkTest02351 extends HttpServlet {
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a55382 = param; //assign
-		StringBuilder b55382 = new StringBuilder(a55382);  // stick in stringbuilder
-		b55382.append(" SafeStuff"); // append some safe content
-		b55382.replace(b55382.length()-"Chars".length(),b55382.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map55382 = new java.util.HashMap<String,Object>();
-		map55382.put("key55382", b55382.toString()); // put in a collection
-		String c55382 = (String)map55382.get("key55382"); // get it back out
-		String d55382 = c55382.substring(0,c55382.length()-1); // extract most of it
-		String e55382 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d55382.getBytes() ) )); // B64 encode and decode it
-		String f55382 = e55382.split(" ")[0]; // split it on a space
+		String a2630 = param; //assign
+		StringBuilder b2630 = new StringBuilder(a2630);  // stick in stringbuilder
+		b2630.append(" SafeStuff"); // append some safe content
+		b2630.replace(b2630.length()-"Chars".length(),b2630.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map2630 = new java.util.HashMap<String,Object>();
+		map2630.put("key2630", b2630.toString()); // put in a collection
+		String c2630 = (String)map2630.get("key2630"); // get it back out
+		String d2630 = c2630.substring(0,c2630.length()-1); // extract most of it
+		String e2630 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d2630.getBytes() ) )); // B64 encode and decode it
+		String f2630 = e2630.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f55382); // reflection
+		String bar = thing.doSomething(f2630); // reflection
 	
 		return bar;	
 	}

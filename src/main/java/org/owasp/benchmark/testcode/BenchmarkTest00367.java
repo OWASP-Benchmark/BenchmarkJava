@@ -45,20 +45,20 @@ public class BenchmarkTest00367 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a8537 = param; //assign
-		StringBuilder b8537 = new StringBuilder(a8537);  // stick in stringbuilder
-		b8537.append(" SafeStuff"); // append some safe content
-		b8537.replace(b8537.length()-"Chars".length(),b8537.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map8537 = new java.util.HashMap<String,Object>();
-		map8537.put("key8537", b8537.toString()); // put in a collection
-		String c8537 = (String)map8537.get("key8537"); // get it back out
-		String d8537 = c8537.substring(0,c8537.length()-1); // extract most of it
-		String e8537 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d8537.getBytes() ) )); // B64 encode and decode it
-		String f8537 = e8537.split(" ")[0]; // split it on a space
+		String a64949 = param; //assign
+		StringBuilder b64949 = new StringBuilder(a64949);  // stick in stringbuilder
+		b64949.append(" SafeStuff"); // append some safe content
+		b64949.replace(b64949.length()-"Chars".length(),b64949.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map64949 = new java.util.HashMap<String,Object>();
+		map64949.put("key64949", b64949.toString()); // put in a collection
+		String c64949 = (String)map64949.get("key64949"); // get it back out
+		String d64949 = c64949.substring(0,c64949.length()-1); // extract most of it
+		String e64949 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d64949.getBytes() ) )); // B64 encode and decode it
+		String f64949 = e64949.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g8537 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g8537); // reflection
+		String g64949 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g64949); // reflection
 		
 		
 	org.owasp.benchmark.helpers.LDAPManager ads = new org.owasp.benchmark.helpers.LDAPManager();

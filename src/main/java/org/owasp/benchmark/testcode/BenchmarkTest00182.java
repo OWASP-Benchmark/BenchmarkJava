@@ -45,20 +45,20 @@ public class BenchmarkTest00182 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a4877 = param; //assign
-		StringBuilder b4877 = new StringBuilder(a4877);  // stick in stringbuilder
-		b4877.append(" SafeStuff"); // append some safe content
-		b4877.replace(b4877.length()-"Chars".length(),b4877.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map4877 = new java.util.HashMap<String,Object>();
-		map4877.put("key4877", b4877.toString()); // put in a collection
-		String c4877 = (String)map4877.get("key4877"); // get it back out
-		String d4877 = c4877.substring(0,c4877.length()-1); // extract most of it
-		String e4877 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d4877.getBytes() ) )); // B64 encode and decode it
-		String f4877 = e4877.split(" ")[0]; // split it on a space
+		String a23427 = param; //assign
+		StringBuilder b23427 = new StringBuilder(a23427);  // stick in stringbuilder
+		b23427.append(" SafeStuff"); // append some safe content
+		b23427.replace(b23427.length()-"Chars".length(),b23427.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map23427 = new java.util.HashMap<String,Object>();
+		map23427.put("key23427", b23427.toString()); // put in a collection
+		String c23427 = (String)map23427.get("key23427"); // get it back out
+		String d23427 = c23427.substring(0,c23427.length()-1); // extract most of it
+		String e23427 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d23427.getBytes() ) )); // B64 encode and decode it
+		String f23427 = e23427.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g4877 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g4877); // reflection
+		String g23427 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g23427); // reflection
 		
 		
 		try {
@@ -74,20 +74,24 @@ public class BenchmarkTest00182 extends HttpServlet {
 			
 			boolean foundUser = false;
 			javax.servlet.http.Cookie[] cookies = request.getCookies();
-			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-				javax.servlet.http.Cookie cookie = cookies[i];
-				if (cookieName.equals(cookie.getName())) {
-					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-						foundUser = true;
+			if (cookies != null) {
+				for (int i = 0; !foundUser && i < cookies.length; i++) {
+					javax.servlet.http.Cookie cookie = cookies[i];
+					if (cookieName.equals(cookie.getName())) {
+						if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+							foundUser = true;
+						}
 					}
 				}
 			}
+
 			
 			if (foundUser) {
 				response.getWriter().println("Welcome back: " + user + "<br/>");			
 			} else {			
 				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
 				rememberMe.setSecure(true);
+				rememberMe.setPath("/benchmark/" + this.getClass().getSimpleName());
 				request.getSession().setAttribute(cookieName, rememberMeKey);
 				response.addCookie(rememberMe);
 				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 

@@ -10,7 +10,7 @@
 <form action="/benchmark/BenchmarkTest01026" method="POST" id="FormBenchmarkTest01026">
     <div><label>Please explain your answer:</label></div>
     <br/>
-	<div><textarea rows="4" cols="50" id="vectorArea" name="vectorArea" value=""></textarea></div>
+	<div><textarea rows="4" cols="50" id="vectorArea" name="vectorArea"></textarea></div>
 	<div><label>Any additional note for the reviewer:</label></div>
 	<div><input type="text" id="answer" name="answer"></input></div>
     <br/>
@@ -18,7 +18,7 @@
     <input type="text" id="vector" name="vector" value="FileName" class="safe"></input></div>
 	<div><input type="button" id="login-btn" value="Login" /></div>
 </form>
-<div id="ajax-form-msg1"></div>
+<div id="ajax-form-msg1"><pre><code class="prettyprint" id="code"></code></pre></div>
 <script>
 $('.safe').keypress(function (e) {
   if (e.which == 13) {
@@ -37,9 +37,9 @@ $("#login-btn").click(function(){
         type: "POST",
         data : formData,
         success: function(data, textStatus, jqXHR){
-            $("#ajax-form-msg1").html('<pre><code class="prettyprint">'+data+'</code></pre>');
+			$("#code").text(data);
         },
-        error: function (jqXHR, textStatus, errorThrown){ alert(errorThrown);}
+        error: function (jqXHR, textStatus, errorThrown){ console.error(errorThrown);}
     });
 });
 </script>

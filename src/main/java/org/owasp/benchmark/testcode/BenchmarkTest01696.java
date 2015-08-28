@@ -73,20 +73,24 @@ public class BenchmarkTest01696 extends HttpServlet {
 			
 			boolean foundUser = false;
 			javax.servlet.http.Cookie[] cookies = request.getCookies();
-			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-				javax.servlet.http.Cookie cookie = cookies[i];
-				if (cookieName.equals(cookie.getName())) {
-					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-						foundUser = true;
+			if (cookies != null) {
+				for (int i = 0; !foundUser && i < cookies.length; i++) {
+					javax.servlet.http.Cookie cookie = cookies[i];
+					if (cookieName.equals(cookie.getName())) {
+						if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+							foundUser = true;
+						}
 					}
 				}
 			}
+
 			
 			if (foundUser) {
 				response.getWriter().println("Welcome back: " + user + "<br/>");			
 			} else {			
 				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
 				rememberMe.setSecure(true);
+				rememberMe.setPath("/benchmark/" + this.getClass().getSimpleName());
 				request.getSession().setAttribute(cookieName, rememberMeKey);
 				response.addCookie(rememberMe);
 				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
@@ -106,11 +110,11 @@ public class BenchmarkTest01696 extends HttpServlet {
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map81368 = new java.util.HashMap<String,Object>();
-		map81368.put("keyA-81368", "a Value"); // put some stuff in the collection
-		map81368.put("keyB-81368", param); // put it in a collection
-		map81368.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map81368.get("keyB-81368"); // get it back out
+		java.util.HashMap<String,Object> map77709 = new java.util.HashMap<String,Object>();
+		map77709.put("keyA-77709", "a Value"); // put some stuff in the collection
+		map77709.put("keyB-77709", param); // put it in a collection
+		map77709.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map77709.get("keyB-77709"); // get it back out
 
             return bar;
         }

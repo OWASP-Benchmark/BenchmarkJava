@@ -18,7 +18,7 @@
     <input type="text" id="vector" name="vector" value="verifyUserPassword('foo','bar')" class="safe"></input></div>
     <div><input type="button" id="login-btn" value="Login" /></div>
 </form>
-<div id="ajax-form-msg1"></div>
+<div id="ajax-form-msg1"><pre><code class="prettyprint" id="code"></code></pre></div>
 <script>
 $('.safe').keypress(function (e) {
   if (e.which == 13) {
@@ -46,9 +46,9 @@ $("#login-btn").click(function(){
         type: "POST",
         data : formData,
         success: function(data, textStatus, jqXHR){
-            $("#ajax-form-msg1").html('<pre><code class="prettyprint">'+data+'</code></pre>');
+            $("#code").text(data);
         },
-         error: function (jqXHR, textStatus, errorThrown){ alert(errorThrown);}
+         error: function (jqXHR, textStatus, errorThrown){ console.error(errorThrown);}
     });
 });
 </script>

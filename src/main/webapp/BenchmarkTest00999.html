@@ -8,7 +8,7 @@
 </head>
 <body>
 <form action="/benchmark/BenchmarkTest00999" method="POST" id="FormBenchmarkTest00999" >
-    <div><p>Here is the image you are looking for: &nbsp</p></div>
+    <div><p>Here is the image you are looking for: &nbsp;</p></div>
     <div><img src="img/500px-Banner_stand.png"  style="width: 20%; height: 20%" class="img-responsive" alt="Responsive image" onload="setCookie('vector','test',1)"></div>
     <div><p>This page automatically generated the cookie named vector with the value displayed below,
         if you want to generate a new cookie with a different value or use a specific vector, please
@@ -16,24 +16,24 @@
         press the "Test it!" to send the cookie.</p></div>
     <div><label>Parameter: cookie vector<BR> Value:</label>
 	<input type="text" id="vector" name="vector" value="verifyUserPassword('foo','bar')"></input></div>
-	<div><input type="button" value="Generate cookie" onclick="setCookie('vector','',1)" id="cGenerator"/></div>
+	<div><input type="button" value="Generate cookie" onclick="setCookie('vector',document.getElementById('vector').value,1)" id="cGenerator"/></div>
     <br/>
     <div><h5 id="cValue"></h5></div>
 	<div><input type="submit" value="Test it!" /></div>
 </form>
-</div>
 <script>
 function setCookie(cname, cvalue, exdays) {
 	document.cookie = cname + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 	var d = new Date();
     d.setTime(d.getTime() + (exdays*24*60*60*1000));
     var expires = "expires="+d.toUTCString();
-    if(cvalue==''){
-    	Cookies.set(cname, document.getElementById("vector").value, { version: 1 });   
+    if(cvalue=='test'){
+    	Cookies.set(cname, "FileName", { version: 1 });
     }else{
-    	Cookies.set(cname, "verifyUserPassword('foo','bar')", { version: 1 });
+    	console.log(cvalue);
+    	Cookies.set(cname, cvalue, { version: 1 });    	
     }
-    document.getElementById("cValue").innerText = document.cookie;
+   	$("#cValue").text(document.cookie);
 }
 </script> 
 </body>

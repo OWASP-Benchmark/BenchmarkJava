@@ -45,19 +45,19 @@ public class BenchmarkTest00427 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a14813 = param; //assign
-		StringBuilder b14813 = new StringBuilder(a14813);  // stick in stringbuilder
-		b14813.append(" SafeStuff"); // append some safe content
-		b14813.replace(b14813.length()-"Chars".length(),b14813.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map14813 = new java.util.HashMap<String,Object>();
-		map14813.put("key14813", b14813.toString()); // put in a collection
-		String c14813 = (String)map14813.get("key14813"); // get it back out
-		String d14813 = c14813.substring(0,c14813.length()-1); // extract most of it
-		String e14813 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d14813.getBytes() ) )); // B64 encode and decode it
-		String f14813 = e14813.split(" ")[0]; // split it on a space
+		String a18946 = param; //assign
+		StringBuilder b18946 = new StringBuilder(a18946);  // stick in stringbuilder
+		b18946.append(" SafeStuff"); // append some safe content
+		b18946.replace(b18946.length()-"Chars".length(),b18946.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map18946 = new java.util.HashMap<String,Object>();
+		map18946.put("key18946", b18946.toString()); // put in a collection
+		String c18946 = (String)map18946.get("key18946"); // get it back out
+		String d18946 = c18946.substring(0,c18946.length()-1); // extract most of it
+		String e18946 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d18946.getBytes() ) )); // B64 encode and decode it
+		String f18946 = e18946.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f14813); // reflection
+		String bar = thing.doSomething(f18946); // reflection
 		
 		
 		// javax.servlet.http.HttpSession.setAttribute(java.lang.String,java.lang.Object^)

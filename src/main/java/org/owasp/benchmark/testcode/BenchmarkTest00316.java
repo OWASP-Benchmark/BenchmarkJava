@@ -48,19 +48,19 @@ public class BenchmarkTest00316 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a83591 = param; //assign
-		StringBuilder b83591 = new StringBuilder(a83591);  // stick in stringbuilder
-		b83591.append(" SafeStuff"); // append some safe content
-		b83591.replace(b83591.length()-"Chars".length(),b83591.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map83591 = new java.util.HashMap<String,Object>();
-		map83591.put("key83591", b83591.toString()); // put in a collection
-		String c83591 = (String)map83591.get("key83591"); // get it back out
-		String d83591 = c83591.substring(0,c83591.length()-1); // extract most of it
-		String e83591 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d83591.getBytes() ) )); // B64 encode and decode it
-		String f83591 = e83591.split(" ")[0]; // split it on a space
+		String a11826 = param; //assign
+		StringBuilder b11826 = new StringBuilder(a11826);  // stick in stringbuilder
+		b11826.append(" SafeStuff"); // append some safe content
+		b11826.replace(b11826.length()-"Chars".length(),b11826.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map11826 = new java.util.HashMap<String,Object>();
+		map11826.put("key11826", b11826.toString()); // put in a collection
+		String c11826 = (String)map11826.get("key11826"); // get it back out
+		String d11826 = c11826.substring(0,c11826.length()-1); // extract most of it
+		String e11826 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d11826.getBytes() ) )); // B64 encode and decode it
+		String f11826 = e11826.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f83591); // reflection
+		String bar = thing.doSomething(f11826); // reflection
 		
 		
 		try {
@@ -77,20 +77,24 @@ public class BenchmarkTest00316 extends HttpServlet {
 			
 			boolean foundUser = false;
 			javax.servlet.http.Cookie[] cookies = request.getCookies();
-			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-				javax.servlet.http.Cookie cookie = cookies[i];
-				if (cookieName.equals(cookie.getName())) {
-					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-						foundUser = true;
+			if (cookies != null) {
+				for (int i = 0; !foundUser && i < cookies.length; i++) {
+					javax.servlet.http.Cookie cookie = cookies[i];
+					if (cookieName.equals(cookie.getName())) {
+						if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+							foundUser = true;
+						}
 					}
 				}
 			}
+
 			
 			if (foundUser) {
 				response.getWriter().println("Welcome back: " + user + "<br/>");			
 			} else {			
 				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
 				rememberMe.setSecure(true);
+				rememberMe.setPath("/benchmark/" + this.getClass().getSimpleName());
 				request.getSession().setAttribute(cookieName, rememberMeKey);
 				response.addCookie(rememberMe);
 				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 

@@ -61,20 +61,24 @@ public class BenchmarkTest01537 extends HttpServlet {
 			
 			boolean foundUser = false;
 			javax.servlet.http.Cookie[] cookies = request.getCookies();
-			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-				javax.servlet.http.Cookie cookie = cookies[i];
-				if (cookieName.equals(cookie.getName())) {
-					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-						foundUser = true;
+			if (cookies != null) {
+				for (int i = 0; !foundUser && i < cookies.length; i++) {
+					javax.servlet.http.Cookie cookie = cookies[i];
+					if (cookieName.equals(cookie.getName())) {
+						if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+							foundUser = true;
+						}
 					}
 				}
 			}
+
 			
 			if (foundUser) {
 				response.getWriter().println("Welcome back: " + user + "<br/>");			
 			} else {			
 				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
 				rememberMe.setSecure(true);
+				rememberMe.setPath("/benchmark/" + this.getClass().getSimpleName());
 				request.getSession().setAttribute(cookieName, rememberMeKey);
 				response.addCookie(rememberMe);
 				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
@@ -97,12 +101,12 @@ public class BenchmarkTest01537 extends HttpServlet {
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map51531 = new java.util.HashMap<String,Object>();
-		map51531.put("keyA-51531", "a_Value"); // put some stuff in the collection
-		map51531.put("keyB-51531", param); // put it in a collection
-		map51531.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map51531.get("keyB-51531"); // get it back out
-		bar = (String)map51531.get("keyA-51531"); // get safe value back out
+		java.util.HashMap<String,Object> map10094 = new java.util.HashMap<String,Object>();
+		map10094.put("keyA-10094", "a_Value"); // put some stuff in the collection
+		map10094.put("keyB-10094", param); // put it in a collection
+		map10094.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map10094.get("keyB-10094"); // get it back out
+		bar = (String)map10094.get("keyA-10094"); // get safe value back out
 
             return bar;
         }

@@ -48,11 +48,11 @@ public class BenchmarkTest00771 extends HttpServlet {
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map17083 = new java.util.HashMap<String,Object>();
-		map17083.put("keyA-17083", "a Value"); // put some stuff in the collection
-		map17083.put("keyB-17083", param); // put it in a collection
-		map17083.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map17083.get("keyB-17083"); // get it back out
+		java.util.HashMap<String,Object> map55432 = new java.util.HashMap<String,Object>();
+		map55432.put("keyA-55432", "a Value"); // put some stuff in the collection
+		map55432.put("keyB-55432", param); // put it in a collection
+		map55432.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map55432.get("keyB-55432"); // get it back out
 		
 		
 		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";

@@ -40,52 +40,71 @@ public class BenchmarkTest01127 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String param = request.getHeader("vector");
-		if (param == null) param = "";
+		String param = "";
+		boolean flag = true;
+		java.util.Enumeration<String> names = request.getHeaderNames();
+		while (names.hasMoreElements() && flag) {
+			String name = (String) names.nextElement();
+			java.util.Enumeration<String> values = request.getHeaders(name);
+			if (values != null) {
+				while (values.hasMoreElements() && flag) {
+					String value = (String) values.nextElement();
+					if (value.equals("vector")) {
+						param = name;
+						flag = false;
+					}
+				}
+			}
+		}
 
 		String bar = new Test().doSomething(param);
 		
-		try {
-	        String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"
-	            + bar + "'";
-	
-			java.util.List list = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.queryForList(sql);
-			java.io.PrintWriter out = response.getWriter();
-	        out.write("Your results are: <br>");
-	//		System.out.println("Your results are");
-			
-			for(Object o:list){
-				out.write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(o.toString()) + "<br>");
-	//			System.out.println(o.toString());
+		double value = new java.util.Random().nextDouble();
+		String rememberMeKey = Double.toString(value).substring(2); // Trim off the 0. at the front.
+		
+		String user = "Donna";
+		String fullClassName = this.getClass().getName();
+		String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
+		user+= testCaseNumber;
+		
+		String cookieName = "rememberMe" + testCaseNumber;
+		
+		boolean foundUser = false;
+		javax.servlet.http.Cookie[] cookies = request.getCookies();
+		for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
+			javax.servlet.http.Cookie cookie = cookies[i];
+			if (cookieName.equals(cookie.getName())) {
+				if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+					foundUser = true;
+				}
 			}
-		} catch (org.springframework.dao.DataAccessException e) {
-			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
-        		return;
-        	}
-			else throw new ServletException(e);
 		}
+		
+		if (foundUser) {
+			response.getWriter().println("Welcome back: " + user + "<br/>");			
+		} else {			
+			javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
+			rememberMe.setSecure(true);
+			request.getSession().setAttribute(cookieName, rememberMeKey);
+			response.addCookie(rememberMe);
+			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
+					+ " whose value is: " + rememberMe.getValue() + "<br/>");
+		}
+		
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextDouble() executed");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a79857 = param; //assign
-		StringBuilder b79857 = new StringBuilder(a79857);  // stick in stringbuilder
-		b79857.append(" SafeStuff"); // append some safe content
-		b79857.replace(b79857.length()-"Chars".length(),b79857.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map79857 = new java.util.HashMap<String,Object>();
-		map79857.put("key79857", b79857.toString()); // put in a collection
-		String c79857 = (String)map79857.get("key79857"); // get it back out
-		String d79857 = c79857.substring(0,c79857.length()-1); // extract most of it
-		String e79857 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d79857.getBytes() ) )); // B64 encode and decode it
-		String f79857 = e79857.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g79857 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g79857); // reflection
+		String bar;
+		
+		// Simple if statement that assigns param to bar on true condition
+		int num = 196;
+		if ( (500/42) + num > 200 )
+		   bar = param;
+		else bar = "This should never happen"; 
 
             return bar;
         }

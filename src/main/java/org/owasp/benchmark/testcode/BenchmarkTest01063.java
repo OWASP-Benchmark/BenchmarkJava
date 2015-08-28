@@ -45,55 +45,27 @@ public class BenchmarkTest01063 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-	org.owasp.benchmark.helpers.LDAPManager ads = new org.owasp.benchmark.helpers.LDAPManager();
-	try {
-		response.setContentType("text/html");
-		String base = "ou=users,ou=system";
-		javax.naming.directory.SearchControls sc = new javax.naming.directory.SearchControls();
-		sc.setSearchScope(javax.naming.directory.SearchControls.SUBTREE_SCOPE);
-		String filter = "(&(objectclass=person)(uid=" + bar
-				+ "))";
-		
-		javax.naming.directory.DirContext ctx = ads.getDirContext();
-		javax.naming.directory.InitialDirContext idc = (javax.naming.directory.InitialDirContext) ctx;
-		javax.naming.NamingEnumeration<javax.naming.directory.SearchResult> results = 
-				idc.search(base, filter, sc);
-		
-		while (results.hasMore()) {
-			javax.naming.directory.SearchResult sr = (javax.naming.directory.SearchResult) results.next();
-			javax.naming.directory.Attributes attrs = sr.getAttributes();
-
-			javax.naming.directory.Attribute attr = attrs.get("uid");
-			javax.naming.directory.Attribute attr2 = attrs.get("street");
-			if (attr != null){
-				response.getWriter().write("LDAP query results:<br>"
-						+ " Record found with name " + attr.get() + "<br>"
-								+ "Address: " + attr2.get()+ "<br>");
-				System.out.println("record found " + attr.get());
-			}
-		}
-	} catch (javax.naming.NamingException e) {
-		throw new ServletException(e);
-	}finally{
-    	try {
-    		ads.closeDirContext();
-		} catch (Exception e) {
-			throw new ServletException(e);
-		}
-    }
+		response.getWriter().write("Parameter value: " + bar);
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		
-		// Simple if statement that assigns param to bar on true condition
-		int num = 196;
-		if ( (500/42) + num > 200 )
-		   bar = param;
-		else bar = "This should never happen"; 
+		// Chain a bunch of propagators in sequence
+		String a97938 = param; //assign
+		StringBuilder b97938 = new StringBuilder(a97938);  // stick in stringbuilder
+		b97938.append(" SafeStuff"); // append some safe content
+		b97938.replace(b97938.length()-"Chars".length(),b97938.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map97938 = new java.util.HashMap<String,Object>();
+		map97938.put("key97938", b97938.toString()); // put in a collection
+		String c97938 = (String)map97938.get("key97938"); // get it back out
+		String d97938 = c97938.substring(0,c97938.length()-1); // extract most of it
+		String e97938 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d97938.getBytes() ) )); // B64 encode and decode it
+		String f97938 = e97938.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f97938); // reflection
 
             return bar;
         }

@@ -40,51 +40,21 @@ public class BenchmarkTest01260 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("vector");
-		if (headers.hasMoreElements()) {
-			param = headers.nextElement(); // just grab first element
-		}
+		String param = request.getParameter("vector");
+		if (param == null) param = "";
 
 		String bar = new Test().doSomething(param);
 		
-		try {
-			java.io.FileInputStream file = new java.io.FileInputStream(org.owasp.benchmark.helpers.Utils.getFileFromClasspath("employees.xml", this.getClass().getClassLoader()));
-			javax.xml.parsers.DocumentBuilderFactory builderFactory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
-			javax.xml.parsers.DocumentBuilder builder = builderFactory.newDocumentBuilder();
-			org.w3c.dom.Document xmlDocument = builder.parse(file);
-			javax.xml.xpath.XPathFactory xpf = javax.xml.xpath.XPathFactory.newInstance();
-			javax.xml.xpath.XPath xp = xpf.newXPath();
-			
-			String expression = "/Employees/Employee[@emplid='"+bar+"']";
-			
-			response.getWriter().println("Your query results are: <br/>"); 
-			org.w3c.dom.NodeList nodeList = (org.w3c.dom.NodeList) xp.compile(expression).evaluate(xmlDocument, javax.xml.xpath.XPathConstants.NODESET);
-			for (int i = 0; i < nodeList.getLength(); i++) {
-				org.w3c.dom.Element value = (org.w3c.dom.Element) nodeList.item(i);
-				response.getWriter().println(value.getTextContent() + "<br/>");
-			}
-		} catch (javax.xml.xpath.XPathExpressionException e) {
-			// OK to swallow
-			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
-		} catch (javax.xml.parsers.ParserConfigurationException e) {
-			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
-		} catch (org.xml.sax.SAXException e) {
-			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
-		}
+		Object[] obj = { bar, "b"};
+		response.getWriter().printf("Formatted like: %1$s and %2$s.",obj);
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		
-		// Simple ? condition that assigns constant to bar on true condition
-		int num = 106;
-		
-		bar = (7*18) + num > 200 ? "This_should_always_happen" : param;
-		
+		String bar = "";
+		if (param != null) bar = param.split(" ")[0];
 
             return bar;
         }

@@ -59,27 +59,33 @@ public class BenchmarkTest02359 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		Object[] obj = { "a", "b" };
-		response.getWriter().format(bar,obj);
+		try {
+			String sql = "SELECT TOP 1 userid from USERS where USERNAME='foo' and PASSWORD='"+ bar + "'";
+	
+			Long results = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.queryForLong(sql);
+			java.io.PrintWriter out = response.getWriter();
+			out.write("Your results are: ");
+	//		System.out.println("your results are");
+			out.write(results.toString());
+	//		System.out.println(results);
+		} catch (org.springframework.dao.DataAccessException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a12741 = param; //assign
-		StringBuilder b12741 = new StringBuilder(a12741);  // stick in stringbuilder
-		b12741.append(" SafeStuff"); // append some safe content
-		b12741.replace(b12741.length()-"Chars".length(),b12741.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map12741 = new java.util.HashMap<String,Object>();
-		map12741.put("key12741", b12741.toString()); // put in a collection
-		String c12741 = (String)map12741.get("key12741"); // get it back out
-		String d12741 = c12741.substring(0,c12741.length()-1); // extract most of it
-		String e12741 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d12741.getBytes() ) )); // B64 encode and decode it
-		String f12741 = e12741.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g12741 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g12741); // reflection
+		String bar;
+		
+		// Simple if statement that assigns param to bar on true condition
+		int num = 196;
+		if ( (500/42) + num > 200 )
+		   bar = param;
+		else bar = "This should never happen"; 
 	
 		return bar;	
 	}

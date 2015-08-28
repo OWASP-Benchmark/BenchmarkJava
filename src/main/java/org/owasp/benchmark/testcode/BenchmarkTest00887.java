@@ -44,41 +44,14 @@ public class BenchmarkTest00887 extends HttpServlet {
 		String param = scr.getTheValue("vector");
 		
 		
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(param);
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map44337 = new java.util.HashMap<String,Object>();
+		map44337.put("keyA-44337", "a Value"); // put some stuff in the collection
+		map44337.put("keyB-44337", param); // put it in a collection
+		map44337.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map44337.get("keyB-44337"); // get it back out
 		
 		
-		double value = java.lang.Math.random();
-        String rememberMeKey = Double.toString(value).substring(2);  // Trim off the 0. at the front.
-
-		String user = "Doug";
-		String fullClassName = this.getClass().getName();
-		String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
-		user+= testCaseNumber;
-		
-		String cookieName = "rememberMe" + testCaseNumber;
-		
-		boolean foundUser = false;
-		javax.servlet.http.Cookie[] cookies = request.getCookies();
-		for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-			javax.servlet.http.Cookie cookie = cookies[i];
-			if (cookieName.equals(cookie.getName())) {
-				if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-					foundUser = true;
-				}
-			}
-		}
-		
-		if (foundUser) {
-			response.getWriter().println("Welcome back: " + user + "<br/>");			
-		} else {			
-			javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
-			rememberMe.setSecure(true);
-			request.getSession().setAttribute(cookieName, rememberMeKey);
-			response.addCookie(rememberMe);
-			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-					+ " whose value is: " + rememberMe.getValue() + "<br/>");
-		}
-		response.getWriter().println("Weak Randomness Test java.lang.Math.random() executed");
+		response.getWriter().println(bar.toCharArray());
 	}
 }

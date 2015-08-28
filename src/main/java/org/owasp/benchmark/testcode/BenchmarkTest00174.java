@@ -44,23 +44,21 @@ public class BenchmarkTest00174 extends HttpServlet {
 		if (param == null) param = "";
 		
 		
-		String bar = "alsosafe";
-		if (param != null) {
-			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
-			valuesList.add("safe");
-			valuesList.add( param );
-			valuesList.add( "moresafe" );
-			
-			valuesList.remove(0); // remove the 1st safe value
-			
-			bar = valuesList.get(1); // get the last 'safe' value
-		}
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(param);
 		
 		
-		int length = 1;
-		if (bar != null) {
-			length = bar.length();
-			response.getWriter().write(bar.toCharArray(),0,length);
+		String cmd = org.owasp.benchmark.helpers.Utils.getInsecureOSCommandString(this.getClass().getClassLoader());
+        
+		String[] argsEnv = { bar };
+		Runtime r = Runtime.getRuntime();
+
+		try {
+			Process p = r.exec(cmd, argsEnv);
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - TestCase");
+            throw new ServletException(e);
 		}
 	}
 }

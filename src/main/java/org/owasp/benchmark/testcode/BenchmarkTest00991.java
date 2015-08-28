@@ -42,36 +42,30 @@ public class BenchmarkTest00991 extends HttpServlet {
 	
 		javax.servlet.http.Cookie[] theCookies = request.getCookies();
 		
-		String param = null;
-		boolean foundit = false;
+		String param = "";
 		if (theCookies != null) {
 			for (javax.servlet.http.Cookie theCookie : theCookies) {
 				if (theCookie.getName().equals("vector")) {
 					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
-					foundit = true;
+					break;
 				}
 			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
 		}
 
 		String bar = new Test().doSomething(param);
 		
-		Object[] obj = { bar, "b"};
-		response.getWriter().printf("Formatted like: %1$s and %2$s.",obj);
+		// javax.servlet.http.HttpSession.putValue(java.lang.String^,java.lang.Object)
+		request.getSession().putValue( bar, "10340");
+		
+		response.getWriter().println("Item: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
+			+ "' with value: 10340 saved in session.");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		StringBuilder sbxyz62907 = new StringBuilder(param);
-		String bar = sbxyz62907.append("_SafeStuff").toString();
+		String bar = org.springframework.web.util.HtmlUtils.htmlEscape(param);
 
             return bar;
         }

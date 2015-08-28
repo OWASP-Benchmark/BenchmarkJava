@@ -45,18 +45,25 @@ public class BenchmarkTest01316 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		String cmd = org.owasp.benchmark.helpers.Utils.getInsecureOSCommandString(this.getClass().getClassLoader());
-		String[] args = {cmd};
-        String[] argsEnv = { bar };
-        
-		Runtime r = Runtime.getRuntime();
-
 		try {
-			Process p = r.exec(args, argsEnv);
-			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - TestCase");
-            throw new ServletException(e);
+			java.io.FileInputStream file = new java.io.FileInputStream(org.owasp.benchmark.helpers.Utils.getFileFromClasspath("employees.xml", this.getClass().getClassLoader()));
+			javax.xml.parsers.DocumentBuilderFactory builderFactory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+			javax.xml.parsers.DocumentBuilder builder = builderFactory.newDocumentBuilder();
+			org.w3c.dom.Document xmlDocument = builder.parse(file);
+			javax.xml.xpath.XPathFactory xpf = javax.xml.xpath.XPathFactory.newInstance();
+			javax.xml.xpath.XPath xp = xpf.newXPath();
+			
+			response.getWriter().println("Your query results are: <br/>"); 
+			String expression = "/Employees/Employee[@emplid='"+bar+"']";
+			response.getWriter().println(xp.evaluate(expression, xmlDocument) + "<br/>");
+			
+		} catch (javax.xml.xpath.XPathExpressionException e) {
+			// OK to swallow
+			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
+		} catch (javax.xml.parsers.ParserConfigurationException e) {
+			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
+		} catch (org.xml.sax.SAXException e) {
+			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
 		}
 	}  // end doPost
 
@@ -64,8 +71,13 @@ public class BenchmarkTest01316 extends HttpServlet {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(param);
+		String bar;
+		
+		// Simple if statement that assigns param to bar on true condition
+		int num = 196;
+		if ( (500/42) + num > 200 )
+		   bar = param;
+		else bar = "This should never happen"; 
 
             return bar;
         }

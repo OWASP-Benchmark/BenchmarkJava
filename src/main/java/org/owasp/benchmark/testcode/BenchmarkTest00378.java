@@ -44,33 +44,11 @@ public class BenchmarkTest00378 extends HttpServlet {
 		if (param == null) param = "";
 		
 		
-		String bar;
-		
-		// Simple ? condition that assigns constant to bar on true condition
-		int num = 106;
-		
-		bar = (7*18) + num > 200 ? "This_should_always_happen" : param;
+		StringBuilder sbxyz92061 = new StringBuilder(param);
+		String bar = sbxyz92061.append("_SafeStuff").toString();
 		
 		
-		
-		// FILE URIs are tricky because they are different between Mac and Windows because of lack of standardization.
-		// Mac requires an extra slash for some reason.
-		String startURIslashes = "";
-        if (System.getProperty("os.name").indexOf("Windows") != -1)
-	        if (System.getProperty("os.name").indexOf("Windows") != -1)
-	        	startURIslashes = "/";
-	        else startURIslashes = "//";
-
-		try {
-			java.net.URI fileURI = new java.net.URI("file:" + startURIslashes 
-				+ org.owasp.benchmark.helpers.Utils.testfileDir.replace('\\', '/').replace(' ', '_') + bar);
-			java.io.File fileTarget = new java.io.File(fileURI);
-			response.getWriter().write("Access to file: '" + fileTarget + "' created." );
-			if (fileTarget.exists()) {
-				response.getWriter().write(" And file already exists.");
-			} else { response.getWriter().write(" But file doesn't exist yet."); }
-		} catch (java.net.URISyntaxException e) {
-			throw new ServletException(e);
-		}
+		Object[] obj = { "a", "b" };
+		response.getWriter().format(bar,obj);
 	}
 }

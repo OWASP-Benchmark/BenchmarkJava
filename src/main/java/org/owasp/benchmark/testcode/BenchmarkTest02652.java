@@ -59,17 +59,38 @@ public class BenchmarkTest02652 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		Object[] obj = { bar, "b"};
-		response.getWriter().printf("Formatted like: %1$s and %2$s.",obj);
+		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
+				
+		try {
+			java.sql.Statement statement =  org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			statement.execute( sql, new String[] { "username", "password" } );
+            org.owasp.benchmark.helpers.DatabaseHelper.printResults(statement, sql, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "";
-		if (param != null) {
-			bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    	new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
-		}
+		// Chain a bunch of propagators in sequence
+		String a80049 = param; //assign
+		StringBuilder b80049 = new StringBuilder(a80049);  // stick in stringbuilder
+		b80049.append(" SafeStuff"); // append some safe content
+		b80049.replace(b80049.length()-"Chars".length(),b80049.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map80049 = new java.util.HashMap<String,Object>();
+		map80049.put("key80049", b80049.toString()); // put in a collection
+		String c80049 = (String)map80049.get("key80049"); // get it back out
+		String d80049 = c80049.substring(0,c80049.length()-1); // extract most of it
+		String e80049 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d80049.getBytes() ) )); // B64 encode and decode it
+		String f80049 = e80049.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String g80049 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g80049); // reflection
 	
 		return bar;	
 	}

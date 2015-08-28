@@ -46,46 +46,55 @@ public class BenchmarkTest02444 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		String fileName = null;
-		java.io.FileOutputStream fos = null;
-
 		try {
-			// Create the file first so the test won't throw an exception if it doesn't exist.
-			// Note: Don't actually do this because this method signature could cause a tool to find THIS file constructor 
-			// as a vuln, rather than the File signature we are trying to actually test.
-			// If necessary, just run the benchmark twice. The 1st run should create all the necessary files.
-			//new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir + bar).createNewFile();
+			int randNumber = java.security.SecureRandom.getInstance("SHA1PRNG").nextInt(99);
+			String rememberMeKey = Integer.toString(randNumber);
 			
-			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
-	
-	
-	        java.io.FileInputStream fileInputStream = new java.io.FileInputStream(fileName);
-	        java.io.FileDescriptor fd = fileInputStream.getFD();
-	        fos = new java.io.FileOutputStream(fd);
-	        response.getWriter().write("Now ready to write to file: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName));
-		} catch (Exception e) {
-			System.out.println("Couldn't open FileOutputStream on file: '" + fileName + "'");
-//			System.out.println("File exception caught and swallowed: " + e.getMessage());
-		} finally {
-			if (fos != null) {
-				try {
-					fos.close();
-                    fos = null;
-				} catch (Exception e) {
-					// we tried...
+			String user = "SafeInga";
+			String fullClassName = this.getClass().getName();
+			String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
+			user+= testCaseNumber;
+			
+			String cookieName = "rememberMe" + testCaseNumber;
+			
+			boolean foundUser = false;
+			javax.servlet.http.Cookie[] cookies = request.getCookies();
+			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
+				javax.servlet.http.Cookie cookie = cookies[i];
+				if (cookieName.equals(cookie.getName())) {
+					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+						foundUser = true;
+					}
 				}
 			}
-		}
+			
+			if (foundUser) {
+				response.getWriter().println("Welcome back: " + user + "<br/>");			
+			} else {			
+				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
+				rememberMe.setSecure(true);
+				request.getSession().setAttribute(cookieName, rememberMeKey);
+				response.addCookie(rememberMe);
+				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
+						+ " whose value is: " + rememberMe.getValue() + "<br/>");
+			}
+
+	    } catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing SecureRandom.nextInt(int) - TestCase");
+			throw new ServletException(e);
+	    }		
+		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextInt(int) executed");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map5664 = new java.util.HashMap<String,Object>();
-		map5664.put("keyA-5664", "a Value"); // put some stuff in the collection
-		map5664.put("keyB-5664", param); // put it in a collection
-		map5664.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map5664.get("keyB-5664"); // get it back out
+		String bar;
+		
+		// Simple ? condition that assigns param to bar on false condition
+		int num = 106;
+		
+		bar = (7*42) - num > 200 ? "This should never happen" : param;
+		
 	
 		return bar;	
 	}

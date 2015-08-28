@@ -45,22 +45,64 @@ public class BenchmarkTest02159 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		java.io.File fileTarget = new java.io.File(new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),bar);
-		response.getWriter().write("Access to file: '" + fileTarget + "' created." );
-		if (fileTarget.exists()) {
-			response.getWriter().write(" And file already exists.");
-		} else { response.getWriter().write(" But file doesn't exist yet."); }
+		try {
+			double rand = java.security.SecureRandom.getInstance("SHA1PRNG").nextDouble();
+			
+			String rememberMeKey = Double.toString(rand).substring(2); // Trim off the 0. at the front.
+			
+			String user = "SafeDonna";
+			String fullClassName = this.getClass().getName();
+			String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
+			user+= testCaseNumber;
+			
+			String cookieName = "rememberMe" + testCaseNumber;
+			
+			boolean foundUser = false;
+			javax.servlet.http.Cookie[] cookies = request.getCookies();
+			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
+				javax.servlet.http.Cookie cookie = cookies[i];
+				if (cookieName.equals(cookie.getName())) {
+					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+						foundUser = true;
+					}
+				}
+			}
+			
+			if (foundUser) {
+				response.getWriter().println("Welcome back: " + user + "<br/>");			
+			} else {			
+				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
+				rememberMe.setSecure(true);
+				request.getSession().setAttribute(cookieName, rememberMeKey);
+				response.addCookie(rememberMe);
+				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
+						+ " whose value is: " + rememberMe.getValue() + "<br/>");
+			}
+
+	    } catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing SecureRandom.nextDouble() - TestCase");
+			throw new ServletException(e);
+	    }
+		
+		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextDouble() executed");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		
-		// Simple ? condition that assigns constant to bar on true condition
-		int num = 106;
-		
-		bar = (7*18) + num > 200 ? "This_should_always_happen" : param;
-		
+		// Chain a bunch of propagators in sequence
+		String a26515 = param; //assign
+		StringBuilder b26515 = new StringBuilder(a26515);  // stick in stringbuilder
+		b26515.append(" SafeStuff"); // append some safe content
+		b26515.replace(b26515.length()-"Chars".length(),b26515.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map26515 = new java.util.HashMap<String,Object>();
+		map26515.put("key26515", b26515.toString()); // put in a collection
+		String c26515 = (String)map26515.get("key26515"); // get it back out
+		String d26515 = c26515.substring(0,c26515.length()-1); // extract most of it
+		String e26515 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d26515.getBytes() ) )); // B64 encode and decode it
+		String f26515 = e26515.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f26515); // reflection
 	
 		return bar;	
 	}

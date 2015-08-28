@@ -41,69 +41,57 @@ public class BenchmarkTest01159 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		String param = "";
-		boolean flag = true;
-		java.util.Enumeration<String> names = request.getHeaderNames();
-		while (names.hasMoreElements() && flag) {
-			String name = (String) names.nextElement();
-			java.util.Enumeration<String> values = request.getHeaders(name);
-			if (values != null) {
-				while (values.hasMoreElements() && flag) {
-					String value = (String) values.nextElement();
-					if (value.equals("vector")) {
-						param = name;
-						flag = false;
-					}
-				}
-			}
+		java.util.Enumeration<String> headers = request.getHeaders("vector");
+		if (headers.hasMoreElements()) {
+			param = headers.nextElement(); // just grab first element
 		}
 
 		String bar = new Test().doSomething(param);
 		
+		String fileName = null;
+		java.io.FileInputStream fis = null;
+
 		try {
-		    java.util.Properties benchmarkprops = new java.util.Properties();
-		    benchmarkprops.load(this.getClass().getClassLoader().getResourceAsStream("benchmark.properties"));
-			String algorithm = benchmarkprops.getProperty("hashAlg2", "SHA5");
-			java.security.MessageDigest md = java.security.MessageDigest.getInstance(algorithm);
-			byte[] input = { (byte)'?' };
-			Object inputParam = bar;
-			if (inputParam instanceof String) input = ((String) inputParam).getBytes();
-			if (inputParam instanceof java.io.InputStream) {
-				byte[] strInput = new byte[1000];
-				int i = ((java.io.InputStream) inputParam).read(strInput);
-				if (i == -1) {
-					response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
-					return;
+			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
+			fis = new java.io.FileInputStream(fileName);
+			byte[] b = new byte[1000];
+			int size = fis.read(b);
+			response.getWriter().write("The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n");
+			response.getWriter().write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size)));
+		} catch (Exception e) {
+			System.out.println("Couldn't open FileInputStream on file: '" + fileName + "'");
+//			System.out.println("File exception caught and swallowed: " + e.getMessage());
+		} finally {
+			if (fis != null) {
+				try {
+					fis.close();
+                    fis = null;
+				} catch (Exception e) {
+					// we tried...
 				}
-				input = java.util.Arrays.copyOf(strInput, i);
-			}			
-			md.update(input);
-			
-			byte[] result = md.digest();
-			java.io.File fileTarget = new java.io.File(
-					new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),"passwordFile.txt");
-			java.io.FileWriter fw = new java.io.FileWriter(fileTarget,true); //the true will append the new data
-			    fw.write("hash_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
-			fw.close();
-			response.getWriter().println("Sensitive value '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' hashed and stored<br/>");
-		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing hash - TestCase");
-			throw new ServletException(e);
+			}
 		}
-		
-		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String) executed");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		
-		// Simple ? condition that assigns param to bar on false condition
-		int num = 106;
-		
-		bar = (7*42) - num > 200 ? "This should never happen" : param;
-		
+		// Chain a bunch of propagators in sequence
+		String a36698 = param; //assign
+		StringBuilder b36698 = new StringBuilder(a36698);  // stick in stringbuilder
+		b36698.append(" SafeStuff"); // append some safe content
+		b36698.replace(b36698.length()-"Chars".length(),b36698.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map36698 = new java.util.HashMap<String,Object>();
+		map36698.put("key36698", b36698.toString()); // put in a collection
+		String c36698 = (String)map36698.get("key36698"); // get it back out
+		String d36698 = c36698.substring(0,c36698.length()-1); // extract most of it
+		String e36698 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d36698.getBytes() ) )); // B64 encode and decode it
+		String f36698 = e36698.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String g36698 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g36698); // reflection
 
             return bar;
         }

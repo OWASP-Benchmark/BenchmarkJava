@@ -2,6 +2,6 @@
   <benchmark-version>1.2beta</benchmark-version>
   <category>weakrand</category>
   <test-number>02000</test-number>
-  <vulnerability>false</vulnerability>
+  <vulnerability>true</vulnerability>
   <cwe>330</cwe>
 </test-metadata>

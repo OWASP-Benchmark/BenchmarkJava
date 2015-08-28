@@ -45,19 +45,33 @@ public class BenchmarkTest02180 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		Object[] obj = { "a", "b" };
-		response.getWriter().format(bar,obj);
+		try {
+			String sql = "SELECT TOP 1 userid from USERS where USERNAME='foo' and PASSWORD='"+ bar + "'";
+	
+			Long results = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.queryForLong(sql);
+			java.io.PrintWriter out = response.getWriter();
+			out.write("Your results are: ");
+	//		System.out.println("your results are");
+			out.write(results.toString());
+	//		System.out.println(results);
+		} catch (org.springframework.dao.DataAccessException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		
-		// Simple ? condition that assigns param to bar on false condition
-		int num = 106;
-		
-		bar = (7*42) - num > 200 ? "This should never happen" : param;
-		
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map37558 = new java.util.HashMap<String,Object>();
+		map37558.put("keyA-37558", "a_Value"); // put some stuff in the collection
+		map37558.put("keyB-37558", param); // put it in a collection
+		map37558.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map37558.get("keyB-37558"); // get it back out
+		bar = (String)map37558.get("keyA-37558"); // get safe value back out
 	
 		return bar;	
 	}

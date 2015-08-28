@@ -48,32 +48,20 @@ public class BenchmarkTest01617 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		response.getWriter().println(bar.toCharArray());
+		// javax.servlet.http.HttpSession.setAttribute(java.lang.String^,java.lang.Object)
+		request.getSession().setAttribute( bar, "10340");
+				
+		response.getWriter().println("Item: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
+			+ "' with value: '10340' saved in session.");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		String guess = "ABC";
-		char switchTarget = guess.charAt(1); // condition 'B', which is safe
-		
-		// Simple case statement that assigns param to bar on conditions 'A', 'C', or 'D'
-		switch (switchTarget) {
-		  case 'A':
-		        bar = param;
-		        break;
-		  case 'B': 
-		        bar = "bob";
-		        break;
-		  case 'C':
-		  case 'D':        
-		        bar = param;
-		        break;
-		  default:
-		        bar = "bob's your uncle";
-		        break;
+		String bar = param;
+		if (param != null && param.length() > 1) {
+		    bar = param.substring(0,param.length()-1);
 		}
 
             return bar;

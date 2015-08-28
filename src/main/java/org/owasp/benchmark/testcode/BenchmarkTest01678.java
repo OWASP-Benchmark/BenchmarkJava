@@ -59,38 +59,59 @@ public class BenchmarkTest01678 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		// FILE URIs are tricky because they are different between Mac and Windows because of lack of standardization.
-		// Mac requires an extra slash for some reason.
-		String startURIslashes = "";
-        if (System.getProperty("os.name").indexOf("Windows") != -1)
-	        if (System.getProperty("os.name").indexOf("Windows") != -1)
-	        	startURIslashes = "/";
-	        else startURIslashes = "//";
-
-		try {
-			java.net.URI fileURI = new java.net.URI("file:" + startURIslashes 
-				+ org.owasp.benchmark.helpers.Utils.testfileDir.replace('\\', '/').replace(' ', '_') + bar);
-			java.io.File fileTarget = new java.io.File(fileURI);
-			response.getWriter().write("Access to file: '" + fileTarget + "' created." );
-			if (fileTarget.exists()) {
-				response.getWriter().write(" And file already exists.");
-			} else { response.getWriter().write(" But file doesn't exist yet."); }
-		} catch (java.net.URISyntaxException e) {
-			throw new ServletException(e);
+		float rand = new java.util.Random().nextFloat();
+		String rememberMeKey = Float.toString(rand).substring(2); // Trim off the 0. at the front.
+		
+		String user = "Floyd";
+		String fullClassName = this.getClass().getName();
+		String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
+		user+= testCaseNumber;
+		
+		String cookieName = "rememberMe" + testCaseNumber;
+		
+		boolean foundUser = false;
+		javax.servlet.http.Cookie[] cookies = request.getCookies();
+		for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
+			javax.servlet.http.Cookie cookie = cookies[i];
+			if (cookieName.equals(cookie.getName())) {
+				if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+					foundUser = true;
+				}
+			}
 		}
+		
+		if (foundUser) {
+			response.getWriter().println("Welcome back: " + user + "<br/>");			
+		} else {			
+			javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
+			rememberMe.setSecure(true);
+			request.getSession().setAttribute(cookieName, rememberMeKey);
+			response.addCookie(rememberMe);
+			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
+					+ " whose value is: " + rememberMe.getValue() + "<br/>");
+		}
+		
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextFloat() executed");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		
-		// Simple if statement that assigns param to bar on true condition
-		int num = 196;
-		if ( (500/42) + num > 200 )
-		   bar = param;
-		else bar = "This should never happen"; 
+		// Chain a bunch of propagators in sequence
+		String a14333 = param; //assign
+		StringBuilder b14333 = new StringBuilder(a14333);  // stick in stringbuilder
+		b14333.append(" SafeStuff"); // append some safe content
+		b14333.replace(b14333.length()-"Chars".length(),b14333.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map14333 = new java.util.HashMap<String,Object>();
+		map14333.put("key14333", b14333.toString()); // put in a collection
+		String c14333 = (String)map14333.get("key14333"); // get it back out
+		String d14333 = c14333.substring(0,c14333.length()-1); // extract most of it
+		String e14333 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d14333.getBytes() ) )); // B64 encode and decode it
+		String f14333 = e14333.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f14333); // reflection
 
             return bar;
         }

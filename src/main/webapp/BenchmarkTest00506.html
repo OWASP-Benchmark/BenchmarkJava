@@ -8,17 +8,14 @@
 </head>
 <body>
 <form action="/benchmark/BenchmarkTest00506" method="POST" id="FormBenchmarkTest00506">
-    <div><label>Please enter your details:</label></div>
-    <div><label>Is your information secure?:</label>
-	<input type="text" id="secure" name="secure"></input></div>
-    <div><label>Provide your product ID:</label>
-	<input type="text" id="productID" name="productID"></input></div>
-	<div><label>Do you even foo?</label>
-    <input type="text" id="foo" name="foo" value="foo"></input></div>
-    <div><label>Parameter: vector <BR> Value:</label>
-	<input type="text" id="vector" name="vector" value="whatever"></input></div>
-    <div>
-	<input type="submit" value="Post it" /></div>
-</form>
+    <p>Please make your car selection, and edit the value to be sent [value]:</p>
+	<select name="vector" multiple>
+	    <option value="whatever" selected>Audi. [whatever]</option>
+	    <option value="Ford">Ford. [Ford]</option>
+	    <option value="Opel">Opel. [Opel]</option>
+        <option value="Subaru">Subaru. [Subaru]</option>
+	</select><br/><br/>
+    <input type="submit" value="Submit">
+ </form>
 </body>
 </html>

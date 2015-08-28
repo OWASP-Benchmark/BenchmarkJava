@@ -48,45 +48,62 @@ public class BenchmarkTest02081 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		String fileName = null;
-		java.io.FileOutputStream fos = null;
-
 		try {
-			// Create the file first so the test won't throw an exception if it doesn't exist.
-			// Note: Don't actually do this because this method signature could cause a tool to find THIS file constructor 
-			// as a vuln, rather than the File signature we are trying to actually test.
-			// If necessary, just run the benchmark twice. The 1st run should create all the necessary files.
-			//new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir + bar).createNewFile();
+			int randNumber = java.security.SecureRandom.getInstance("SHA1PRNG").nextInt(99);
+			String rememberMeKey = Integer.toString(randNumber);
 			
-			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
-	
-	
-	        java.io.FileInputStream fileInputStream = new java.io.FileInputStream(fileName);
-	        java.io.FileDescriptor fd = fileInputStream.getFD();
-	        fos = new java.io.FileOutputStream(fd);
-	        response.getWriter().write("Now ready to write to file: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName));
-		} catch (Exception e) {
-			System.out.println("Couldn't open FileOutputStream on file: '" + fileName + "'");
-//			System.out.println("File exception caught and swallowed: " + e.getMessage());
-		} finally {
-			if (fos != null) {
-				try {
-					fos.close();
-                    fos = null;
-				} catch (Exception e) {
-					// we tried...
+			String user = "SafeInga";
+			String fullClassName = this.getClass().getName();
+			String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
+			user+= testCaseNumber;
+			
+			String cookieName = "rememberMe" + testCaseNumber;
+			
+			boolean foundUser = false;
+			javax.servlet.http.Cookie[] cookies = request.getCookies();
+			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
+				javax.servlet.http.Cookie cookie = cookies[i];
+				if (cookieName.equals(cookie.getName())) {
+					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+						foundUser = true;
+					}
 				}
 			}
-		}
+			
+			if (foundUser) {
+				response.getWriter().println("Welcome back: " + user + "<br/>");			
+			} else {			
+				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
+				rememberMe.setSecure(true);
+				request.getSession().setAttribute(cookieName, rememberMeKey);
+				response.addCookie(rememberMe);
+				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
+						+ " whose value is: " + rememberMe.getValue() + "<br/>");
+			}
+
+	    } catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing SecureRandom.nextInt(int) - TestCase");
+			throw new ServletException(e);
+	    }		
+		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextInt(int) executed");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "";
-		if (param != null) {
-			bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    	new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
-		}
+		// Chain a bunch of propagators in sequence
+		String a97717 = param; //assign
+		StringBuilder b97717 = new StringBuilder(a97717);  // stick in stringbuilder
+		b97717.append(" SafeStuff"); // append some safe content
+		b97717.replace(b97717.length()-"Chars".length(),b97717.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map97717 = new java.util.HashMap<String,Object>();
+		map97717.put("key97717", b97717.toString()); // put in a collection
+		String c97717 = (String)map97717.get("key97717"); // get it back out
+		String d97717 = c97717.substring(0,c97717.length()-1); // extract most of it
+		String e97717 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d97717.getBytes() ) )); // B64 encode and decode it
+		String f97717 = e97717.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f97717); // reflection
 	
 		return bar;	
 	}

@@ -58,22 +58,27 @@ public class BenchmarkTest00571 extends HttpServlet {
 		}
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a96073 = param; //assign
-		StringBuilder b96073 = new StringBuilder(a96073);  // stick in stringbuilder
-		b96073.append(" SafeStuff"); // append some safe content
-		b96073.replace(b96073.length()-"Chars".length(),b96073.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map96073 = new java.util.HashMap<String,Object>();
-		map96073.put("key96073", b96073.toString()); // put in a collection
-		String c96073 = (String)map96073.get("key96073"); // get it back out
-		String d96073 = c96073.substring(0,c96073.length()-1); // extract most of it
-		String e96073 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d96073.getBytes() ) )); // B64 encode and decode it
-		String f96073 = e96073.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f96073); // reflection
+		String bar;
+		
+		// Simple if statement that assigns constant to bar on true condition
+		int num = 86;
+		if ( (7*42) - num > 200 )
+		   bar = "This_should_always_happen"; 
+		else bar = param;
 		
 		
-		response.getWriter().write(bar.toCharArray());
+		String cmd = org.owasp.benchmark.helpers.Utils.getInsecureOSCommandString(this.getClass().getClassLoader());
+		String[] args = {cmd};
+        String[] argsEnv = { bar };
+        
+		Runtime r = Runtime.getRuntime();
+
+		try {
+			Process p = r.exec(args, argsEnv, new java.io.File(System.getProperty("user.dir")));
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - TestCase");
+            throw new ServletException(e);
+		}
 	}
 }

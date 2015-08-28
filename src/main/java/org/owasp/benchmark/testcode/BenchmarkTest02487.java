@@ -40,22 +40,22 @@ public class BenchmarkTest02487 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheParameter("vector");
-		if (param == null) param = "";
+		String[] values = request.getParameterValues("vector");
+		String param;
+		if (values != null && values.length > 0)
+		  param = values[0];
+		else param = "";
 
 		String bar = doSomething(param);
 		
-		// javax.servlet.http.HttpSession.setAttribute(java.lang.String,java.lang.Object^)
-		request.getSession().setAttribute( "userid", bar);
-				
-		response.getWriter().println("Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
-			+ "' saved in session.");
+		Object[] obj = { bar, "b"};
+		response.getWriter().printf("Formatted like: %1$s and %2$s.",obj);
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = org.springframework.web.util.HtmlUtils.htmlEscape(param);
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(param);
 	
 		return bar;	
 	}

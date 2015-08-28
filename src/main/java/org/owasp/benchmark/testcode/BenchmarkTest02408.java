@@ -40,51 +40,32 @@ public class BenchmarkTest02408 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		String param = "";
-		boolean flag = true;
-		java.util.Enumeration<String> names = request.getParameterNames();
-		while (names.hasMoreElements() && flag) {
-			String name = (String) names.nextElement();		    	
-			String[] values = request.getParameterValues(name);
-			if (values != null) {
-				for(int i=0;i<values.length && flag; i++){
-					String value = values[i];
-					if (value.equals("vector")) {
-						param = name;
-					    flag = false;
-					}
-				}
-			}
-		}
+		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
+		String param = scr.getTheParameter("vector");
+		if (param == null) param = "";
 
 		String bar = doSomething(param);
 		
-		String sql = "SELECT * from USERS where USERNAME=? and PASSWORD='"+ bar +"'";
-				
-		try {
-			java.sql.Connection connection = org.owasp.benchmark.helpers.DatabaseHelper.getSqlConnection();
-			java.sql.PreparedStatement statement = connection.prepareStatement( sql, new int[] { 1, 2 } );
-			statement.setString(1, "foo");
-			statement.execute();
-            org.owasp.benchmark.helpers.DatabaseHelper.printResults(statement, sql, response);
-		} catch (java.sql.SQLException e) {
-			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
-        		return;
-        	}
-			else throw new ServletException(e);
-		}
+		response.getWriter().write(bar.toCharArray());
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		
-		// Simple if statement that assigns constant to bar on true condition
-		int num = 86;
-		if ( (7*42) - num > 200 )
-		   bar = "This_should_always_happen"; 
-		else bar = param;
+		// Chain a bunch of propagators in sequence
+		String a13743 = param; //assign
+		StringBuilder b13743 = new StringBuilder(a13743);  // stick in stringbuilder
+		b13743.append(" SafeStuff"); // append some safe content
+		b13743.replace(b13743.length()-"Chars".length(),b13743.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map13743 = new java.util.HashMap<String,Object>();
+		map13743.put("key13743", b13743.toString()); // put in a collection
+		String c13743 = (String)map13743.get("key13743"); // get it back out
+		String d13743 = c13743.substring(0,c13743.length()-1); // extract most of it
+		String e13743 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d13743.getBytes() ) )); // B64 encode and decode it
+		String f13743 = e13743.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String g13743 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g13743); // reflection
 	
 		return bar;	
 	}

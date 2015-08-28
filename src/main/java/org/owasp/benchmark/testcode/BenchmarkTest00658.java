@@ -45,9 +45,29 @@ public class BenchmarkTest00658 extends HttpServlet {
 		if (param == null) param = "";
 		
 		
-		String bar = org.owasp.esapi.ESAPI.encoder().encodeForHTML(param);
+		String bar;
+		
+		// Simple ? condition that assigns constant to bar on true condition
+		int num = 106;
+		
+		bar = (7*18) + num > 200 ? "This_should_always_happen" : param;
 		
 		
-		response.getWriter().println(bar.toCharArray());
+		
+		String cmd = "";
+        String osName = System.getProperty("os.name");
+        if (osName.indexOf("Windows") != -1) {
+        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("echo");
+        }
+        
+		Runtime r = Runtime.getRuntime();
+
+		try {
+			Process p = r.exec(cmd + bar);
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - TestCase");
+            throw new ServletException(e);
+		}
 	}
 }

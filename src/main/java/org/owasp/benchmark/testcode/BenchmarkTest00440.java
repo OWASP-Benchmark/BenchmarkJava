@@ -44,23 +44,27 @@ public class BenchmarkTest00440 extends HttpServlet {
 		if (param == null) param = "";
 		
 		
-		String bar = "";
-		if (param != null) {
-			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
-			valuesList.add("safe");
-			valuesList.add( param );
-			valuesList.add( "moresafe" );
-			
-			valuesList.remove(0); // remove the 1st safe value
-			
-			bar = valuesList.get(0); // get the param value
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map70877 = new java.util.HashMap<String,Object>();
+		map70877.put("keyA-70877", "a_Value"); // put some stuff in the collection
+		map70877.put("keyB-70877", param); // put it in a collection
+		map70877.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map70877.get("keyB-70877"); // get it back out
+		bar = (String)map70877.get("keyA-70877"); // get safe value back out
+		
+		
+		String sql = "INSERT INTO users (username, password) VALUES ('foo','"+ bar + "')";
+				
+		try {
+			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			int count = statement.executeUpdate( sql, java.sql.Statement.RETURN_GENERATED_KEYS );
+            org.owasp.benchmark.helpers.DatabaseHelper.outputUpdateComplete(sql, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
 		}
-		
-		
-		// javax.servlet.http.HttpSession.putValue(java.lang.String,java.lang.Object^)
-		request.getSession().putValue( "userid", bar);
-		
-		response.getWriter().println("Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
-			+ "' saved in session.");
 	}
 }

@@ -41,75 +41,25 @@ public class BenchmarkTest02047 extends HttpServlet {
 		response.setContentType("text/html");
 
 		String param = "";
-		boolean flag = true;
-		java.util.Enumeration<String> names = request.getHeaderNames();
-		while (names.hasMoreElements() && flag) {
-			String name = (String) names.nextElement();
-			java.util.Enumeration<String> values = request.getHeaders(name);
-			if (values != null) {
-				while (values.hasMoreElements() && flag) {
-					String value = (String) values.nextElement();
-					if (value.equals("vector")) {
-						param = name;
-						flag = false;
-					}
-				}
-			}
+		java.util.Enumeration<String> headers = request.getHeaders("vector");
+		if (headers.hasMoreElements()) {
+			param = headers.nextElement(); // just grab first element
 		}
 
 		String bar = doSomething(param);
 		
-		try {
-		    java.util.Properties benchmarkprops = new java.util.Properties();
-		    benchmarkprops.load(this.getClass().getClassLoader().getResourceAsStream("benchmark.properties"));
-			String algorithm = benchmarkprops.getProperty("hashAlg2", "SHA5");
-			java.security.MessageDigest md = java.security.MessageDigest.getInstance(algorithm);
-			byte[] input = { (byte)'?' };
-			Object inputParam = bar;
-			if (inputParam instanceof String) input = ((String) inputParam).getBytes();
-			if (inputParam instanceof java.io.InputStream) {
-				byte[] strInput = new byte[1000];
-				int i = ((java.io.InputStream) inputParam).read(strInput);
-				if (i == -1) {
-					response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
-					return;
-				}
-				input = java.util.Arrays.copyOf(strInput, i);
-			}			
-			md.update(input);
-			
-			byte[] result = md.digest();
-			java.io.File fileTarget = new java.io.File(
-					new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),"passwordFile.txt");
-			java.io.FileWriter fw = new java.io.FileWriter(fileTarget,true); //the true will append the new data
-			    fw.write("hash_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
-			fw.close();
-			response.getWriter().println("Sensitive value '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' hashed and stored<br/>");
-		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing hash - TestCase");
-			throw new ServletException(e);
-		}
-		
-		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String) executed");
+		response.getWriter().print(bar.toCharArray());
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a12685 = param; //assign
-		StringBuilder b12685 = new StringBuilder(a12685);  // stick in stringbuilder
-		b12685.append(" SafeStuff"); // append some safe content
-		b12685.replace(b12685.length()-"Chars".length(),b12685.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map12685 = new java.util.HashMap<String,Object>();
-		map12685.put("key12685", b12685.toString()); // put in a collection
-		String c12685 = (String)map12685.get("key12685"); // get it back out
-		String d12685 = c12685.substring(0,c12685.length()-1); // extract most of it
-		String e12685 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d12685.getBytes() ) )); // B64 encode and decode it
-		String f12685 = e12685.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g12685 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g12685); // reflection
+		String bar;
+		
+		// Simple if statement that assigns param to bar on true condition
+		int num = 196;
+		if ( (500/42) + num > 200 )
+		   bar = param;
+		else bar = "This should never happen"; 
 	
 		return bar;	
 	}

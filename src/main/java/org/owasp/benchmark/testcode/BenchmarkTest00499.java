@@ -49,15 +49,24 @@ public class BenchmarkTest00499 extends HttpServlet {
 		
 		
 		
-		String bar;
-		
-		// Simple ? condition that assigns constant to bar on true condition
-		int num = 106;
-		
-		bar = (7*18) + num > 200 ? "This_should_always_happen" : param;
+		String bar = param;
 		
 		
-		
-		response.getWriter().write(bar.toCharArray());
+		String cmd = "";
+        String osName = System.getProperty("os.name");
+        if (osName.indexOf("Windows") != -1) {
+        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("echo");
+        }
+        
+		String[] argsEnv = { "Foo=bar" };
+		Runtime r = Runtime.getRuntime();
+
+		try {
+			Process p = r.exec(cmd + bar, argsEnv);
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - TestCase");
+            throw new ServletException(e);
+		}
 	}
 }

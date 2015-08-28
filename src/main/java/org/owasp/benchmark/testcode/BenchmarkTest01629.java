@@ -48,20 +48,32 @@ public class BenchmarkTest01629 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		response.getWriter().write("Parameter value: " + bar);
+		String sql = "INSERT INTO users (username, password) VALUES ('foo','"+ bar + "')";
+				
+		try {
+			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			int count = statement.executeUpdate( sql, java.sql.Statement.RETURN_GENERATED_KEYS );
+            org.owasp.benchmark.helpers.DatabaseHelper.outputUpdateComplete(sql, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map96821 = new java.util.HashMap<String,Object>();
-		map96821.put("keyA-96821", "a_Value"); // put some stuff in the collection
-		map96821.put("keyB-96821", param); // put it in a collection
-		map96821.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map96821.get("keyB-96821"); // get it back out
-		bar = (String)map96821.get("keyA-96821"); // get safe value back out
+		String bar;
+		
+		// Simple if statement that assigns constant to bar on true condition
+		int num = 86;
+		if ( (7*42) - num > 200 )
+		   bar = "This_should_always_happen"; 
+		else bar = param;
 
             return bar;
         }

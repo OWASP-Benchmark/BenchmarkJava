@@ -48,20 +48,51 @@ public class BenchmarkTest01614 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		Object[] obj = { "a", "b"};
-		response.getWriter().printf(java.util.Locale.US,bar,obj);
+		try {
+			long l = java.security.SecureRandom.getInstance("SHA1PRNG").nextLong();
+			String rememberMeKey = Long.toString(l);
+			
+			String user = "SafeLogan";
+			String fullClassName = this.getClass().getName();
+			String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
+			user+= testCaseNumber;
+			
+			String cookieName = "rememberMe" + testCaseNumber;
+			
+			boolean foundUser = false;
+			javax.servlet.http.Cookie[] cookies = request.getCookies();
+			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
+				javax.servlet.http.Cookie cookie = cookies[i];
+				if (cookieName.equals(cookie.getName())) {
+					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+						foundUser = true;
+					}
+				}
+			}
+			
+			if (foundUser) {
+				response.getWriter().println("Welcome back: " + user + "<br/>");			
+			} else {			
+				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
+				rememberMe.setSecure(true);
+				request.getSession().setAttribute(cookieName, rememberMeKey);
+				response.addCookie(rememberMe);
+				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
+						+ " whose value is: " + rememberMe.getValue() + "<br/>");
+			}
+
+	    } catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing SecureRandom.nextLong() - TestCase");
+			throw new ServletException(e);
+	    }		
+		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextLong() executed");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map67729 = new java.util.HashMap<String,Object>();
-		map67729.put("keyA-67729", "a Value"); // put some stuff in the collection
-		map67729.put("keyB-67729", param); // put it in a collection
-		map67729.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map67729.get("keyB-67729"); // get it back out
+		String bar = org.owasp.esapi.ESAPI.encoder().encodeForHTML(param);
 
             return bar;
         }

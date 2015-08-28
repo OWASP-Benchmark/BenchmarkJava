@@ -41,69 +41,44 @@ public class BenchmarkTest02059 extends HttpServlet {
 		response.setContentType("text/html");
 
 		String param = "";
-		boolean flag = true;
-		java.util.Enumeration<String> names = request.getHeaderNames();
-		while (names.hasMoreElements() && flag) {
-			String name = (String) names.nextElement();
-			java.util.Enumeration<String> values = request.getHeaders(name);
-			if (values != null) {
-				while (values.hasMoreElements() && flag) {
-					String value = (String) values.nextElement();
-					if (value.equals("vector")) {
-						param = name;
-						flag = false;
-					}
-				}
-			}
+		java.util.Enumeration<String> headers = request.getHeaders("vector");
+		if (headers.hasMoreElements()) {
+			param = headers.nextElement(); // just grab first element
 		}
 
 		String bar = doSomething(param);
 		
-		try {
-			double rand = java.security.SecureRandom.getInstance("SHA1PRNG").nextDouble();
-			
-			String rememberMeKey = Double.toString(rand).substring(2); // Trim off the 0. at the front.
-			
-			String user = "SafeDonna";
-			String fullClassName = this.getClass().getName();
-			String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
-			user+= testCaseNumber;
-			
-			String cookieName = "rememberMe" + testCaseNumber;
-			
-			boolean foundUser = false;
-			javax.servlet.http.Cookie[] cookies = request.getCookies();
-			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-				javax.servlet.http.Cookie cookie = cookies[i];
-				if (cookieName.equals(cookie.getName())) {
-					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-						foundUser = true;
-					}
-				}
-			}
-			
-			if (foundUser) {
-				response.getWriter().println("Welcome back: " + user + "<br/>");			
-			} else {			
-				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
-				rememberMe.setSecure(true);
-				request.getSession().setAttribute(cookieName, rememberMeKey);
-				response.addCookie(rememberMe);
-				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-						+ " whose value is: " + rememberMe.getValue() + "<br/>");
-			}
+		String a1 = "";
+		String a2 = "";
+		String osName = System.getProperty("os.name");
+        if (osName.indexOf("Windows") != -1) {
+        	a1 = "cmd.exe";
+        	a2 = "/c";
+        } else {
+        	a1 = "sh";
+        	a2 = "-c";
+        }
+        String[] args = {a1, a2, "echo " + bar};
 
-	    } catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing SecureRandom.nextDouble() - TestCase");
-			throw new ServletException(e);
-	    }
+		ProcessBuilder pb = new ProcessBuilder(args);
 		
-		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextDouble() executed");
+		try {
+			Process p = pb.start();
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - java.lang.ProcessBuilder(java.lang.String[]) Test Case");
+            throw new ServletException(e);
+		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = org.springframework.web.util.HtmlUtils.htmlEscape(param);
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map97440 = new java.util.HashMap<String,Object>();
+		map97440.put("keyA-97440", "a Value"); // put some stuff in the collection
+		map97440.put("keyB-97440", param); // put it in a collection
+		map97440.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map97440.get("keyB-97440"); // get it back out
 	
 		return bar;	
 	}

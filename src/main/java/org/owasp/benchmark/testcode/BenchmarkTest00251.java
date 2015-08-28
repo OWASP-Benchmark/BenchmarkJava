@@ -58,45 +58,14 @@ public class BenchmarkTest00251 extends HttpServlet {
 		}
 		
 		
-		String bar = param;
-		if (param != null && param.length() > 1) {
-		    StringBuilder sbxyz26196 = new StringBuilder(param);
-		    bar = sbxyz26196.replace(param.length()-"Z".length(), param.length(),"Z").toString();
-		}
+		String bar = "";
+		if (param != null) bar = param.split(" ")[0];
 		
 		
-		double value = new java.util.Random().nextDouble();
-		String rememberMeKey = Double.toString(value).substring(2); // Trim off the 0. at the front.
+		// javax.servlet.http.HttpSession.putValue(java.lang.String,java.lang.Object^)
+		request.getSession().putValue( "userid", bar);
 		
-		String user = "Donna";
-		String fullClassName = this.getClass().getName();
-		String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
-		user+= testCaseNumber;
-		
-		String cookieName = "rememberMe" + testCaseNumber;
-		
-		boolean foundUser = false;
-		javax.servlet.http.Cookie[] cookies = request.getCookies();
-		for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-			javax.servlet.http.Cookie cookie = cookies[i];
-			if (cookieName.equals(cookie.getName())) {
-				if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-					foundUser = true;
-				}
-			}
-		}
-		
-		if (foundUser) {
-			response.getWriter().println("Welcome back: " + user + "<br/>");			
-		} else {			
-			javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
-			rememberMe.setSecure(true);
-			request.getSession().setAttribute(cookieName, rememberMeKey);
-			response.addCookie(rememberMe);
-			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-					+ " whose value is: " + rememberMe.getValue() + "<br/>");
-		}
-		
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextDouble() executed");
+		response.getWriter().println("Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
+			+ "' saved in session.");
 	}
 }

@@ -58,43 +58,29 @@ public class BenchmarkTest00837 extends HttpServlet {
 		param = java.net.URLDecoder.decode(param, "UTF-8");
 		
 		
-		String bar;
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map15216 = new java.util.HashMap<String,Object>();
+		map15216.put("keyA-15216", "a_Value"); // put some stuff in the collection
+		map15216.put("keyB-15216", param); // put it in a collection
+		map15216.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map15216.get("keyB-15216"); // get it back out
+		bar = (String)map15216.get("keyA-15216"); // get safe value back out
 		
-		// Simple if statement that assigns param to bar on true condition
-		int num = 196;
-		if ( (500/42) + num > 200 )
-		   bar = param;
-		else bar = "This should never happen"; 
 		
-		
-		String cmd = "";	
-		String a1 = "";
-		String a2 = "";
-		String[] args = null;
-		String osName = System.getProperty("os.name");
-		
-		if (osName.indexOf("Windows") != -1) {
-        	a1 = "cmd.exe";
-        	a2 = "/c";
-        	cmd = "echo ";
-        	args = new String[]{a1, a2, cmd, bar};
-        } else {
-        	a1 = "sh";
-        	a2 = "-c";
-        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("ls");
-        	args = new String[]{a1, a2,cmd + bar};
-        }
-        
-        String[] argsEnv = { "foo=bar" };
-        
-		Runtime r = Runtime.getRuntime();
-
+		String sql = "{call " + bar + "}";
+				
 		try {
-			Process p = r.exec(args, argsEnv, new java.io.File(System.getProperty("user.dir")));
-			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - TestCase");
-            throw new ServletException(e);
+			java.sql.Connection connection = org.owasp.benchmark.helpers.DatabaseHelper.getSqlConnection();
+			java.sql.CallableStatement statement = connection.prepareCall( sql, java.sql.ResultSet.TYPE_FORWARD_ONLY, 
+							java.sql.ResultSet.CONCUR_READ_ONLY, java.sql.ResultSet.CLOSE_CURSORS_AT_COMMIT );
+			java.sql.ResultSet rs = statement.executeQuery();
+            org.owasp.benchmark.helpers.DatabaseHelper.printResults(rs, sql, response);
+        } catch (java.sql.SQLException e) {
+        	if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
 		}
 	}
 }

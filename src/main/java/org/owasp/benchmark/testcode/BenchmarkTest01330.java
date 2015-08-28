@@ -40,29 +40,50 @@ public class BenchmarkTest01330 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String param = request.getParameter("vector");
-		if (param == null) param = "";
+		java.util.Map<String,String[]> map = request.getParameterMap();
+		String param = "";
+		if (!map.isEmpty()) {
+			String[] values = map.get("vector");
+			if (values != null) param = values[0];
+		}
+		
 
 		String bar = new Test().doSomething(param);
 		
-		// javax.servlet.http.HttpSession.putValue(java.lang.String^,java.lang.Object)
-		request.getSession().putValue( bar, "10340");
-		
-		response.getWriter().println("Item: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
-			+ "' with value: 10340 saved in session.");
+		String fileName = null;
+		java.io.FileOutputStream fos = null;
+
+		try {
+			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
+	
+			fos = new java.io.FileOutputStream(new java.io.File(fileName));
+	        response.getWriter().write("Now ready to write to file: " + fileName);
+		} catch (Exception e) {
+			System.out.println("Couldn't open FileOutputStream on file: '" + fileName + "'");
+//			System.out.println("File exception caught and swallowed: " + e.getMessage());
+		} finally {
+			if (fos != null) {
+				try {
+					fos.close();
+                    fos = null;
+				} catch (Exception e) {
+					// we tried...
+				}
+			}
+		}
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map62716 = new java.util.HashMap<String,Object>();
-		map62716.put("keyA-62716", "a_Value"); // put some stuff in the collection
-		map62716.put("keyB-62716", param); // put it in a collection
-		map62716.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map62716.get("keyB-62716"); // get it back out
-		bar = (String)map62716.get("keyA-62716"); // get safe value back out
+		String bar;
+		
+		// Simple if statement that assigns param to bar on true condition
+		int num = 196;
+		if ( (500/42) + num > 200 )
+		   bar = param;
+		else bar = "This should never happen"; 
 
             return bar;
         }

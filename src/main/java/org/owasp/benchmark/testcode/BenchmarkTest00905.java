@@ -44,19 +44,35 @@ public class BenchmarkTest00905 extends HttpServlet {
 		String param = scr.getTheValue("vector");
 		
 		
-		String bar = "alsosafe";
-		if (param != null) {
-			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
-			valuesList.add("safe");
-			valuesList.add( param );
-			valuesList.add( "moresafe" );
-			
-			valuesList.remove(0); // remove the 1st safe value
-			
-			bar = valuesList.get(1); // get the last 'safe' value
+		String bar = param;
+		
+		
+		String cmd = "";	
+		String a1 = "";
+		String a2 = "";
+		String[] args = null;
+		String osName = System.getProperty("os.name");
+		
+		if (osName.indexOf("Windows") != -1) {
+        	a1 = "cmd.exe";
+        	a2 = "/c";
+        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("echo");
+        	args = new String[]{a1, a2, cmd, bar};
+        } else {
+        	a1 = "sh";
+        	a2 = "-c";
+        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("ping -c1");
+        	args = new String[]{a1, a2,cmd + bar};
+        }
+		
+		Runtime r = Runtime.getRuntime();
+
+		try {
+			Process p = r.exec(args);
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - TestCase");
+            throw new ServletException(e);
 		}
-		
-		
-		response.getWriter().println(bar.toCharArray());
 	}
 }

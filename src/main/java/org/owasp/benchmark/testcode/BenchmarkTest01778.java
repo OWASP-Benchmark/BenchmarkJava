@@ -45,52 +45,37 @@ public class BenchmarkTest01778 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-	org.owasp.benchmark.helpers.LDAPManager ads = new org.owasp.benchmark.helpers.LDAPManager();
-	try {
-			response.setContentType("text/html");
-			javax.naming.directory.DirContext ctx = ads.getDirContext();
-			String base = "ou=users,ou=system";
-			javax.naming.directory.SearchControls sc = new javax.naming.directory.SearchControls();
-			sc.setSearchScope(javax.naming.directory.SearchControls.SUBTREE_SCOPE);
-			String filter = "(&(objectclass=person))(|(uid="+bar+")(street={0}))";
-			Object[] filters = new Object[]{"The streetz 4 Ms bar"};
-			System.out.println("Filter " + filter);
-			javax.naming.NamingEnumeration<javax.naming.directory.SearchResult> results = ctx.search(base, filter,filters, sc);
-			while (results.hasMore()) {
-				javax.naming.directory.SearchResult sr = (javax.naming.directory.SearchResult) results.next();
-				javax.naming.directory.Attributes attrs = sr.getAttributes();
+		String a1 = "";
+		String a2 = "";
+		String osName = System.getProperty("os.name");
+        if (osName.indexOf("Windows") != -1) {
+        	a1 = "cmd.exe";
+        	a2 = "/c";
+        } else {
+        	a1 = "sh";
+        	a2 = "-c";
+        }
+        String[] args = {a1, a2, "echo " + bar};
 
-				javax.naming.directory.Attribute attr = attrs.get("uid");
-				javax.naming.directory.Attribute attr2 = attrs.get("street");
-				if (attr != null){
-					response.getWriter().write("LDAP query results:<br>"
-							+ " Record found with name " + attr.get() + "<br>"
-									+ "Address: " + attr2.get() + "<br>");
-					System.out.println("record found " + attr.get());
-				}
-			}
-	} catch (javax.naming.NamingException e) {
-		throw new ServletException(e);
-	}finally{
-    	try {
-    		ads.closeDirContext();
-		} catch (Exception e) {
-			throw new ServletException(e);
+		ProcessBuilder pb = new ProcessBuilder();
+
+		pb.command(args);
+		
+		try {
+			Process p = pb.start();
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - java.lang.ProcessBuilder(java.util.List) Test Case");
+            throw new ServletException(e);
 		}
-    }
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		
-		// Simple ? condition that assigns constant to bar on true condition
-		int num = 106;
-		
-		bar = (7*18) + num > 200 ? "This_should_always_happen" : param;
-		
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(param);
 
             return bar;
         }

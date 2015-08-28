@@ -58,28 +58,13 @@ public class BenchmarkTest00802 extends HttpServlet {
 		param = java.net.URLDecoder.decode(param, "UTF-8");
 		
 		
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(param);
-		
-		
-		// FILE URIs are tricky because they are different between Mac and Windows because of lack of standardization.
-		// Mac requires an extra slash for some reason.
-		String startURIslashes = "";
-        if (System.getProperty("os.name").indexOf("Windows") != -1)
-	        if (System.getProperty("os.name").indexOf("Windows") != -1)
-	        	startURIslashes = "/";
-	        else startURIslashes = "//";
-
-		try {
-			java.net.URI fileURI = new java.net.URI("file", null, startURIslashes 
-				+ org.owasp.benchmark.helpers.Utils.testfileDir.replace('\\', java.io.File.separatorChar).replace(' ', '_') + bar, null, null);
-			java.io.File fileTarget = new java.io.File(fileURI);
-            response.getWriter().write("Access to file: '" + fileTarget + "' created." );
-            if (fileTarget.exists()) {
-            response.getWriter().write(" And file already exists.");
-            } else { response.getWriter().write(" But file doesn't exist yet."); }
-		} catch (java.net.URISyntaxException e) {
-			throw new ServletException(e);
+		String bar = "";
+		if (param != null) {
+			bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    	new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
 		}
+		
+		
+		response.getWriter().print(bar.toCharArray());
 	}
 }

@@ -44,39 +44,26 @@ public class BenchmarkTest00427 extends HttpServlet {
 		if (param == null) param = "";
 		
 		
-		String bar = "";
-		if (param != null) {
-			bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    	new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
-		}
+		// Chain a bunch of propagators in sequence
+		String a14813 = param; //assign
+		StringBuilder b14813 = new StringBuilder(a14813);  // stick in stringbuilder
+		b14813.append(" SafeStuff"); // append some safe content
+		b14813.replace(b14813.length()-"Chars".length(),b14813.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map14813 = new java.util.HashMap<String,Object>();
+		map14813.put("key14813", b14813.toString()); // put in a collection
+		String c14813 = (String)map14813.get("key14813"); // get it back out
+		String d14813 = c14813.substring(0,c14813.length()-1); // extract most of it
+		String e14813 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d14813.getBytes() ) )); // B64 encode and decode it
+		String f14813 = e14813.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f14813); // reflection
 		
 		
-		String cmd = "";	
-		String a1 = "";
-		String a2 = "";
-		String[] args = null;
-		String osName = System.getProperty("os.name");
-		
-		if (osName.indexOf("Windows") != -1) {
-        	a1 = "cmd.exe";
-        	a2 = "/c";
-        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("echo");
-        	args = new String[]{a1, a2, cmd, bar};
-        } else {
-        	a1 = "sh";
-        	a2 = "-c";
-        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("ping -c1");
-        	args = new String[]{a1, a2,cmd + bar};
-        }
-		
-		Runtime r = Runtime.getRuntime();
-
-		try {
-			Process p = r.exec(args);
-			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - TestCase");
-            throw new ServletException(e);
-		}
+		// javax.servlet.http.HttpSession.setAttribute(java.lang.String,java.lang.Object^)
+		request.getSession().setAttribute( "userid", bar);
+				
+		response.getWriter().println("Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
+			+ "' saved in session.");
 	}
 }

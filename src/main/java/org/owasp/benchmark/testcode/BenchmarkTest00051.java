@@ -46,7 +46,26 @@ public class BenchmarkTest00051 extends HttpServlet {
 		String param = scr.getTheValue("vector");
 
 		
-		Object[] obj = { "a", param };
-		response.getWriter().format("Formatted like: %1$s and %2$s.",obj);
+		String a1 = "";
+		String a2 = "";
+		String osName = System.getProperty("os.name");
+        if (osName.indexOf("Windows") != -1) {
+        	a1 = "cmd.exe";
+        	a2 = "/c";
+        } else {
+        	a1 = "sh";
+        	a2 = "-c";
+        }
+        String[] args = {a1, a2, "echo " + param};
+
+		ProcessBuilder pb = new ProcessBuilder(args);
+		
+		try {
+			Process p = pb.start();
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - java.lang.ProcessBuilder(java.lang.String[]) Test Case");
+            throw new ServletException(e);
+		}
 	}
 }

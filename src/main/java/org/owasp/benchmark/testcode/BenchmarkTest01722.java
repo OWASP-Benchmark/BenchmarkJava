@@ -59,26 +59,35 @@ public class BenchmarkTest01722 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		String a1 = "";
-		String a2 = "";
-		String osName = System.getProperty("os.name");
-        if (osName.indexOf("Windows") != -1) {
-        	a1 = "cmd.exe";
-        	a2 = "/c";
-        } else {
-        	a1 = "sh";
-        	a2 = "-c";
-        }
-        String[] args = {a1, a2, "echo " + bar};
-
-		ProcessBuilder pb = new ProcessBuilder(args);
-		
-		try {
-			Process p = pb.start();
-			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - java.lang.ProcessBuilder(java.lang.String[]) Test Case");
-            throw new ServletException(e);
+ 		try {
+	        String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='" + bar + "'";
+	
+			java.util.List<String> results = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.query(sql,  new org.springframework.jdbc.core.RowMapper<String>() {
+	            public String mapRow(java.sql.ResultSet rs, int rowNum) throws java.sql.SQLException {
+	                try {
+	                	return rs.getString("USERNAME");
+	                } catch (java.sql.SQLException e) {
+	                	if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+	        				return "Error processing query.";
+	        			}
+						else throw e;
+					}
+	            }
+	        });
+			java.io.PrintWriter out = response.getWriter();
+			
+			out.write("Your results are: ");
+	//		System.out.println("Your results are");
+			for(String s : results){
+				out.write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(s) + "<br>");
+	//			System.out.println(s);
+			}
+		} catch (org.springframework.dao.DataAccessException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
 		}
 	}  // end doPost
 
@@ -86,13 +95,13 @@ public class BenchmarkTest01722 extends HttpServlet {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		
-		// Simple ? condition that assigns constant to bar on true condition
-		int num = 106;
-		
-		bar = (7*18) + num > 200 ? "This_should_always_happen" : param;
-		
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map95113 = new java.util.HashMap<String,Object>();
+		map95113.put("keyA-95113", "a_Value"); // put some stuff in the collection
+		map95113.put("keyB-95113", param); // put it in a collection
+		map95113.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map95113.get("keyB-95113"); // get it back out
+		bar = (String)map95113.get("keyA-95113"); // get safe value back out
 
             return bar;
         }

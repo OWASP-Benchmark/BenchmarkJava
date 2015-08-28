@@ -40,53 +40,54 @@ public class BenchmarkTest02700 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		String queryString = request.getQueryString();
-		String paramval = "vector"+"=";
-		int paramLoc = -1;
-		if (queryString != null) paramLoc = queryString.indexOf(paramval);
-		if (paramLoc == -1) {
-			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "vector" + "' in query string.");
-			return;
-		}
-		
-		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "vector" param is last parameter in query string.
-		// And then check to see if its in the middle of the query string and if so, trim off what comes after.
-		int ampersandLoc = queryString.indexOf("&", paramLoc);
-		if (ampersandLoc != -1) {
-			param = queryString.substring(paramLoc + paramval.length(), ampersandLoc);
-		}
-		param = java.net.URLDecoder.decode(param, "UTF-8");
+		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
+		String param = scr.getTheValue("vector");
 
 		String bar = doSomething(param);
 		
-		try {
-			String sql = "SELECT  * from USERS where USERNAME='foo' and PASSWORD='"+ bar + "'" ;
-	
-	        org.springframework.jdbc.support.rowset.SqlRowSet results = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.queryForRowSet(sql);
-	        java.io.PrintWriter out = response.getWriter();
-			out.write("Your results are: ");
-	//		System.out.println("Your results are");
-			while(results.next()) {
-	            out.write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(results.getString("USERNAME")) + " ");
-	//			System.out.println(results.getString("USERNAME"));
+		byte[] bytes = new byte[10];
+		new java.util.Random().nextBytes(bytes);
+        String rememberMeKey = org.owasp.esapi.ESAPI.encoder().encodeForBase64(bytes, true);
+
+		String user = "Byron";
+		String fullClassName = this.getClass().getName();
+		String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
+		user+= testCaseNumber;
+		
+		String cookieName = "rememberMe" + testCaseNumber;
+		
+		boolean foundUser = false;
+		javax.servlet.http.Cookie[] cookies = request.getCookies();
+		for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
+			javax.servlet.http.Cookie cookie = cookies[i];
+			if (cookieName.equals(cookie.getName())) {
+				if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+					foundUser = true;
+				}
 			}
-		} catch (org.springframework.dao.DataAccessException e) {
-			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
-        		return;
-        	}
-			else throw new ServletException(e);
 		}
+		
+		if (foundUser) {
+			response.getWriter().println("Welcome back: " + user + "<br/>");			
+		} else {			
+			javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
+			rememberMe.setSecure(true);
+			request.getSession().setAttribute(cookieName, rememberMeKey);
+			response.addCookie(rememberMe);
+			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
+					+ " whose value is: " + rememberMe.getValue() + "<br/>");
+		}
+
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextBytes() executed");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map30642 = new java.util.HashMap<String,Object>();
-		map30642.put("keyA-30642", "a Value"); // put some stuff in the collection
-		map30642.put("keyB-30642", param); // put it in a collection
-		map30642.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map30642.get("keyB-30642"); // get it back out
+		String bar = "";
+		if (param != null) {
+			bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    	new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
+		}
 	
 		return bar;	
 	}

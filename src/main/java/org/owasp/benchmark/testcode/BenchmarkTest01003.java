@@ -42,48 +42,32 @@ public class BenchmarkTest01003 extends HttpServlet {
 	
 		javax.servlet.http.Cookie[] theCookies = request.getCookies();
 		
-		String param = null;
-		boolean foundit = false;
+		String param = "";
 		if (theCookies != null) {
 			for (javax.servlet.http.Cookie theCookie : theCookies) {
 				if (theCookie.getName().equals("vector")) {
 					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
-					foundit = true;
+					break;
 				}
 			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
 		}
 
 		String bar = new Test().doSomething(param);
 		
-		java.util.List<String> argList = new java.util.ArrayList<String>();
-		
-		String osName = System.getProperty("os.name");
-        if (osName.indexOf("Windows") != -1) {
-        	argList.add("cmd.exe");
-        	argList.add("/c");
-        } else {
-        	argList.add("sh");
-        	argList.add("-c");
-        }
-        argList.add("echo " + bar);
-
-		ProcessBuilder pb = new ProcessBuilder();
-
-		pb.command(argList);
-		
+		String sql = "SELECT * from USERS where USERNAME=? and PASSWORD='"+ bar +"'";
+				
 		try {
-			Process p = pb.start();
-			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - java.lang.ProcessBuilder(java.util.List) Test Case");
-            throw new ServletException(e);
+			java.sql.Connection connection = org.owasp.benchmark.helpers.DatabaseHelper.getSqlConnection();
+			java.sql.PreparedStatement statement = connection.prepareStatement( sql, new String[] {"Column1","Column2"} );
+			statement.setString(1, "foo");
+			statement.execute();
+            org.owasp.benchmark.helpers.DatabaseHelper.printResults(statement, sql, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
 		}
 	}  // end doPost
 
@@ -91,12 +75,17 @@ public class BenchmarkTest01003 extends HttpServlet {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map65190 = new java.util.HashMap<String,Object>();
-		map65190.put("keyA-65190", "a Value"); // put some stuff in the collection
-		map65190.put("keyB-65190", param); // put it in a collection
-		map65190.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map65190.get("keyB-65190"); // get it back out
+		String bar = "";
+		if (param != null) {
+			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+			valuesList.add("safe");
+			valuesList.add( param );
+			valuesList.add( "moresafe" );
+			
+			valuesList.remove(0); // remove the 1st safe value
+			
+			bar = valuesList.get(0); // get the param value
+		}
 
             return bar;
         }

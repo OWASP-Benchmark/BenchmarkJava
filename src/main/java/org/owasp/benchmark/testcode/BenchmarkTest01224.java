@@ -48,34 +48,25 @@ public class BenchmarkTest01224 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		String cmd = "";	
-		String a1 = "";
-		String a2 = "";
-		String[] args = null;
-		String osName = System.getProperty("os.name");
-		
-		if (osName.indexOf("Windows") != -1) {
-        	a1 = "cmd.exe";
-        	a2 = "/c";
-        	cmd = "echo ";
-        	args = new String[]{a1, a2, cmd, bar};
-        } else {
-        	a1 = "sh";
-        	a2 = "-c";
-        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("ls");
-        	args = new String[]{a1, a2,cmd + bar};
-        }
-        
-        String[] argsEnv = { "foo=bar" };
-        
-		Runtime r = Runtime.getRuntime();
-
 		try {
-			Process p = r.exec(args, argsEnv);
-			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - TestCase");
-            throw new ServletException(e);
+			java.io.FileInputStream file = new java.io.FileInputStream(org.owasp.benchmark.helpers.Utils.getFileFromClasspath("employees.xml", this.getClass().getClassLoader()));
+			javax.xml.parsers.DocumentBuilderFactory builderFactory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+			javax.xml.parsers.DocumentBuilder builder = builderFactory.newDocumentBuilder();
+			org.w3c.dom.Document xmlDocument = builder.parse(file);
+			javax.xml.xpath.XPathFactory xpf = javax.xml.xpath.XPathFactory.newInstance();
+			javax.xml.xpath.XPath xp = xpf.newXPath();
+			
+			response.getWriter().println("Your query results are: <br/>"); 
+			String expression = "/Employees/Employee[@emplid='"+bar+"']";
+			response.getWriter().println(xp.evaluate(expression, xmlDocument) + "<br/>");
+			
+		} catch (javax.xml.xpath.XPathExpressionException e) {
+			// OK to swallow
+			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
+		} catch (javax.xml.parsers.ParserConfigurationException e) {
+			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
+		} catch (org.xml.sax.SAXException e) {
+			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
 		}
 	}  // end doPost
 
@@ -83,13 +74,17 @@ public class BenchmarkTest01224 extends HttpServlet {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map70292 = new java.util.HashMap<String,Object>();
-		map70292.put("keyA-70292", "a_Value"); // put some stuff in the collection
-		map70292.put("keyB-70292", param); // put it in a collection
-		map70292.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map70292.get("keyB-70292"); // get it back out
-		bar = (String)map70292.get("keyA-70292"); // get safe value back out
+		String bar = "";
+		if (param != null) {
+			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+			valuesList.add("safe");
+			valuesList.add( param );
+			valuesList.add( "moresafe" );
+			
+			valuesList.remove(0); // remove the 1st safe value
+			
+			bar = valuesList.get(0); // get the param value
+		}
 
             return bar;
         }

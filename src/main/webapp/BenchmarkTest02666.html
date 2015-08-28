@@ -7,18 +7,15 @@
 <title>BenchmarkTest02666</title>
 </head>
 <body>
-<form action="/benchmark/BenchmarkTest02666" method="GET" id="FormBenchmarkTest02666">
-    <div><label>Please enter your details:</label></div>
-    <br/>
-	<div><label>Username:</label></div>
-	<div><input type="text" id="username" name="username"></input></div>
-	<div><label>Password:</label></div>
-	<div><input type="text" id="password" name="password" value=""></input></div>
-    <div>&nbsp</div>
-    <div><label>Parameter: vector <BR> Value:</label>
-	<input type="text" id="vector" name="vector" value="whatever"></input></div>
-    <br/>
-	<div><input type="submit" value="Login" /></div>
-</form>
+<form action="/benchmark/BenchmarkTest02666" method="POST" id="FormBenchmarkTest02666">
+    <p>Please make your car selection, and edit the value to be sent [value]:</p>
+	<select name="vector" multiple>
+	    <option value="FileName" selected>Audi. [FileName]</option>
+	    <option value="Ford">Ford. [Ford]</option>
+	    <option value="Opel">Opel. [Opel]</option>
+        <option value="Subaru">Subaru. [Subaru]</option>
+	</select><br/><br/>
+    <input type="submit" value="Submit">
+ </form>
 </body>
 </html>

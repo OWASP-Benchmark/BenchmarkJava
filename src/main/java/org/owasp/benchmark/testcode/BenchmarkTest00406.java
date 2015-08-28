@@ -44,10 +44,41 @@ public class BenchmarkTest00406 extends HttpServlet {
 		if (param == null) param = "";
 		
 		
-		StringBuilder sbxyz33119 = new StringBuilder(param);
-		String bar = sbxyz33119.append("_SafeStuff").toString();
+		String bar;
+		
+		// Simple if statement that assigns constant to bar on true condition
+		int num = 86;
+		if ( (7*42) - num > 200 )
+		   bar = "This_should_always_happen"; 
+		else bar = param;
 		
 		
-		response.getWriter().println(bar.toCharArray());
+		String cmd = "";	
+		String a1 = "";
+		String a2 = "";
+		String[] args = null;
+		String osName = System.getProperty("os.name");
+		
+		if (osName.indexOf("Windows") != -1) {
+        	a1 = "cmd.exe";
+        	a2 = "/c";
+        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("echo");
+        	args = new String[]{a1, a2, cmd, bar};
+        } else {
+        	a1 = "sh";
+        	a2 = "-c";
+        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("ping -c1");
+        	args = new String[]{a1, a2,cmd + bar};
+        }
+		
+		Runtime r = Runtime.getRuntime();
+
+		try {
+			Process p = r.exec(args);
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - TestCase");
+            throw new ServletException(e);
+		}
 	}
 }

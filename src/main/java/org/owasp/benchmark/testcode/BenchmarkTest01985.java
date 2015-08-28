@@ -40,62 +40,39 @@ public class BenchmarkTest01985 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		String param = request.getHeader("vector");
-		if (param == null) param = "";
-
-		String bar = doSomething(param);
-		
-		double stuff = new java.util.Random().nextGaussian();
-		String rememberMeKey = Double.toString(stuff).substring(2); // Trim off the 0. at the front.
-		
-		String user = "Gayle";
-		String fullClassName = this.getClass().getName();
-		String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
-		user+= testCaseNumber;
-		
-		String cookieName = "rememberMe" + testCaseNumber;
-		
-		boolean foundUser = false;
-		javax.servlet.http.Cookie[] cookies = request.getCookies();
-		for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-			javax.servlet.http.Cookie cookie = cookies[i];
-			if (cookieName.equals(cookie.getName())) {
-				if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-					foundUser = true;
+		String param = "";
+		boolean flag = true;
+		java.util.Enumeration<String> names = request.getHeaderNames();
+		while (names.hasMoreElements() && flag) {
+			String name = (String) names.nextElement();
+			java.util.Enumeration<String> values = request.getHeaders(name);
+			if (values != null) {
+				while (values.hasMoreElements() && flag) {
+					String value = (String) values.nextElement();
+					if (value.equals("vector")) {
+						param = name;
+						flag = false;
+					}
 				}
 			}
 		}
+
+		String bar = doSomething(param);
 		
-		if (foundUser) {
-			response.getWriter().println("Welcome back: " + user + "<br/>");			
-		} else {			
-			javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
-			rememberMe.setSecure(true);
-			request.getSession().setAttribute(cookieName, rememberMeKey);
-			response.addCookie(rememberMe);
-			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-					+ " whose value is: " + rememberMe.getValue() + "<br/>");
-		}
-			
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextGaussian() executed");
+		java.io.File fileTarget = new java.io.File(bar, "/Test.txt");
+		response.getWriter().write("Access to file: '" + fileTarget + "' created." );
+		if (fileTarget.exists()) {
+			response.getWriter().write(" And file already exists.");
+		} else { response.getWriter().write(" But file doesn't exist yet."); }
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a31177 = param; //assign
-		StringBuilder b31177 = new StringBuilder(a31177);  // stick in stringbuilder
-		b31177.append(" SafeStuff"); // append some safe content
-		b31177.replace(b31177.length()-"Chars".length(),b31177.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map31177 = new java.util.HashMap<String,Object>();
-		map31177.put("key31177", b31177.toString()); // put in a collection
-		String c31177 = (String)map31177.get("key31177"); // get it back out
-		String d31177 = c31177.substring(0,c31177.length()-1); // extract most of it
-		String e31177 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d31177.getBytes() ) )); // B64 encode and decode it
-		String f31177 = e31177.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f31177); // reflection
+		String bar = "";
+		if (param != null) {
+			bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    	new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
+		}
 	
 		return bar;	
 	}

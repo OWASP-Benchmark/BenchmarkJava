@@ -44,39 +44,16 @@ public class BenchmarkTest00886 extends HttpServlet {
 		String param = scr.getTheValue("vector");
 		
 		
-		String bar;
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map18121 = new java.util.HashMap<String,Object>();
+		map18121.put("keyA-18121", "a_Value"); // put some stuff in the collection
+		map18121.put("keyB-18121", param); // put it in a collection
+		map18121.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map18121.get("keyB-18121"); // get it back out
+		bar = (String)map18121.get("keyA-18121"); // get safe value back out
 		
-		// Simple ? condition that assigns constant to bar on true condition
-		int num = 106;
 		
-		bar = (7*18) + num > 200 ? "This_should_always_happen" : param;
-		
-		
-		
-		String fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
-        java.io.InputStream is = null;
-        
-		try {	
-			java.nio.file.Path path = java.nio.file.Paths.get(fileName);
-			is = java.nio.file.Files.newInputStream(path, java.nio.file.StandardOpenOption.READ);
-			byte[] b = new byte[1000];
-			int size = is.read(b);
-			response.getWriter().write("The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n");
-			response.getWriter().write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size)));
-			is.close();
-		} catch (Exception e) {
-            System.out.println("Couldn't open InputStream on file: '" + fileName + "'");
-			response.getWriter().write("Problem getting InputStream: " 
-				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage()));
-        } finally {
-			if (is != null) {
-                try {
-                    is.close();
-                    is = null;
-                } catch (Exception e) {
-                    // we tried...
-                }
-            }
-        }
+		Object[] obj = { bar, "b"};
+		response.getWriter().printf("Formatted like: %1$s and %2$s.",obj);
 	}
 }

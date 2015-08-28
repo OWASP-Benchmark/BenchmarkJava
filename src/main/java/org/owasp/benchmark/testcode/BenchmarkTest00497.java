@@ -49,14 +49,40 @@ public class BenchmarkTest00497 extends HttpServlet {
 		
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map73686 = new java.util.HashMap<String,Object>();
-		map73686.put("keyA-73686", "a Value"); // put some stuff in the collection
-		map73686.put("keyB-73686", param); // put it in a collection
-		map73686.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map73686.get("keyB-73686"); // get it back out
+		String bar;
+		String guess = "ABC";
+		char switchTarget = guess.charAt(2);
+		
+		// Simple case statement that assigns param to bar on conditions 'A', 'C', or 'D'
+		switch (switchTarget) {
+		  case 'A':
+		        bar = param;
+		        break;
+		  case 'B': 
+		        bar = "bobs_your_uncle";
+		        break;
+		  case 'C':
+		  case 'D':        
+		        bar = param;
+		        break;
+		  default:
+		        bar = "bobs_your_uncle";
+		        break;
+		}
 		
 		
-		response.getWriter().println(bar);
+		String cmd = org.owasp.benchmark.helpers.Utils.getInsecureOSCommandString(this.getClass().getClassLoader());
+		String[] args = {cmd};
+        String[] argsEnv = { bar };
+        
+		Runtime r = Runtime.getRuntime();
+
+		try {
+			Process p = r.exec(args, argsEnv);
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - TestCase");
+            throw new ServletException(e);
+		}
 	}
 }

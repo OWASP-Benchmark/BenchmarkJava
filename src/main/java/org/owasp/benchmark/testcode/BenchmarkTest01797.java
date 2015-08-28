@@ -45,24 +45,59 @@ public class BenchmarkTest01797 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		Object[] obj = { "a", bar };
-		java.io.PrintWriter out = response.getWriter();
-		out.write("<!DOCTYPE html>\n<html>\n<body>\n<p>");
-		out.format(java.util.Locale.US,"Formatted like: %1$s and %2$s.",obj);
-	    out.write("\n</p>\n</body>\n</html>");
+		try {
+			double rand = java.security.SecureRandom.getInstance("SHA1PRNG").nextDouble();
+			
+			String rememberMeKey = Double.toString(rand).substring(2); // Trim off the 0. at the front.
+			
+			String user = "SafeDonna";
+			String fullClassName = this.getClass().getName();
+			String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
+			user+= testCaseNumber;
+			
+			String cookieName = "rememberMe" + testCaseNumber;
+			
+			boolean foundUser = false;
+			javax.servlet.http.Cookie[] cookies = request.getCookies();
+			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
+				javax.servlet.http.Cookie cookie = cookies[i];
+				if (cookieName.equals(cookie.getName())) {
+					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+						foundUser = true;
+					}
+				}
+			}
+			
+			if (foundUser) {
+				response.getWriter().println("Welcome back: " + user + "<br/>");			
+			} else {			
+				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
+				rememberMe.setSecure(true);
+				request.getSession().setAttribute(cookieName, rememberMeKey);
+				response.addCookie(rememberMe);
+				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
+						+ " whose value is: " + rememberMe.getValue() + "<br/>");
+			}
+
+	    } catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing SecureRandom.nextDouble() - TestCase");
+			throw new ServletException(e);
+	    }
+		
+		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextDouble() executed");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		
-		// Simple if statement that assigns constant to bar on true condition
-		int num = 86;
-		if ( (7*42) - num > 200 )
-		   bar = "This_should_always_happen"; 
-		else bar = param;
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map74334 = new java.util.HashMap<String,Object>();
+		map74334.put("keyA-74334", "a_Value"); // put some stuff in the collection
+		map74334.put("keyB-74334", param); // put it in a collection
+		map74334.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map74334.get("keyB-74334"); // get it back out
+		bar = (String)map74334.get("keyA-74334"); // get safe value back out
 
             return bar;
         }

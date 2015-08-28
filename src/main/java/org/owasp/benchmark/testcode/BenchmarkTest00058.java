@@ -42,48 +42,29 @@ public class BenchmarkTest00058 extends HttpServlet {
 	
 		javax.servlet.http.Cookie[] theCookies = request.getCookies();
 		
-		String param = null;
-		boolean foundit = false;
+		String param = "";
 		if (theCookies != null) {
 			for (javax.servlet.http.Cookie theCookie : theCookies) {
 				if (theCookie.getName().equals("vector")) {
 					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
-					foundit = true;
+					break;
 				}
 			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
 		}
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map68278 = new java.util.HashMap<String,Object>();
-		map68278.put("keyA-68278", "a Value"); // put some stuff in the collection
-		map68278.put("keyB-68278", param); // put it in a collection
-		map68278.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map68278.get("keyB-68278"); // get it back out
+		String bar = param;
 		
 		
 		// Code based on example from:
 		// http://examples.javacodegeeks.com/core-java/crypto/encrypt-decrypt-file-stream-with-des/
-	    // 8-byte initialization vector
-	    byte[] iv = {
-	    	(byte)0xB2, (byte)0x12, (byte)0xD5, (byte)0xB2,
-	    	(byte)0x44, (byte)0x21, (byte)0xC3, (byte)0xC3033
-	    };
 		
 		try {
-			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("DES/CBC/PKCS5Padding");
+			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("DESEDE/ECB/PKCS5Padding");
 			
             // Prepare the cipher to encrypt
-            javax.crypto.SecretKey key = javax.crypto.KeyGenerator.getInstance("DES").generateKey();
-            java.security.spec.AlgorithmParameterSpec paramSpec = new javax.crypto.spec.IvParameterSpec(iv);
-            c.init(javax.crypto.Cipher.ENCRYPT_MODE, key, paramSpec);
+            javax.crypto.SecretKey key = javax.crypto.KeyGenerator.getInstance("DESEDE").generateKey();
+            c.init(javax.crypto.Cipher.ENCRYPT_MODE, key);
 			
 			// encrypt and store the results
 			byte[] input = { (byte)'?' };
@@ -127,11 +108,8 @@ public class BenchmarkTest00058 extends HttpServlet {
 			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
 			e.printStackTrace(response.getWriter());
 			throw new ServletException(e);
-		} catch (java.security.InvalidAlgorithmParameterException e) {
-			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			e.printStackTrace(response.getWriter());
-			throw new ServletException(e);
 		}
+
 		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String) executed");
 	}
 }

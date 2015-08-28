@@ -40,55 +40,40 @@ public class BenchmarkTest02241 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		String param = request.getParameter("vector");
-		if (param == null) param = "";
+		java.util.Map<String,String[]> map = request.getParameterMap();
+		String param = "";
+		if (!map.isEmpty()) {
+			String[] values = map.get("vector");
+			if (values != null) param = values[0];
+		}
+		
 
 		String bar = doSomething(param);
 		
- 		try {
-	        String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='" + bar + "'";
-	
-			java.util.List<String> results = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.query(sql,  new org.springframework.jdbc.core.RowMapper<String>() {
-	            public String mapRow(java.sql.ResultSet rs, int rowNum) throws java.sql.SQLException {
-	                try {
-	                	return rs.getString("USERNAME");
-	                } catch (java.sql.SQLException e) {
-	                	if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-	        				return "Error processing query.";
-	        			}
-						else throw e;
-					}
-	            }
-	        });
-			java.io.PrintWriter out = response.getWriter();
-			
-			out.write("Your results are: ");
-	//		System.out.println("Your results are");
-			for(String s : results){
-				out.write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(s) + "<br>");
-	//			System.out.println(s);
-			}
-		} catch (org.springframework.dao.DataAccessException e) {
-			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
-        		return;
-        	}
-			else throw new ServletException(e);
-		}
+		response.getWriter().write(bar);
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "alsosafe";
-		if (param != null) {
-			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
-			valuesList.add("safe");
-			valuesList.add( param );
-			valuesList.add( "moresafe" );
-			
-			valuesList.remove(0); // remove the 1st safe value
-			
-			bar = valuesList.get(1); // get the last 'safe' value
+		String bar;
+		String guess = "ABC";
+		char switchTarget = guess.charAt(2);
+		
+		// Simple case statement that assigns param to bar on conditions 'A', 'C', or 'D'
+		switch (switchTarget) {
+		  case 'A':
+		        bar = param;
+		        break;
+		  case 'B': 
+		        bar = "bobs_your_uncle";
+		        break;
+		  case 'C':
+		  case 'D':        
+		        bar = param;
+		        break;
+		  default:
+		        bar = "bobs_your_uncle";
+		        break;
 		}
 	
 		return bar;	

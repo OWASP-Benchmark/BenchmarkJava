@@ -49,6 +49,20 @@ public class BenchmarkTest00017 extends HttpServlet {
 		}
 
 		
-		response.getWriter().println(param);
+		String cmd = "";
+        String osName = System.getProperty("os.name");
+        if (osName.indexOf("Windows") != -1) {
+        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("echo");
+        }
+        
+		Runtime r = Runtime.getRuntime();
+
+		try {
+			Process p = r.exec(cmd + param);
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - TestCase");
+            throw new ServletException(e);
+		}
 	}
 }

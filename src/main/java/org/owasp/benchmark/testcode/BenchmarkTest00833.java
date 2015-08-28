@@ -58,15 +58,19 @@ public class BenchmarkTest00833 extends HttpServlet {
 		param = java.net.URLDecoder.decode(param, "UTF-8");
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map56521 = new java.util.HashMap<String,Object>();
-		map56521.put("keyA-56521", "a_Value"); // put some stuff in the collection
-		map56521.put("keyB-56521", param); // put it in a collection
-		map56521.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map56521.get("keyB-56521"); // get it back out
-		bar = (String)map56521.get("keyA-56521"); // get safe value back out
+		String bar;
+		
+		// Simple if statement that assigns param to bar on true condition
+		int num = 196;
+		if ( (500/42) + num > 200 )
+		   bar = param;
+		else bar = "This should never happen"; 
 		
 		
-		response.getWriter().write("Parameter value: " + bar);
+		// javax.servlet.http.HttpSession.putValue(java.lang.String,java.lang.Object^)
+		request.getSession().putValue( "userid", bar);
+		
+		response.getWriter().println("Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
+			+ "' saved in session.");
 	}
 }

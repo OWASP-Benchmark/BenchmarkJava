@@ -41,26 +41,18 @@ public class BenchmarkTest02043 extends HttpServlet {
 		response.setContentType("text/html");
 
 		String param = "";
-		boolean flag = true;
-		java.util.Enumeration<String> names = request.getHeaderNames();
-		while (names.hasMoreElements() && flag) {
-			String name = (String) names.nextElement();
-			java.util.Enumeration<String> values = request.getHeaders(name);
-			if (values != null) {
-				while (values.hasMoreElements() && flag) {
-					String value = (String) values.nextElement();
-					if (value.equals("vector")) {
-						param = name;
-						flag = false;
-					}
-				}
-			}
+		java.util.Enumeration<String> headers = request.getHeaders("vector");
+		if (headers.hasMoreElements()) {
+			param = headers.nextElement(); // just grab first element
 		}
 
 		String bar = doSomething(param);
 		
 		try {
-			java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA1", "SUN");
+		    java.util.Properties benchmarkprops = new java.util.Properties();
+		    benchmarkprops.load(this.getClass().getClassLoader().getResourceAsStream("benchmark.properties"));
+			String algorithm = benchmarkprops.getProperty("hashAlg2", "SHA5");
+			java.security.MessageDigest md = java.security.MessageDigest.getInstance(algorithm);
 			byte[] input = { (byte)'?' };
 			Object inputParam = bar;
 			if (inputParam instanceof String) input = ((String) inputParam).getBytes();
@@ -72,7 +64,7 @@ public class BenchmarkTest02043 extends HttpServlet {
 					return;
 				}
 				input = java.util.Arrays.copyOf(strInput, i);
-			}		
+			}			
 			md.update(input);
 			
 			byte[] result = md.digest();
@@ -83,29 +75,22 @@ public class BenchmarkTest02043 extends HttpServlet {
 			fw.close();
 			response.getWriter().println("Sensitive value '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' hashed and stored<br/>");
 		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.lang.String)");
-			throw new ServletException(e);			
-		} catch (java.security.NoSuchProviderException e) {
-			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.lang.String)");
+			System.out.println("Problem executing hash - TestCase");
 			throw new ServletException(e);
 		}
-
-		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.lang.String) executed");
+		
+		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String) executed");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "";
-		if (param != null) {
-			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
-			valuesList.add("safe");
-			valuesList.add( param );
-			valuesList.add( "moresafe" );
-			
-			valuesList.remove(0); // remove the 1st safe value
-			
-			bar = valuesList.get(0); // get the param value
-		}
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map84843 = new java.util.HashMap<String,Object>();
+		map84843.put("keyA-84843", "a_Value"); // put some stuff in the collection
+		map84843.put("keyB-84843", param); // put it in a collection
+		map84843.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map84843.get("keyB-84843"); // get it back out
+		bar = (String)map84843.get("keyA-84843"); // get safe value back out
 	
 		return bar;	
 	}

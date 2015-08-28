@@ -40,37 +40,57 @@ public class BenchmarkTest01753 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String queryString = request.getQueryString();
-		String paramval = "vector"+"=";
-		int paramLoc = -1;
-		if (queryString != null) paramLoc = queryString.indexOf(paramval);
-		if (paramLoc == -1) {
-			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "vector" + "' in query string.");
-			return;
-		}
-		
-		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "vector" param is last parameter in query string.
-		// And then check to see if its in the middle of the query string and if so, trim off what comes after.
-		int ampersandLoc = queryString.indexOf("&", paramLoc);
-		if (ampersandLoc != -1) {
-			param = queryString.substring(paramLoc + paramval.length(), ampersandLoc);
-		}
-		param = java.net.URLDecoder.decode(param, "UTF-8");
+		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
+		String param = scr.getTheValue("vector");
 
 		String bar = new Test().doSomething(param);
 		
-		// javax.servlet.http.HttpSession.setAttribute(java.lang.String,java.lang.Object^)
-		request.getSession().setAttribute( "userid", bar);
-				
-		response.getWriter().println("Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
-			+ "' saved in session.");
+	org.owasp.benchmark.helpers.LDAPManager ads = new org.owasp.benchmark.helpers.LDAPManager();
+	try {
+		response.setContentType("text/html");
+		String base = "ou=users,ou=system";
+		javax.naming.directory.SearchControls sc = new javax.naming.directory.SearchControls();
+		sc.setSearchScope(javax.naming.directory.SearchControls.SUBTREE_SCOPE);
+		String filter = "(&(objectclass=person))(|(uid="+bar+")(street={0}))";
+		Object[] filters = new Object[]{"The streetz 4 Ms bar"};
+		
+		javax.naming.directory.DirContext ctx = ads.getDirContext();
+		javax.naming.directory.InitialDirContext idc = (javax.naming.directory.InitialDirContext) ctx;
+		javax.naming.NamingEnumeration<javax.naming.directory.SearchResult> results = 
+				idc.search(base, filter,filters, sc);
+		while (results.hasMore()) {
+			javax.naming.directory.SearchResult sr = (javax.naming.directory.SearchResult) results.next();
+			javax.naming.directory.Attributes attrs = sr.getAttributes();
+
+			javax.naming.directory.Attribute attr = attrs.get("uid");
+			javax.naming.directory.Attribute attr2 = attrs.get("street");
+			if (attr != null){
+				response.getWriter().write("LDAP query results:<br>"
+						+ " Record found with name " + attr.get() + "<br>"
+								+ "Address: " + attr2.get()+ "<br>");
+				System.out.println("record found " + attr.get());
+			}
+		}
+	} catch (javax.naming.NamingException e) {
+		throw new ServletException(e);
+	}finally{
+    	try {
+    		ads.closeDirContext();
+		} catch (Exception e) {
+			throw new ServletException(e);
+		}
+    }
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = org.owasp.esapi.ESAPI.encoder().encodeForHTML(param);
+		String bar = "";
+		if (param != null) {
+			bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    	new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
+		}
 
             return bar;
         }

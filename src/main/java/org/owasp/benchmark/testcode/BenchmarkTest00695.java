@@ -40,39 +40,53 @@ public class BenchmarkTest00695 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheParameter("vector");
-		if (param == null) param = "";
+		String[] values = request.getParameterValues("vector");
+		String param;
+		if (values != null && values.length > 0)
+		  param = values[0];
+		else param = "";
 		
 		
-		String bar;
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map50222 = new java.util.HashMap<String,Object>();
+		map50222.put("keyA-50222", "a Value"); // put some stuff in the collection
+		map50222.put("keyB-50222", param); // put it in a collection
+		map50222.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map50222.get("keyB-50222"); // get it back out
 		
-		// Simple if statement that assigns constant to bar on true condition
-		int num = 86;
-		if ( (7*42) - num > 200 )
-		   bar = "This_should_always_happen"; 
-		else bar = param;
 		
-		
-		try {
-	        String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"
-	            + bar + "'";
-	
-			java.util.List list = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.queryForList(sql);
-			java.io.PrintWriter out = response.getWriter();
-	        out.write("Your results are: <br>");
-	//		System.out.println("Your results are");
-			
-			for(Object o:list){
-				out.write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(o.toString()) + "<br>");
-	//			System.out.println(o.toString());
+	org.owasp.benchmark.helpers.LDAPManager ads = new org.owasp.benchmark.helpers.LDAPManager();
+	try {
+			response.setContentType("text/html");
+			javax.naming.directory.DirContext ctx = ads.getDirContext();
+			String base = "ou=users,ou=system";
+			javax.naming.directory.SearchControls sc = new javax.naming.directory.SearchControls();
+			sc.setSearchScope(javax.naming.directory.SearchControls.SUBTREE_SCOPE);
+			String filter = "(&(objectclass=person)(uid=" + bar
+					+ "))";
+			System.out.println("Filter " + filter);
+			javax.naming.NamingEnumeration<javax.naming.directory.SearchResult> results = ctx.search(base, filter, sc);
+			while (results.hasMore()) {
+				javax.naming.directory.SearchResult sr = (javax.naming.directory.SearchResult) results.next();
+				javax.naming.directory.Attributes attrs = sr.getAttributes();
+
+				javax.naming.directory.Attribute attr = attrs.get("uid");
+				javax.naming.directory.Attribute attr2 = attrs.get("street");
+				if (attr != null){
+					response.getWriter().write("LDAP query results:<br>"
+							+ " Record found with name " + attr.get() + "<br>"
+									+ "Address: " + attr2.get()+ "<br>");
+					System.out.println("record found " + attr.get());
+				}
 			}
-		} catch (org.springframework.dao.DataAccessException e) {
-			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
-        		return;
-        	}
-			else throw new ServletException(e);
+	} catch (javax.naming.NamingException e) {
+		throw new ServletException(e);
+	}finally{
+    	try {
+    		ads.closeDirContext();
+		} catch (Exception e) {
+			throw new ServletException(e);
 		}
+    }
 	}
 }

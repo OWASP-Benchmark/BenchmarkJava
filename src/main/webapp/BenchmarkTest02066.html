@@ -15,7 +15,7 @@
 	<div><input type="text" id="answer" name="answer"></input></div>
     <br/>
     <div><label>An AJAX request will be sent with a header named vector and value:</label>
-    <input type="text" id="vector" name="vector" value="my_userid" class="safe"></input></div>
+    <input type="text" id="vector" name="vector" value="whatever" class="safe"></input></div>
 	<div><input type="button" id="login-btn" value="Login" /></div>
 </form>
 <div id="ajax-form-msg1"></div>
@@ -31,19 +31,15 @@ $("#login-btn").click(function(){
     var formData = $("#FormBenchmarkTest02066").serializeArray();
     var URL = $("#FormBenchmarkTest02066").attr("action");
     var text = $("#FormBenchmarkTest02066 input[id=vector]").val();
-    
     $.ajax({
-        beforeSend: function (request)
-            {
-                request.setRequestHeader($("#FormBenchmarkTest02066 input[id=vector]").val(), 'vector');
-            },
         url : URL,
+        headers: { 'vector': text },
         type: "POST",
         data : formData,
         success: function(data, textStatus, jqXHR){
             $("#ajax-form-msg1").html('<pre><code class="prettyprint">'+data+'</code></pre>');
         },
-         error: function (jqXHR, textStatus, errorThrown){ alert(errorThrown);}
+        error: function (jqXHR, textStatus, errorThrown){ alert(errorThrown);}
     });
 });
 </script>

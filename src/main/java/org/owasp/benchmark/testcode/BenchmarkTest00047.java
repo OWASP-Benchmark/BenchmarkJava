@@ -60,26 +60,7 @@ public class BenchmarkTest00047 extends HttpServlet {
 		param = java.net.URLDecoder.decode(param, "UTF-8");
 
 		
-		String fileName = null;
-		java.io.FileOutputStream fos = null;
-
-		try {
-			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + param;
-	
-			fos = new java.io.FileOutputStream(new java.io.File(fileName));
-	        response.getWriter().write("Now ready to write to file: " + fileName);
-		} catch (Exception e) {
-			System.out.println("Couldn't open FileOutputStream on file: '" + fileName + "'");
-//			System.out.println("File exception caught and swallowed: " + e.getMessage());
-		} finally {
-			if (fos != null) {
-				try {
-					fos.close();
-                    fos = null;
-				} catch (Exception e) {
-					// we tried...
-				}
-			}
-		}
+		Object[] obj = { "a", "b" };
+		response.getWriter().format(param,obj);
 	}
 }

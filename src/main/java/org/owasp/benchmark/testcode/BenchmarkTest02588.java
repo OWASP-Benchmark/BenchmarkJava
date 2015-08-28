@@ -40,30 +40,45 @@ public class BenchmarkTest02588 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		String[] values = request.getParameterValues("vector");
-		String param;
-		if (values != null && values.length > 0)
-		  param = values[0];
-		else param = "";
+		String queryString = request.getQueryString();
+		String paramval = "vector"+"=";
+		int paramLoc = -1;
+		if (queryString != null) paramLoc = queryString.indexOf(paramval);
+		if (paramLoc == -1) {
+			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "vector" + "' in query string.");
+			return;
+		}
+		
+		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "vector" param is last parameter in query string.
+		// And then check to see if its in the middle of the query string and if so, trim off what comes after.
+		int ampersandLoc = queryString.indexOf("&", paramLoc);
+		if (ampersandLoc != -1) {
+			param = queryString.substring(paramLoc + paramval.length(), ampersandLoc);
+		}
+		param = java.net.URLDecoder.decode(param, "UTF-8");
 
 		String bar = doSomething(param);
 		
-		// javax.servlet.http.HttpSession.setAttribute(java.lang.String^,java.lang.Object)
-		request.getSession().setAttribute( bar, "10340");
-				
-		response.getWriter().println("Item: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
-			+ "' with value: '10340' saved in session.");
+		Object[] obj = { "a", "b"};
+		response.getWriter().printf(java.util.Locale.US,bar,obj);
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		
-		// Simple ? condition that assigns constant to bar on true condition
-		int num = 106;
-		
-		bar = (7*18) + num > 200 ? "This_should_always_happen" : param;
-		
+		// Chain a bunch of propagators in sequence
+		String a95405 = param; //assign
+		StringBuilder b95405 = new StringBuilder(a95405);  // stick in stringbuilder
+		b95405.append(" SafeStuff"); // append some safe content
+		b95405.replace(b95405.length()-"Chars".length(),b95405.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map95405 = new java.util.HashMap<String,Object>();
+		map95405.put("key95405", b95405.toString()); // put in a collection
+		String c95405 = (String)map95405.get("key95405"); // get it back out
+		String d95405 = c95405.substring(0,c95405.length()-1); // extract most of it
+		String e95405 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d95405.getBytes() ) )); // B64 encode and decode it
+		String f95405 = e95405.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f95405); // reflection
 	
 		return bar;	
 	}

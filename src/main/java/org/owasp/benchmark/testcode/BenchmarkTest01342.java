@@ -40,45 +40,25 @@ public class BenchmarkTest01342 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String param = request.getParameter("vector");
-		if (param == null) param = "";
+		java.util.Map<String,String[]> map = request.getParameterMap();
+		String param = "";
+		if (!map.isEmpty()) {
+			String[] values = map.get("vector");
+			if (values != null) param = values[0];
+		}
+		
 
 		String bar = new Test().doSomething(param);
 		
-		String sql = "INSERT INTO users (username, password) VALUES ('foo','"+ bar + "')";
-				
-		try {
-			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			int count = statement.executeUpdate( sql, java.sql.Statement.RETURN_GENERATED_KEYS );
-            org.owasp.benchmark.helpers.DatabaseHelper.outputUpdateComplete(sql, response);
-		} catch (java.sql.SQLException e) {
-			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
-        		return;
-        	}
-			else throw new ServletException(e);
-		}
+		Object[] obj = { "a", bar};
+		response.getWriter().printf(java.util.Locale.US,"Formatted like: %1$s and %2$s.",obj);
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a74982 = param; //assign
-		StringBuilder b74982 = new StringBuilder(a74982);  // stick in stringbuilder
-		b74982.append(" SafeStuff"); // append some safe content
-		b74982.replace(b74982.length()-"Chars".length(),b74982.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map74982 = new java.util.HashMap<String,Object>();
-		map74982.put("key74982", b74982.toString()); // put in a collection
-		String c74982 = (String)map74982.get("key74982"); // get it back out
-		String d74982 = c74982.substring(0,c74982.length()-1); // extract most of it
-		String e74982 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d74982.getBytes() ) )); // B64 encode and decode it
-		String f74982 = e74982.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g74982 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g74982); // reflection
+		String bar = org.springframework.web.util.HtmlUtils.htmlEscape(param);
 
             return bar;
         }

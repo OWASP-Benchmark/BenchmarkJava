@@ -59,19 +59,32 @@ public class BenchmarkTest02642 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		Object[] obj = { "a", bar };
-		response.getWriter().format("Formatted like: %1$s and %2$s.",obj);
+		try {
+	        String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"
+	            + bar + "'";
+	
+			java.util.List list = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.queryForList(sql);
+			java.io.PrintWriter out = response.getWriter();
+	        out.write("Your results are: <br>");
+	//		System.out.println("Your results are");
+			
+			for(Object o:list){
+				out.write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(o.toString()) + "<br>");
+	//			System.out.println(o.toString());
+			}
+		} catch (org.springframework.dao.DataAccessException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		
-		// Simple ? condition that assigns constant to bar on true condition
-		int num = 106;
-		
-		bar = (7*18) + num > 200 ? "This_should_always_happen" : param;
-		
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(param);
 	
 		return bar;	
 	}

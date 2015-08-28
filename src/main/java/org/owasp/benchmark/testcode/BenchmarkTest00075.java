@@ -42,38 +42,30 @@ public class BenchmarkTest00075 extends HttpServlet {
 	
 		javax.servlet.http.Cookie[] theCookies = request.getCookies();
 		
-		String param = null;
-		boolean foundit = false;
+		String param = "";
 		if (theCookies != null) {
 			for (javax.servlet.http.Cookie theCookie : theCookies) {
 				if (theCookie.getName().equals("vector")) {
 					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
-					foundit = true;
+					break;
 				}
 			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
 		}
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map25859 = new java.util.HashMap<String,Object>();
-		map25859.put("keyA-25859", "a_Value"); // put some stuff in the collection
-		map25859.put("keyB-25859", param); // put it in a collection
-		map25859.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map25859.get("keyB-25859"); // get it back out
-		bar = (String)map25859.get("keyA-25859"); // get safe value back out
+		String bar;
+		
+		// Simple ? condition that assigns param to bar on false condition
+		int num = 106;
+		
+		bar = (7*42) - num > 200 ? "This should never happen" : param;
+		
 		
 		
 		try {
 		    java.util.Properties benchmarkprops = new java.util.Properties();
 		    benchmarkprops.load(this.getClass().getClassLoader().getResourceAsStream("benchmark.properties"));
-			String algorithm = benchmarkprops.getProperty("hashAlg1", "SHA512");
+			String algorithm = benchmarkprops.getProperty("hashAlg2", "SHA5");
 			java.security.MessageDigest md = java.security.MessageDigest.getInstance(algorithm);
 			byte[] input = { (byte)'?' };
 			Object inputParam = bar;

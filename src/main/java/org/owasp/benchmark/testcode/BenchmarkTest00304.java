@@ -47,22 +47,47 @@ public class BenchmarkTest00304 extends HttpServlet {
 		}
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a70614 = param; //assign
-		StringBuilder b70614 = new StringBuilder(a70614);  // stick in stringbuilder
-		b70614.append(" SafeStuff"); // append some safe content
-		b70614.replace(b70614.length()-"Chars".length(),b70614.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map70614 = new java.util.HashMap<String,Object>();
-		map70614.put("key70614", b70614.toString()); // put in a collection
-		String c70614 = (String)map70614.get("key70614"); // get it back out
-		String d70614 = c70614.substring(0,c70614.length()-1); // extract most of it
-		String e70614 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d70614.getBytes() ) )); // B64 encode and decode it
-		String f70614 = e70614.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f70614); // reflection
+		String bar = "";
+		if (param != null) {
+			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+			valuesList.add("safe");
+			valuesList.add( param );
+			valuesList.add( "moresafe" );
+			
+			valuesList.remove(0); // remove the 1st safe value
+			
+			bar = valuesList.get(0); // get the param value
+		}
 		
 		
-		response.getWriter().println(bar);
+		String cmd = "";	
+		String a1 = "";
+		String a2 = "";
+		String[] args = null;
+		String osName = System.getProperty("os.name");
+		
+		if (osName.indexOf("Windows") != -1) {
+        	a1 = "cmd.exe";
+        	a2 = "/c";
+        	cmd = "echo ";
+        	args = new String[]{a1, a2, cmd, bar};
+        } else {
+        	a1 = "sh";
+        	a2 = "-c";
+        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("ls");
+        	args = new String[]{a1, a2,cmd + bar};
+        }
+        
+        String[] argsEnv = { "foo=bar" };
+        
+		Runtime r = Runtime.getRuntime();
+
+		try {
+			Process p = r.exec(args, argsEnv, new java.io.File(System.getProperty("user.dir")));
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - TestCase");
+            throw new ServletException(e);
+		}
 	}
 }

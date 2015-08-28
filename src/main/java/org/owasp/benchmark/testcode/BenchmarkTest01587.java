@@ -40,46 +40,29 @@ public class BenchmarkTest01587 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheParameter("vector");
-		if (param == null) param = "";
+		String[] values = request.getParameterValues("vector");
+		String param;
+		if (values != null && values.length > 0)
+		  param = values[0];
+		else param = "";
 
 		String bar = new Test().doSomething(param);
 		
-		String sql = "INSERT INTO users (username, password) VALUES ('foo','"+ bar + "')";
-				
-		try {
-			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
-			int count = statement.executeUpdate( sql, new int[] {1,2} );
-            org.owasp.benchmark.helpers.DatabaseHelper.outputUpdateComplete(sql, response);
-		} catch (java.sql.SQLException e) {
-			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
-        		return;
-        	}
-			else throw new ServletException(e);
-		}
+		Object[] obj = { "a", "b"};
+		response.getWriter().printf(java.util.Locale.US,bar,obj);
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a38820 = param; //assign
-		StringBuilder b38820 = new StringBuilder(a38820);  // stick in stringbuilder
-		b38820.append(" SafeStuff"); // append some safe content
-		b38820.replace(b38820.length()-"Chars".length(),b38820.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map38820 = new java.util.HashMap<String,Object>();
-		map38820.put("key38820", b38820.toString()); // put in a collection
-		String c38820 = (String)map38820.get("key38820"); // get it back out
-		String d38820 = c38820.substring(0,c38820.length()-1); // extract most of it
-		String e38820 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d38820.getBytes() ) )); // B64 encode and decode it
-		String f38820 = e38820.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g38820 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g38820); // reflection
+		String bar;
+		
+		// Simple ? condition that assigns param to bar on false condition
+		int num = 106;
+		
+		bar = (7*42) - num > 200 ? "This should never happen" : param;
+		
 
             return bar;
         }

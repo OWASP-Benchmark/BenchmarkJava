@@ -44,15 +44,45 @@ public class BenchmarkTest00402 extends HttpServlet {
 		if (param == null) param = "";
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map55529 = new java.util.HashMap<String,Object>();
-		map55529.put("keyA-55529", "a_Value"); // put some stuff in the collection
-		map55529.put("keyB-55529", param); // put it in a collection
-		map55529.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map55529.get("keyB-55529"); // get it back out
-		bar = (String)map55529.get("keyA-55529"); // get safe value back out
+		String bar = param;
+		if (param != null && param.length() > 1) {
+		    StringBuilder sbxyz21807 = new StringBuilder(param);
+		    bar = sbxyz21807.replace(param.length()-"Z".length(), param.length(),"Z").toString();
+		}
 		
 		
-		response.getWriter().print(bar);
+		int r = new java.util.Random().nextInt();
+		String rememberMeKey = Integer.toString(r);
+		
+		String user = "Ingrid";
+		String fullClassName = this.getClass().getName();
+		String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
+		user+= testCaseNumber;
+		
+		String cookieName = "rememberMe" + testCaseNumber;
+		
+		boolean foundUser = false;
+		javax.servlet.http.Cookie[] cookies = request.getCookies();
+		for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
+			javax.servlet.http.Cookie cookie = cookies[i];
+			if (cookieName.equals(cookie.getName())) {
+				if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+					foundUser = true;
+				}
+			}
+		}
+		
+		if (foundUser) {
+			response.getWriter().println("Welcome back: " + user + "<br/>");			
+		} else {			
+			javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
+			rememberMe.setSecure(true);
+			request.getSession().setAttribute(cookieName, rememberMeKey);
+			response.addCookie(rememberMe);
+			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
+					+ " whose value is: " + rememberMe.getValue() + "<br/>");
+		}
+				
+		response.getWriter().println("Weak Randomness Test java.util.Random.nextInt() executed");
 	}
 }

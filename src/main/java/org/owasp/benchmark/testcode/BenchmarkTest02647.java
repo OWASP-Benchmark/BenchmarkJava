@@ -59,25 +59,29 @@ public class BenchmarkTest02647 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		response.getWriter().print(bar);
+		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
+				
+		try {
+			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			statement.addBatch( sql );
+			int[] counts = statement.executeBatch();
+            org.owasp.benchmark.helpers.DatabaseHelper.printResults(sql, counts, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a82842 = param; //assign
-		StringBuilder b82842 = new StringBuilder(a82842);  // stick in stringbuilder
-		b82842.append(" SafeStuff"); // append some safe content
-		b82842.replace(b82842.length()-"Chars".length(),b82842.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map82842 = new java.util.HashMap<String,Object>();
-		map82842.put("key82842", b82842.toString()); // put in a collection
-		String c82842 = (String)map82842.get("key82842"); // get it back out
-		String d82842 = c82842.substring(0,c82842.length()-1); // extract most of it
-		String e82842 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d82842.getBytes() ) )); // B64 encode and decode it
-		String f82842 = e82842.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f82842); // reflection
+		String bar = "";
+		if (param != null) {
+			bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    	new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
+		}
 	
 		return bar;	
 	}

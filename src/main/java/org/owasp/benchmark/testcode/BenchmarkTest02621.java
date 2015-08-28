@@ -59,38 +59,53 @@ public class BenchmarkTest02621 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		String fileName = null;
-		java.io.FileOutputStream fos = null;
-
 		try {
-			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
-	
-			fos = new java.io.FileOutputStream(fileName);
-	        response.getWriter().write("Now ready to write to file: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName));
-   		} catch (Exception e) {
-			System.out.println("Couldn't open FileOutputStream on file: '" + fileName + "'");
-//			System.out.println("File exception caught and swallowed: " + e.getMessage());
-		} finally {
-			if (fos != null) {
-				try {
-					fos.close();
-                    fos = null;
-				} catch (Exception e) {
-					// we tried...
+			int r = java.security.SecureRandom.getInstance("SHA1PRNG").nextInt();
+			String rememberMeKey = Integer.toString(r);
+			
+			String user = "SafeIngrid";
+			String fullClassName = this.getClass().getName();
+			String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
+			user+= testCaseNumber;
+			
+			String cookieName = "rememberMe" + testCaseNumber;
+			
+			boolean foundUser = false;
+			javax.servlet.http.Cookie[] cookies = request.getCookies();
+			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
+				javax.servlet.http.Cookie cookie = cookies[i];
+				if (cookieName.equals(cookie.getName())) {
+					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+						foundUser = true;
+					}
 				}
 			}
-		}
+			
+			if (foundUser) {
+				response.getWriter().println("Welcome back: " + user + "<br/>");			
+			} else {			
+				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
+				rememberMe.setSecure(true);
+				request.getSession().setAttribute(cookieName, rememberMeKey);
+				response.addCookie(rememberMe);
+				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
+						+ " whose value is: " + rememberMe.getValue() + "<br/>");
+			}
+
+		} catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing SecureRandom.nextInt() - TestCase");
+			throw new ServletException(e);
+	    }
+		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextInt() executed");
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map94181 = new java.util.HashMap<String,Object>();
-		map94181.put("keyA-94181", "a_Value"); // put some stuff in the collection
-		map94181.put("keyB-94181", param); // put it in a collection
-		map94181.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map94181.get("keyB-94181"); // get it back out
-		bar = (String)map94181.get("keyA-94181"); // get safe value back out
+		String bar = param;
+		if (param != null && param.length() > 1) {
+		    StringBuilder sbxyz17230 = new StringBuilder(param);
+		    bar = sbxyz17230.replace(param.length()-"Z".length(), param.length(),"Z").toString();
+		}
 	
 		return bar;	
 	}

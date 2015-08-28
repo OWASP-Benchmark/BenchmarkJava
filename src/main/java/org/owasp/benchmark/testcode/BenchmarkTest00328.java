@@ -47,51 +47,29 @@ public class BenchmarkTest00328 extends HttpServlet {
 		}
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a94434 = param; //assign
-		StringBuilder b94434 = new StringBuilder(a94434);  // stick in stringbuilder
-		b94434.append(" SafeStuff"); // append some safe content
-		b94434.replace(b94434.length()-"Chars".length(),b94434.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map94434 = new java.util.HashMap<String,Object>();
-		map94434.put("key94434", b94434.toString()); // put in a collection
-		String c94434 = (String)map94434.get("key94434"); // get it back out
-		String d94434 = c94434.substring(0,c94434.length()-1); // extract most of it
-		String e94434 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d94434.getBytes() ) )); // B64 encode and decode it
-		String f94434 = e94434.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g94434 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g94434); // reflection
+		String bar;
+		
+		// Simple ? condition that assigns param to bar on false condition
+		int num = 106;
+		
+		bar = (7*42) - num > 200 ? "This should never happen" : param;
 		
 		
-		String cmd = "";	
-		String a1 = "";
-		String a2 = "";
-		String[] args = null;
-		String osName = System.getProperty("os.name");
 		
-		if (osName.indexOf("Windows") != -1) {
-        	a1 = "cmd.exe";
-        	a2 = "/c";
-        	cmd = "echo ";
-        	args = new String[]{a1, a2, cmd, bar};
-        } else {
-        	a1 = "sh";
-        	a2 = "-c";
-        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("ls");
-        	args = new String[]{a1, a2,cmd + bar};
-        }
-        
-        String[] argsEnv = { "foo=bar" };
-        
-		Runtime r = Runtime.getRuntime();
-
+		String sql = "{call " + bar + "}";
+				
 		try {
-			Process p = r.exec(args, argsEnv);
-			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - TestCase");
-            throw new ServletException(e);
+			java.sql.Connection connection = org.owasp.benchmark.helpers.DatabaseHelper.getSqlConnection();
+			java.sql.CallableStatement statement = connection.prepareCall( sql );
+		    java.sql.ResultSet rs = statement.executeQuery();
+            org.owasp.benchmark.helpers.DatabaseHelper.printResults(rs, sql, response);
+
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
 		}
 	}
 }

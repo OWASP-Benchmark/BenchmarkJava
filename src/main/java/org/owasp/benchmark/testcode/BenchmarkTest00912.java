@@ -44,27 +44,58 @@ public class BenchmarkTest00912 extends HttpServlet {
 		String param = scr.getTheValue("vector");
 		
 		
-		// Chain a bunch of propagators in sequence
-		String a89008 = param; //assign
-		StringBuilder b89008 = new StringBuilder(a89008);  // stick in stringbuilder
-		b89008.append(" SafeStuff"); // append some safe content
-		b89008.replace(b89008.length()-"Chars".length(),b89008.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map89008 = new java.util.HashMap<String,Object>();
-		map89008.put("key89008", b89008.toString()); // put in a collection
-		String c89008 = (String)map89008.get("key89008"); // get it back out
-		String d89008 = c89008.substring(0,c89008.length()-1); // extract most of it
-		String e89008 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d89008.getBytes() ) )); // B64 encode and decode it
-		String f89008 = e89008.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g89008 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g89008); // reflection
+		String bar;
+		
+		// Simple if statement that assigns constant to bar on true condition
+		int num = 86;
+		if ( (7*42) - num > 200 )
+		   bar = "This_should_always_happen"; 
+		else bar = param;
 		
 		
-		int length = 1;
-		if (bar != null) {
-			length = bar.length();
-			response.getWriter().write(bar, 0, length);
-		}
+	    try {
+		    java.security.SecureRandom secureRandomGenerator = java.security.SecureRandom.getInstance("SHA1PRNG");
+		
+		    // Get 40 random bytes
+		    byte[] randomBytes = new byte[40];
+		    secureRandomGenerator.nextBytes(randomBytes);
+		    
+	        String rememberMeKey = org.owasp.esapi.ESAPI.encoder().encodeForBase64(randomBytes, true);
+	
+			String user = "SafeByron";
+			String fullClassName = this.getClass().getName();
+			String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
+			user+= testCaseNumber;
+			
+			String cookieName = "rememberMe" + testCaseNumber;
+			
+			boolean foundUser = false;
+			javax.servlet.http.Cookie[] cookies = request.getCookies();
+			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
+				javax.servlet.http.Cookie cookie = cookies[i];
+				if (cookieName.equals(cookie.getName())) {
+					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+						foundUser = true;
+					}
+				}
+			}
+			
+			if (foundUser) {
+				response.getWriter().println("Welcome back: " + user + "<br/>");			
+			} else {			
+				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
+				rememberMe.setSecure(true);
+				request.getSession().setAttribute(cookieName, rememberMeKey);
+				response.addCookie(rememberMe);
+				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
+						+ " whose value is: " + rememberMe.getValue() + "<br/>");
+			}
+				    
+	    } catch (java.security.NoSuchAlgorithmException e) {
+			System.out.println("Problem executing SecureRandom.nextBytes() - TestCase");
+			throw new ServletException(e);
+	    } finally {
+			response.getWriter().println("Randomness Test java.security.SecureRandom.nextBytes(byte[]) executed");	    
+	    }
 	}
 }

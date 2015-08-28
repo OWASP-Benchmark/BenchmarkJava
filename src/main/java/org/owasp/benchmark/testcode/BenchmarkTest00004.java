@@ -44,53 +44,21 @@ public class BenchmarkTest00004 extends HttpServlet {
 
 		javax.servlet.http.Cookie[] theCookies = request.getCookies();
 		
-		String param = null;
-		boolean foundit = false;
+		String param = "";
 		if (theCookies != null) {
 			for (javax.servlet.http.Cookie theCookie : theCookies) {
 				if (theCookie.getName().equals("vector")) {
 					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
-					foundit = true;
+					break;
 				}
 			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
 		}
 
 		
-		String cmd = "";	
-		String a1 = "";
-		String a2 = "";
-		String[] args = null;
-		String osName = System.getProperty("os.name");
-		
-		if (osName.indexOf("Windows") != -1) {
-        	a1 = "cmd.exe";
-        	a2 = "/c";
-        	cmd = "echo ";
-        	args = new String[]{a1, a2, cmd, param};
-        } else {
-        	a1 = "sh";
-        	a2 = "-c";
-        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("ls");
-        	args = new String[]{a1, a2,cmd + param};
-        }
-        
-        String[] argsEnv = { "foo=bar" };
-        
-		Runtime r = Runtime.getRuntime();
-
-		try {
-			Process p = r.exec(args, argsEnv, new java.io.File(System.getProperty("user.dir")));
-			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - TestCase");
-            throw new ServletException(e);
-		}
+		// javax.servlet.http.HttpSession.setAttribute(java.lang.String^,java.lang.Object)
+		request.getSession().setAttribute( param, "10340");
+				
+		response.getWriter().println("Item: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(param)
+			+ "' with value: '10340' saved in session.");
 	}
 }

@@ -47,16 +47,22 @@ public class BenchmarkTest00737 extends HttpServlet {
 		else param = "";
 		
 		
-		String bar;
+		// Chain a bunch of propagators in sequence
+		String a66064 = param; //assign
+		StringBuilder b66064 = new StringBuilder(a66064);  // stick in stringbuilder
+		b66064.append(" SafeStuff"); // append some safe content
+		b66064.replace(b66064.length()-"Chars".length(),b66064.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map66064 = new java.util.HashMap<String,Object>();
+		map66064.put("key66064", b66064.toString()); // put in a collection
+		String c66064 = (String)map66064.get("key66064"); // get it back out
+		String d66064 = c66064.substring(0,c66064.length()-1); // extract most of it
+		String e66064 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d66064.getBytes() ) )); // B64 encode and decode it
+		String f66064 = e66064.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f66064); // reflection
 		
-		// Simple if statement that assigns param to bar on true condition
-		int num = 196;
-		if ( (500/42) + num > 200 )
-		   bar = param;
-		else bar = "This should never happen"; 
 		
-		
-		Object[] obj = { bar, "b"};
-		response.getWriter().printf("Formatted like: %1$s and %2$s.",obj);
+		response.getWriter().write("Parameter value: " + bar);
 	}
 }

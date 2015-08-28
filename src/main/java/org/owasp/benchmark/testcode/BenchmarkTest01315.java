@@ -45,28 +45,32 @@ public class BenchmarkTest01315 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		response.getWriter().write("Parameter value: " + bar);
+		String sql = "INSERT INTO users (username, password) VALUES ('foo','"+ bar + "')";
+				
+		try {
+			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			int count = statement.executeUpdate( sql, java.sql.Statement.RETURN_GENERATED_KEYS );
+            org.owasp.benchmark.helpers.DatabaseHelper.outputUpdateComplete(sql, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a57110 = param; //assign
-		StringBuilder b57110 = new StringBuilder(a57110);  // stick in stringbuilder
-		b57110.append(" SafeStuff"); // append some safe content
-		b57110.replace(b57110.length()-"Chars".length(),b57110.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map57110 = new java.util.HashMap<String,Object>();
-		map57110.put("key57110", b57110.toString()); // put in a collection
-		String c57110 = (String)map57110.get("key57110"); // get it back out
-		String d57110 = c57110.substring(0,c57110.length()-1); // extract most of it
-		String e57110 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d57110.getBytes() ) )); // B64 encode and decode it
-		String f57110 = e57110.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g57110 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g57110); // reflection
+		String bar;
+		
+		// Simple ? condition that assigns constant to bar on true condition
+		int num = 106;
+		
+		bar = (7*18) + num > 200 ? "This_should_always_happen" : param;
+		
 
             return bar;
         }

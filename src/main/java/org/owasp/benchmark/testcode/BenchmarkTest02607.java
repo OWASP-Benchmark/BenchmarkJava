@@ -74,6 +74,7 @@ public class BenchmarkTest02607 extends HttpServlet {
 		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie", str);
 		
 		cookie.setSecure(true);
+		cookie.setPath("/benchmark/" + this.getClass().getSimpleName());
 		
 		response.addCookie(cookie);
 
@@ -83,8 +84,8 @@ public class BenchmarkTest02607 extends HttpServlet {
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		StringBuilder sbxyz4310 = new StringBuilder(param);
-		String bar = sbxyz4310.append("_SafeStuff").toString();
+		StringBuilder sbxyz34016 = new StringBuilder(param);
+		String bar = sbxyz34016.append("_SafeStuff").toString();
 	
 		return bar;	
 	}

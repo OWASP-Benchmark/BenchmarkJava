@@ -45,19 +45,19 @@ public class BenchmarkTest00883 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a50023 = param; //assign
-		StringBuilder b50023 = new StringBuilder(a50023);  // stick in stringbuilder
-		b50023.append(" SafeStuff"); // append some safe content
-		b50023.replace(b50023.length()-"Chars".length(),b50023.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map50023 = new java.util.HashMap<String,Object>();
-		map50023.put("key50023", b50023.toString()); // put in a collection
-		String c50023 = (String)map50023.get("key50023"); // get it back out
-		String d50023 = c50023.substring(0,c50023.length()-1); // extract most of it
-		String e50023 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d50023.getBytes() ) )); // B64 encode and decode it
-		String f50023 = e50023.split(" ")[0]; // split it on a space
+		String a92832 = param; //assign
+		StringBuilder b92832 = new StringBuilder(a92832);  // stick in stringbuilder
+		b92832.append(" SafeStuff"); // append some safe content
+		b92832.replace(b92832.length()-"Chars".length(),b92832.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map92832 = new java.util.HashMap<String,Object>();
+		map92832.put("key92832", b92832.toString()); // put in a collection
+		String c92832 = (String)map92832.get("key92832"); // get it back out
+		String d92832 = c92832.substring(0,c92832.length()-1); // extract most of it
+		String e92832 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d92832.getBytes() ) )); // B64 encode and decode it
+		String f92832 = e92832.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f50023); // reflection
+		String bar = thing.doSomething(f92832); // reflection
 		
 		
 		Object[] obj = { "a", bar};

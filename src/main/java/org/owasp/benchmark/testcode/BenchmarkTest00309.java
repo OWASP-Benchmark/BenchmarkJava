@@ -48,12 +48,12 @@ public class BenchmarkTest00309 extends HttpServlet {
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map95142 = new java.util.HashMap<String,Object>();
-		map95142.put("keyA-95142", "a_Value"); // put some stuff in the collection
-		map95142.put("keyB-95142", param); // put it in a collection
-		map95142.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map95142.get("keyB-95142"); // get it back out
-		bar = (String)map95142.get("keyA-95142"); // get safe value back out
+		java.util.HashMap<String,Object> map5997 = new java.util.HashMap<String,Object>();
+		map5997.put("keyA-5997", "a_Value"); // put some stuff in the collection
+		map5997.put("keyB-5997", param); // put it in a collection
+		map5997.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map5997.get("keyB-5997"); // get it back out
+		bar = (String)map5997.get("keyA-5997"); // get safe value back out
 		
 		
 		String cmd = org.owasp.benchmark.helpers.Utils.getInsecureOSCommandString(this.getClass().getClassLoader());

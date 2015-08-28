@@ -48,12 +48,12 @@ public class BenchmarkTest00315 extends HttpServlet {
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map5121 = new java.util.HashMap<String,Object>();
-		map5121.put("keyA-5121", "a_Value"); // put some stuff in the collection
-		map5121.put("keyB-5121", param); // put it in a collection
-		map5121.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map5121.get("keyB-5121"); // get it back out
-		bar = (String)map5121.get("keyA-5121"); // get safe value back out
+		java.util.HashMap<String,Object> map37891 = new java.util.HashMap<String,Object>();
+		map37891.put("keyA-37891", "a_Value"); // put some stuff in the collection
+		map37891.put("keyB-37891", param); // put it in a collection
+		map37891.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map37891.get("keyB-37891"); // get it back out
+		bar = (String)map37891.get("keyA-37891"); // get safe value back out
 		
 		
 	    try {
@@ -74,11 +74,13 @@ public class BenchmarkTest00315 extends HttpServlet {
 			
 			boolean foundUser = false;
 			javax.servlet.http.Cookie[] cookies = request.getCookies();
-			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-				javax.servlet.http.Cookie cookie = cookies[i];
-				if (cookieName.equals(cookie.getName())) {
-					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-						foundUser = true;
+			if (cookies != null) {
+				for (int i = 0; !foundUser && i < cookies.length; i++) {
+					javax.servlet.http.Cookie cookie = cookies[i];
+					if (cookieName.equals(cookie.getName())) {
+						if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+							foundUser = true;
+						}
 					}
 				}
 			}
@@ -88,6 +90,7 @@ public class BenchmarkTest00315 extends HttpServlet {
 			} else {			
 				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
 				rememberMe.setSecure(true);
+				rememberMe.setPath("/benchmark/" + this.getClass().getSimpleName());
 				request.getSession().setAttribute(cookieName, rememberMeKey);
 				response.addCookie(rememberMe);
 				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 

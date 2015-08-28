@@ -66,11 +66,13 @@ public class BenchmarkTest02071 extends HttpServlet {
 			
 			boolean foundUser = false;
 			javax.servlet.http.Cookie[] cookies = request.getCookies();
-			for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-				javax.servlet.http.Cookie cookie = cookies[i];
-				if (cookieName.equals(cookie.getName())) {
-					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-						foundUser = true;
+			if (cookies != null) {
+				for (int i = 0; !foundUser && i < cookies.length; i++) {
+					javax.servlet.http.Cookie cookie = cookies[i];
+					if (cookieName.equals(cookie.getName())) {
+						if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+							foundUser = true;
+						}
 					}
 				}
 			}
@@ -80,6 +82,7 @@ public class BenchmarkTest02071 extends HttpServlet {
 			} else {			
 				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
 				rememberMe.setSecure(true);
+				rememberMe.setPath("/benchmark/" + this.getClass().getSimpleName());
 				request.getSession().setAttribute(cookieName, rememberMeKey);
 				response.addCookie(rememberMe);
 				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
@@ -97,11 +100,11 @@ public class BenchmarkTest02071 extends HttpServlet {
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map3606 = new java.util.HashMap<String,Object>();
-		map3606.put("keyA-3606", "a Value"); // put some stuff in the collection
-		map3606.put("keyB-3606", param); // put it in a collection
-		map3606.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map3606.get("keyB-3606"); // get it back out
+		java.util.HashMap<String,Object> map15349 = new java.util.HashMap<String,Object>();
+		map15349.put("keyA-15349", "a Value"); // put some stuff in the collection
+		map15349.put("keyB-15349", param); // put it in a collection
+		map15349.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map15349.get("keyB-15349"); // get it back out
 	
 		return bar;	
 	}

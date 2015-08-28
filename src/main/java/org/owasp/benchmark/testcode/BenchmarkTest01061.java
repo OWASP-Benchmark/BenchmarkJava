@@ -60,6 +60,7 @@ public class BenchmarkTest01061 extends HttpServlet {
 		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie", str);
 		
 		cookie.setSecure(false);
+		cookie.setPath("/benchmark/" + this.getClass().getSimpleName());
 		
 		response.addCookie(cookie);
 
@@ -73,8 +74,8 @@ public class BenchmarkTest01061 extends HttpServlet {
 
 		String bar = param;
 		if (param != null && param.length() > 1) {
-		    StringBuilder sbxyz64325 = new StringBuilder(param);
-		    bar = sbxyz64325.replace(param.length()-"Z".length(), param.length(),"Z").toString();
+		    StringBuilder sbxyz41711 = new StringBuilder(param);
+		    bar = sbxyz41711.replace(param.length()-"Z".length(), param.length(),"Z").toString();
 		}
 
             return bar;

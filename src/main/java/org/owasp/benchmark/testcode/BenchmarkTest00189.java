@@ -45,20 +45,20 @@ public class BenchmarkTest00189 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a5268 = param; //assign
-		StringBuilder b5268 = new StringBuilder(a5268);  // stick in stringbuilder
-		b5268.append(" SafeStuff"); // append some safe content
-		b5268.replace(b5268.length()-"Chars".length(),b5268.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map5268 = new java.util.HashMap<String,Object>();
-		map5268.put("key5268", b5268.toString()); // put in a collection
-		String c5268 = (String)map5268.get("key5268"); // get it back out
-		String d5268 = c5268.substring(0,c5268.length()-1); // extract most of it
-		String e5268 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d5268.getBytes() ) )); // B64 encode and decode it
-		String f5268 = e5268.split(" ")[0]; // split it on a space
+		String a6438 = param; //assign
+		StringBuilder b6438 = new StringBuilder(a6438);  // stick in stringbuilder
+		b6438.append(" SafeStuff"); // append some safe content
+		b6438.replace(b6438.length()-"Chars".length(),b6438.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map6438 = new java.util.HashMap<String,Object>();
+		map6438.put("key6438", b6438.toString()); // put in a collection
+		String c6438 = (String)map6438.get("key6438"); // get it back out
+		String d6438 = c6438.substring(0,c6438.length()-1); // extract most of it
+		String e6438 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d6438.getBytes() ) )); // B64 encode and decode it
+		String f6438 = e6438.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g5268 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g5268); // reflection
+		String g6438 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g6438); // reflection
 		
 		
 		// javax.servlet.http.HttpSession.setAttribute(java.lang.String,java.lang.Object^)

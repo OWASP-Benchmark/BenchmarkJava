@@ -45,11 +45,11 @@ public class BenchmarkTest00902 extends HttpServlet {
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map76008 = new java.util.HashMap<String,Object>();
-		map76008.put("keyA-76008", "a Value"); // put some stuff in the collection
-		map76008.put("keyB-76008", param); // put it in a collection
-		map76008.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map76008.get("keyB-76008"); // get it back out
+		java.util.HashMap<String,Object> map51882 = new java.util.HashMap<String,Object>();
+		map51882.put("keyA-51882", "a Value"); // put some stuff in the collection
+		map51882.put("keyB-51882", param); // put it in a collection
+		map51882.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map51882.get("keyB-51882"); // get it back out
 		
 		
 		int r = new java.util.Random().nextInt();
@@ -64,11 +64,13 @@ public class BenchmarkTest00902 extends HttpServlet {
 		
 		boolean foundUser = false;
 		javax.servlet.http.Cookie[] cookies = request.getCookies();
-		for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-			javax.servlet.http.Cookie cookie = cookies[i];
-			if (cookieName.equals(cookie.getName())) {
-				if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-					foundUser = true;
+		if (cookies != null) {
+			for (int i = 0; !foundUser && i < cookies.length; i++) {
+				javax.servlet.http.Cookie cookie = cookies[i];
+				if (cookieName.equals(cookie.getName())) {
+					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+						foundUser = true;
+					}
 				}
 			}
 		}
@@ -78,6 +80,7 @@ public class BenchmarkTest00902 extends HttpServlet {
 		} else {			
 			javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
 			rememberMe.setSecure(true);
+			rememberMe.setPath("/benchmark/" + this.getClass().getSimpleName());
 			request.getSession().setAttribute(cookieName, rememberMeKey);
 			response.addCookie(rememberMe);
 			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 

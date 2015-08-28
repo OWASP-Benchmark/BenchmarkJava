@@ -74,6 +74,7 @@ public class BenchmarkTest01134 extends HttpServlet {
 		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie", str);
 		
 		cookie.setSecure(false);
+		cookie.setPath("/benchmark/" + this.getClass().getSimpleName());
 		
 		response.addCookie(cookie);
 
@@ -86,11 +87,11 @@ public class BenchmarkTest01134 extends HttpServlet {
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map17632 = new java.util.HashMap<String,Object>();
-		map17632.put("keyA-17632", "a Value"); // put some stuff in the collection
-		map17632.put("keyB-17632", param); // put it in a collection
-		map17632.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map17632.get("keyB-17632"); // get it back out
+		java.util.HashMap<String,Object> map885 = new java.util.HashMap<String,Object>();
+		map885.put("keyA-885", "a Value"); // put some stuff in the collection
+		map885.put("keyB-885", param); // put it in a collection
+		map885.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map885.get("keyB-885"); // get it back out
 
             return bar;
         }

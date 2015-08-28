@@ -71,11 +71,13 @@ public class BenchmarkTest01678 extends HttpServlet {
 		
 		boolean foundUser = false;
 		javax.servlet.http.Cookie[] cookies = request.getCookies();
-		for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-			javax.servlet.http.Cookie cookie = cookies[i];
-			if (cookieName.equals(cookie.getName())) {
-				if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-					foundUser = true;
+		if (cookies != null) {
+			for (int i = 0; !foundUser && i < cookies.length; i++) {
+				javax.servlet.http.Cookie cookie = cookies[i];
+				if (cookieName.equals(cookie.getName())) {
+					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+						foundUser = true;
+					}
 				}
 			}
 		}
@@ -85,6 +87,7 @@ public class BenchmarkTest01678 extends HttpServlet {
 		} else {			
 			javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
 			rememberMe.setSecure(true);
+            rememberMe.setPath("/benchmark/" + this.getClass().getSimpleName());
 			request.getSession().setAttribute(cookieName, rememberMeKey);
 			response.addCookie(rememberMe);
 			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
@@ -99,19 +102,19 @@ public class BenchmarkTest01678 extends HttpServlet {
         public String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a14333 = param; //assign
-		StringBuilder b14333 = new StringBuilder(a14333);  // stick in stringbuilder
-		b14333.append(" SafeStuff"); // append some safe content
-		b14333.replace(b14333.length()-"Chars".length(),b14333.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map14333 = new java.util.HashMap<String,Object>();
-		map14333.put("key14333", b14333.toString()); // put in a collection
-		String c14333 = (String)map14333.get("key14333"); // get it back out
-		String d14333 = c14333.substring(0,c14333.length()-1); // extract most of it
-		String e14333 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d14333.getBytes() ) )); // B64 encode and decode it
-		String f14333 = e14333.split(" ")[0]; // split it on a space
+		String a5363 = param; //assign
+		StringBuilder b5363 = new StringBuilder(a5363);  // stick in stringbuilder
+		b5363.append(" SafeStuff"); // append some safe content
+		b5363.replace(b5363.length()-"Chars".length(),b5363.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map5363 = new java.util.HashMap<String,Object>();
+		map5363.put("key5363", b5363.toString()); // put in a collection
+		String c5363 = (String)map5363.get("key5363"); // get it back out
+		String d5363 = c5363.substring(0,c5363.length()-1); // extract most of it
+		String e5363 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d5363.getBytes() ) )); // B64 encode and decode it
+		String f5363 = e5363.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f14333); // reflection
+		String bar = thing.doSomething(f5363); // reflection
 
             return bar;
         }

@@ -45,20 +45,20 @@ public class BenchmarkTest00202 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a10446 = param; //assign
-		StringBuilder b10446 = new StringBuilder(a10446);  // stick in stringbuilder
-		b10446.append(" SafeStuff"); // append some safe content
-		b10446.replace(b10446.length()-"Chars".length(),b10446.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map10446 = new java.util.HashMap<String,Object>();
-		map10446.put("key10446", b10446.toString()); // put in a collection
-		String c10446 = (String)map10446.get("key10446"); // get it back out
-		String d10446 = c10446.substring(0,c10446.length()-1); // extract most of it
-		String e10446 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d10446.getBytes() ) )); // B64 encode and decode it
-		String f10446 = e10446.split(" ")[0]; // split it on a space
+		String a36926 = param; //assign
+		StringBuilder b36926 = new StringBuilder(a36926);  // stick in stringbuilder
+		b36926.append(" SafeStuff"); // append some safe content
+		b36926.replace(b36926.length()-"Chars".length(),b36926.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map36926 = new java.util.HashMap<String,Object>();
+		map36926.put("key36926", b36926.toString()); // put in a collection
+		String c36926 = (String)map36926.get("key36926"); // get it back out
+		String d36926 = c36926.substring(0,c36926.length()-1); // extract most of it
+		String e36926 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d36926.getBytes() ) )); // B64 encode and decode it
+		String f36926 = e36926.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g10446 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g10446); // reflection
+		String g36926 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g36926); // reflection
 		
 		
 		String sql = "INSERT INTO users (username, password) VALUES ('foo','"+ bar + "')";

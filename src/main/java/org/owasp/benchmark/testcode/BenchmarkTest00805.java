@@ -59,19 +59,19 @@ public class BenchmarkTest00805 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a51380 = param; //assign
-		StringBuilder b51380 = new StringBuilder(a51380);  // stick in stringbuilder
-		b51380.append(" SafeStuff"); // append some safe content
-		b51380.replace(b51380.length()-"Chars".length(),b51380.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map51380 = new java.util.HashMap<String,Object>();
-		map51380.put("key51380", b51380.toString()); // put in a collection
-		String c51380 = (String)map51380.get("key51380"); // get it back out
-		String d51380 = c51380.substring(0,c51380.length()-1); // extract most of it
-		String e51380 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d51380.getBytes() ) )); // B64 encode and decode it
-		String f51380 = e51380.split(" ")[0]; // split it on a space
+		String a41898 = param; //assign
+		StringBuilder b41898 = new StringBuilder(a41898);  // stick in stringbuilder
+		b41898.append(" SafeStuff"); // append some safe content
+		b41898.replace(b41898.length()-"Chars".length(),b41898.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map41898 = new java.util.HashMap<String,Object>();
+		map41898.put("key41898", b41898.toString()); // put in a collection
+		String c41898 = (String)map41898.get("key41898"); // get it back out
+		String d41898 = c41898.substring(0,c41898.length()-1); // extract most of it
+		String e41898 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d41898.getBytes() ) )); // B64 encode and decode it
+		String f41898 = e41898.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f51380); // reflection
+		String bar = thing.doSomething(f41898); // reflection
 		
 		
 		response.getWriter().print(bar);

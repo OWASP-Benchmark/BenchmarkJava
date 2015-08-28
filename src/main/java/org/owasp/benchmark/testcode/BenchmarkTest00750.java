@@ -49,8 +49,8 @@ public class BenchmarkTest00750 extends HttpServlet {
 		
 		String bar = param;
 		if (param != null && param.length() > 1) {
-		    StringBuilder sbxyz71959 = new StringBuilder(param);
-		    bar = sbxyz71959.replace(param.length()-"Z".length(), param.length(),"Z").toString();
+		    StringBuilder sbxyz51045 = new StringBuilder(param);
+		    bar = sbxyz51045.replace(param.length()-"Z".length(), param.length(),"Z").toString();
 		}
 		
 		

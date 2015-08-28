@@ -45,20 +45,20 @@ public class BenchmarkTest00367 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a64949 = param; //assign
-		StringBuilder b64949 = new StringBuilder(a64949);  // stick in stringbuilder
-		b64949.append(" SafeStuff"); // append some safe content
-		b64949.replace(b64949.length()-"Chars".length(),b64949.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map64949 = new java.util.HashMap<String,Object>();
-		map64949.put("key64949", b64949.toString()); // put in a collection
-		String c64949 = (String)map64949.get("key64949"); // get it back out
-		String d64949 = c64949.substring(0,c64949.length()-1); // extract most of it
-		String e64949 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d64949.getBytes() ) )); // B64 encode and decode it
-		String f64949 = e64949.split(" ")[0]; // split it on a space
+		String a25370 = param; //assign
+		StringBuilder b25370 = new StringBuilder(a25370);  // stick in stringbuilder
+		b25370.append(" SafeStuff"); // append some safe content
+		b25370.replace(b25370.length()-"Chars".length(),b25370.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map25370 = new java.util.HashMap<String,Object>();
+		map25370.put("key25370", b25370.toString()); // put in a collection
+		String c25370 = (String)map25370.get("key25370"); // get it back out
+		String d25370 = c25370.substring(0,c25370.length()-1); // extract most of it
+		String e25370 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d25370.getBytes() ) )); // B64 encode and decode it
+		String f25370 = e25370.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g64949 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g64949); // reflection
+		String g25370 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g25370); // reflection
 		
 		
 	org.owasp.benchmark.helpers.LDAPManager ads = new org.owasp.benchmark.helpers.LDAPManager();

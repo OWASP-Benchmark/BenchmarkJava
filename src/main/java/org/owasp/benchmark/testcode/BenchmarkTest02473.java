@@ -60,11 +60,13 @@ public class BenchmarkTest02473 extends HttpServlet {
 		
 		boolean foundUser = false;
 		javax.servlet.http.Cookie[] cookies = request.getCookies();
-		for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-			javax.servlet.http.Cookie cookie = cookies[i];
-			if (cookieName.equals(cookie.getName())) {
-				if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-					foundUser = true;
+		if (cookies != null) {
+			for (int i = 0; !foundUser && i < cookies.length; i++) {
+				javax.servlet.http.Cookie cookie = cookies[i];
+				if (cookieName.equals(cookie.getName())) {
+					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+						foundUser = true;
+					}
 				}
 			}
 		}
@@ -86,11 +88,11 @@ public class BenchmarkTest02473 extends HttpServlet {
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map9934 = new java.util.HashMap<String,Object>();
-		map9934.put("keyA-9934", "a Value"); // put some stuff in the collection
-		map9934.put("keyB-9934", param); // put it in a collection
-		map9934.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map9934.get("keyB-9934"); // get it back out
+		java.util.HashMap<String,Object> map58044 = new java.util.HashMap<String,Object>();
+		map58044.put("keyA-58044", "a Value"); // put some stuff in the collection
+		map58044.put("keyB-58044", param); // put it in a collection
+		map58044.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map58044.get("keyB-58044"); // get it back out
 	
 		return bar;	
 	}

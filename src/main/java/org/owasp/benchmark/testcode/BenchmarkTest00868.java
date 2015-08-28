@@ -45,19 +45,19 @@ public class BenchmarkTest00868 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a62962 = param; //assign
-		StringBuilder b62962 = new StringBuilder(a62962);  // stick in stringbuilder
-		b62962.append(" SafeStuff"); // append some safe content
-		b62962.replace(b62962.length()-"Chars".length(),b62962.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map62962 = new java.util.HashMap<String,Object>();
-		map62962.put("key62962", b62962.toString()); // put in a collection
-		String c62962 = (String)map62962.get("key62962"); // get it back out
-		String d62962 = c62962.substring(0,c62962.length()-1); // extract most of it
-		String e62962 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d62962.getBytes() ) )); // B64 encode and decode it
-		String f62962 = e62962.split(" ")[0]; // split it on a space
+		String a23801 = param; //assign
+		StringBuilder b23801 = new StringBuilder(a23801);  // stick in stringbuilder
+		b23801.append(" SafeStuff"); // append some safe content
+		b23801.replace(b23801.length()-"Chars".length(),b23801.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map23801 = new java.util.HashMap<String,Object>();
+		map23801.put("key23801", b23801.toString()); // put in a collection
+		String c23801 = (String)map23801.get("key23801"); // get it back out
+		String d23801 = c23801.substring(0,c23801.length()-1); // extract most of it
+		String e23801 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d23801.getBytes() ) )); // B64 encode and decode it
+		String f23801 = e23801.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f62962); // reflection
+		String bar = thing.doSomething(f23801); // reflection
 		
 		
 		java.security.Provider[] provider = java.security.Security.getProviders();

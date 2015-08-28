@@ -44,8 +44,8 @@ public class BenchmarkTest00425 extends HttpServlet {
 		if (param == null) param = "";
 		
 		
-		StringBuilder sbxyz36323 = new StringBuilder(param);
-		String bar = sbxyz36323.append("_SafeStuff").toString();
+		StringBuilder sbxyz98107 = new StringBuilder(param);
+		String bar = sbxyz98107.append("_SafeStuff").toString();
 		
 		
 		// javax.servlet.http.HttpSession.putValue(java.lang.String,java.lang.Object^)

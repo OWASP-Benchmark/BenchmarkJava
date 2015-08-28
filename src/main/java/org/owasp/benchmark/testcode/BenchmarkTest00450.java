@@ -50,19 +50,19 @@ public class BenchmarkTest00450 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a26944 = param; //assign
-		StringBuilder b26944 = new StringBuilder(a26944);  // stick in stringbuilder
-		b26944.append(" SafeStuff"); // append some safe content
-		b26944.replace(b26944.length()-"Chars".length(),b26944.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map26944 = new java.util.HashMap<String,Object>();
-		map26944.put("key26944", b26944.toString()); // put in a collection
-		String c26944 = (String)map26944.get("key26944"); // get it back out
-		String d26944 = c26944.substring(0,c26944.length()-1); // extract most of it
-		String e26944 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d26944.getBytes() ) )); // B64 encode and decode it
-		String f26944 = e26944.split(" ")[0]; // split it on a space
+		String a93966 = param; //assign
+		StringBuilder b93966 = new StringBuilder(a93966);  // stick in stringbuilder
+		b93966.append(" SafeStuff"); // append some safe content
+		b93966.replace(b93966.length()-"Chars".length(),b93966.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map93966 = new java.util.HashMap<String,Object>();
+		map93966.put("key93966", b93966.toString()); // put in a collection
+		String c93966 = (String)map93966.get("key93966"); // get it back out
+		String d93966 = c93966.substring(0,c93966.length()-1); // extract most of it
+		String e93966 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d93966.getBytes() ) )); // B64 encode and decode it
+		String f93966 = e93966.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f26944); // reflection
+		String bar = thing.doSomething(f93966); // reflection
 		
 		
 		// Code based on example from:

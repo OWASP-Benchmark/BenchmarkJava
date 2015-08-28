@@ -58,11 +58,13 @@ public class BenchmarkTest01502 extends HttpServlet {
 		
 		boolean foundUser = false;
 		javax.servlet.http.Cookie[] cookies = request.getCookies();
-		for (int i = 0; cookies != null && ++i < cookies.length && !foundUser;) {
-			javax.servlet.http.Cookie cookie = cookies[i];
-			if (cookieName.equals(cookie.getName())) {
-				if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
-					foundUser = true;
+		if (cookies != null) {
+			for (int i = 0; !foundUser && i < cookies.length; i++) {
+				javax.servlet.http.Cookie cookie = cookies[i];
+				if (cookieName.equals(cookie.getName())) {
+					if (cookie.getValue().equals(request.getSession().getAttribute(cookieName))) {
+						foundUser = true;
+					}
 				}
 			}
 		}
@@ -86,20 +88,20 @@ public class BenchmarkTest01502 extends HttpServlet {
         public String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a73704 = param; //assign
-		StringBuilder b73704 = new StringBuilder(a73704);  // stick in stringbuilder
-		b73704.append(" SafeStuff"); // append some safe content
-		b73704.replace(b73704.length()-"Chars".length(),b73704.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map73704 = new java.util.HashMap<String,Object>();
-		map73704.put("key73704", b73704.toString()); // put in a collection
-		String c73704 = (String)map73704.get("key73704"); // get it back out
-		String d73704 = c73704.substring(0,c73704.length()-1); // extract most of it
-		String e73704 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d73704.getBytes() ) )); // B64 encode and decode it
-		String f73704 = e73704.split(" ")[0]; // split it on a space
+		String a82209 = param; //assign
+		StringBuilder b82209 = new StringBuilder(a82209);  // stick in stringbuilder
+		b82209.append(" SafeStuff"); // append some safe content
+		b82209.replace(b82209.length()-"Chars".length(),b82209.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map82209 = new java.util.HashMap<String,Object>();
+		map82209.put("key82209", b82209.toString()); // put in a collection
+		String c82209 = (String)map82209.get("key82209"); // get it back out
+		String d82209 = c82209.substring(0,c82209.length()-1); // extract most of it
+		String e82209 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d82209.getBytes() ) )); // B64 encode and decode it
+		String f82209 = e82209.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g73704 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g73704); // reflection
+		String g82209 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g82209); // reflection
 
             return bar;
         }

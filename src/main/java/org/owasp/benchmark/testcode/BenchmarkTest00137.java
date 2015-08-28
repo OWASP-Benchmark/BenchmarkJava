@@ -45,12 +45,12 @@ public class BenchmarkTest00137 extends HttpServlet {
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map91650 = new java.util.HashMap<String,Object>();
-		map91650.put("keyA-91650", "a_Value"); // put some stuff in the collection
-		map91650.put("keyB-91650", param); // put it in a collection
-		map91650.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map91650.get("keyB-91650"); // get it back out
-		bar = (String)map91650.get("keyA-91650"); // get safe value back out
+		java.util.HashMap<String,Object> map44108 = new java.util.HashMap<String,Object>();
+		map44108.put("keyA-44108", "a_Value"); // put some stuff in the collection
+		map44108.put("keyB-44108", param); // put it in a collection
+		map44108.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map44108.get("keyB-44108"); // get it back out
+		bar = (String)map44108.get("keyA-44108"); // get safe value back out
 		
 		
 		String fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;

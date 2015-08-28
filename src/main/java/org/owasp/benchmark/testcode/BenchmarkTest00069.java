@@ -42,27 +42,24 @@ public class BenchmarkTest00069 extends HttpServlet {
 	
 		javax.servlet.http.Cookie[] theCookies = request.getCookies();
 		
-		String param = null;
-		boolean foundit = false;
+		String param = "";
 		if (theCookies != null) {
 			for (javax.servlet.http.Cookie theCookie : theCookies) {
 				if (theCookie.getName().equals("vector")) {
 					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
-					foundit = true;
+					break;
 				}
 			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
 		}
 		
 		
-		StringBuilder sbxyz78173 = new StringBuilder(param);
-		String bar = sbxyz78173.append("_SafeStuff").toString();
+		String bar;
+		
+		// Simple ? condition that assigns constant to bar on true condition
+		int num = 106;
+		
+		bar = (7*18) + num > 200 ? "This_should_always_happen" : param;
+		
 		
 		
 		java.security.Provider[] provider = java.security.Security.getProviders();
@@ -71,9 +68,9 @@ public class BenchmarkTest00069 extends HttpServlet {
 		try {
 			if (provider.length > 1) {
 
-				md = java.security.MessageDigest.getInstance("SHA1", provider[0]);
+				md = java.security.MessageDigest.getInstance("sha-384", provider[0]);
 			} else {
-				md = java.security.MessageDigest.getInstance("SHA1", "SUN");
+				md = java.security.MessageDigest.getInstance("sha-384","SUN");
 			}
 			byte[] input = { (byte)'?' };
 			Object inputParam = bar;
@@ -86,7 +83,7 @@ public class BenchmarkTest00069 extends HttpServlet {
 					return;
 				}
 				input = java.util.Arrays.copyOf(strInput, i);
-			}
+			}			
 			md.update(input);
 			
 			byte[] result = md.digest();

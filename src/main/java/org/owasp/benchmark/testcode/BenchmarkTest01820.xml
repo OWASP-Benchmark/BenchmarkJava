@@ -1,7 +1,7 @@
 <test-metadata>
   <benchmark-version>1.2beta</benchmark-version>
-  <category>cmdi</category>
+  <category>sqli</category>
   <test-number>01820</test-number>
   <vulnerability>false</vulnerability>
-  <cwe>78</cwe>
+  <cwe>89</cwe>
 </test-metadata>

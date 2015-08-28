@@ -46,25 +46,30 @@ public class BenchmarkTest02456 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		response.getWriter().println(bar);
+		String sql = "INSERT INTO users (username, password) VALUES ('foo','"+ bar + "')";
+				
+		try {
+			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			int count = statement.executeUpdate( sql, new String[] {"USERNAME","PASSWORD"} );
+            org.owasp.benchmark.helpers.DatabaseHelper.outputUpdateComplete(sql, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		// Chain a bunch of propagators in sequence
-		String a74276 = param; //assign
-		StringBuilder b74276 = new StringBuilder(a74276);  // stick in stringbuilder
-		b74276.append(" SafeStuff"); // append some safe content
-		b74276.replace(b74276.length()-"Chars".length(),b74276.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map74276 = new java.util.HashMap<String,Object>();
-		map74276.put("key74276", b74276.toString()); // put in a collection
-		String c74276 = (String)map74276.get("key74276"); // get it back out
-		String d74276 = c74276.substring(0,c74276.length()-1); // extract most of it
-		String e74276 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d74276.getBytes() ) )); // B64 encode and decode it
-		String f74276 = e74276.split(" ")[0]; // split it on a space
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f74276); // reflection
+		String bar;
+		
+		// Simple if statement that assigns constant to bar on true condition
+		int num = 86;
+		if ( (7*42) - num > 200 )
+		   bar = "This_should_always_happen"; 
+		else bar = param;
 	
 		return bar;	
 	}

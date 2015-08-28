@@ -15,7 +15,7 @@
         use the text box "Value" then press the "Generate cookie" button; once you have the value you can
         press the "Test it!" to send the cookie.</p></div>
     <div><label>Parameter: cookie vector<BR> Value:</label>
-	<input type="text" id="vector" name="vector" value="someSecret"></input></div>
+	<input type="text" id="vector" name="vector" value="anything"></input></div>
 	<div><input type="button" value="Generate cookie" onclick="setCookie('vector','',1)" id="cGenerator"/></div>
     <br/>
     <div><h5 id="cValue"></h5></div>
@@ -31,7 +31,7 @@ function setCookie(cname, cvalue, exdays) {
     if(cvalue==''){
     	Cookies.set(cname, document.getElementById("vector").value, { version: 1 });   
     }else{
-    	Cookies.set(cname, "someSecret", { version: 1 });
+    	Cookies.set(cname, "anything", { version: 1 });
     }
     document.getElementById("cValue").innerText = document.cookie;
 }

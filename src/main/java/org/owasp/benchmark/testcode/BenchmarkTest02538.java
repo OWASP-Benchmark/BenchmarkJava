@@ -48,12 +48,41 @@ public class BenchmarkTest02538 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		response.getWriter().print(bar.toCharArray());
+		try {
+			String sql = "SELECT TOP 1 USERNAME from USERS where USERNAME='foo' and PASSWORD='"+ bar + "'";
+	
+	        Object results = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.queryForObject(sql,new Object[]{}, String.class);
+			java.io.PrintWriter out = response.getWriter();
+			out.write("Your results are: ");
+	//		System.out.println("Your results are");
+			out.write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(results.toString()));
+	//		System.out.println(results.toString());
+		} catch (org.springframework.dao.DataAccessException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = org.springframework.web.util.HtmlUtils.htmlEscape(param);
+		// Chain a bunch of propagators in sequence
+		String a18591 = param; //assign
+		StringBuilder b18591 = new StringBuilder(a18591);  // stick in stringbuilder
+		b18591.append(" SafeStuff"); // append some safe content
+		b18591.replace(b18591.length()-"Chars".length(),b18591.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map18591 = new java.util.HashMap<String,Object>();
+		map18591.put("key18591", b18591.toString()); // put in a collection
+		String c18591 = (String)map18591.get("key18591"); // get it back out
+		String d18591 = c18591.substring(0,c18591.length()-1); // extract most of it
+		String e18591 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d18591.getBytes() ) )); // B64 encode and decode it
+		String f18591 = e18591.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String g18591 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g18591); // reflection
 	
 		return bar;	
 	}

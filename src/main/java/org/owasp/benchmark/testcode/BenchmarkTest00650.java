@@ -45,40 +45,23 @@ public class BenchmarkTest00650 extends HttpServlet {
 		if (param == null) param = "";
 		
 		
-		String bar = org.springframework.web.util.HtmlUtils.htmlEscape(param);
+		// Chain a bunch of propagators in sequence
+		String a11287 = param; //assign
+		StringBuilder b11287 = new StringBuilder(a11287);  // stick in stringbuilder
+		b11287.append(" SafeStuff"); // append some safe content
+		b11287.replace(b11287.length()-"Chars".length(),b11287.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map11287 = new java.util.HashMap<String,Object>();
+		map11287.put("key11287", b11287.toString()); // put in a collection
+		String c11287 = (String)map11287.get("key11287"); // get it back out
+		String d11287 = c11287.substring(0,c11287.length()-1); // extract most of it
+		String e11287 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d11287.getBytes() ) )); // B64 encode and decode it
+		String f11287 = e11287.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String g11287 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g11287); // reflection
 		
 		
-		try {
-			java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA1", "SUN");
-			byte[] input = { (byte)'?' };
-			Object inputParam = bar;
-			if (inputParam instanceof String) input = ((String) inputParam).getBytes();
-			if (inputParam instanceof java.io.InputStream) {
-				byte[] strInput = new byte[1000];
-				int i = ((java.io.InputStream) inputParam).read(strInput);
-				if (i == -1) {
-					response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
-					return;
-				}
-				input = java.util.Arrays.copyOf(strInput, i);
-			}		
-			md.update(input);
-			
-			byte[] result = md.digest();
-			java.io.File fileTarget = new java.io.File(
-					new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),"passwordFile.txt");
-			java.io.FileWriter fw = new java.io.FileWriter(fileTarget,true); //the true will append the new data
-			    fw.write("hash_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
-			fw.close();
-			response.getWriter().println("Sensitive value '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' hashed and stored<br/>");
-		} catch (java.security.NoSuchAlgorithmException e) {
-			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.lang.String)");
-			throw new ServletException(e);			
-		} catch (java.security.NoSuchProviderException e) {
-			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.lang.String)");
-			throw new ServletException(e);
-		}
-
-		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.lang.String) executed");
+		response.getWriter().write(bar.toCharArray());
 	}
 }

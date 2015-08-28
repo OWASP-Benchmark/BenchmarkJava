@@ -40,24 +40,37 @@ public class BenchmarkTest02231 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		String param = request.getParameter("vector");
-		if (param == null) param = "";
+		java.util.Map<String,String[]> map = request.getParameterMap();
+		String param = "";
+		if (!map.isEmpty()) {
+			String[] values = map.get("vector");
+			if (values != null) param = values[0];
+		}
+		
 
 		String bar = doSomething(param);
 		
-		// javax.servlet.http.HttpSession.setAttribute(java.lang.String,java.lang.Object^)
-		request.getSession().setAttribute( "userid", bar);
-				
-		response.getWriter().println("Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
-			+ "' saved in session.");
+		Object[] obj = { bar, "b"};
+		response.getWriter().printf("Formatted like: %1$s and %2$s.",obj);
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = param;
-		if (param != null && param.length() > 1) {
-		    bar = param.substring(0,param.length()-1);
-		}
+		// Chain a bunch of propagators in sequence
+		String a78831 = param; //assign
+		StringBuilder b78831 = new StringBuilder(a78831);  // stick in stringbuilder
+		b78831.append(" SafeStuff"); // append some safe content
+		b78831.replace(b78831.length()-"Chars".length(),b78831.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map78831 = new java.util.HashMap<String,Object>();
+		map78831.put("key78831", b78831.toString()); // put in a collection
+		String c78831 = (String)map78831.get("key78831"); // get it back out
+		String d78831 = c78831.substring(0,c78831.length()-1); // extract most of it
+		String e78831 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d78831.getBytes() ) )); // B64 encode and decode it
+		String f78831 = e78831.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String g78831 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g78831); // reflection
 	
 		return bar;	
 	}

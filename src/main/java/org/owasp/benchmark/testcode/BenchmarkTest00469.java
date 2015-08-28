@@ -49,33 +49,16 @@ public class BenchmarkTest00469 extends HttpServlet {
 		
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map73437 = new java.util.HashMap<String,Object>();
-		map73437.put("keyA-73437", "a_Value"); // put some stuff in the collection
-		map73437.put("keyB-73437", param); // put it in a collection
-		map73437.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map73437.get("keyB-73437"); // get it back out
-		bar = (String)map73437.get("keyA-73437"); // get safe value back out
+		String bar;
+		
+		// Simple ? condition that assigns constant to bar on true condition
+		int num = 106;
+		
+		bar = (7*18) + num > 200 ? "This_should_always_happen" : param;
 		
 		
-		// FILE URIs are tricky because they are different between Mac and Windows because of lack of standardization.
-		// Mac requires an extra slash for some reason.
-		String startURIslashes = "";
-        if (System.getProperty("os.name").indexOf("Windows") != -1)
-	        if (System.getProperty("os.name").indexOf("Windows") != -1)
-	        	startURIslashes = "/";
-	        else startURIslashes = "//";
-
-		try {
-			java.net.URI fileURI = new java.net.URI("file:" + startURIslashes 
-				+ org.owasp.benchmark.helpers.Utils.testfileDir.replace('\\', '/').replace(' ', '_') + bar);
-			java.io.File fileTarget = new java.io.File(fileURI);
-			response.getWriter().write("Access to file: '" + fileTarget + "' created." );
-			if (fileTarget.exists()) {
-				response.getWriter().write(" And file already exists.");
-			} else { response.getWriter().write(" But file doesn't exist yet."); }
-		} catch (java.net.URISyntaxException e) {
-			throw new ServletException(e);
-		}
+		
+		Object[] obj = { "a", "b" };
+		response.getWriter().format(bar,obj);
 	}
 }

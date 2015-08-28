@@ -46,20 +46,31 @@ public class BenchmarkTest01550 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		response.getWriter().println(bar);
+		// javax.servlet.http.HttpSession.setAttribute(java.lang.String,java.lang.Object^)
+		request.getSession().setAttribute( "userid", bar);
+				
+		response.getWriter().println("Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
+			+ "' saved in session.");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		
-		// Simple ? condition that assigns param to bar on false condition
-		int num = 106;
-		
-		bar = (7*42) - num > 200 ? "This should never happen" : param;
-		
+		// Chain a bunch of propagators in sequence
+		String a58700 = param; //assign
+		StringBuilder b58700 = new StringBuilder(a58700);  // stick in stringbuilder
+		b58700.append(" SafeStuff"); // append some safe content
+		b58700.replace(b58700.length()-"Chars".length(),b58700.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map58700 = new java.util.HashMap<String,Object>();
+		map58700.put("key58700", b58700.toString()); // put in a collection
+		String c58700 = (String)map58700.get("key58700"); // get it back out
+		String d58700 = c58700.substring(0,c58700.length()-1); // extract most of it
+		String e58700 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d58700.getBytes() ) )); // B64 encode and decode it
+		String f58700 = e58700.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String bar = thing.doSomething(f58700); // reflection
 
             return bar;
         }

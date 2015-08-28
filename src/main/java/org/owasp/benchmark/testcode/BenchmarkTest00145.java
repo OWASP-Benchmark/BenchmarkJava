@@ -44,32 +44,15 @@ public class BenchmarkTest00145 extends HttpServlet {
 		if (param == null) param = "";
 		
 		
-		String bar;
-		String guess = "ABC";
-		char switchTarget = guess.charAt(1); // condition 'B', which is safe
-		
-		// Simple case statement that assigns param to bar on conditions 'A', 'C', or 'D'
-		switch (switchTarget) {
-		  case 'A':
-		        bar = param;
-		        break;
-		  case 'B': 
-		        bar = "bob";
-		        break;
-		  case 'C':
-		  case 'D':        
-		        bar = param;
-		        break;
-		  default:
-		        bar = "bob's your uncle";
-		        break;
-		}
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map30888 = new java.util.HashMap<String,Object>();
+		map30888.put("keyA-30888", "a Value"); // put some stuff in the collection
+		map30888.put("keyB-30888", param); // put it in a collection
+		map30888.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map30888.get("keyB-30888"); // get it back out
 		
 		
-		java.io.File fileTarget = new java.io.File(new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),bar);
-		response.getWriter().write("Access to file: '" + fileTarget + "' created." );
-		if (fileTarget.exists()) {
-			response.getWriter().write(" And file already exists.");
-		} else { response.getWriter().write(" But file doesn't exist yet."); }
+		Object[] obj = { "a", "b" };
+		response.getWriter().format(java.util.Locale.US,bar,obj);
 	}
 }

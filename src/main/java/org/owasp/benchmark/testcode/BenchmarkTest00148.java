@@ -44,19 +44,16 @@ public class BenchmarkTest00148 extends HttpServlet {
 		if (param == null) param = "";
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map1839 = new java.util.HashMap<String,Object>();
-		map1839.put("keyA-1839", "a_Value"); // put some stuff in the collection
-		map1839.put("keyB-1839", param); // put it in a collection
-		map1839.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map1839.get("keyB-1839"); // get it back out
-		bar = (String)map1839.get("keyA-1839"); // get safe value back out
+		String bar;
+		
+		// Simple if statement that assigns param to bar on true condition
+		int num = 196;
+		if ( (500/42) + num > 200 )
+		   bar = param;
+		else bar = "This should never happen"; 
 		
 		
-		java.io.File fileTarget = new java.io.File(bar, "/Test.txt");
-		response.getWriter().write("Access to file: '" + fileTarget + "' created." );
-		if (fileTarget.exists()) {
-			response.getWriter().write(" And file already exists.");
-		} else { response.getWriter().write(" But file doesn't exist yet."); }
+		Object[] obj = { "a", bar };
+		response.getWriter().format("Formatted like: %1$s and %2$s.",obj);
 	}
 }

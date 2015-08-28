@@ -59,18 +59,41 @@ public class BenchmarkTest02363 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		response.getWriter().print(bar);
+		try {
+	        String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"
+	            + bar + "'";
+	
+			org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.batchUpdate(sql);
+			java.io.PrintWriter out = response.getWriter();
+	//		System.out.println("no results for query: " + sql + " because the Spring batchUpdate method doesn't return results.");
+			out.write("No results can be displayed for query: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(sql) + "<br>");
+			out.write(" because the Spring batchUpdate method doesn't return results.");
+		} catch (org.springframework.dao.DataAccessException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar;
-		
-		// Simple if statement that assigns param to bar on true condition
-		int num = 196;
-		if ( (500/42) + num > 200 )
-		   bar = param;
-		else bar = "This should never happen"; 
+		// Chain a bunch of propagators in sequence
+		String a17358 = param; //assign
+		StringBuilder b17358 = new StringBuilder(a17358);  // stick in stringbuilder
+		b17358.append(" SafeStuff"); // append some safe content
+		b17358.replace(b17358.length()-"Chars".length(),b17358.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map17358 = new java.util.HashMap<String,Object>();
+		map17358.put("key17358", b17358.toString()); // put in a collection
+		String c17358 = (String)map17358.get("key17358"); // get it back out
+		String d17358 = c17358.substring(0,c17358.length()-1); // extract most of it
+		String e17358 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d17358.getBytes() ) )); // B64 encode and decode it
+		String f17358 = e17358.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String g17358 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g17358); // reflection
 	
 		return bar;	
 	}

@@ -59,7 +59,21 @@ public class BenchmarkTest01712 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		response.getWriter().println(bar);
+		String sql = "{call " + bar + "}";
+				
+		try {
+			java.sql.Connection connection = org.owasp.benchmark.helpers.DatabaseHelper.getSqlConnection();
+			java.sql.CallableStatement statement = connection.prepareCall( sql );
+		    java.sql.ResultSet rs = statement.executeQuery();
+            org.owasp.benchmark.helpers.DatabaseHelper.printResults(rs, sql, response);
+
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}  // end doPost
 
     private class Test {
@@ -67,11 +81,11 @@ public class BenchmarkTest01712 extends HttpServlet {
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map91632 = new java.util.HashMap<String,Object>();
-		map91632.put("keyA-91632", "a Value"); // put some stuff in the collection
-		map91632.put("keyB-91632", param); // put it in a collection
-		map91632.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map91632.get("keyB-91632"); // get it back out
+		java.util.HashMap<String,Object> map37306 = new java.util.HashMap<String,Object>();
+		map37306.put("keyA-37306", "a Value"); // put some stuff in the collection
+		map37306.put("keyB-37306", param); // put it in a collection
+		map37306.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map37306.get("keyB-37306"); // get it back out
 
             return bar;
         }

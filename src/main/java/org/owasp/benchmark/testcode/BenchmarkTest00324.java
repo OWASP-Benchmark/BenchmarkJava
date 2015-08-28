@@ -47,9 +47,13 @@ public class BenchmarkTest00324 extends HttpServlet {
 		}
 		
 		
-		String bar = org.owasp.esapi.ESAPI.encoder().encodeForHTML(param);
+		String bar = org.springframework.web.util.HtmlUtils.htmlEscape(param);
 		
 		
-		response.getWriter().write("Parameter value: " + bar);
+		// javax.servlet.http.HttpSession.putValue(java.lang.String,java.lang.Object^)
+		request.getSession().putValue( "userid", bar);
+		
+		response.getWriter().println("Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
+			+ "' saved in session.");
 	}
 }

@@ -40,66 +40,32 @@ public class BenchmarkTest02409 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		String param = "";
-		boolean flag = true;
-		java.util.Enumeration<String> names = request.getParameterNames();
-		while (names.hasMoreElements() && flag) {
-			String name = (String) names.nextElement();		    	
-			String[] values = request.getParameterValues(name);
-			if (values != null) {
-				for(int i=0;i<values.length && flag; i++){
-					String value = values[i];
-					if (value.equals("vector")) {
-						param = name;
-					    flag = false;
-					}
-				}
-			}
-		}
+		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
+		String param = scr.getTheParameter("vector");
+		if (param == null) param = "";
 
 		String bar = doSomething(param);
 		
- 		try {
-	        String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='" + bar + "'";
-	
-			java.util.List<String> results = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.query(sql,  new org.springframework.jdbc.core.RowMapper<String>() {
-	            public String mapRow(java.sql.ResultSet rs, int rowNum) throws java.sql.SQLException {
-	                try {
-	                	return rs.getString("USERNAME");
-	                } catch (java.sql.SQLException e) {
-	                	if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-	        				return "Error processing query.";
-	        			}
-						else throw e;
-					}
-	            }
-	        });
-			java.io.PrintWriter out = response.getWriter();
-			
-			out.write("Your results are: ");
-	//		System.out.println("Your results are");
-			for(String s : results){
-				out.write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(s) + "<br>");
-	//			System.out.println(s);
-			}
-		} catch (org.springframework.dao.DataAccessException e) {
-			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
-        		return;
-        	}
-			else throw new ServletException(e);
+		int length = 1;
+		if (bar != null) {
+			length = bar.length();
+			response.getWriter().write(bar, 0, length);
 		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map15180 = new java.util.HashMap<String,Object>();
-		map15180.put("keyA-15180", "a_Value"); // put some stuff in the collection
-		map15180.put("keyB-15180", param); // put it in a collection
-		map15180.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map15180.get("keyB-15180"); // get it back out
-		bar = (String)map15180.get("keyA-15180"); // get safe value back out
+		String bar = "";
+		if (param != null) {
+			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+			valuesList.add("safe");
+			valuesList.add( param );
+			valuesList.add( "moresafe" );
+			
+			valuesList.remove(0); // remove the 1st safe value
+			
+			bar = valuesList.get(0); // get the param value
+		}
 	
 		return bar;	
 	}

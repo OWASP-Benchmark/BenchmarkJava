@@ -1,7 +1,7 @@
 <test-metadata>
   <benchmark-version>1.2beta</benchmark-version>
-  <category>cmdi</category>
+  <category>crypto</category>
   <test-number>01321</test-number>
-  <vulnerability>true</vulnerability>
-  <cwe>78</cwe>
+  <vulnerability>false</vulnerability>
+  <cwe>327</cwe>
 </test-metadata>

@@ -48,47 +48,44 @@ public class BenchmarkTest01601 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-	org.owasp.benchmark.helpers.LDAPManager ads = new org.owasp.benchmark.helpers.LDAPManager();
-	try {
-			response.setContentType("text/html");
-			javax.naming.directory.DirContext ctx = ads.getDirContext();
-			String base = "ou=users,ou=system";
-			javax.naming.directory.SearchControls sc = new javax.naming.directory.SearchControls();
-			sc.setSearchScope(javax.naming.directory.SearchControls.SUBTREE_SCOPE);
-			String filter = "(&(objectclass=person)(uid=" + bar
-					+ "))";
-			System.out.println("Filter " + filter);
-			javax.naming.NamingEnumeration<javax.naming.directory.SearchResult> results = ctx.search(base, filter, sc);
-			while (results.hasMore()) {
-				javax.naming.directory.SearchResult sr = (javax.naming.directory.SearchResult) results.next();
-				javax.naming.directory.Attributes attrs = sr.getAttributes();
+		java.util.List<String> argList = new java.util.ArrayList<String>();
+		
+		String osName = System.getProperty("os.name");
+        if (osName.indexOf("Windows") != -1) {
+        	argList.add("cmd.exe");
+        	argList.add("/c");
+        } else {
+        	argList.add("sh");
+        	argList.add("-c");
+        }
+        argList.add("echo " + bar);
 
-				javax.naming.directory.Attribute attr = attrs.get("uid");
-				javax.naming.directory.Attribute attr2 = attrs.get("street");
-				if (attr != null){
-					response.getWriter().write("LDAP query results:<br>"
-							+ " Record found with name " + attr.get() + "<br>"
-									+ "Address: " + attr2.get()+ "<br>");
-					System.out.println("record found " + attr.get());
-				}
-			}
-	} catch (javax.naming.NamingException e) {
-		throw new ServletException(e);
-	}finally{
-    	try {
-    		ads.closeDirContext();
-		} catch (Exception e) {
-			throw new ServletException(e);
+		ProcessBuilder pb = new ProcessBuilder(argList);
+
+		try {
+			Process p = pb.start();
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - java.lang.ProcessBuilder(java.util.List) Test Case");
+            throw new ServletException(e);
 		}
-    }
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(param);
+		String bar = "";
+		if (param != null) {
+			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
+			valuesList.add("safe");
+			valuesList.add( param );
+			valuesList.add( "moresafe" );
+			
+			valuesList.remove(0); // remove the 1st safe value
+			
+			bar = valuesList.get(0); // get the param value
+		}
 
             return bar;
         }

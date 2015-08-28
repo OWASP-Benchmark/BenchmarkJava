@@ -49,16 +49,32 @@ public class BenchmarkTest00491 extends HttpServlet {
 		
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map82636 = new java.util.HashMap<String,Object>();
-		map82636.put("keyA-82636", "a_Value"); // put some stuff in the collection
-		map82636.put("keyB-82636", param); // put it in a collection
-		map82636.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map82636.get("keyB-82636"); // get it back out
-		bar = (String)map82636.get("keyA-82636"); // get safe value back out
+		String bar = param;
+		if (param != null && param.length() > 1) {
+		    StringBuilder sbxyz11317 = new StringBuilder(param);
+		    bar = sbxyz11317.replace(param.length()-"Z".length(), param.length(),"Z").toString();
+		}
 		
 		
-		Object[] obj = { "a", "b"};
-		response.getWriter().printf(java.util.Locale.US,bar,obj);
+		byte[] input = new byte[1000];
+		String str = "?";
+		Object inputParam = param;
+		if (inputParam instanceof String) str = ((String) inputParam);
+		if (inputParam instanceof java.io.InputStream) {
+			int i = ((java.io.InputStream) inputParam).read(input);
+			if (i == -1) {
+				response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+				return;
+			}			
+			str = new String(input, 0, i);
+		}
+		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie", str);
+		
+		cookie.setSecure(false);
+		
+		response.addCookie(cookie);
+
+        response.getWriter().println("Created cookie: 'SomeCookie': with value: '"
+          + org.owasp.esapi.ESAPI.encoder().encodeForHTML(str) + "' and secure flag set to: false");
 	}
 }

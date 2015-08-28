@@ -41,28 +41,17 @@ public class BenchmarkTest01162 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		String param = "";
-		boolean flag = true;
-		java.util.Enumeration<String> names = request.getHeaderNames();
-		while (names.hasMoreElements() && flag) {
-			String name = (String) names.nextElement();
-			java.util.Enumeration<String> values = request.getHeaders(name);
-			if (values != null) {
-				while (values.hasMoreElements() && flag) {
-					String value = (String) values.nextElement();
-					if (value.equals("vector")) {
-						param = name;
-						flag = false;
-					}
-				}
-			}
+		java.util.Enumeration<String> headers = request.getHeaders("vector");
+		if (headers.hasMoreElements()) {
+			param = headers.nextElement(); // just grab first element
 		}
 
 		String bar = new Test().doSomething(param);
 		
-		int r = new java.util.Random().nextInt();
-		String rememberMeKey = Integer.toString(r);
-		
-		String user = "Ingrid";
+		double value = java.lang.Math.random();
+        String rememberMeKey = Double.toString(value).substring(2);  // Trim off the 0. at the front.
+
+		String user = "Doug";
 		String fullClassName = this.getClass().getName();
 		String testCaseNumber = fullClassName.substring(fullClassName.lastIndexOf('.')+1+"BenchmarkTest".length());
 		user+= testCaseNumber;
@@ -90,25 +79,20 @@ public class BenchmarkTest01162 extends HttpServlet {
 			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
 					+ " whose value is: " + rememberMe.getValue() + "<br/>");
 		}
-				
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextInt() executed");
+		response.getWriter().println("Weak Randomness Test java.lang.Math.random() executed");
 	}  // end doPost
 
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "";
-		if (param != null) {
-			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
-			valuesList.add("safe");
-			valuesList.add( param );
-			valuesList.add( "moresafe" );
-			
-			valuesList.remove(0); // remove the 1st safe value
-			
-			bar = valuesList.get(0); // get the param value
-		}
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map81207 = new java.util.HashMap<String,Object>();
+		map81207.put("keyA-81207", "a_Value"); // put some stuff in the collection
+		map81207.put("keyB-81207", param); // put it in a collection
+		map81207.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map81207.get("keyB-81207"); // get it back out
+		bar = (String)map81207.get("keyA-81207"); // get safe value back out
 
             return bar;
         }

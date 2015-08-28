@@ -42,46 +42,35 @@ public class BenchmarkTest00054 extends HttpServlet {
 	
 		javax.servlet.http.Cookie[] theCookies = request.getCookies();
 		
-		String param = null;
-		boolean foundit = false;
+		String param = "";
 		if (theCookies != null) {
 			for (javax.servlet.http.Cookie theCookie : theCookies) {
 				if (theCookie.getName().equals("vector")) {
 					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
-					foundit = true;
+					break;
 				}
 			}
-			if (!foundit) {
-				// no cookie found in collection
-				param = "";
-			}
-		} else {
-			// no cookies
-			param = "";
 		}
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map25110 = new java.util.HashMap<String,Object>();
-		map25110.put("keyA-25110", "a Value"); // put some stuff in the collection
-		map25110.put("keyB-25110", param); // put it in a collection
-		map25110.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map25110.get("keyB-25110"); // get it back out
+		String bar = param;
 		
 		
 		// Code based on example from:
 		// http://examples.javacodegeeks.com/core-java/crypto/encrypt-decrypt-file-stream-with-des/
-	    // 8-byte initialization vector
+	    // 16-byte initialization vector
 	    byte[] iv = {
 	    	(byte)0xB2, (byte)0x12, (byte)0xD5, (byte)0xB2,
-	    	(byte)0x44, (byte)0x21, (byte)0xC3, (byte)0xC3033
+	    	(byte)0x44, (byte)0x21, (byte)0xC3, (byte)0xC3,
+	    	(byte)0xF3, (byte)0x3C, (byte)0x23, (byte)0xB9,
+	    	(byte)0x9E, (byte)0xC5, (byte)0x77, (byte)0x0B033
 	    };
-		
+	    
 		try {
-            javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("DES/CBC/PKCS5PADDING", java.security.Security.getProvider("SunJCE"));
+			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("AES/CBC/PKCS5PADDING", java.security.Security.getProvider("SunJCE"));
             
             // Prepare the cipher to encrypt
-            javax.crypto.SecretKey key = javax.crypto.KeyGenerator.getInstance("DES").generateKey();
+            javax.crypto.SecretKey key = javax.crypto.KeyGenerator.getInstance("AES").generateKey();
             java.security.spec.AlgorithmParameterSpec paramSpec = new javax.crypto.spec.IvParameterSpec(iv);
             c.init(javax.crypto.Cipher.ENCRYPT_MODE, key, paramSpec);
 			
@@ -98,7 +87,7 @@ public class BenchmarkTest00054 extends HttpServlet {
 				}
 				input = java.util.Arrays.copyOf(strInput, i);
 			}
-			byte[] result = c.doFinal( input );
+			byte[] result = c.doFinal(input);
 			
 			java.io.File fileTarget = new java.io.File(
 					new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),"passwordFile.txt");

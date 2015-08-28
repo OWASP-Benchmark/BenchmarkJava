@@ -48,7 +48,19 @@ public class BenchmarkTest01222 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		response.getWriter().write("Parameter value: " + bar);
+		String sql = "INSERT INTO users (username, password) VALUES ('foo','"+ bar + "')";
+				
+		try {
+			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			int count = statement.executeUpdate( sql, java.sql.Statement.RETURN_GENERATED_KEYS );
+            org.owasp.benchmark.helpers.DatabaseHelper.outputUpdateComplete(sql, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}  // end doPost
 
     private class Test {
@@ -56,11 +68,11 @@ public class BenchmarkTest01222 extends HttpServlet {
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map25904 = new java.util.HashMap<String,Object>();
-		map25904.put("keyA-25904", "a Value"); // put some stuff in the collection
-		map25904.put("keyB-25904", param); // put it in a collection
-		map25904.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map25904.get("keyB-25904"); // get it back out
+		java.util.HashMap<String,Object> map4484 = new java.util.HashMap<String,Object>();
+		map4484.put("keyA-4484", "a Value"); // put some stuff in the collection
+		map4484.put("keyB-4484", param); // put it in a collection
+		map4484.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map4484.get("keyB-4484"); // get it back out
 
             return bar;
         }

@@ -44,19 +44,26 @@ public class BenchmarkTest00172 extends HttpServlet {
 		if (param == null) param = "";
 		
 		
-		String bar = "";
-		if (param != null) {
-			java.util.List<String> valuesList = new java.util.ArrayList<String>( );
-			valuesList.add("safe");
-			valuesList.add( param );
-			valuesList.add( "moresafe" );
-			
-			valuesList.remove(0); // remove the 1st safe value
-			
-			bar = valuesList.get(0); // get the param value
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map31859 = new java.util.HashMap<String,Object>();
+		map31859.put("keyA-31859", "a Value"); // put some stuff in the collection
+		map31859.put("keyB-31859", param); // put it in a collection
+		map31859.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map31859.get("keyB-31859"); // get it back out
+		
+		
+		String cmd = org.owasp.benchmark.helpers.Utils.getInsecureOSCommandString(this.getClass().getClassLoader());
+		String[] args = {cmd};
+        String[] argsEnv = { bar };
+        
+		Runtime r = Runtime.getRuntime();
+
+		try {
+			Process p = r.exec(args, argsEnv, new java.io.File(System.getProperty("user.dir")));
+			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
+		} catch (IOException e) {
+			System.out.println("Problem executing cmdi - TestCase");
+            throw new ServletException(e);
 		}
-		
-		
-		response.getWriter().write(bar.toCharArray());
 	}
 }

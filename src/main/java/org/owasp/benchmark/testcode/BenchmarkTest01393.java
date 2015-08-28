@@ -50,20 +50,18 @@ public class BenchmarkTest01393 extends HttpServlet {
 
 		String bar = new Test().doSomething(param);
 		
-		String cmd = "";
-        String osName = System.getProperty("os.name");
-        if (osName.indexOf("Windows") != -1) {
-        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("echo");
-        }
-        
-		Runtime r = Runtime.getRuntime();
-
+		String sql = "INSERT INTO users (username, password) VALUES ('foo','"+ bar + "')";
+				
 		try {
-			Process p = r.exec(cmd + bar);
-			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - TestCase");
-            throw new ServletException(e);
+			java.sql.Statement statement = org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			int count = statement.executeUpdate( sql, new int[] {1,2} );
+            org.owasp.benchmark.helpers.DatabaseHelper.outputUpdateComplete(sql, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
 		}
 	}  // end doPost
 
@@ -71,11 +69,21 @@ public class BenchmarkTest01393 extends HttpServlet {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		String bar = "";
-		if (param != null) {
-			bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    	new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
-		}
+		// Chain a bunch of propagators in sequence
+		String a16442 = param; //assign
+		StringBuilder b16442 = new StringBuilder(a16442);  // stick in stringbuilder
+		b16442.append(" SafeStuff"); // append some safe content
+		b16442.replace(b16442.length()-"Chars".length(),b16442.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map16442 = new java.util.HashMap<String,Object>();
+		map16442.put("key16442", b16442.toString()); // put in a collection
+		String c16442 = (String)map16442.get("key16442"); // get it back out
+		String d16442 = c16442.substring(0,c16442.length()-1); // extract most of it
+		String e16442 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d16442.getBytes() ) )); // B64 encode and decode it
+		String f16442 = e16442.split(" ")[0]; // split it on a space
+		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
+		String g16442 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g16442); // reflection
 
             return bar;
         }

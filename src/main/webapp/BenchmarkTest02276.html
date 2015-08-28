@@ -8,14 +8,13 @@
 </head>
 <body>
 <form action="/benchmark/BenchmarkTest02276" method="POST" id="FormBenchmarkTest02276">
-    <p>Please make your car selection, and edit the value to be sent [value]:</p>
-	<select name="vector" multiple>
-	    <option value="SafeText" selected>Audi. [SafeText]</option>
-	    <option value="Ford">Ford. [Ford]</option>
-	    <option value="Opel">Opel. [Opel]</option>
-        <option value="Subaru">Subaru. [Subaru]</option>
-	</select><br/><br/>
-    <input type="submit" value="Submit">
+ <div><label>Select your habits and edit the parameter [name,value]:</label></div><br/>
+    <div><input type="checkbox" name="vector" value="bar" checked>Reading. [vector, bar]</div>
+    <div><input type="checkbox" name="vector" value="Movies">Movies. [vector, Movies]</div>
+    <div><input type="checkbox" name="vector" value="Writing">Writing. [vector, Writing]</div>
+    <div><input type="checkbox" name="vector" value="Singing">Singing. [vector, Singing]</div>
+    <div><label>Parameter foo, value:</label><input type="text" id="foo" name="foo" value="bar"></input></div><br/>
+    <div><input type="submit" value="Submit"></div>
  </form>
 </body>
 </html>

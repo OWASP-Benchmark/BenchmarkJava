@@ -48,17 +48,30 @@ public class BenchmarkTest02095 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		Object[] obj = { "a", bar};
-		response.getWriter().printf(java.util.Locale.US,"Formatted like: %1$s and %2$s.",obj);
+		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
+				
+		try {
+			java.sql.Statement statement =  org.owasp.benchmark.helpers.DatabaseHelper.getSqlStatement();
+			statement.execute( sql, java.sql.Statement.RETURN_GENERATED_KEYS );
+            org.owasp.benchmark.helpers.DatabaseHelper.printResults(statement, sql, response);
+		} catch (java.sql.SQLException e) {
+			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
+        		response.getWriter().println("Error processing request.");
+        		return;
+        	}
+			else throw new ServletException(e);
+		}
 	}  // end doPost
 	
 	private static String doSomething(String param) throws ServletException, IOException {
 
-		String bar = param;
-		if (param != null && param.length() > 1) {
-		    StringBuilder sbxyz42400 = new StringBuilder(param);
-		    bar = sbxyz42400.replace(param.length()-"Z".length(), param.length(),"Z").toString();
-		}
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map8270 = new java.util.HashMap<String,Object>();
+		map8270.put("keyA-8270", "a_Value"); // put some stuff in the collection
+		map8270.put("keyB-8270", param); // put it in a collection
+		map8270.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map8270.get("keyB-8270"); // get it back out
+		bar = (String)map8270.get("keyA-8270"); // get safe value back out
 	
 		return bar;	
 	}

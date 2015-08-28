@@ -1,7 +1,7 @@
 <test-metadata>
   <benchmark-version>1.2beta</benchmark-version>
-  <category>weakrand</category>
+  <category>hash</category>
   <test-number>02217</test-number>
-  <vulnerability>false</vulnerability>
-  <cwe>330</cwe>
+  <vulnerability>true</vulnerability>
+  <cwe>328</cwe>
 </test-metadata>

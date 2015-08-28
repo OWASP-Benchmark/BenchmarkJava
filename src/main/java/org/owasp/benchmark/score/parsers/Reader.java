@@ -74,7 +74,7 @@ public class Reader {
         return results;
     }
 
-    public String getAttributeValue(String name, Node node) {
+    public static String getAttributeValue(String name, Node node) {
         if (node == null)
             return null;
         NamedNodeMap nnm = node.getAttributes();

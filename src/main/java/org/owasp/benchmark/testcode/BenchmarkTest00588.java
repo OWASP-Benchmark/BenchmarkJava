@@ -58,29 +58,16 @@ public class BenchmarkTest00588 extends HttpServlet {
 		}
 		
 		
-		String bar = "safe!";
-		java.util.HashMap<String,Object> map98164 = new java.util.HashMap<String,Object>();
-		map98164.put("keyA-98164", "a_Value"); // put some stuff in the collection
-		map98164.put("keyB-98164", param); // put it in a collection
-		map98164.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map98164.get("keyB-98164"); // get it back out
-		bar = (String)map98164.get("keyA-98164"); // get safe value back out
-		
-		
-		String cmd = "";
-        String osName = System.getProperty("os.name");
-        if (osName.indexOf("Windows") != -1) {
-        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("echo");
-        }
-        
-		Runtime r = Runtime.getRuntime();
-
-		try {
-			Process p = r.exec(cmd + bar);
-			org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
-		} catch (IOException e) {
-			System.out.println("Problem executing cmdi - TestCase");
-            throw new ServletException(e);
+		String bar = param;
+		if (param != null && param.length() > 1) {
+		    bar = param.substring(0,param.length()-1);
 		}
+		
+		
+		// javax.servlet.http.HttpSession.setAttribute(java.lang.String^,java.lang.Object)
+		request.getSession().setAttribute( bar, "10340");
+				
+		response.getWriter().println("Item: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
+			+ "' with value: '10340' saved in session.");
 	}
 }

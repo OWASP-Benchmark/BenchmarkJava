@@ -47,29 +47,14 @@ public class BenchmarkTest00301 extends HttpServlet {
 		}
 		
 		
-		String bar;
-		String guess = "ABC";
-		char switchTarget = guess.charAt(1); // condition 'B', which is safe
-		
-		// Simple case statement that assigns param to bar on conditions 'A', 'C', or 'D'
-		switch (switchTarget) {
-		  case 'A':
-		        bar = param;
-		        break;
-		  case 'B': 
-		        bar = "bob";
-		        break;
-		  case 'C':
-		  case 'D':        
-		        bar = param;
-		        break;
-		  default:
-		        bar = "bob's your uncle";
-		        break;
-		}
+		String bar = "safe!";
+		java.util.HashMap<String,Object> map89814 = new java.util.HashMap<String,Object>();
+		map89814.put("keyA-89814", "a Value"); // put some stuff in the collection
+		map89814.put("keyB-89814", param); // put it in a collection
+		map89814.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map89814.get("keyB-89814"); // get it back out
 		
 		
-		Object[] obj = { bar, "b"};
-		response.getWriter().printf("Formatted like: %1$s and %2$s.",obj);
+		response.getWriter().write("Parameter value: " + bar);
 	}
 }

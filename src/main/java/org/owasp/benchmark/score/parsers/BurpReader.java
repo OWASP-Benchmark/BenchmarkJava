@@ -25,14 +25,13 @@ import org.w3c.dom.Node;
 
 public class BurpReader extends Reader {
     
-    public TestResults parse(Document doc) throws Exception {
+    public TestResults parse(Node root) throws Exception {
 
-        TestResults tr = new TestResults("Burp Pro", true, TestResults.ToolType.SAST);
+        TestResults tr = new TestResults("Burp Suite Pro", true, TestResults.ToolType.DAST);
 
         // <issues burpVersion="1.6.24"
         // exportTime="Wed Aug 19 23:27:54 EDT 2015">
 
-        Node root = doc.getDocumentElement();
         String version = getAttributeValue("burpVersion", root);
         tr.setToolVersion(version);
 
@@ -74,7 +73,7 @@ public class BurpReader extends Reader {
         tcr.setCategory(name);
         tcr.setEvidence(name);
 
-        String confidence = getNamedChild( "confidence", issue ).getTextContent();
+        //String confidence = getNamedChild( "confidence", issue ).getTextContent();
         // tcr.setConfidence( makeIntoInt( confidence ) );
 
         String testcase = getNamedChild("path", issue).getTextContent();
@@ -95,18 +94,25 @@ public class BurpReader extends Reader {
 
     private int translate(String id) {
         switch (id) {
-        case "2097920": return 79;  // XSS
+        case "2097920": return 79;   // XSS
         case "5247488": return 9999; // DOM Trust Boundary Violation - Map to nothing right now.
-        case "1048832": return 78; // Command Injection 
-        case "1051392": return 22; // Path Manipulation
-        case "5243392": return 614; //SSL cookie without secure flag set
-        case "5244416": return 9998; //cookie without HttpOnly flag set - There is no CWE defined for this weakness
-        case "1050112": return 643; //XPATH injection
-        
+        case "1048832": return 78;   // Command Injection 
+        case "1051392": return 22;   // Path Manipulation
+        case "5243392": return 614;  // SSL cookie without secure flag set
+        case "5244416": return 9998; // cookie without HttpOnly flag set - There is no CWE defined for this weakness
+        case "1050112": return 643;  // XPATH injection
+        case "1049344": return 22;   // Path Manipulation
+        case "1049088": return 89;   // SQL injection
+        case "6291968": return 200;  // Information Disclosure - Email Address Disclosed 
+        case "6292736": return 200;  // Information Disclosure - Credit Card # Disclosed 
+        case "7340288": return 525;  // Information Exposure Through Browser Caching-Cacheable HTTPS Response
+        case "5245344": return 8888; // Clickjacking - There is no CWE # for this.
+        case "8389632": return 9999; // Incorrect Content Type - Don't care. Map to nothing right now.
+        case "2098944": return 352;  // CSRF Vulnerability
+        case "8389120": return 9999; // HTML doesn't specify character set - Don't care. Map to nothing.
+                
             // //case "Build Misconfiguration" : return 00;
-            // case "Command Injection" : return 78;
             // case "Cookie Security" : return 614;
-            // case "Cross-Site Scripting" : return 79;
             // //case "Dead Code" : return 00;
             // //case "Denial of Service" : return 00;
             // case "Header Manipulation" : return 113;
@@ -116,19 +122,16 @@ public class BurpReader extends Reader {
             // //case "Missing Check against Null" : return 00;
             // //case "Null Dereference" : return 00;
             // case "Password Management" : return 00;
-            // case "Path Manipulation" : return 22;
             // //case "Poor Error Handling" : return 00;
             // //case "Poor Logging Practice" : return 00;
             // //case "Poor Style" : return 00;
             // //case "Resource Injection" : return 00;
-            // case "SQL Injection" : return 89;
             // //case "System Information Leak" : return 00;
             // case "Trust Boundary Violation" : return 501;
             // //case "Unreleased Resource" : return 00;
             // //case "Unsafe Reflection" : return 00;
             // case "Weak Cryptographic Hash" : return 328;
             // case "Weak Encryption" : return 327;
-            // case "XPath Injection" : return 643;
         }
         System.out.println("Unknown id: " + id);
         return -1;

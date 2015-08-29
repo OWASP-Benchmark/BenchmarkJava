@@ -45,7 +45,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.io.FileUtils;
-import org.owasp.benchmark.score.parsers.AppscanReader;
+import org.owasp.benchmark.score.parsers.AppScanDynamicReader;
+import org.owasp.benchmark.score.parsers.AppScanSourceReader;
 import org.owasp.benchmark.score.parsers.ArachniReader;
 import org.owasp.benchmark.score.parsers.BurpReader;
 import org.owasp.benchmark.score.parsers.CheckmarxReader;
@@ -373,7 +374,7 @@ public class BenchmarkScore {
 		TestResults tr = null;
         
         if ( filename.endsWith(".ozasmt" ) ) {
-            tr = new AppscanReader().parse( actual );
+            tr = new AppScanSourceReader().parse( actual );
         }      
         
         else if ( filename.endsWith(".json" ) ) {
@@ -432,7 +433,11 @@ public class BenchmarkScore {
                 Document doc = getXMLDocument( actual );
                 Node root = doc.getDocumentElement();
                 if ( root.getNodeName().equals( "issues" ) ) {
-                    tr = new BurpReader().parse( doc );
+                    tr = new BurpReader().parse( root );
+                }
+                
+                if ( root.getNodeName().equals( "XmlReport") ) {
+                    tr = new AppScanDynamicReader().parse( root );
                 }
             }
 		}

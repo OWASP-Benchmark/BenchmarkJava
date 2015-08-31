@@ -21,7 +21,9 @@ package org.owasp.benchmark.score.report;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -41,6 +43,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.StandardChartTheme;
 import org.jfree.chart.annotations.XYLineAnnotation;
 import org.jfree.chart.annotations.XYPointerAnnotation;
+import org.jfree.chart.annotations.XYShapeAnnotation;
 import org.jfree.chart.annotations.XYTextAnnotation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
@@ -54,13 +57,14 @@ import org.jfree.ui.TextAnchor;
 import org.owasp.benchmark.score.parsers.OverallResult;
 import org.owasp.benchmark.score.parsers.OverallResults;
 
-public class Scatter {
+public class ScatterTools {
+	public char averageLabel;
 	public double atpr, afpr, totalTools, totalToolPR, totalToolFR;
 
 	JFreeChart chart = null;
 	StandardChartTheme theme = null;
 
-	public Scatter(String title, int height, int width, OverallResults or) {
+	public ScatterTools(String title, int height, int width, OverallResults or) {
 		display("          " + title, height, width, or);
 	}
 
@@ -69,19 +73,23 @@ public class Scatter {
 		JFrame f = new JFrame(title);
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		// Note: this is a little weird, since each point is a separate series
 		XYSeriesCollection dataset = new XYSeriesCollection();
 		XYSeries series = new XYSeries("Scores");
 		for (OverallResult r : or.getResults()) {
-			series.add(r.fpr * 100, r.tpr * 100);
+		
+			series.add(r.falsePositiveRate * 100, r.truePositiveRate * 100);
 			totalTools++;
-			totalToolPR += r.tpr;
-			totalToolFR += r.fpr;
+			totalToolPR += r.truePositiveRate;
+			totalToolFR += r.falsePositiveRate;
 
 		}
 		atpr = totalToolPR / totalTools;
 		afpr = totalToolFR / totalTools;
-		series.add(afpr * 100, atpr * 100);
+		
+		if ( or.getResults().size() > 1) {
+		    series.add(afpr * 100, atpr * 100);
+		}
+		
 		dataset.addSeries(series);
 
 		chart = ChartFactory.createScatterPlot(title, "False Positive Rate", "True Positive Rate", dataset,
@@ -144,7 +152,7 @@ public class Scatter {
 		chart.removeLegend();
 		chart.setPadding(new RectangleInsets(20, 20, 20, 20));
 		xyplot.getRenderer().setSeriesPaint(0, Color.decode("#4572a7"));
-
+		
 		// // setup item labels
 		// XYItemRenderer renderer = xyplot.getRenderer();
 		// Shape circle = new Ellipse2D.Float(-2.0f, -2.0f, 7.0f, 7.0f);
@@ -223,18 +231,18 @@ public class Scatter {
 				XYTextAnnotation annotation = new XYTextAnnotation(label, p.getX(), p.getY());
 				annotation.setTextAnchor(p.getX() < 3 ? TextAnchor.TOP_LEFT : TextAnchor.TOP_CENTER);
 				annotation.setBackgroundPaint(Color.white);
-				// set color of average to black
-
-				annotation.setPaint(Color.blue);
+				// set color of average to black and everything else to blue
+				if(averageLabel==label.toCharArray()[0]){
+					annotation.setPaint(Color.magenta);
+				} else {
+				    annotation.setPaint(Color.blue);
+				}
 
 				annotation.setFont(theme.getRegularFont());
 				xyplot.addAnnotation(annotation);
-
 			}
-
 			x++;
 		}
-
 	}
 
 	private String sort(String value) {
@@ -254,28 +262,28 @@ public class Scatter {
 	private HashMap<Point2D, String> makePointList(OverallResults or) {
 		HashMap<Point2D, String> map = new HashMap<Point2D, String>();
 		char ch = 'A';
-
+		int size = 0;
 		// make a list of all points. Add in a tiny random to prevent exact
 		// duplicate coordinates in map
 		for (OverallResult r : or.getResults()) {
-			double x = r.fpr * 100 + sr.nextDouble() * .000001;
-			double y = r.tpr * 100 + sr.nextDouble() * .000001 - 1; // this puts
-																	// the label
-																	// just
-																	// below the
-																	// point
+			size++;
+			double x = r.falsePositiveRate * 100 + sr.nextDouble() * .000001;
+			// this puts the label just below the point
+			double y = r.truePositiveRate * 100 + sr.nextDouble() * .000001 - 1;
 			Point2D p = new Point2D.Double(x, y);
 			String label = "" + ch;
 			map.put(p, label);
 			ch++;
 		}
-		// add  point
-		double x = afpr * 100 + sr.nextDouble() * .000001;
-		double y = atpr * 100 + sr.nextDouble() * .000001 - 1;
-		Point2D p = new Point2D.Double(x, y);
-		String label = "" + ch;
-		map.put(p, label);
-
+		// add  average point
+		if(size>1){
+    		double x = afpr * 100 + sr.nextDouble() * .000001;
+    		double y = atpr * 100 + sr.nextDouble() * .000001 - 1;
+    		Point2D p = new Point2D.Double(x, y);
+    		String label = "" + ch;
+    		averageLabel = ch;
+    		map.put(p, label);
+		}
 		dedupify(map);
 		return map;
 	}
@@ -313,10 +321,14 @@ public class Scatter {
 	private void makeLegend(OverallResults or, int x, int y, XYSeriesCollection dataset, XYPlot xyplot) {
 		char ch = 'A';
 		int i = 0;
+		int toolCount = 0;
+        double totalScore = 0;
 		for (OverallResult r : or.getResults()) {
+			toolCount++;
 			String label = (ch == 'I' ? ch + ":  " : "" + ch + ": ");
-			int score = (int) (100 * (r.tpr - r.fpr));
+			int score = (int) (100 * (r.truePositiveRate - r.falsePositiveRate));
 			String msg = "\u25A0 " + label + r.category + " (" + score + "%)";
+			totalScore += score;
 			XYTextAnnotation stroketext = new XYTextAnnotation(msg, x, y + i * -3.3);
 			stroketext.setTextAnchor(TextAnchor.CENTER_LEFT);
 			stroketext.setBackgroundPaint(Color.white);
@@ -326,16 +338,32 @@ public class Scatter {
 			i++;
 			ch++;
 		}
-		XYTextAnnotation stroketext = new XYTextAnnotation("\u25A0 " + ch + ": Commercial Average", x, y + i * -3.3);
-		stroketext.setTextAnchor(TextAnchor.CENTER_LEFT);
-		stroketext.setBackgroundPaint(Color.white);
-		stroketext.setPaint(Color.black);
-		stroketext.setFont(theme.getRegularFont());
-		xyplot.addAnnotation(stroketext);
-		i++;
-		ch++;
+		
+		if(toolCount>1) {
+            double averageScore = totalScore/toolCount;
+    		XYTextAnnotation stroketext = new XYTextAnnotation("\u25A0 " + ch + ": Average Score for this Tool"+ " (" + (int)averageScore + "%)", x, y + i * -3.3);
+    		stroketext.setTextAnchor(TextAnchor.CENTER_LEFT);
+    		stroketext.setBackgroundPaint(Color.white);
+    		stroketext.setPaint(Color.magenta);
+    		stroketext.setFont(theme.getRegularFont());
+    		xyplot.addAnnotation(stroketext);
+
+    		Point2D averagePoint = new Point2D.Double( afpr*100, atpr*100 );
+            makePoint(xyplot, averagePoint, 3, Color.magenta );
+		}
 	}
 
+    // Note that rotation is for the entire G2D, so put in coordinates accordingly
+    private void makePoint(XYPlot xyplot, Point2D location, double radius, Color color) {
+        double x = location.getX() - radius/2;
+        double y = location.getY() - radius/2;
+        Shape dot = new Ellipse2D.Double(x, y, radius, radius);
+        Color transparentRed = new Color(1, 0, 0, 0.5f);
+        XYShapeAnnotation area = new XYShapeAnnotation(dot, new BasicStroke(), color, transparentRed );
+        xyplot.addAnnotation( area );
+    }
+
+    
 	private XYPointerAnnotation makePointer(int x, int y, String msg, TextAnchor anchor, int angle) {
 		XYPointerAnnotation pointer = new XYPointerAnnotation(msg, x, y, Math.toRadians(angle));
 		pointer.setBackgroundPaint(Color.white);
@@ -376,7 +404,7 @@ public class Scatter {
 		or.add("Reflection Injection", 0, 0, 300, 5);
 		or.add("LDAP Injection", .5, 1, 6, 5);
 		or.add("Weak Encryption", .2, .9, 600, 5);
-		Scatter scatter = new Scatter("OWASP Benchmark Results for SomeTool", 800, 800, or);
+		ScatterTools scatter = new ScatterTools("OWASP Benchmark Results for SomeTool", 800, 800, or);
 		scatter.writeChartToFile(new File("test.png"), 800, 800);
 		System.exit(0);
 	}

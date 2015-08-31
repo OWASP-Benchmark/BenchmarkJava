@@ -39,7 +39,7 @@ public class ZapReader extends Reader {
         InputSource is = new InputSource( new FileInputStream(f) );
         Document doc = docBuilder.parse(is);
  
-        TestResults tr = new TestResults( "ZAP", false, TestResults.ToolType.DAST);
+        TestResults tr = new TestResults( "OWASP ZAP", false, TestResults.ToolType.DAST);
         
         // If the filename includes an elapsed time in seconds (e.g., TOOLNAME-seconds.xml), set the compute time on the score card.
         tr.setTime(f);

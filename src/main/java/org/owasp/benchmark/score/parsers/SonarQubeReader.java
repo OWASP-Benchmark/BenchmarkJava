@@ -41,7 +41,7 @@ public class SonarQubeReader extends Reader {
 	    {
             TestCaseResult tcr = parseSonarQubeFinding( arr.getJSONObject(i) );
             if ( tcr != null ) {
-                // System.out.println( tcr.getNumber() + " " + tcr.getName() + " -> " + tcr.getCWE() + "\t" + tcr.getEvidence() );
+                // System.out.println( tcr.getNumber() + "\t" + tcr.getCWE() + "\t" + tcr.getEvidence() );
                 tr.put( tcr );
             }
 	    }

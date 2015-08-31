@@ -19,33 +19,26 @@
 package org.owasp.benchmark.score.parsers;
 
 public class OverallResult {
-	public String category;
-	public double tpr;
-	public double fpr;
-	public int total;
-	public double score;
+	public final String category;
+	public final double truePositiveRate;
+	public final double falsePositiveRate;
+	public final int total;
+	public final double score;
 	
+	/**
+	 * The overall results for a single vulnerability category for a single tool.
+	 * @param category - The vulnerability category.
+	 * @param tpr - The true positive rate
+	 * @param fpr - The false positive rate
+	 * @param total - The total number of TP, FP, TN, FN in this category 
+	 * @param score - The tool's score in this category
+	 */
 	public OverallResult( String category, double tpr, double fpr, int total, double score) {
 		this.category = category;
-		this.tpr = tpr;
-		this.fpr = fpr;
+		this.truePositiveRate = tpr;
+		this.falsePositiveRate = fpr;
 		this.total = total;
 		this.score = score;
 	}
-
-	public String getCategory() {
-	    return category;
-	}
 	
-    public double getFalsePositiveRate() {
-        return fpr;
-    }
-
-    public double getTruePositiveRate() {
-        return tpr;
-    }
-
-    public double getScore() {
-        return score;
-    }
 }

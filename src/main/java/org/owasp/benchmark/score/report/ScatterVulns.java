@@ -21,12 +21,13 @@ package org.owasp.benchmark.score.report;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.security.SecureRandom;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.swing.JFrame;
 
@@ -44,6 +46,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.StandardChartTheme;
 import org.jfree.chart.annotations.XYLineAnnotation;
 import org.jfree.chart.annotations.XYPointerAnnotation;
+import org.jfree.chart.annotations.XYShapeAnnotation;
 import org.jfree.chart.annotations.XYTextAnnotation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
@@ -58,71 +61,72 @@ import org.jfree.ui.TextAnchor;
 import org.owasp.benchmark.score.BenchmarkScore;
 import org.owasp.benchmark.score.parsers.OverallResult;
 import org.owasp.benchmark.score.parsers.OverallResults;
-import org.owasp.benchmark.score.parsers.TestCaseResult;
-import org.owasp.benchmark.score.parsers.TestResults;
 
 public class ScatterVulns {
+	char averageLabel;
 	double afr = 0;
 	double atr = 0;
     JFreeChart chart = null;
     StandardChartTheme theme = null;
     
     /**
-     * This calculates the summary chart across all the tools analyzed against the Benchmark.
+     * This calculates how all the tools did against the Benchmark in this vulnerability category
      * @param title - The title of the chart to be produced.
      * @param height - Height of the chart (typically 800)
      * @param width - Width of the chart (typically 800)
-     * @param category - FIXME-What is this?
+     * @param category - The vulnerability category this chart is being generated for.
      * @param toolResults - A list of each individual tool's results.
      */
-    public ScatterVulns(String title, int height, int width, String category, List<Report> toolResults ) {
+    public ScatterVulns(String title, int height, int width, String category, Set<Report> toolResults ) {
         display("          " + title, height, width, category, toolResults );
     }
 
-    private JFreeChart display(String title, int height, int width, String category, List<Report> toolResults ) {
-        
-    	
+    private JFreeChart display(String title, int height, int width, String category, Set<Report> toolResults ) {  	
     	JFrame f = new JFrame(title);
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         //averages
         ArrayList<Double> averageFalseRates = new ArrayList<Double>();
-
         ArrayList<Double> averageTrueRates = new ArrayList<Double>();
-        double averageFalseRate=0;
-        double averageTrueRate=0;
         
+        int commercialToolCount = 0;
         XYSeriesCollection dataset = new XYSeriesCollection(); 
-        XYSeries series = new XYSeries("Scores");        
-		for (int i = 0; i < toolResults.size(); i++) {
-			Report toolReport = toolResults.get(i);
-			OverallResult overallResults = toolReport.getOverallResults().getResults(category);
-	        series.add( overallResults.getFalsePositiveRate() * 100, overallResults.getTruePositiveRate() * 100);
-	        if(toolReport.isCommercial()){
-	        averageFalseRates.add(overallResults.getFalsePositiveRate());
-	        
-	        averageTrueRates.add(overallResults.getTruePositiveRate());
-	        
-	        
-	        }
-		}
-	        
-		
+        XYSeries series = new XYSeries("Scores");
+        
+        for ( Report toolReport : toolResults ) {
+            if ( !toolReport.isCommercial() ) {
+                OverallResult overallResult = toolReport.getOverallResults().getResults(category);
+                series.add( overallResult.falsePositiveRate * 100, overallResult.truePositiveRate * 100);
+            }
+        }
+        
+        for ( Report toolReport : toolResults ) {
+            if ( toolReport.isCommercial() ) {
+        		OverallResult overallResult = toolReport.getOverallResults().getResults(category);
+            	if (!BenchmarkScore.showAveOnlyMode) {
+            		series.add( overallResult.falsePositiveRate * 100, overallResult.truePositiveRate * 100);
+            	}
+                commercialToolCount++;
+                averageFalseRates.add(overallResult.falsePositiveRate);
+                averageTrueRates.add(overallResult.truePositiveRate);
+            }
+        }
+        
 		for (double d : averageFalseRates){
-			averageFalseRate  += d;
+			afr  += d;
 		}
-		averageFalseRate = averageFalseRate/averageFalseRates.size();
-		
+		afr = afr/averageFalseRates.size();
 		
 		for (double d : averageTrueRates){
-			averageTrueRate += d;
+			atr += d;
 		}
-		averageTrueRate = averageTrueRate/averageTrueRates.size();
+		atr = atr/averageTrueRates.size();
 		
-		series.add(averageFalseRate *100, averageTrueRate*100);
+        if ( commercialToolCount > 1  || (BenchmarkScore.showAveOnlyMode && commercialToolCount == 1)) {
+            series.add(afr *100, atr*100);
+        }
+        
         dataset.addSeries(series);
-        afr = averageFalseRate;
-        atr = averageTrueRate;
 
         chart = ChartFactory.createScatterPlot(title, "False Positive Rate", "True Positive Rate", dataset, PlotOrientation.VERTICAL, true, true, false);
         String fontName = "Arial";
@@ -200,13 +204,6 @@ public class ScatterVulns {
 //            renderer.setSeriesPositiveItemLabelPosition(i, position);
 //        }
         
-        
-        
-
-        
-        
-        
-
         makeDataLabels( category, toolResults, xyplot );
         makeLegend( category, toolResults, 57, 48, dataset, xyplot );
  
@@ -254,13 +251,12 @@ public class ScatterVulns {
         f.pack();
         f.setLocationRelativeTo(null);
 //      f.setVisible(true);
-        
-        
+           
 		return chart;
     }
 
     
-    private void makeDataLabels( String category, List<Report> toolResults, XYPlot xyplot ) {        
+    private void makeDataLabels( String category, Set<Report> toolResults, XYPlot xyplot ) {        
         HashMap<Point2D,String> map = makePointList( category, toolResults );
         for (Entry<Point2D,String> e : map.entrySet() ) {
             if ( e.getValue() != null ) {
@@ -269,7 +265,11 @@ public class ScatterVulns {
                 XYTextAnnotation annotation = new XYTextAnnotation( label, p.getX(), p.getY());
                 annotation.setTextAnchor( p.getX() < 3 ? TextAnchor.TOP_LEFT : TextAnchor.TOP_CENTER);
                 annotation.setBackgroundPaint(Color.white);
-                annotation.setPaint(Color.blue);
+                if(label.toCharArray()[0] == averageLabel){
+                annotation.setPaint(Color.magenta);
+                }else{
+                    annotation.setPaint(Color.blue);
+                }
                 annotation.setFont(theme.getRegularFont());
                 xyplot.addAnnotation(annotation);
             }
@@ -287,24 +287,46 @@ public class ScatterVulns {
         return sb.toString();
     }
 
-    SecureRandom sr = new SecureRandom();
-    private HashMap<Point2D, String> makePointList( String category, List<Report> toolResults ) {          
+    private SecureRandom sr = new SecureRandom();
+    private HashMap<Point2D, String> makePointList( String category, Set<Report> toolResults ) {          
         HashMap<Point2D,String> map = new HashMap<Point2D, String>();
         char ch = 'A';
         
         // make a list of all points.  Add in a tiny random to prevent exact duplicate coordinates in map
-        for (Report r : toolResults ) {
-            OverallResult or = r.getOverallResults().getResults(category);
-            double x = or.getFalsePositiveRate() * 100 + sr.nextDouble() * .000001;
-            double y = or.getTruePositiveRate() * 100 + sr.nextDouble() * .000001 - 1;   // this puts the label just below the point
-            Point2D p = new Point2D.Double(x,y);
-            String label = ""+ch ;
-            map.put( p, label );
-            ch++;
-        }
-        Point2D ap= new Point2D.Double(afr*100 + sr.nextDouble() * .000001,atr*100 + sr.nextDouble() * .000001 - 1);
+        int commercialToolCount = 0;
         
-        map.put(ap, ""+ch);
+        for (Report r : toolResults ) {
+        	if (!r.isCommercial()) {
+                OverallResult or = r.getOverallResults().getResults(category);
+                double x = or.falsePositiveRate * 100 + sr.nextDouble() * .000001;
+                double y = or.truePositiveRate * 100 + sr.nextDouble() * .000001 - 1;   // this puts the label just below the point
+                Point2D p = new Point2D.Double(x,y);
+                String label = "" + ch ;
+                map.put( p, label );
+                ch++;
+        	}
+        }
+        
+        for (Report r : toolResults ) {
+            if (r.isCommercial()) {
+        	    commercialToolCount++;
+        	    if (!BenchmarkScore.showAveOnlyMode) {
+	                OverallResult or = r.getOverallResults().getResults(category);
+	                double x = or.falsePositiveRate * 100 + sr.nextDouble() * .000001;
+	                double y = or.truePositiveRate * 100 + sr.nextDouble() * .000001 - 1;   // this puts the label just below the point
+	                Point2D p = new Point2D.Double(x,y);
+	                String label = "" + ch ;
+	                map.put( p, label );
+	                ch++;
+        	    }
+            }
+        }
+        
+        if ( commercialToolCount > 1 || (BenchmarkScore.showAveOnlyMode && commercialToolCount == 1)) {
+            Point2D ap= new Point2D.Double(afr*100 + sr.nextDouble() * .000001,atr*100 + sr.nextDouble() * .000001 - 1);
+            averageLabel = ch;
+            map.put(ap, "" + ch);
+        }
         dedupify( map );
         return map;
     }
@@ -336,88 +358,107 @@ public class ScatterVulns {
         return null;
     }
 
-    private void makeLegend( String category, List<Report> toolResults, int x, int y, XYSeriesCollection dataset, XYPlot xyplot ) {
+    private void makeLegend( String category, Set<Report> toolResults, int x, int y, XYSeriesCollection dataset, XYPlot xyplot ) {
         char ch = 'A';
         int i = -2;
-      
-        
-        
-      //print commercial label
-        XYTextAnnotation stroketext = new XYTextAnnotation("commercial", x, y + i * -3.3);
-        stroketext.setTextAnchor(TextAnchor.CENTER_LEFT);
-        stroketext.setBackgroundPaint(Color.white);
-        stroketext.setPaint(Color.gray);
-        stroketext.setFont(theme.getRegularFont());
-        i++;
-        
-        //commercial tools
-        for (Report r : toolResults ) {
-            OverallResults or = r.getOverallResults();
-            if(r.isCommercial()){
-            String label = ( ch == 'I' ? ch + ":  " : ""+ch + ": " );
-            int score = (int)(or.getResults(category).getScore() * 100);
-            String msg = "\u25A0 " + label + r.getToolName() + " (" + score + "%)";
-            XYTextAnnotation stroketext4 = new XYTextAnnotation(msg, x, y + i * -3.3);
-            stroketext4.setTextAnchor(TextAnchor.CENTER_LEFT);
-            stroketext4.setBackgroundPaint(Color.white);
-            stroketext4.setPaint(Color.blue);
-            stroketext4.setFont(theme.getRegularFont());
-            xyplot.addAnnotation(stroketext4);
-            
-        
-            i++;
-            
-            ch++;
-            }
-           
-        }
-        //print non commercial label
-        XYTextAnnotation stroketext1 = new XYTextAnnotation("non - commercial", x, y + i * -3.3);
-        stroketext1.setTextAnchor(TextAnchor.CENTER_LEFT);
-        stroketext1.setBackgroundPaint(Color.white);
-        stroketext1.setPaint(Color.gray);
-        stroketext1.setFont(theme.getRegularFont());
-        i++;
-        
         
         //non-commercial results
+        boolean printedNonCommercialLabel = false;
+
         for (Report r : toolResults ) {
-            OverallResults or = r.getOverallResults();
             if(!r.isCommercial()){
-            String label = ( ch == 'I' ? ch + ":  " : ""+ch + ": " );
-            int score = (int)(or.getResults(category).getScore() * 100);
-            String msg = "\u25A0 " + label + r.getToolName() + " (" + score + "%)";
-            XYTextAnnotation stroketext3 = new XYTextAnnotation(msg, x, y + i * -3.3);
-            stroketext3.setTextAnchor(TextAnchor.CENTER_LEFT);
-            stroketext3.setBackgroundPaint(Color.white);
-            stroketext3.setPaint(Color.blue);
-            stroketext3.setFont(theme.getRegularFont());
-            xyplot.addAnnotation(stroketext3);
-            
-            i++;
-            
-            ch++;
+            	// print non commercial label if there is at least one non-commercial tool
+            	if (!printedNonCommercialLabel) {
+	                XYTextAnnotation stroketext1 = new XYTextAnnotation("Non-Commercial", x, y + i * -3.3);
+	                stroketext1.setTextAnchor(TextAnchor.CENTER_LEFT);
+	                stroketext1.setBackgroundPaint(Color.white);
+	                stroketext1.setPaint(Color.black);
+	                stroketext1.setFont(theme.getRegularFont());
+	                xyplot.addAnnotation(stroketext1);
+	                i++;
+	                printedNonCommercialLabel = true;
+            	}
+            	
+                OverallResults or = r.getOverallResults();
+                String label = ( ch == 'I' ? ch + ":  " : ""+ch + ": " );
+                double score = or.getResults(category).score * 100;
+                String msg = "\u25A0 " + label + r.getToolName() + " (" + (int)score + "%)";
+                XYTextAnnotation stroketext3 = new XYTextAnnotation(msg, x, y + i * -3.3);
+                stroketext3.setTextAnchor(TextAnchor.CENTER_LEFT);
+                stroketext3.setBackgroundPaint(Color.white);
+                stroketext3.setPaint(Color.blue);
+                stroketext3.setFont(theme.getRegularFont());
+                xyplot.addAnnotation(stroketext3);
+                i++;
+                ch++;
             }
-           
         }
         
+        //commercial tools
+        double totalScore = 0;
+        boolean printedCommercialLabel = false;
+        int commercialToolCount = 0;
+        
+        for (Report r : toolResults ) {
+            OverallResults or = r.getOverallResults();
+            if(r.isCommercial()) {
+            	
+            	// print commercial label if there is at least one commercial tool
+            	if (!printedCommercialLabel) {
+	                XYTextAnnotation stroketext = new XYTextAnnotation("Commercial", x, y + i * -3.3);
+	                stroketext.setTextAnchor(TextAnchor.CENTER_LEFT);
+	                stroketext.setBackgroundPaint(Color.white);
+	                stroketext.setPaint(Color.black);
+	                stroketext.setFont(theme.getRegularFont());
+	                xyplot.addAnnotation(stroketext);
+	                i++;
+	                printedCommercialLabel = true;
+            	}
+                
+                commercialToolCount++;
+	            double score = or.getResults(category).score * 100;
+	            if (!BenchmarkScore.showAveOnlyMode) {
+		            String label = ( ch == 'I' ? ch + ":  " : "" + ch + ": " );
+	                String msg = "\u25A0 " + label + r.getToolName() + " (" + (int)score + "%)";
+	                XYTextAnnotation stroketext4 = new XYTextAnnotation(msg, x, y + i * -3.3);
+	                stroketext4.setTextAnchor(TextAnchor.CENTER_LEFT);
+	                stroketext4.setBackgroundPaint(Color.white);
+	                stroketext4.setPaint(Color.blue);
+	                stroketext4.setFont(theme.getRegularFont());
+	                xyplot.addAnnotation(stroketext4);
+	                i++;
+	                ch++;
+                }
+	            totalScore+=score;
+            }           
+        }
+      
         //commercial average
-        
-        XYTextAnnotation stroketext2 = new XYTextAnnotation("\u25A0 M: Commercial Average", x, y + i * -3.3);
-        stroketext2.setTextAnchor(TextAnchor.CENTER_LEFT);
-        stroketext2.setBackgroundPaint(Color.white);
-        stroketext2.setPaint(Color.black);
-        stroketext2.setFont(theme.getRegularFont());
-        
-        xyplot.addAnnotation(stroketext);
-        xyplot.addAnnotation(stroketext1);
-        xyplot.addAnnotation(stroketext2);
-       
-       
-        
-        
-       
+        if (commercialToolCount > 1 || (BenchmarkScore.showAveOnlyMode && commercialToolCount == 1)){
+        	double averageScore = totalScore/commercialToolCount;
+            XYTextAnnotation stroketext2 = new XYTextAnnotation("\u25A0 "+ch+": Commercial Average"+ " (" + (int)averageScore + "%)", x, y + i * -3.3);
+            stroketext2.setTextAnchor(TextAnchor.CENTER_LEFT);
+            stroketext2.setBackgroundPaint(Color.white);
+            stroketext2.setPaint(Color.magenta);
+            stroketext2.setFont(theme.getRegularFont());
+            xyplot.addAnnotation(stroketext2);
+
+            Point2D averagePoint = new Point2D.Double( afr*100, atr*100 );
+            makePoint(xyplot, averagePoint, 3, Color.magenta );
+        }       
     }
+
+    
+    // Note that rotation is for the entire G2D, so put in coordinates accordingly
+    private void makePoint(XYPlot xyplot, Point2D location, double radius, Color color) {
+        double x = location.getX() - radius/2;
+        double y = location.getY() - radius/2;
+        Shape dot = new Ellipse2D.Double(x, y, radius, radius);
+        Color transparentRed = new Color(1, 0, 0, 0.5f);
+        XYShapeAnnotation area = new XYShapeAnnotation(dot, new BasicStroke(), color, transparentRed );
+        xyplot.addAnnotation( area );
+    }
+    
     
     private XYPointerAnnotation makePointer(int x, int y, String msg, TextAnchor anchor, int angle ) {
         XYPointerAnnotation pointer = new XYPointerAnnotation(msg, x, y, Math.toRadians(angle));
@@ -438,16 +479,17 @@ public class ScatterVulns {
         stream.close();
     }
 
-    public static void generateComparisonChart(String category, List toolResults ) {
+    public static void generateComparisonChart(String category, Set<Report> toolResults ) {
     	try {
-            ScatterVulns scatter = new ScatterVulns("Benchmark v" + BenchmarkScore.benchmarkVersion + " "
-            		+ category + " Comparison", 800, 800, category, toolResults );
+            String scatterTitle = "Benchmark" 
+    				+ (BenchmarkScore.mixedMode ? "" : " v" + BenchmarkScore.benchmarkVersion) 
+            		+ " " + category + " Comparison";
+            ScatterVulns scatter = new ScatterVulns(scatterTitle, 800, 800, category, toolResults );            
             scatter.writeChartToFile(new File("scorecard/Benchmark_v" + BenchmarkScore.benchmarkVersion+"_Scorecard_for_" +category.replace(' ', '_')+".png"), 800, 800);    		
     	} catch (IOException e) {
     		System.out.println("Couldn't generate Benchmark vulnerability chart for some reason.");
     		e.printStackTrace();
     	}
     }
-    
-    
+
 }

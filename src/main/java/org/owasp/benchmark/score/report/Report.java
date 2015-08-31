@@ -31,50 +31,56 @@ import org.owasp.benchmark.score.parsers.Counter;
 import org.owasp.benchmark.score.parsers.OverallResult;
 import org.owasp.benchmark.score.parsers.OverallResults;
 import org.owasp.benchmark.score.parsers.TestResults;
+import org.owasp.benchmark.score.parsers.TestResults.ToolType;
 
 public class Report implements Comparable<Report> {
 
+	private final boolean isCommercial;
+	private final boolean isStatic;
 	private String toolName = "not specified";
-	private String reportPath;
-	private OverallResults overallResults;
-	private boolean isCommercial;
-	private boolean isStatic;
+	private final String benchmarkVersion;
+	private final Map<String, Counter> scores;
+	private final OverallResults overallResults;
+	private final String reportPath;
 
 	// The name of the file that contains this scorecard report
 	private String filename = null;
-	public Report( OverallResults or,boolean isCommercial,String toolName){
-		this.toolName = toolName;
-		this.overallResults = or;
-		this.isCommercial = isCommercial;
-	}
+	
 	public Report(TestResults actualResults, Map<String, Counter> scores, OverallResults or, int totalResults,
 			String actualResultsFileName, boolean isCommercial, boolean isStatic)
 					throws IOException, URISyntaxException {
-		this.isStatic = isStatic;
+		
 		this.isCommercial = isCommercial;
-		toolName = actualResults.getTool();
+		this.isStatic = isStatic;
+		this.toolName = actualResults.getTool();
 		String version = actualResults.getToolVersion();
-		if (version != null)
+		if (version != null && (!BenchmarkScore.anonymousMode || !isCommercial)) {
 			version = " v" + version;
-		else
-			version = "";
+		} else version = "";
+		this.benchmarkVersion = actualResults.getBenchmarkVersion();
 
 		String fullTitle = "OWASP Benchmark Scorecard for " + toolName + version;
-		String shortTitle = "Benchmark v" + BenchmarkScore.benchmarkVersion + " Scorecard for " + toolName;
-		filename = shortTitle.replace(' ', '_');
+		if (actualResults.toolType == ToolType.SAST) fullTitle += " (SAST)";
+		if (actualResults.toolType == ToolType.DAST) fullTitle += " (DAST)";
+		if (actualResults.toolType == ToolType.IAST) fullTitle += " (IAST)";
+		String shortTitle = "Benchmark v" + actualResults.getBenchmarkVersion() + " Scorecard for " + toolName;
+		this.filename = shortTitle.replace(' ', '_');
 
-		overallResults = or;
+		this.scores = scores;
+		this.overallResults = or;
 
-		reportPath = BenchmarkScore.scoreCardDirName + File.separator + filename + ".html";
+		this.reportPath = BenchmarkScore.scoreCardDirName + File.separator + filename + ".html";
 		File img = new File(BenchmarkScore.scoreCardDirName + File.separator + filename + ".png");
-		Scatter graph = new Scatter(shortTitle, 800, 800, or);
+		ScatterTools graph = new ScatterTools(shortTitle, 800, 800, or);
 
-		graph.writeChartToFile(img, 800, 800);
-
-		String reportHtml = generateHtml(fullTitle, actualResults, scores, or, totalResults, img,
-				actualResultsFileName);
-		Files.write(Paths.get(reportPath), reportHtml.getBytes());
-		System.out.println("Report written to: " + new File(reportPath).getAbsolutePath());
+		if (!(BenchmarkScore.showAveOnlyMode && this.isCommercial)) {
+			graph.writeChartToFile(img, 800, 800);
+	
+			String reportHtml = generateHtml(fullTitle, actualResults, scores, or, totalResults, img,
+					actualResultsFileName);
+			Files.write(Paths.get(reportPath), reportHtml.getBytes());
+			System.out.println("Report written to: " + new File(reportPath).getAbsolutePath());
+		}
 	}
 
 	/**
@@ -83,20 +89,28 @@ public class Report implements Comparable<Report> {
 	 * @return Name of the tool.
 	 */
 	public String getToolName() {
-		return toolName;
+		return this.toolName;
 	}
 
 	public boolean isCommercial() {
-		return isCommercial;
+		return this.isCommercial;
 	}
 
+	public boolean isStatic() {
+		return this.isStatic;
+	}
+
+	public String getBenchmarkVersion() {
+		return this.benchmarkVersion;
+	}
+	
 	/**
 	 * Gets the name of the file that contains this scorecard.
 	 * 
 	 * @return Name of the file (without any path information)
 	 */
 	public String getFilename() {
-		return filename;
+		return this.filename;
 	}
 
 	/**
@@ -105,7 +119,7 @@ public class Report implements Comparable<Report> {
 	 * @return the overall results for this scorecard.
 	 */
 	public OverallResults getOverallResults() {
-		return overallResults;
+		return this.overallResults;
 	}
 
 	private String generateHtml(String title, TestResults actualResults, Map<String, Counter> scores, OverallResults or,
@@ -124,7 +138,7 @@ public class Report implements Comparable<Report> {
 		html = html.replace("${time}", or.getTime());
 		html = html.replace("${score}", "" + new DecimalFormat("#0.00%").format(or.getScore()));
 		html = html.replace("${tool}", actualResults.getTool());
-		html = html.replace("${version}", BenchmarkScore.benchmarkVersion);
+		html = html.replace("${version}", actualResults.getBenchmarkVersion());
 		html = html.replace("${actualResultsFile}", actualResultsFileName);
 
 		String imgTag = "<img align=\"middle\" src=\"" + img.getName() + "\" />";
@@ -161,52 +175,57 @@ public class Report implements Comparable<Report> {
 			OverallResult r = or.getResults(category);
 			String style = "";
 			
-			if (Math.abs(r.tpr - r.fpr) < .1)
+			if (Math.abs(r.truePositiveRate - r.falsePositiveRate) < .1)
 				style = "class=\"danger\"";
-			else if (r.tpr > .7 && r.fpr < .3)
+			else if (r.truePositiveRate > .7 && r.falsePositiveRate < .3)
 				style = "class=\"success\"";
 			sb.append("<tr " + style + ">");
 			sb.append("<td>" + category + "</td>");
-			sb.append("<td>" + (int) c.tp + "</td>");
-			sb.append("<td>" + (int) c.fn + "</td>");
-			sb.append("<td>" + (int) c.tn + "</td>");
-			sb.append("<td>" + (int) c.fp + "</td>");
-			sb.append("<td>" + (int) r.total + "</td>");
-			sb.append("<td>" + new DecimalFormat("#0.00%").format(r.tpr) + "</td>");
-			sb.append("<td>" + new DecimalFormat("#0.00%").format(r.fpr) + "</td>");
+			sb.append("<td>" + c.tp + "</td>");
+			sb.append("<td>" + c.fn + "</td>");
+			sb.append("<td>" + c.tn + "</td>");
+			sb.append("<td>" + c.fp + "</td>");
+			sb.append("<td>" + r.total + "</td>");
+			sb.append("<td>" + new DecimalFormat("#0.00%").format(r.truePositiveRate) + "</td>");
+			sb.append("<td>" + new DecimalFormat("#0.00%").format(r.falsePositiveRate) + "</td>");
 			sb.append("<td>" + new DecimalFormat("#0.00%").format(r.score) + "</td>");
 			sb.append("</tr>\n");
 			totals.tp += c.tp;
 			totals.fn += c.fn;
 			totals.tn += c.tn;
 			totals.fp += c.fp;
-			if (!Double.isNaN(r.tpr))
-				totalTPR += r.tpr;
-			if (!Double.isNaN(r.fpr))
-				totalFPR += r.fpr;
+			if (!Double.isNaN(r.truePositiveRate))
+				totalTPR += r.truePositiveRate;
+			if (!Double.isNaN(r.falsePositiveRate))
+				totalFPR += r.falsePositiveRate;
 			if (!Double.isNaN(r.score))
 				totalScore += r.score;
 		}
 		sb.append("<th>" + "Totals" + "</th>");
-		sb.append("<th>" + (int) totals.tp + "</th>");
-		sb.append("<th>" + (int) totals.fn + "</th>");
-		sb.append("<th>" + (int) totals.tn + "</th>");
-		sb.append("<th>" + (int) totals.fp + "</th>");
-		sb.append("<th>" + (int) (totals.tp + totals.fn + totals.tn + totals.fp) + "</th>");
-		sb.append("<th>" + new DecimalFormat("#0.00%").format(totalTPR / scores.size()) + "</th>");
-		sb.append("<th>" + new DecimalFormat("#0.00%").format(totalFPR / scores.size()) + "</th>");
-		sb.append("<th>" + new DecimalFormat("#0.00%").format(totalScore / scores.size()) + "</th>");
+		sb.append("<th>" + totals.tp + "</th>");
+		sb.append("<th>" + totals.fn + "</th>");
+		sb.append("<th>" + totals.tn + "</th>");
+		sb.append("<th>" + totals.fp + "</th>");
+		int total = totals.tp + totals.fn + totals.tn + totals.fp;
+		sb.append("<th>" + total + "</th>");
+		double tpr = (totalTPR / scores.size());
+		sb.append("<th>" + new DecimalFormat("#0.00%").format(tpr) + "</th>");
+		double fpr = (totalFPR / scores.size());
+		sb.append("<th>" + new DecimalFormat("#0.00%").format(fpr) + "</th>");
+		double score = totalScore / scores.size();
+		sb.append("<th>" + new DecimalFormat("#0.00%").format(score) + "</th>");
 		sb.append("</tr>\n");
 		sb.append("</table>");
+				
 		return sb.toString();
 	}
 
 	public int compareTo(Report r) {
-		return this.toolName.compareTo(r.toolName);
+		return this.toolName.toLowerCase().compareTo(r.toolName.toLowerCase());
 	}
 
-	public boolean getIsStatic() {
-		return isStatic;
+	public Map<String, Counter> getScores() {
+		return 	this.scores;
 	}
-
+	
 }

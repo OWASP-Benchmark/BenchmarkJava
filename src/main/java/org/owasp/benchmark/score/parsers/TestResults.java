@@ -27,26 +27,43 @@ import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
 /*
- * This class contains the actual results for a single tool against the entire Benchmark.
+ * This class contains the actual results for a single tool against the entire Benchmark, or the 
+ * expected results, if its initialized with the expected results file.
  */
 
 public class TestResults {
-    private String tool = "Unknown Tool";
-    private String toolVersion = null;
-	private String time = "Unknown";
-	public boolean isCommercial;
-	public ToolType toolType;
-	private Map<Integer, List<TestCaseResult>> map = new TreeMap<Integer, List<TestCaseResult>>();
+
+	// The types of tools that can generate results
 	public static enum ToolType{
 		SAST,
 		DAST,
 		IAST
 	}
-	public TestResults( String toolname,boolean isCommercial,ToolType toolType) {
+	
+	// The version of the Benchmark these test results are for
+	private String benchmarkVersion = "notSet";
+	
+	private String tool = "Unknown Tool";
+    private String toolVersion = null;
+	private String time = "Unknown";
+	public final boolean isCommercial;
+	public final ToolType toolType;
+	private Map<Integer, List<TestCaseResult>> map = new TreeMap<Integer, List<TestCaseResult>>();
+	
+	public TestResults( String toolname, boolean isCommercial, ToolType toolType) {
 	    this.setTool( toolname );
 	    this.isCommercial = isCommercial;
 	    this.toolType = toolType;
 	  
+	}
+	
+	// Set the Benchmark version number for this specific set of TestResults
+	public void setBenchmarkVersion( String version ) {
+		this.benchmarkVersion = version;
+	}
+	
+	public String getBenchmarkVersion() {
+		return this.benchmarkVersion;
 	}
 	
 	public void put( TestCaseResult tcr ) {

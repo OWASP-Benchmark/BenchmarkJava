@@ -20,9 +20,9 @@ package org.owasp.benchmark.score.parsers;
 
 public class Counter {
 
-	public double tp = 0;
-	public double fn = 0;
-	public double tn = 0;
-	public double fp = 0;
+	public int tp = 0;
+	public int fn = 0;
+	public int tn = 0;
+	public int fp = 0;
 	
 }

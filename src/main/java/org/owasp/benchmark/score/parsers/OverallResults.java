@@ -31,11 +31,14 @@ import java.util.TreeMap;
 public class OverallResults {
 
 	private Map<String,OverallResult> map = new TreeMap<String,OverallResult>();
-	private double score = 0;
+	private double score = 0;  // The overall score for this tool
+	private int total = 0; // The total number of TP, FP, FN, TN across all test cases for this tool.
 	
 	// The overall True and False positive rates for this tool. These are values between 1 and 0.
 	private double TPRate = 0;
 	private double FPRate = 0;
+	
+	private Counter findingCounts;
 	
     private String time = "Unknown";
 
@@ -111,6 +114,22 @@ public class OverallResults {
     }
 
     /**
+     * Returns the total number of test cases processed with this tool.
+     * @return The total.
+     */
+    public int getTotal() {
+        return total;
+    }
+    
+    /**
+     * Set the total number of test cases processed with this tool.
+     * @param The total.
+     */
+    public void setTotal( int total ) {
+        this.total = total;
+    }
+
+    /**
      * Returns the amount of time it took to run a scan of the Benchmark with this tool.
      * @return The Benchmark scan time.
      */
@@ -126,4 +145,16 @@ public class OverallResults {
         this.time = elapsed;
     }
 
+    public void setFindingCounts(int tp, int fp, int fn, int tn) {
+    	this.findingCounts = new Counter();
+    	this.findingCounts.tp = tp;
+    	this.findingCounts.fp = fp;
+    	this.findingCounts.fn = fn;
+    	this.findingCounts.tn = tn;
+    }
+    
+    public Counter getFindingCounts() {
+    	return this.findingCounts;
+    }
+    
 }

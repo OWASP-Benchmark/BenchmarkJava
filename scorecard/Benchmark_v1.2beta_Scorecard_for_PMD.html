@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>OWASP Benchmark Scorecard for PMD v5.2.3</title>
+    <title>OWASP Benchmark Scorecard for PMD v5.2.3 (SAST)</title>
 
     <!-- Bootstrap core CSS -->
     <link href="content/css/bootstrap.min.css" rel="stylesheet">
@@ -43,8 +43,9 @@
 	          <ul class="dropdown-menu">
             <li><a href="Benchmark_v1.2beta_Scorecard_for_FBwFindSecBugs.html">FBwFindSecBugs</a></li>
             <li><a href="Benchmark_v1.2beta_Scorecard_for_FindBugs.html">FindBugs</a></li>
+            <li><a href="Benchmark_v1.2beta_Scorecard_for_OWASP_ZAP.html">OWASP ZAP</a></li>
             <li><a href="Benchmark_v1.2beta_Scorecard_for_PMD.html">PMD</a></li>
-            <li><a href="Benchmark_v1.2beta_Scorecard_for_ZAP.html">ZAP</a></li>
+            <li><a href="Benchmark_v1.2beta_Scorecard_for_SonarQube.html">SonarQube</a></li>
 
 	          </ul>
 	        </li>
@@ -78,7 +79,7 @@
 <div>empty</div>
 <div>empty</div>
 
-<h3>OWASP Benchmark Scorecard for PMD v5.2.3</h3>
+<h3>OWASP Benchmark Scorecard for PMD v5.2.3 (SAST)</h3>
  
 <p>The OWASP Benchmark is a test suite designed to evaluate the speed, coverage, and accuracy of automated vulnerability detection tools. Without the ability to measure these tools, 
 it is difficult to understand their strengths and weaknesses, and compare them to each other. The Benchmark contains over 20,000 test cases that are fully runnable and exploitable. 
@@ -92,14 +93,14 @@ The following is the scorecard for the tool PMD against version 1.2beta of the B
 <table class="table">
 <tr>
 <th>Tool elapsed analysis time</th>
-<td>0:00:16</td>
+<td>0:00:17</td>
 </tr>
 <tr>
 <th>Tool overall score (0-100)</th>
 <td>0.00%</td>
 </tr>
 <th>Total test cases</th>
-<td>2793</td>
+<td>2740</td>
 <tr>
 <th>Download raw results</th>
 <td><a href="Benchmark_v1.2beta_Scorecard_for_PMD.csv" download>Actual Results</a></td>
@@ -112,18 +113,18 @@ The following is the scorecard for the tool PMD against version 1.2beta of the B
 <h2>Detailed Results</h2>
 <table class="table">
 <tr><th>Category</th><th>TP</th><th>FN</th><th>TN</th><th>FP</th><th>Total</th><th>TPR</th><th>FPR</th><th>Score</th></tr>
-<tr class="danger"><td>Command Injection</td><td>0</td><td>125</td><td>109</td><td>0</td><td>234</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
-<tr class="danger"><td>Cross-Site Scripting</td><td>0</td><td>234</td><td>278</td><td>0</td><td>512</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
-<tr class="danger"><td>Insecure Cookie</td><td>0</td><td>21</td><td>30</td><td>0</td><td>51</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
-<tr class="danger"><td>LDAP Injection</td><td>0</td><td>34</td><td>25</td><td>0</td><td>59</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
-<tr class="danger"><td>Path Traversal</td><td>0</td><td>124</td><td>132</td><td>0</td><td>256</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
-<tr class="danger"><td>SQL Injection</td><td>0</td><td>244</td><td>231</td><td>0</td><td>475</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
-<tr class="danger"><td>Trust Boundary Violation</td><td>0</td><td>79</td><td>41</td><td>0</td><td>120</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
-<tr class="danger"><td>Weak Encryption Algorithm</td><td>0</td><td>122</td><td>116</td><td>0</td><td>238</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
-<tr class="danger"><td>Weak Hash Algorithm</td><td>0</td><td>123</td><td>129</td><td>0</td><td>252</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
-<tr class="danger"><td>Weak Random Number</td><td>0</td><td>228</td><td>329</td><td>0</td><td>557</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
-<tr class="danger"><td>XPath Injection</td><td>0</td><td>19</td><td>20</td><td>0</td><td>39</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
-<th>Totals</th><th>0</th><th>1353</th><th>1440</th><th>0</th><th>2793</th><th>0.00%</th><th>0.00%</th><th>0.00%</th></tr>
+<tr class="danger"><td>Command Injection</td><td>0</td><td>126</td><td>125</td><td>0</td><td>251</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
+<tr class="danger"><td>Cross-Site Scripting</td><td>0</td><td>246</td><td>209</td><td>0</td><td>455</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
+<tr class="danger"><td>Insecure Cookie</td><td>0</td><td>36</td><td>31</td><td>0</td><td>67</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
+<tr class="danger"><td>LDAP Injection</td><td>0</td><td>27</td><td>32</td><td>0</td><td>59</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
+<tr class="danger"><td>Path Traversal</td><td>0</td><td>133</td><td>135</td><td>0</td><td>268</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
+<tr class="danger"><td>SQL Injection</td><td>0</td><td>272</td><td>232</td><td>0</td><td>504</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
+<tr class="danger"><td>Trust Boundary Violation</td><td>0</td><td>83</td><td>43</td><td>0</td><td>126</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
+<tr class="danger"><td>Weak Encryption Algorithm</td><td>0</td><td>130</td><td>116</td><td>0</td><td>246</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
+<tr class="danger"><td>Weak Hash Algorithm</td><td>0</td><td>129</td><td>107</td><td>0</td><td>236</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
+<tr class="danger"><td>Weak Random Number</td><td>0</td><td>218</td><td>275</td><td>0</td><td>493</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
+<tr class="danger"><td>XPath Injection</td><td>0</td><td>15</td><td>20</td><td>0</td><td>35</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
+<th>Totals</th><th>0</th><th>1415</th><th>1325</th><th>0</th><th>2740</th><th>0.00%</th><th>0.00%</th><th>0.00%</th></tr>
 </table>
 <p>
 

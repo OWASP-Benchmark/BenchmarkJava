@@ -60,7 +60,6 @@ import org.owasp.benchmark.score.parsers.OverallResult;
 import org.owasp.benchmark.score.parsers.OverallResults;
 import org.owasp.benchmark.score.parsers.PMDReader;
 import org.owasp.benchmark.score.parsers.ParasoftReader;
-import org.owasp.benchmark.score.parsers.SonarQubeLegacyReader;
 import org.owasp.benchmark.score.parsers.SonarQubeReader;
 import org.owasp.benchmark.score.parsers.TestCaseResult;
 import org.owasp.benchmark.score.parsers.TestResults;
@@ -558,10 +557,6 @@ public class BenchmarkScore {
             if ( line2.contains("formatVersion")) {
                 tr = new CoverityReader().parse( actual );
             }
-            
-            else {
-                tr = new SonarQubeReader().parse( actual );
-            }
         }
         
 		else if ( filename.endsWith( ".xml" ) ) {
@@ -589,7 +584,7 @@ public class BenchmarkScore {
             }
 
             else if ( line1.startsWith( "<total")) {
-                tr = new SonarQubeLegacyReader().parse( actual );
+                tr = new SonarQubeReader().parse( actual );
             }
             
             else if ( line1.contains( "<OWASPZAPReport") || line2.contains( "<OWASPZAPReport")) {

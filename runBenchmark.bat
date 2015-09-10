@@ -1,1 +1,1 @@
-call mvn compile verify cargo:run -Pdeploy
+call mvn clean package cargo:run -Pdeploy

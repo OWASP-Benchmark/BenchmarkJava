@@ -80,14 +80,6 @@ public class LDAPManager {
 	}
 
 	public boolean insert(LDAPPerson person) {
-		/*
-		DirContext ctx = null;
-		try {
-			ctx = getDirContext();
-		} catch (NamingException e1) {
-			System.out.println("Problem getting LDAP - DirContext:" + e1.getMessage());
-		}
-		*/
 		Attributes matchAttrs = new BasicAttributes(true);
 		matchAttrs.put(new BasicAttribute("uid", person.getName()));
 		matchAttrs.put(new BasicAttribute("cn", person.getName()));
@@ -104,7 +96,9 @@ public class LDAPManager {
 		try {
 			iniDirContext.bind(name, ctx, matchAttrs);
 		} catch (NamingException e) {
-			System.out.println("Record already exist or an error ocurred: " + e.getMessage());
+			if(!e.getMessage().contains("ENTRY_ALREADY_EXISTS")){
+				System.out.println("Record already exist or an error ocurred: " + e.getMessage());
+			}
 		}finally{
 			if(iniDirContext != null){
 				/*
@@ -117,8 +111,7 @@ public class LDAPManager {
 			}
 		}
 
-		// logger.debug("success inserting " + person.getName());
-		System.out.println("inserted");
+//		System.out.println("inserted");
 		return true;
 
 	}
@@ -151,13 +144,14 @@ public class LDAPManager {
 				Attribute attr = attrs.get("uid");
 				if (attr != null) {
 					// logger.debug("record found " + attr.get());
-					System.out.println("record found " + attr.get());
+					// System.out.println("record found " + attr.get());
 				}
 			}
 			ctx.close();
 
 			return true;
 		} catch (Exception e) {
+			System.out.println("LDAP error search: ");
 			// logger.error(e, e);
 			e.printStackTrace();
 			return false;

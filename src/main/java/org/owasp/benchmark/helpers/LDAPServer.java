@@ -36,7 +36,7 @@ public class LDAPServer {
 	public LDAPServer() {
 		String dir = Utils.getFileFromClasspath("benchmark.properties", LDAPManager.class.getClassLoader()).getParent();
 		File workDir = new File(dir + "/../ldap");
-		System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%% " + dir + "/../ldap");
+		// System.out.println(dir + "/../ldap");
 		// File workDir = new File(System.getProperty("user.dir") +
 		workDir.mkdirs();
 
@@ -56,7 +56,7 @@ public class LDAPServer {
 		}
 
 		// And print it if available
-		System.out.println("Found entry : " + result);
+//		System.out.println("Found entry : " + result);
 
 		// optionally we can start a server too
 		try {
@@ -97,9 +97,13 @@ public class LDAPServer {
 	 * @throws Exception
 	 *             if there were some problems while initializing the system
 	 */
-	private void initDirectoryService(File workDir) throws Exception {
+	private void initDirectoryService(File workDir){
 		// Initialize the LDAP service
-		service = new DefaultDirectoryService();
+		try {
+			service = new DefaultDirectoryService();
+		} catch (Exception e1) {
+			System.out.println("Error creating DefaultDirectoryService. " + e1.getMessage());
+		}
 		service.setWorkingDirectory(workDir);
 
 		// first load the schema
@@ -107,7 +111,12 @@ public class LDAPServer {
 
 		// then the system partition
 		// this is a MANDATORY partition
-		Partition systemPartition = addPartition("system", ServerDNConstants.SYSTEM_DN);
+		Partition systemPartition = null;
+		try {
+			systemPartition = addPartition("system", ServerDNConstants.SYSTEM_DN);
+		} catch (Exception e1) {
+			System.out.println("Error addPartition system. " + e1.getMessage());
+		}
 		service.setSystemPartition(systemPartition);
 
 		// Disable the ChangeLog system
@@ -116,9 +125,24 @@ public class LDAPServer {
 
 		// Now we can create as many partitions as we need
 		// Create some new partitions named 'foo', 'bar' and 'apache'.
-		Partition fooPartition = addPartition("foo", "dc=foo,dc=com");
-		Partition barPartition = addPartition("bar", "dc=bar,dc=com");
-		Partition apachePartition = addPartition("apache", "dc=apache,dc=org");
+		Partition fooPartition = null;
+		try {
+			fooPartition = addPartition("foo", "dc=foo,dc=com");
+		} catch (Exception e1) {
+			System.out.println("Error addPartition foo. " + e1.getMessage());
+		}
+		Partition barPartition = null;
+		try {
+			barPartition = addPartition("bar", "dc=bar,dc=com");
+		} catch (Exception e1) {
+			System.out.println("Error addPartition bar. " + e1.getMessage());
+		}
+		Partition apachePartition = null;
+		try {
+			apachePartition = addPartition("apache", "dc=apache,dc=org");
+		} catch (Exception e1) {
+			System.out.println("Error addPartition apache. " + e1.getMessage());
+		}
 
 		// Index some attributes on the apache partition
 		addIndex(apachePartition, "objectClass", "ou", "uid");
@@ -126,41 +150,55 @@ public class LDAPServer {
 			// And start the service
 			service.startup();
 		} catch (Exception e) {
-			e.printStackTrace();
-			//System.out.println("%%%%%%%ERROR%%%%%%%%" + e.getMessage());
+			System.out.println("Error at LDAP startup: " + e.getMessage());
 		}
 		// Inject the foo root entry if it does not already exist
 		try {
 			service.getAdminSession().lookup(fooPartition.getSuffixDn());
-		} catch (LdapException lnnfe) {
-			DN dnFoo = new DN("dc=foo,dc=com");
-			ServerEntry entryFoo = service.newEntry(dnFoo);
-			entryFoo.add("objectClass", "top", "domain", "extensibleObject");
-			entryFoo.add("dc", "foo");
-			service.getAdminSession().add(entryFoo);
+		} catch (Exception lnnfe) {
+			try {
+				DN dnFoo = new DN("dc=foo,dc=com");
+				ServerEntry entryFoo = service.newEntry(dnFoo);
+				entryFoo.add("objectClass", "top", "domain", "extensibleObject");
+				entryFoo.add("dc", "foo");
+				service.getAdminSession().add(entryFoo);
+			} catch (Exception e) {
+				System.out.println("Error creating new DN.");
+			}
 		}
 
 		// Inject the bar root entry
 		try {
 			service.getAdminSession().lookup(barPartition.getSuffixDn());
-		} catch (LdapException lnnfe) {
-			DN dnBar = new DN("dc=bar,dc=com");
-			ServerEntry entryBar = service.newEntry(dnBar);
-			entryBar.add("objectClass", "top", "domain", "extensibleObject");
-			entryBar.add("dc", "bar");
-			service.getAdminSession().add(entryBar);
+		} catch (Exception lnnfe) {
+			try {
+				DN dnBar = new DN("dc=bar,dc=com");
+				ServerEntry entryBar = service.newEntry(dnBar);
+				entryBar.add("objectClass", "top", "domain", "extensibleObject");
+				entryBar.add("dc", "bar");
+				service.getAdminSession().add(entryBar);
+			} catch (Exception e) {
+				System.out.println("Error creating new DN.");
+			}
 		}
 
 		// Inject the apache root entry
-		if (!service.getAdminSession().exists(apachePartition.getSuffixDn())) {
-			DN dnApache = new DN("dc=Apache,dc=Org");
-			ServerEntry entryApache = service.newEntry(dnApache);
-			entryApache.add("objectClass", "top", "domain", "extensibleObject");
-			entryApache.add("dc", "Apache");
-			service.getAdminSession().add(entryApache);
+		try {
+			if (!service.getAdminSession().exists(apachePartition.getSuffixDn())) {
+				try{
+					DN dnApache = new DN("dc=Apache,dc=Org");
+					ServerEntry entryApache = service.newEntry(dnApache);
+					entryApache.add("objectClass", "top", "domain", "extensibleObject");
+					entryApache.add("dc", "Apache");
+					service.getAdminSession().add(entryApache);
+				} catch (Exception e) {
+					System.out.println("Error creating new DN.");
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("Error when checking if partition exists.");
 		}
 
-		// We are all done !
 	}
 
 	/**
@@ -184,7 +222,7 @@ public class LDAPServer {
 		SchemaLdifExtractor extractor = new DefaultSchemaLdifExtractor(wd);
 		try {
 			extractor.extractOrCopy( true );
-			System.out.println("is Extracted: " + extractor.isExtracted());
+			//System.out.println("is Extracted: " + extractor.isExtracted());
 		} catch (Exception e) {
 		}
 		
@@ -282,7 +320,8 @@ public class LDAPServer {
 	 * @throws Exception 
 	 */
 	public static void main(String[] args) throws Exception {
-		new LDAPServer();
+		LDAPServer ldap = new LDAPServer();
+		//ldap.stopServer();
 	}
 
 }

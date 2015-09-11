@@ -41,28 +41,29 @@
 			<li class="dropdown">
 	          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools<span class="caret"></span></a>
 	          <ul class="dropdown-menu">
-            <li><a href="Benchmark_v1.2beta_Scorecard_for_FBwFindSecBugs.html">FBwFindSecBugs</a></li>
-            <li><a href="Benchmark_v1.2beta_Scorecard_for_FindBugs.html">FindBugs</a></li>
-            <li><a href="Benchmark_v1.2beta_Scorecard_for_OWASP_ZAP.html">OWASP ZAP</a></li>
-            <li><a href="Benchmark_v1.2beta_Scorecard_for_PMD.html">PMD</a></li>
-            <li><a href="Benchmark_v1.2beta_Scorecard_for_SonarQube.html">SonarQube</a></li>
+<li><a href="Benchmark_v1.2beta_Scorecard_for_FBwFindSecBugs.html">FBwFindSecBugs</a></li>
+<li><a href="Benchmark_v1.2beta_Scorecard_for_FindBugs.html">FindBugs</a></li>
+<li><a href="Benchmark_v1.2beta_Scorecard_for_OWASP_ZAP.html">OWASP ZAP</a></li>
+<li><a href="Benchmark_v1.2beta_Scorecard_for_PMD.html">PMD</a></li>
+<li><a href="Benchmark_v1.2beta_Scorecard_for_SonarQube.html">SonarQube</a></li>
+<li><a href="Benchmark_v1.1,1.2beta_Scorecard_for_Commercial_Tools.html">Commercial Average</a></li>
 
 	          </ul>
 	        </li>
 			<li class="dropdown">
 	          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Vulnerabilities<span class="caret"></span></a>
 	          <ul class="dropdown-menu">
-            <li><a href="Benchmark_v1.2beta_Scorecard_for_Command_Injection.html">Command Injection</a></li>
-            <li><a href="Benchmark_v1.2beta_Scorecard_for_Cross-Site_Scripting.html">Cross-Site Scripting</a></li>
-            <li><a href="Benchmark_v1.2beta_Scorecard_for_Insecure_Cookie.html">Insecure Cookie</a></li>
-            <li><a href="Benchmark_v1.2beta_Scorecard_for_LDAP_Injection.html">LDAP Injection</a></li>
-            <li><a href="Benchmark_v1.2beta_Scorecard_for_Path_Traversal.html">Path Traversal</a></li>
-            <li><a href="Benchmark_v1.2beta_Scorecard_for_SQL_Injection.html">SQL Injection</a></li>
-            <li><a href="Benchmark_v1.2beta_Scorecard_for_Trust_Boundary_Violation.html">Trust Boundary Violation</a></li>
-            <li><a href="Benchmark_v1.2beta_Scorecard_for_Weak_Encryption_Algorithm.html">Weak Encryption Algorithm</a></li>
-            <li><a href="Benchmark_v1.2beta_Scorecard_for_Weak_Hash_Algorithm.html">Weak Hash Algorithm</a></li>
-            <li><a href="Benchmark_v1.2beta_Scorecard_for_Weak_Random_Number.html">Weak Random Number</a></li>
-            <li><a href="Benchmark_v1.2beta_Scorecard_for_XPath_Injection.html">XPath Injection</a></li>
+            <li><a href="Benchmark_v1.1,1.2beta_Scorecard_for_Command_Injection.html">Command Injection</a></li>
+            <li><a href="Benchmark_v1.1,1.2beta_Scorecard_for_Cross-Site_Scripting.html">Cross-Site Scripting</a></li>
+            <li><a href="Benchmark_v1.1,1.2beta_Scorecard_for_Insecure_Cookie.html">Insecure Cookie</a></li>
+            <li><a href="Benchmark_v1.1,1.2beta_Scorecard_for_LDAP_Injection.html">LDAP Injection</a></li>
+            <li><a href="Benchmark_v1.1,1.2beta_Scorecard_for_Path_Traversal.html">Path Traversal</a></li>
+            <li><a href="Benchmark_v1.1,1.2beta_Scorecard_for_SQL_Injection.html">SQL Injection</a></li>
+            <li><a href="Benchmark_v1.1,1.2beta_Scorecard_for_Trust_Boundary_Violation.html">Trust Boundary Violation</a></li>
+            <li><a href="Benchmark_v1.1,1.2beta_Scorecard_for_Weak_Encryption_Algorithm.html">Weak Encryption Algorithm</a></li>
+            <li><a href="Benchmark_v1.1,1.2beta_Scorecard_for_Weak_Hash_Algorithm.html">Weak Hash Algorithm</a></li>
+            <li><a href="Benchmark_v1.1,1.2beta_Scorecard_for_Weak_Random_Number.html">Weak Random Number</a></li>
+            <li><a href="Benchmark_v1.1,1.2beta_Scorecard_for_XPath_Injection.html">XPath Injection</a></li>
 
 	          </ul>
 	        </li>
@@ -82,7 +83,7 @@
 <h3>OWASP Benchmark Scorecard for OWASP ZAP vD-2015-08-24 (DAST)</h3>
  
 <p>The OWASP Benchmark is a test suite designed to evaluate the speed, coverage, and accuracy of automated vulnerability detection tools. Without the ability to measure these tools, 
-it is difficult to understand their strengths and weaknesses, and compare them to each other. The Benchmark contains over 20,000 test cases that are fully runnable and exploitable. 
+it is difficult to understand their strengths and weaknesses, and compare them to each other. The Benchmark contains thousands of test cases that are fully runnable and exploitable. 
 The following is the scorecard for the tool OWASP ZAP against version 1.2beta of the Benchmark. It shows how well this tool finds true positives and avoids false positives in the Benchmark test cases.</p>
 
 <p>For more information, please visit the <a href="https://www.owasp.org/index.php/Benchmark">OWASP Benchmark Project Site</a>.
@@ -153,7 +154,7 @@ The following is the scorecard for the tool OWASP ZAP against version 1.2beta of
 
 <tr>
 <th>True Positive Rate (TPR) = TP / ( TP + FN )</th>
-<td>The rate at which the tool correctly reports real vulnerabilities. Also referred to as Precision, as defined at 
+<td>The rate at which the tool correctly reports real vulnerabilities. Also referred to as Recall, as defined at 
 <a href="https://en.wikipedia.org/wiki/Precision_and_recall">Wikipedia</a>.</td>
 </tr>
 

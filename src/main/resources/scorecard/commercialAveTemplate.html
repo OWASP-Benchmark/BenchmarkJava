@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>OWASP Benchmark Scorecard for Weak Encryption Algorithm</title>
+    <title>Commercial Tools Scorecard</title>
 
     <!-- Bootstrap core CSS -->
     <link href="content/css/bootstrap.min.css" rel="stylesheet">
@@ -33,7 +33,7 @@
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container-fluid">
         <div class="navbar-header">
-          <a class="navbar-brand" href="OWASP_Benchmark_Home.html">OWASP Benchmark v1.2beta</a>
+          <a class="navbar-brand" href="OWASP_Benchmark_Home.html">OWASP Benchmark v${version}</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
@@ -41,29 +41,13 @@
 			<li class="dropdown">
 	          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools<span class="caret"></span></a>
 	          <ul class="dropdown-menu">
-            <li><a href="Benchmark_v1.2beta_Scorecard_for_FBwFindSecBugs.html">FBwFindSecBugs</a></li>
-            <li><a href="Benchmark_v1.2beta_Scorecard_for_FindBugs.html">FindBugs</a></li>
-            <li><a href="Benchmark_v1.2beta_Scorecard_for_OWASP_ZAP.html">OWASP ZAP</a></li>
-            <li><a href="Benchmark_v1.2beta_Scorecard_for_PMD.html">PMD</a></li>
-            <li><a href="Benchmark_v1.2beta_Scorecard_for_SonarQube.html">SonarQube</a></li>
-
+${toolmenu}
 	          </ul>
 	        </li>
 			<li class="dropdown">
 	          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Vulnerabilities<span class="caret"></span></a>
 	          <ul class="dropdown-menu">
-            <li><a href="Benchmark_v1.2beta_Scorecard_for_Command_Injection.html">Command Injection</a></li>
-            <li><a href="Benchmark_v1.2beta_Scorecard_for_Cross-Site_Scripting.html">Cross-Site Scripting</a></li>
-            <li><a href="Benchmark_v1.2beta_Scorecard_for_Insecure_Cookie.html">Insecure Cookie</a></li>
-            <li><a href="Benchmark_v1.2beta_Scorecard_for_LDAP_Injection.html">LDAP Injection</a></li>
-            <li><a href="Benchmark_v1.2beta_Scorecard_for_Path_Traversal.html">Path Traversal</a></li>
-            <li><a href="Benchmark_v1.2beta_Scorecard_for_SQL_Injection.html">SQL Injection</a></li>
-            <li><a href="Benchmark_v1.2beta_Scorecard_for_Trust_Boundary_Violation.html">Trust Boundary Violation</a></li>
-            <li><a href="Benchmark_v1.2beta_Scorecard_for_Weak_Encryption_Algorithm.html">Weak Encryption Algorithm</a></li>
-            <li><a href="Benchmark_v1.2beta_Scorecard_for_Weak_Hash_Algorithm.html">Weak Hash Algorithm</a></li>
-            <li><a href="Benchmark_v1.2beta_Scorecard_for_Weak_Random_Number.html">Weak Random Number</a></li>
-            <li><a href="Benchmark_v1.2beta_Scorecard_for_XPath_Injection.html">XPath Injection</a></li>
-
+${vulnmenu}
 	          </ul>
 	        </li>
             <li><a href="OWASP_Benchmark_Guide.html">Guide</a></li>
@@ -79,22 +63,32 @@
 <div>empty</div>
 <div>empty</div>
 
-<h3>OWASP Benchmark Scorecard for Weak Encryption Algorithm</h3>
+<h3>OWASP Benchmark Scorecard for Commercial Tools</h3>
  
 <p>The OWASP Benchmark is a test suite designed to evaluate the speed, coverage, and accuracy of automated vulnerability detection tools. Without the ability to measure these tools, 
-it is difficult to understand their strengths and weaknesses, and compare them to each other. The Benchmark contains over 20,000 test cases that are fully runnable and exploitable. 
-The following is the scorecard showing how well all the tools perform against Weak Encryption Algorithm in version 1.2beta of the Benchmark. It shows how well each tool finds true positives and 
-avoids false positives for that type of vulnerability in the Benchmark test cases.</p>
+it is difficult to understand their strengths and weaknesses, and compare them to each other. The Benchmark contains thousands of test cases that are fully runnable and exploitable. 
+The following is the scorecard showing how well the commercial tools collectively performed against version ${version} of the Benchmark. For each vulnerability
+it shows the lowest, average, and highest scores across all the commercial tools included in this scorecard calculation.</p>
 
 <p>For more information, please visit the <a href="https://www.owasp.org/index.php/Benchmark">OWASP Benchmark Project Site</a>.
 
-<img src='Benchmark_v1.2beta_Scorecard_for_Weak_Encryption_Algorithm.png' />
+<p>
+<p>
+
+<h2>Average Scores Per Vulnerability for Commercial Tools</h2>
+${table}
 
 <p>
 <p>
 
 <h2>Key</h2>
 <table class="table">
+<tr>
+<th>Tool Type</th>
+<td>SAST - Static Application Security Testing.  DAST - Dynamic Application Security Testing.  
+IAST - Interactive Application Security Testing. These terms were coined by Gartner.</td>
+</tr>
+
 <tr>
 <th>True Positive (TP)</th>
 <td>Tests with real vulnerabilities that were correctly reported as vulnerable by the tool.</td>
@@ -117,7 +111,7 @@ avoids false positives for that type of vulnerability in the Benchmark test case
 
 <tr>
 <th>True Positive Rate (TPR) = TP / ( TP + FN )</th>
-<td>The rate at which the tool correctly reports real vulnerabilities. Also referred to as Precision, as defined at 
+<td>The rate at which the tool correctly reports real vulnerabilities. Also referred to as Recall, as defined at 
 <a href="https://en.wikipedia.org/wiki/Precision_and_recall">Wikipedia</a>.</td>
 </tr>
 

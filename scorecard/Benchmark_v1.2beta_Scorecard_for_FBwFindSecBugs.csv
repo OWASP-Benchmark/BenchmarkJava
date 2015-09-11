@@ -1,4 +1,4 @@
-# test name, category, real vulnerability, CWE, identified by tool, pass/fail, Benchmark version: 1.2beta, Actual results generated: 2015-09-1
+# test name, category, real vulnerability, CWE, identified by tool, pass/fail, Benchmark version: 1.2beta, Actual results generated: 2015-09-11
 BenchmarkTest00001, pathtraver, true, 22, true, pass
 BenchmarkTest00002, pathtraver, true, 22, true, pass
 BenchmarkTest00003, hash, true, 328, false, fail

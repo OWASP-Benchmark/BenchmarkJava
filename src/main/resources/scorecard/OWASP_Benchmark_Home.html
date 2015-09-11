@@ -68,7 +68,7 @@ ${vulnmenu}
 <h2>Introduction</h2>
  
 <p>The OWASP Benchmark is a test suite designed to evaluate the speed, coverage, and accuracy of automated vulnerability detection tools. Without the ability to measure these tools, 
-it is difficult to understand their strengths and weaknesses, and compare them to each other. The Benchmark contains over 20,000 test cases that are fully runnable and exploitable.</p>
+it is difficult to understand their strengths and weaknesses, and compare them to each other. The Benchmark contains thousands of test cases that are fully runnable and exploitable.</p>
 
 <p>The chart below presents the overall results for this set of tools scored against version ${version} of the Benchmark. 
 The score for each tool is the overall true positive rate (TPR) across all the test categories, minus the 
@@ -79,6 +79,54 @@ from the menus above. For an explanation of all the metrics calculated for each 
 <p>For more information, please visit the <a href="https://www.owasp.org/index.php/Benchmark">OWASP Benchmark Project Site</a>.
 
 <img src="benchmark_comparison.png"/>
+
+<p>
+<p>
+
+<h2>Summary of Results by Tool</h2>
+${table}
+<p>
+<p>
+
+<h2>Key</h2>
+<table class="table">
+<tr>
+<th>True Positive (TP)</th>
+<td>Tests with real vulnerabilities that were correctly reported as vulnerable by the tool.</td>
+</tr>
+
+<tr>
+<th>False Negative (FN)</th>
+<td>Tests with real vulnerabilities that were not correctly reported as vulnerable by the tool.</td>
+</tr>
+
+<tr>
+<th>True Negative (TN)</th>
+<td>Tests with fake vulnerabilities that were correctly not reported as vulnerable by the tool.</td>
+</tr>
+
+<tr>
+<th>False Positive (FP)</th>
+<td>Tests with fake vulnerabilities that were incorrectly reported as vulnerable by the tool.</td>
+</tr>
+
+<tr>
+<th>True Positive Rate (TPR) = TP / ( TP + FN )</th>
+<td>The rate at which the tool correctly reports real vulnerabilities. Also referred to as Recall, as defined at 
+<a href="https://en.wikipedia.org/wiki/Precision_and_recall">Wikipedia</a>.</td>
+</tr>
+
+<tr>
+<th>False Positive Rate (FPR) = FP / ( FP + TN )</th>
+<td>The rate at which the tool incorrectly reports fake vulnerabilities as real.</td>
+</tr>
+
+<tr>
+<th>Score = TPR - FPR</th>
+<td>Normalized distance from the random guess line.</td>
+</tr>
+
+</table>
 
     </div>
     

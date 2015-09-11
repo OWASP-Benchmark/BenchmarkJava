@@ -38,6 +38,7 @@ public class Report implements Comparable<Report> {
 	private final boolean isCommercial;
 	private final boolean isStatic;
 	private String toolName = "not specified";
+	private final TestResults.ToolType toolType;
 	private final String benchmarkVersion;
 	private final Map<String, Counter> scores;
 	private final OverallResults overallResults;
@@ -53,6 +54,7 @@ public class Report implements Comparable<Report> {
 		this.isCommercial = isCommercial;
 		this.isStatic = isStatic;
 		this.toolName = actualResults.getTool();
+		this.toolType = actualResults.toolType;
 		String version = actualResults.getToolVersion();
 		if (version != null && (!BenchmarkScore.anonymousMode || !isCommercial)) {
 			version = " v" + version;
@@ -90,6 +92,10 @@ public class Report implements Comparable<Report> {
 	 */
 	public String getToolName() {
 		return this.toolName;
+	}
+
+	public TestResults.ToolType getToolType() {
+		return this.toolType;
 	}
 
 	public boolean isCommercial() {

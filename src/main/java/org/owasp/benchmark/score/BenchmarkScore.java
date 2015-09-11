@@ -84,11 +84,13 @@ public class BenchmarkScore {
 	// Each set in their own directory with their associated expectedresults file.
     public static boolean mixedMode = false;
     // Indicates that the names of Commercial tools should be anonymized
-    public static boolean anonymousMode = false;	
+    public static boolean anonymousMode = false;
     // If in anonymous mode, use this # to number a commercial tool, and then increment it for the next use.
     private static int nextCommercialToolNumber = 1;
     // Indicates that the results of Commercial tools should be suppressed. Only show their averages.
-    public static boolean showAveOnlyMode = false;	
+    public static boolean showAveOnlyMode = false;
+    // The name of this file if generated
+    private static String commercialAveScorecardFilename = null;
 		
 	/*
 	 * A list of the reports produced for each tool.
@@ -857,14 +859,25 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 		}
 		
 		return null; // Should have returned results file name earlier if successful
-		
 	}
 	
+	/*
+	 * Generate all the vulnerability scorecards. And then 1 commercial tool scorecard if there are commercial tool 
+	 * results for at least 2 commercial tools.
+	 */
 	private static void generateVulnerabilityScorecards( Set<Report> toolResults, Set<String> catSet ) {
+		StringBuilder htmlForCommercialAverages = null;
+		
+		int commercialToolTotal = 0;
+		int numberOfVulnCategories = 0;
+		int commercialLowTotal = 0;
+		int commercialAveTotal = 0;
+		int commercialHighTotal = 0;
+		
         for (String cat : catSet ) {
             try {
-                ScatterVulns.generateComparisonChart(cat, toolResults);
-                String filename = "Benchmark_v" + benchmarkVersion + "_Scorecard_for_" + cat.replace(' ', '_');  
+            	ScatterVulns scatter = ScatterVulns.generateComparisonChart(cat, toolResults);
+                String filename = "Benchmark_v" + benchmarkVersion + "_Scorecard_for_" + cat.replace(' ', '_');
                 Path htmlfile = Paths.get( scoreCardDirName + "/" + filename + ".html" );
                 Files.copy(Paths.get(pathToScorecardResources + "vulntemplate.html" ), htmlfile, StandardCopyOption.REPLACE_EXISTING );
                 String html = new String(Files.readAllBytes( htmlfile ) );
@@ -878,12 +891,88 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
         		String table = generateVulnStatsTable(toolResults, cat);
         		html = html.replace("${table}", table);
                 
-                Files.write( htmlfile, html.getBytes() );                
+                Files.write( htmlfile, html.getBytes() );
+                
+                // Now build up the commercial stats scorecard if there are at least 2 commercial tools
+                if (scatter.getCommercialToolCount() > 1) {
+                	if (htmlForCommercialAverages == null) {
+                		commercialToolTotal = scatter.getCommercialToolCount();
+                		htmlForCommercialAverages = new StringBuilder();
+                		htmlForCommercialAverages.append("<table class=\"table\">\n");
+                		htmlForCommercialAverages.append("<tr>");
+                		htmlForCommercialAverages.append("<th>Vulnerability Category</th>");
+                		htmlForCommercialAverages.append("<th>Low Tool Type</th>");
+                		htmlForCommercialAverages.append("<th>Low Score</th>");
+                		htmlForCommercialAverages.append("<th>Ave Score</th>");
+                		htmlForCommercialAverages.append("<th>High Score</th>");
+                		htmlForCommercialAverages.append("<th>High Tool Type</th>");
+                		htmlForCommercialAverages.append("</tr>\n");
+                	} // if 1st time through
+                	
+                	numberOfVulnCategories++;
+
+                	String style = "";
+                	htmlForCommercialAverages.append("<tr>");
+                	htmlForCommercialAverages.append("<td>" + cat + "</td>");
+                	htmlForCommercialAverages.append("<td>" + scatter.getCommercialLowToolType() + "</td>");
+    				if (scatter.getCommercialLow() <= 10)
+    					style = "class=\"danger\"";
+    				else if (scatter.getCommercialLow() >= 50)
+    					style = "class=\"success\"";
+                	htmlForCommercialAverages.append("<td " + style + ">" + scatter.getCommercialLow() + "</td>");
+                	commercialLowTotal += scatter.getCommercialLow();
+                	htmlForCommercialAverages.append("<td>" + scatter.getCommercialAve() + "</td>");
+                	commercialAveTotal += scatter.getCommercialAve();
+    				if (scatter.getCommercialHigh() <= 10)
+    					style = "class=\"danger\"";
+    				else if (scatter.getCommercialHigh() >= 50)
+    					style = "class=\"success\"";
+    				htmlForCommercialAverages.append("<td " + style + ">" + scatter.getCommercialHigh() + "</td>");
+                	commercialHighTotal += scatter.getCommercialHigh();
+                	htmlForCommercialAverages.append("<td>" + scatter.getCommercialHighToolType() + "</td>");
+                	htmlForCommercialAverages.append("</tr>\n");
+                }  // if more than 1 commercial tool
+                
             } catch( IOException e ) {
                 System.out.println( "Error generating vulnerability summaries: " + e.getMessage() );
                 e.printStackTrace();
             }
-        }
+        } // end for loop
+        
+        // if we computed a commercial average, then add the last row to the table AND create the file and write the HTML to it.
+        if (htmlForCommercialAverages != null) {
+        	
+        	htmlForCommercialAverages.append("<tr>");
+        	htmlForCommercialAverages.append("<td>Average across all categories for " + commercialToolTotal + " tools</td>");
+        	htmlForCommercialAverages.append("<td></td>");
+        	htmlForCommercialAverages.append("<td>" 
+        			+ new DecimalFormat("0.0").format((float) commercialLowTotal/(float) numberOfVulnCategories) + "</td>");
+        	htmlForCommercialAverages.append("<td>" 
+        			+ new DecimalFormat("0.0").format((float) commercialAveTotal/(float) numberOfVulnCategories) + "</td>");
+        	htmlForCommercialAverages.append("<td>" 
+        			+ new DecimalFormat("0.0").format((float) commercialHighTotal/(float) numberOfVulnCategories) + "</td>");
+        	htmlForCommercialAverages.append("<td></td>");
+        	htmlForCommercialAverages.append("</tr>\n");
+        	
+            try {
+
+            	commercialAveScorecardFilename = "Benchmark_v" + benchmarkVersion + "_Scorecard_for_Commercial_Tools";
+	            Path htmlfile = Paths.get( scoreCardDirName + "/" + commercialAveScorecardFilename + ".html" );
+	            Files.copy(Paths.get(pathToScorecardResources + "commercialAveTemplate.html" ), htmlfile, StandardCopyOption.REPLACE_EXISTING );
+	            String html = new String(Files.readAllBytes( htmlfile ) );
+	
+	            html = html.replace( "${version}", benchmarkVersion );
+	            
+	        	String table = htmlForCommercialAverages.toString();
+	    		html = html.replace("${table}", table);
+	            
+	            Files.write( htmlfile, html.getBytes() );
+	            System.out.println("Commercial average scorecard computed.");
+            } catch( IOException e ) {
+                System.out.println( "Error generating commercial scorecard: " + e.getMessage() );
+                e.printStackTrace();
+            }
+        } // end if
 	}
 	
     /**
@@ -1006,16 +1095,27 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
         StringBuffer sb = new StringBuffer();
         for ( Report toolReport : toolResults ) {
 			if (!(showAveOnlyMode && toolReport.isCommercial())) {
-	            sb.append("            <li><a href=\"");
+	            sb.append("<li><a href=\"");
 	            sb.append(toolReport.getFilename());
 	            sb.append(".html\">");
 	            sb.append(toolReport.getToolName());
 	            sb.append("</a></li>");
 	            sb.append(System.lineSeparator());
 			}
-        }        
+        }
+        
+        // Before finishing, check to see if there is a commercial average scorecard file, and if so
+        // Add it to the menu
+        if (commercialAveScorecardFilename != null) {
+            sb.append("<li><a href=\"");
+            sb.append(commercialAveScorecardFilename);
+            sb.append(".html\">");
+            sb.append("Commercial Average");
+            sb.append("</a></li>");
+            sb.append(System.lineSeparator());        	
+        }
+        
         String toolmenu = sb.toString();
-
         
         // create vulnerability menu
         sb = new StringBuffer();

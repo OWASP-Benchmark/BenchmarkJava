@@ -66,13 +66,19 @@ ${vulnmenu}
 <h3>${title}</h3>
  
 <p>The OWASP Benchmark is a test suite designed to evaluate the speed, coverage, and accuracy of automated vulnerability detection tools. Without the ability to measure these tools, 
-it is difficult to understand their strengths and weaknesses, and compare them to each other. The Benchmark contains over 20,000 test cases that are fully runnable and exploitable. 
+it is difficult to understand their strengths and weaknesses, and compare them to each other. The Benchmark contains thousands of test cases that are fully runnable and exploitable. 
 The following is the scorecard showing how well all the tools perform against ${vulnerability} in version ${version} of the Benchmark. It shows how well each tool finds true positives and 
 avoids false positives for that type of vulnerability in the Benchmark test cases.</p>
 
 <p>For more information, please visit the <a href="https://www.owasp.org/index.php/Benchmark">OWASP Benchmark Project Site</a>.
 
 <img src='${image}' />
+
+<p>
+<p>
+
+<h2>Detailed Results Per Tool for ${vulnerability}</h2>
+${table}
 
 <p>
 <p>
@@ -101,7 +107,7 @@ avoids false positives for that type of vulnerability in the Benchmark test case
 
 <tr>
 <th>True Positive Rate (TPR) = TP / ( TP + FN )</th>
-<td>The rate at which the tool correctly reports real vulnerabilities. Also referred to as Precision, as defined at 
+<td>The rate at which the tool correctly reports real vulnerabilities. Also referred to as Recall, as defined at 
 <a href="https://en.wikipedia.org/wiki/Precision_and_recall">Wikipedia</a>.</td>
 </tr>
 

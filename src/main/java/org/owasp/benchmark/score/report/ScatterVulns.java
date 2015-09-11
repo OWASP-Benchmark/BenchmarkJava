@@ -61,13 +61,23 @@ import org.jfree.ui.TextAnchor;
 import org.owasp.benchmark.score.BenchmarkScore;
 import org.owasp.benchmark.score.parsers.OverallResult;
 import org.owasp.benchmark.score.parsers.OverallResults;
+import org.owasp.benchmark.score.parsers.TestResults;
 
 public class ScatterVulns {
-	char averageLabel;
-	double afr = 0;
-	double atr = 0;
-    JFreeChart chart = null;
-    StandardChartTheme theme = null;
+	private char averageLabel;
+	private double afr = 0;
+	private double atr = 0;
+	private JFreeChart chart = null;
+	private StandardChartTheme theme = null;
+    
+    // Commercial Scores
+    private int commercialToolCount = 0;
+    private double commercialLow = 100;
+    private TestResults.ToolType commercialLowToolType = null;
+    private double commercialHigh = 0;
+    private TestResults.ToolType commercialHighToolType = null;
+    private double commercialAve = 0;
+    public final String category;
     
     /**
      * This calculates how all the tools did against the Benchmark in this vulnerability category
@@ -78,6 +88,7 @@ public class ScatterVulns {
      * @param toolResults - A list of each individual tool's results.
      */
     public ScatterVulns(String title, int height, int width, String category, Set<Report> toolResults ) {
+    	this.category = category;
         display("          " + title, height, width, category, toolResults );
     }
 
@@ -395,9 +406,8 @@ public class ScatterVulns {
         }
         
         //commercial tools
-        double totalScore = 0;
         boolean printedCommercialLabel = false;
-        int commercialToolCount = 0;
+        double commercialTotal = 0;
         
         for (Report r : toolResults ) {
             OverallResults or = r.getOverallResults();
@@ -429,14 +439,22 @@ public class ScatterVulns {
 	                i++;
 	                ch++;
                 }
-	            totalScore+=score;
+	            commercialTotal += score;
+	            if (score < commercialLow) {
+	            	commercialLow = score;
+	            	commercialLowToolType = r.getToolType();
+	            }
+	            if (score > commercialHigh) {
+	            	commercialHigh = score;
+	            	commercialHighToolType = r.getToolType();
+	            }
             }           
         }
       
         //commercial average
         if (commercialToolCount > 1 || (BenchmarkScore.showAveOnlyMode && commercialToolCount == 1)){
-        	double averageScore = totalScore/commercialToolCount;
-            XYTextAnnotation stroketext2 = new XYTextAnnotation("\u25A0 "+ch+": Commercial Average"+ " (" + (int)averageScore + "%)", x, y + i * -3.3);
+        	commercialAve = commercialTotal/commercialToolCount;
+            XYTextAnnotation stroketext2 = new XYTextAnnotation("\u25A0 "+ch+": Commercial Average"+ " (" + (int)commercialAve + "%)", x, y + i * -3.3);
             stroketext2.setTextAnchor(TextAnchor.CENTER_LEFT);
             stroketext2.setBackgroundPaint(Color.white);
             stroketext2.setPaint(Color.magenta);
@@ -479,17 +497,42 @@ public class ScatterVulns {
         stream.close();
     }
 
-    public static void generateComparisonChart(String category, Set<Report> toolResults ) {
+    public static ScatterVulns generateComparisonChart(String category, Set<Report> toolResults ) {
     	try {
             String scatterTitle = "Benchmark" 
     				+ (BenchmarkScore.mixedMode ? "" : " v" + BenchmarkScore.benchmarkVersion) 
             		+ " " + category + " Comparison";
             ScatterVulns scatter = new ScatterVulns(scatterTitle, 800, 800, category, toolResults );            
-            scatter.writeChartToFile(new File("scorecard/Benchmark_v" + BenchmarkScore.benchmarkVersion+"_Scorecard_for_" +category.replace(' ', '_')+".png"), 800, 800);    		
+            scatter.writeChartToFile(new File("scorecard/Benchmark_v" + BenchmarkScore.benchmarkVersion+"_Scorecard_for_" +category.replace(' ', '_')+".png"), 800, 800);
+            return scatter;
     	} catch (IOException e) {
     		System.out.println("Couldn't generate Benchmark vulnerability chart for some reason.");
     		e.printStackTrace();
+    		return null;
     	}
     }
-
+    
+    public int getCommercialToolCount() {
+    	return commercialToolCount;
+    }
+    
+    public int getCommercialLow() {
+    	return (int) commercialLow;
+    }
+    
+    public TestResults.ToolType getCommercialLowToolType() {
+    	return commercialLowToolType;
+    }
+    
+    public int getCommercialAve() {
+    	return (int) commercialAve;
+    }
+    
+    public int getCommercialHigh() {
+    	return (int) commercialHigh;
+    }
+    
+    public TestResults.ToolType getCommercialHighToolType() {
+    	return commercialHighToolType;
+    }    
 }

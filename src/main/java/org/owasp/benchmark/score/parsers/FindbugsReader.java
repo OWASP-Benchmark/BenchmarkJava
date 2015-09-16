@@ -105,35 +105,26 @@ public class FindbugsReader extends Reader {
 			if ( cwe.equals( "23" ) || cwe.equals( "36" ) ) {
 				cwe = "22";
 			}
+			// FSB identify DES/DESede as CWE-326 (Inadequate Encryption Strength) while Benchmark
+			// marked it as CWE-327 (Use of a Broken or Risky Cryptographic Algorithm)
+			else if ( cwe.equals( "326" ) ) {
+				cwe = "327";
+			}
 			return Integer.parseInt( cwe );
 		}
-		
+
 		switch( cat ) {
-		case "SECCU" : 		return 614;  // insecure cookie use
-		case "SECPR" : 		return 330;  // weak random
-		case "SECLDAPI" : 	return 90;   // LDAP injection
-		case "SECPTO" : 	return 22;   // path traversal
-		case "SECPTI" : 	return 22;   // path traversal
-		case "CIPINT" : 	return 327;	 // weak encryption - cipher with no integrity
-		case "PADORA" : 	return 327;  // padding oracle -- FIXME: probably wrong
-		case "SECXPI" : 	return 643;  // XPATH injection
-		case "SECWMD" : 	return 328;  // weak hash
-		case "SECCI" : 		return 78;   // command injection
-		case "SECDU" : 		return 327;  // weak encryption DES
-		case "SECXRW" :		return 79;   // XSS
-		case "SECXSS1" :	return 79;   // XSS
-		case "SECXSS2" :	return 79;   // XSS
-		case "SECXXEDOC" :  return 611;  // XXE - Probably DOM Parser
-		case "SECSQLIHIB" : return 564;  // Hibernate Injection, child of SQL Injection
-		case "SECXXESAX" :  return 611;  // XXE - SAX Parser
-		case "STAIV" : 		return 329;  // static initialization vector for crypto
 
-		case "SECSP" : 		return 00;	 // servlet parameter - not a vuln
-		case "SECSH" : 		return 00;   // servlet header -- not a vuln
-		case "SECSSQ" : 	return 00;   // servlet query - not a vuln
-		
+			//Padding oracle (no specific CWE .. and not analyze by benchmark)
+			case "PADORA" :      return 00; // servlet cookie - not a vuln
+			//Cookies
+			case "SECCU" :      return 00; // servlet cookie - not a vuln
+			//Others informational elements
+			case "SECSP" : 		return 00;	 // servlet parameter - not a vuln
+			case "SECSH" : 		return 00;   // servlet header -- not a vuln
+			case "SECSSQ" : 	return 00;   // servlet query - not a vuln
 
-		default : System.out.println( "Unknown category: " + cat );
+			default : System.out.println( "Unknown category: " + cat );
 		}
 
 		return 0;

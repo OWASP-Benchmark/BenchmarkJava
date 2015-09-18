@@ -29,8 +29,7 @@ public class ThingFactory {
 		Properties props = new Properties();
 
 		// create a thing using reflection
-		try {
-			InputStream thingproperties = ThingFactory.class.getClassLoader().getResourceAsStream("thing.properties");
+		try (InputStream thingproperties = ThingFactory.class.getClassLoader().getResourceAsStream("thing.properties")) {
 			if (thingproperties == null) {
 				System.out.println("Can't find thing.properties");
 				return new Thing2();

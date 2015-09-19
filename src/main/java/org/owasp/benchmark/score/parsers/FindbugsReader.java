@@ -105,35 +105,69 @@ public class FindbugsReader extends Reader {
 			if ( cwe.equals( "23" ) || cwe.equals( "36" ) ) {
 				cwe = "22";
 			}
+			// FSB identify DES/DESede as CWE-326 (Inadequate Encryption Strength) while Benchmark
+			// marked it as CWE-327 (Use of a Broken or Risky Cryptographic Algorithm)
+			else if ( cwe.equals( "326" ) ) {
+				cwe = "327";
+			}
 			return Integer.parseInt( cwe );
 		}
-		
+
+		//This is a fallback mapping for unsupported/old versions of the Find Security Bugs plugin
+		//All important bug patterns have their CWE ID associated in later versions (1.4.3+).
 		switch( cat ) {
-		case "SECCU" : 		return 614;  // insecure cookie use
-		case "SECPR" : 		return 330;  // weak random
-		case "SECLDAPI" : 	return 90;   // LDAP injection
-		case "SECPTO" : 	return 22;   // path traversal
-		case "SECPTI" : 	return 22;   // path traversal
-		case "CIPINT" : 	return 327;	 // weak encryption - cipher with no integrity
-		case "PADORA" : 	return 327;  // padding oracle -- FIXME: probably wrong
-		case "SECXPI" : 	return 643;  // XPATH injection
-		case "SECWMD" : 	return 328;  // weak hash
-		case "SECCI" : 		return 78;   // command injection
-		case "SECDU" : 		return 327;  // weak encryption DES
-		case "SECXRW" :		return 79;   // XSS
-		case "SECXSS1" :	return 79;   // XSS
-		case "SECXSS2" :	return 79;   // XSS
-		case "SECXXEDOC" :  return 611;  // XXE - Probably DOM Parser
-		case "SECSQLIHIB" : return 564;  // Hibernate Injection, child of SQL Injection
-		case "SECXXESAX" :  return 611;  // XXE - SAX Parser
-		case "STAIV" : 		return 329;  // static initialization vector for crypto
+			//Cookies
+			case "SECIC" : 		return 614;  // insecure cookie use
+			case "SECCU" :      return 00; // servlet cookie
 
-		case "SECSP" : 		return 00;	 // servlet parameter - not a vuln
-		case "SECSH" : 		return 00;   // servlet header -- not a vuln
-		case "SECSSQ" : 	return 00;   // servlet query - not a vuln
-		
+			//Injections
+			case "SECSQLIHIB"     : return 564;  // Hibernate Injection, child of SQL Injection
+			case "SECSQLIJDO"     : return 89;
+			case "SECSQLIJPA"     : return 89;
+			case "SECSQLISPRJDBC" : return 89;
+			case "SECSQLIJDBC"    : return 89;
 
-		default : System.out.println( "Unknown category: " + cat );
+			//LDAP injection
+			case "SECLDAPI" : 	return 90;   // LDAP injection
+
+			//XPath injection
+			case "SECXPI" : 	return 643;  // XPATH injection
+
+			//Command injection
+			case "SECCI" : 		return 78;   // command injection
+
+			//Weak random
+			case "SECPR" : 		return 330;  // weak random
+
+			//Weak encryption
+			case "SECDU" : 		return 327;  // weak encryption DES
+			case "CIPINT" : 	return 327;	 // weak encryption - cipher with no integrity
+			case "PADORA" : 	return 327;  // padding oracle -- FIXME: probably wrong
+			case "STAIV" : 		return 329;  // static initialization vector for crypto
+
+			//Weak hash
+			case "SECWMD" : 	return 328;  // weak hash
+
+			//Path traversal
+			case "SECPTO" : 	return 22;   // path traversal
+			case "SECPTI" : 	return 22;   // path traversal
+
+			//XSS
+			case "SECXRW" :		return 79;   // XSS
+			case "SECXSS1" :	return 79;   // XSS
+			case "SECXSS2" :	return 79;   // XSS
+
+			//XXE
+			case "SECXXEDOC" :  return 611;  // XXE
+			case "SECXXEREAD" :  return 611;  // XXE
+			case "SECXXESAX" :  return 611;  // XXE
+
+			//Input sources
+			case "SECSP" : 		return 00;	 // servlet parameter - not a vuln
+			case "SECSH" : 		return 00;   // servlet header -- not a vuln
+			case "SECSSQ" : 	return 00;   // servlet query - not a vuln
+
+			default : System.out.println( "Unknown category: " + cat );
 		}
 
 		return 0;

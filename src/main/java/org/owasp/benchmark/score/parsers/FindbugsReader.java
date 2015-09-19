@@ -122,10 +122,10 @@ public class FindbugsReader extends Reader {
 
 			//Injections
 			case "SECSQLIHIB"     : return 564;  // Hibernate Injection, child of SQL Injection
-			case "SECSQLIJDO"     : return 72;
-			case "SECSQLIJPA"     : return 72;
-			case "SECSQLISPRJDBC" : return 72;
-			case "SECSQLIJDBC"    : return 72;
+			case "SECSQLIJDO"     : return 89;
+			case "SECSQLIJPA"     : return 89;
+			case "SECSQLISPRJDBC" : return 89;
+			case "SECSQLIJDBC"    : return 89;
 
 			//LDAP injection
 			case "SECLDAPI" : 	return 90;   // LDAP injection

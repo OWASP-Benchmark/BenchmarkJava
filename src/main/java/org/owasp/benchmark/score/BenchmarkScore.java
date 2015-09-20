@@ -47,11 +47,13 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.io.FileUtils;
+import org.owasp.benchmark.score.parsers.AcunetixReader;
 import org.owasp.benchmark.score.parsers.AppScanDynamicReader;
 import org.owasp.benchmark.score.parsers.AppScanSourceReader;
 import org.owasp.benchmark.score.parsers.ArachniReader;
 import org.owasp.benchmark.score.parsers.BurpReader;
 import org.owasp.benchmark.score.parsers.CheckmarxReader;
+import org.owasp.benchmark.score.parsers.ContrastReader;
 import org.owasp.benchmark.score.parsers.Counter;
 import org.owasp.benchmark.score.parsers.CoverityReader;
 import org.owasp.benchmark.score.parsers.FindbugsReader;
@@ -60,10 +62,13 @@ import org.owasp.benchmark.score.parsers.OverallResult;
 import org.owasp.benchmark.score.parsers.OverallResults;
 import org.owasp.benchmark.score.parsers.PMDReader;
 import org.owasp.benchmark.score.parsers.ParasoftReader;
+import org.owasp.benchmark.score.parsers.NoisyCricketReader;
+import org.owasp.benchmark.score.parsers.Rapid7Reader;
 import org.owasp.benchmark.score.parsers.SonarQubeReader;
 import org.owasp.benchmark.score.parsers.TestCaseResult;
 import org.owasp.benchmark.score.parsers.TestResults;
 import org.owasp.benchmark.score.parsers.VeracodeReader;
+import org.owasp.benchmark.score.parsers.WebInspectReader;
 import org.owasp.benchmark.score.parsers.ZapReader;
 import org.owasp.benchmark.score.report.Report;
 import org.owasp.benchmark.score.report.ScatterHome;
@@ -85,24 +90,26 @@ public class BenchmarkScore {
     public static boolean mixedMode = false;
     // Indicates that the names of Commercial tools should be anonymized
     public static boolean anonymousMode = false;
-    // If in anonymous mode, use this # to number a commercial tool, and then increment it for the next use.
-    private static int nextCommercialToolNumber = 1;
     // Indicates that the results of Commercial tools should be suppressed. Only show their averages.
     public static boolean showAveOnlyMode = false;
     // The name of this file if generated
     private static String commercialAveScorecardFilename = null;
-		
+    // The name of the tool to 'focus' on, if any
+    private static String focus = "none";
+    
 	/*
 	 * A list of the reports produced for each tool.
 	 */
 	private static Set<Report> toolResults = new TreeSet<Report>();
 	
-	private static final String usageNotice = "Usage: BenchmarkScore expected actual (optional) anonymous\n"
+	private static final String usageNotice = "Usage: BenchmarkScore expected actual (optional) toolname anonymous/show_ave_only\n"
 		+ "  expected - path of expected results file from Benchmark distribution.\n"
 		+ "    Use value: 'mixed' if there are multiple results subdirectories for different versions of the Benchmark.\n"
 		+ "  actual   - results file, or directory with result files from tools (.ozasmt, .fpr, .fvdl, .xml, etc...\n"
 		+ "    For 'mixed' mode, this is the root directory that contains subdirectories with results files.\n"
-		+ "  And two optional 3rd parameters - can only use one or the other"
+		+ "  An optional 3rd parameter - Name of tool to focus on, or 'none'. This highlights that particular tool in the"
+		+ "    generated charts."
+		+ "  And two optional 4th parameters - can only use one or the other"
 		+ "    anonymous - tells the scorecard generator to hide the names of commercial tools.\n"
 		+ "    show_ave_only - tells the scorecard generator to hide the commercial tool results"
 		+ "      entirely, and only show the commercial average.\n";
@@ -112,17 +119,22 @@ public class BenchmarkScore {
 			System.out.println( usageNotice );
 			System.exit( -1 );
 		}
-		
-		if (args.length > 2) {
-			if ("anonymous".equalsIgnoreCase(args[2])) {
+
+        if ( args.length > 2 ) {
+            focus = args[2];
+        }
+        
+		if (args.length > 3) {
+			if ("anonymous".equalsIgnoreCase(args[3])) {
 				anonymousMode = true;
-			} else if ("show_ave_only".equalsIgnoreCase(args[2])) {
+			} else if ("show_ave_only".equalsIgnoreCase(args[3])) {
 				showAveOnlyMode = true;
 			} else {
 				System.out.println( usageNotice );
 				System.exit( -1 );				
 			}
 		}
+		
 		
 		// Prepare the scorecard results directory for the newly generated scorecards
 		// Step 1: Create the dir if it doesn't exist, or delete everything in it if it does
@@ -222,13 +234,6 @@ public class BenchmarkScore {
 	    				}
     	    			
     			        // Step 5a: Go through each result file and generate a scorecard for that tool.
-/*    	    			for ( File resultsDirFile : rootDirFile.listFiles() ) {
-    	    				// Make sure the file is not a directory and isn't the expected results file. If so, process.
-    	    				if (!resultsDirFile.isDirectory() && !expectedResultsFilename.equals(resultsDirFile.getName())) {
-    	    					process( resultsDirFile, expectedResults, toolResults);
-    	    				}
-    	    			}	// end for
- */   	    			
     					if (!anonymousMode) {
     		    			for ( File actual : rootDirFile.listFiles() ) {
     		    				// Don't confuse the expected results file as an actual results file if its in the same directory
@@ -247,9 +252,7 @@ public class BenchmarkScore {
     						SecureRandom generator = SecureRandom.getInstance("SHA1PRNG");
     						while (files.size() > 0) {
     							// Get a random, positive integer
-    							int randomNum = Math.abs(generator.nextInt());
-    							// Mod it with the size, so what's left randomly picks one file
-    							int fileToGet = randomNum % files.size();
+    							int fileToGet = Math.abs(generator.nextInt(files.size()));
     							File actual = files.remove(fileToGet);
     		    				// Don't confuse the expected results file as an actual results file if its in the same directory
     		    				if (!actual.isDirectory() && !expectedResultsFilename.equals(actual.getName()))
@@ -338,14 +341,14 @@ public class BenchmarkScore {
         }
 		
 		// Then we generate each vulnerability scorecard
-        BenchmarkScore.generateVulnerabilityScorecards(toolResults, catSet);
+        BenchmarkScore.generateVulnerabilityScorecards(toolResults, catSet );
 		System.out.println( "Vulnerability scorecards computed." );
         		
         // Step 7: Update all the menus for all the generated pages to reflect the tools and vulnerability categories
 		updateMenus(toolResults, catSet);
 		
         // Step 8: Generate the overall comparison chart for all the tools in this test
-        ScatterHome.generateComparisonChart(toolResults);
+        ScatterHome.generateComparisonChart(toolResults, focus);
         
         // Step 9: Generate the results table across all the tools in this test
 		String table = generateOverallStatsTable(toolResults);
@@ -379,6 +382,7 @@ public class BenchmarkScore {
         	// Figure out the actual results for this tool from the raw results file for this tool            
             System.out.println( "\nAnalyzing results from " + f.getName() );
             TestResults actualResults = readActualResults( f );
+            //System.out.println("Computed actual results for tool: " + actualResults.getTool());
         
             if ( expectedResults != null && actualResults != null ) {
                 // note: side effect is that "pass/fail" value is set for each expected result
@@ -395,9 +399,10 @@ public class BenchmarkScore {
             
                 OverallResults results = calculateResults( scores );
                 results.setTime( actualResults.getTime() );
-                
-                // This has the side affect of also generating the report on disk.
-                Report scoreCard = new Report( actualResults, scores, results, expectedResults.totalResults(), actualResultsFileName,actualResults.isCommercial,true);
+                              
+                // This has the side effect of also generating the report on disk.
+                Report scoreCard = new Report( actualResults, scores, results, expectedResults.totalResults(), 
+                		actualResultsFileName, actualResults.isCommercial(),actualResults.getToolType(), focus);
                 
                 // Add this report to the list of reports
                 toolreports.add(scoreCard);
@@ -608,8 +613,24 @@ public class BenchmarkScore {
                     tr = new BurpReader().parse( root );
                 }
                 
-                if ( root.getNodeName().equals( "XmlReport") ) {
+                else if ( root.getNodeName().equals( "XmlReport") ) {
                     tr = new AppScanDynamicReader().parse( root );
+                }
+
+                else if ( root.getNodeName().equals( "noisycricket") ) {
+                    tr = new NoisyCricketReader().parse( root );
+                }
+
+                else if ( root.getNodeName().equals( "Scan" ) ) {
+                    tr = new WebInspectReader().parse( root );
+                }
+                
+                else if ( root.getNodeName().equals( "ScanGroup" ) ) {
+                    tr = new AcunetixReader().parse( root );
+                }
+
+                else if ( root.getNodeName().equals( "VulnSummary" ) ) {
+                    tr = new Rapid7Reader().parse( root );
                 }
             }
 		}
@@ -625,6 +646,10 @@ public class BenchmarkScore {
 		
         else if ( filename.endsWith( ".fvdl" ) ) {
             tr = new FortifyReader().parse( actual );
+        }
+        
+        else if ( filename.endsWith( ".zip") ) {
+            tr = new ContrastReader().parse( actual );
         }
         
         // If the version # of the tool is specified in the results file name, extract it, and set it.
@@ -678,12 +703,11 @@ public class BenchmarkScore {
     	
     	// Set the version of the Benchmark these actual results are being compared against
     	actual.setBenchmarkVersion(expected.getBenchmarkVersion());
-    	
+    		
     	// If in anonymous mode, anonymize the tool name if its a commercial tool before its used to compute anything.
-		if (BenchmarkScore.anonymousMode && actual.isCommercial) {
-			if (nextCommercialToolNumber < 10) {
-				actual.setTool("Commercial_0" + nextCommercialToolNumber++);
-			} else actual.setTool("Commercial_" + nextCommercialToolNumber++);
+	    // unless its the tool of 'focus'
+		if (BenchmarkScore.anonymousMode && actual.isCommercial && !actual.getTool().equalsIgnoreCase( focus )) {
+			actual.setAnonymous();
 		}
 		
 		boolean pass = false;
@@ -876,7 +900,7 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 		
         for (String cat : catSet ) {
             try {
-            	ScatterVulns scatter = ScatterVulns.generateComparisonChart(cat, toolResults);
+            	ScatterVulns scatter = ScatterVulns.generateComparisonChart(cat, toolResults, focus );
                 String filename = "Benchmark_v" + benchmarkVersion + "_Scorecard_for_" + cat.replace(' ', '_');
                 Path htmlfile = Paths.get( scoreCardDirName + "/" + filename + ".html" );
                 Files.copy(Paths.get(pathToScorecardResources + "vulntemplate.html" ), htmlfile, StandardCopyOption.REPLACE_EXISTING );

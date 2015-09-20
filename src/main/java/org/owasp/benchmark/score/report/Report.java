@@ -36,36 +36,35 @@ import org.owasp.benchmark.score.parsers.TestResults.ToolType;
 public class Report implements Comparable<Report> {
 
 	private final boolean isCommercial;
-	private final boolean isStatic;
+	private ToolType toolType;
 	private String toolName = "not specified";
-	private final TestResults.ToolType toolType;
 	private final String benchmarkVersion;
 	private final Map<String, Counter> scores;
 	private final OverallResults overallResults;
 	private final String reportPath;
-
+	private static int toolcount = 1;
+	private final int toolNumber;
+	
 	// The name of the file that contains this scorecard report
 	private String filename = null;
+	private String focus = null;
 	
 	public Report(TestResults actualResults, Map<String, Counter> scores, OverallResults or, int totalResults,
-			String actualResultsFileName, boolean isCommercial, boolean isStatic)
-					throws IOException, URISyntaxException {
-		
+			String actualResultsFileName, boolean isCommercial, ToolType toolType, String focus ) throws IOException, URISyntaxException {
+		toolNumber = toolcount++;
 		this.isCommercial = isCommercial;
-		this.isStatic = isStatic;
+		this.toolType = toolType;
 		this.toolName = actualResults.getTool();
 		this.toolType = actualResults.toolType;
+		this.focus = focus;
 		String version = actualResults.getToolVersion();
 		if (version != null && (!BenchmarkScore.anonymousMode || !isCommercial)) {
 			version = " v" + version;
 		} else version = "";
 		this.benchmarkVersion = actualResults.getBenchmarkVersion();
 
-		String fullTitle = "OWASP Benchmark Scorecard for " + toolName + version;
-		if (actualResults.toolType == ToolType.SAST) fullTitle += " (SAST)";
-		if (actualResults.toolType == ToolType.DAST) fullTitle += " (DAST)";
-		if (actualResults.toolType == ToolType.IAST) fullTitle += " (IAST)";
-		String shortTitle = "Benchmark v" + actualResults.getBenchmarkVersion() + " Scorecard for " + toolName;
+		String fullTitle = "OWASP Benchmark Scorecard for " + getToolName() + version;
+		String shortTitle = "Benchmark v" + actualResults.getBenchmarkVersion() + " Scorecard for " + getToolName();
 		this.filename = shortTitle.replace(' ', '_');
 
 		this.scores = scores;
@@ -73,13 +72,11 @@ public class Report implements Comparable<Report> {
 
 		this.reportPath = BenchmarkScore.scoreCardDirName + File.separator + filename + ".html";
 		File img = new File(BenchmarkScore.scoreCardDirName + File.separator + filename + ".png");
-		ScatterTools graph = new ScatterTools(shortTitle, 800, 800, or);
+		ScatterTools graph = new ScatterTools(shortTitle, 800, or);
 
 		if (!(BenchmarkScore.showAveOnlyMode && this.isCommercial)) {
-			graph.writeChartToFile(img, 800, 800);
-	
-			String reportHtml = generateHtml(fullTitle, actualResults, scores, or, totalResults, img,
-					actualResultsFileName);
+			graph.writeChartToFile(img, 800);	
+			String reportHtml = generateHtml(fullTitle, actualResults, scores, or, totalResults, img, actualResultsFileName);
 			Files.write(Paths.get(reportPath), reportHtml.getBytes());
 			System.out.println("Report written to: " + new File(reportPath).getAbsolutePath());
 		}
@@ -94,16 +91,12 @@ public class Report implements Comparable<Report> {
 		return this.toolName;
 	}
 
-	public TestResults.ToolType getToolType() {
-		return this.toolType;
-	}
-
 	public boolean isCommercial() {
 		return this.isCommercial;
 	}
 
-	public boolean isStatic() {
-		return this.isStatic;
+	public ToolType getToolType() {
+		return toolType;
 	}
 
 	public String getBenchmarkVersion() {
@@ -227,7 +220,7 @@ public class Report implements Comparable<Report> {
 	}
 
 	public int compareTo(Report r) {
-		return this.toolName.toLowerCase().compareTo(r.toolName.toLowerCase());
+		return this.getToolName().toLowerCase().compareTo(r.getToolName().toLowerCase());
 	}
 
 	public Map<String, Counter> getScores() {

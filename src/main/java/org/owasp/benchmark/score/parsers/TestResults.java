@@ -34,11 +34,15 @@ import java.util.concurrent.TimeUnit;
 public class TestResults {
 
 	// The types of tools that can generate results
-	public static enum ToolType{
+	public static enum ToolType {
 		SAST,
 		DAST,
 		IAST
 	}
+	
+	private static int nextCommercialSAST_ToolNumber = 1;
+	private static int nextCommercialDAST_ToolNumber = 1;
+	private static int nextCommercialIAST_ToolNumber = 1;
 	
 	// The version of the Benchmark these test results are for
 	private String benchmarkVersion = "notSet";
@@ -54,7 +58,6 @@ public class TestResults {
 	    this.setTool( toolname );
 	    this.isCommercial = isCommercial;
 	    this.toolType = toolType;
-	  
 	}
 	
 	// Set the Benchmark version number for this specific set of TestResults
@@ -64,6 +67,14 @@ public class TestResults {
 	
 	public String getBenchmarkVersion() {
 		return this.benchmarkVersion;
+	}
+	
+	public ToolType getToolType() {
+	    return toolType;
+	}
+	
+	public boolean isCommercial() {
+	    return isCommercial;
 	}
 	
 	public void put( TestCaseResult tcr ) {
@@ -83,6 +94,10 @@ public class TestResults {
 		return map.keySet();
 	}
     
+	/**
+	 * Get the name of the tool. e.g., "IBM AppScan"
+	 * @return Name of the tool.
+	 */
     public String getTool() {
         return tool;
     }
@@ -91,8 +106,40 @@ public class TestResults {
         return toolVersion;
     }
 	
+    /**
+     * Sets the name of the tool. e.g., "HP Fortify"
+     * @param tool - Name of the tool.
+     */
 	public void setTool( String tool ) {
 	    this.tool = tool;
+	}
+
+	/**
+	 * This method anonymizes the tool name based on the type of tool it is and the count of previous 
+	 * tools of the same type that also have been anonymized.
+	 */
+	public void setAnonymous() {
+		//System.out.println("Anonymizing tool: " + this.getTool() + " which is of type: " + getToolType());
+
+		switch (getToolType()) {
+			case SAST : {
+				if (nextCommercialSAST_ToolNumber < 10) {
+					this.setTool("SAST-0" + nextCommercialSAST_ToolNumber++);
+				} else this.setTool("SAST-" + nextCommercialSAST_ToolNumber++);
+				break;
+			}
+			case DAST : {
+				if (nextCommercialDAST_ToolNumber < 10) {
+					this.setTool("DAST-0" + nextCommercialDAST_ToolNumber++);
+				} else this.setTool("DAST-" + nextCommercialDAST_ToolNumber++);				
+				break;
+			}
+			case IAST : {
+				if (nextCommercialIAST_ToolNumber < 10) {
+					this.setTool("IAST-0" + nextCommercialIAST_ToolNumber++);
+				} else this.setTool("IAST-" + nextCommercialIAST_ToolNumber++);				
+			}
+		}
 	}
 	
 	public void setToolVersion( String version ) {

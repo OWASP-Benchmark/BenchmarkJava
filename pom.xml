@@ -9,6 +9,65 @@
 	<url>https://www.owasp.org/index.php/Benchmark</url>
 	<profiles>
 		<profile>
+			<id>permute</id>
+			<properties>
+				<skipTests>true</skipTests>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-clean-plugin</artifactId>
+						<version>2.6.1</version>
+						<configuration>
+							<filesets>
+								<fileset>
+									<directory>src/main/java/org/owasp/benchmark/testcode</directory>
+									<includes>
+										<include>**/BenchmarkTest*</include>
+									</includes>
+									<followSymlinks>false</followSymlinks>
+								</fileset>
+								<fileset>
+									<directory>src/main/webapp</directory>
+									<includes>
+										<include>**/BenchmarkTest*</include>
+										<include>**/*Index*</include>
+									</includes>
+									<followSymlinks>false</followSymlinks>
+								</fileset>
+							</filesets>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>crawler</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.4.0</version>
+						<executions>
+							<execution>
+								<phase>validate</phase>
+								<goals>
+									<goal>java</goal>
+								</goals>
+								<configuration>
+									<mainClass>org.owasp.benchmark.tools.BenchmarkRunner</mainClass>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+
+		<profile>
 			<id>benchmarkscore</id>
 			<build>
 				<plugins>
@@ -131,6 +190,74 @@
 		</profile>
 
 		<profile>
+			<id>deploywcontrast</id>
+			<properties>
+				<skipTests>true</skipTests>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.7</version>
+						<executions>
+							<execution>
+								<id>ldap-server</id>
+								<phase>package</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<ant target="run" antfile="${basedir}/src/config/build.xml">
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+										</ant>
+									</target>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.cargo</groupId>
+						<artifactId>cargo-maven2-plugin</artifactId>
+						<version>1.4.9</version>
+						<configuration>
+							<container>
+								<timeout>300000</timeout>
+								<containerId>tomcat8x</containerId>
+								<zipUrlInstaller>
+									<url>http://archive.apache.org/dist/tomcat/tomcat-8/v8.0.21/bin/apache-tomcat-8.0.21.zip</url>
+								</zipUrlInstaller>
+							</container>
+							<properties>
+									<cargo.jvmargs>-XX:MaxPermSize=6G -Xms1G –Xmx8G</cargo.jvmargs>
+								</properties>
+							<configuration>
+								<properties>
+                                    <cargo.jvmargs>
+                                            -Xmx4G
+                                            -javaagent:${basedir}/forcontrast/contrast.jar=${basedir}/forcontrast/contrast.config
+                                            -Dcontrast.dir=${basedir}/forcontrast/working
+                                            -Dcontrast.saveresults=always
+                                            -Dcontrast.noteamserver.enable=true
+                                            -Dcontrast.teamserver.suppress=true
+                                    </cargo.jvmargs>
+                                    <cargo.servlet.port>8443</cargo.servlet.port>	
+									<cargo.protocol>https</cargo.protocol>
+									<cargo.tomcat.connector.clientAuth>false</cargo.tomcat.connector.clientAuth>
+									<cargo.tomcat.connector.sslProtocol>TLS</cargo.tomcat.connector.sslProtocol>
+									<cargo.tomcat.connector.keystoreFile>../../../../.keystore</cargo.tomcat.connector.keystoreFile>
+									<cargo.tomcat.connector.keystorePass>changeit</cargo.tomcat.connector.keystorePass>
+									<cargo.tomcat.connector.keyAlias>tomcat</cargo.tomcat.connector.keyAlias>
+									<cargo.tomcat.httpSecure>true</cargo.tomcat.httpSecure>
+								</properties>
+							</configuration> 
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
 			<id>time</id>
 			<build>
 				<plugins>
@@ -215,7 +342,20 @@
 		</profile>
 	</profiles>
 
+	<repositories>
+		<repository>
+			<id>jenkins-releases</id>
+			<url>http://repo.jenkins-ci.org/releases/</url>
+		</repository>
+	</repositories>
+
 	<dependencies>
+
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-server-standalone</artifactId>
+			<version>2.46.0</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -523,31 +663,6 @@
 					</compilerArgs>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>com.internetitem</groupId>
-				<artifactId>write-properties-file-maven-plugin</artifactId>
-				<version>1.0.1</version>
-				<executions>
-					<execution>
-						<id>benchmarkVersion</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>write-properties-file</goal>
-						</goals>
-						<configuration>
-							<filename>build.properties</filename>
-							<outputDirectory>${basedir}/src/main/resources/</outputDirectory>
-							<properties>
-								<property>
-									<name>version</name>
-									<value>${project.version}</value>
-								</property>
-							</properties>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
 			<!-- FindBugs Static Analysis -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>

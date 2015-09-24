@@ -38,9 +38,13 @@ public class FortifyReader extends Reader {
 		InputSource is = new InputSource( new FileInputStream(f) );
 		Document doc = docBuilder.parse(is);
 		
-		TestResults tr = new TestResults( "HP Fortify" ,true,TestResults.ToolType.SAST);
-		// FIXME - parse real number
-		tr.setTime("3:38:40");
+		TestResults tr = new TestResults("HP Fortify", true, TestResults.ToolType.SAST);
+		
+        // If the filename includes an elapsed time in seconds (e.g., TOOLNAME-seconds.xml), 
+		// set the compute time on the score card.
+        tr.setFortifyTime(f);
+        
+        // FIXME: Is there any way to get the time from Fortify itself?
 
         Node root = doc.getDocumentElement();
 				
@@ -49,8 +53,6 @@ public class FortifyReader extends Reader {
         String source = getNamedChild( "SourceBasePath", build ).getTextContent();
         if ( source.contains("ronq") ) {
         	tr.setTool( tr.getTool() + "-OnDemand" );
-        	// Fixme - get real time from results somehow if possible
-    		tr.setTime("7+ Days");
         }
               
         // FIXME: in the FPR there is audit.xml that has a different version number in it

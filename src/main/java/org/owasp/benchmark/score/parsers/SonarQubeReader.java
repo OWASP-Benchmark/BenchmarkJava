@@ -41,8 +41,12 @@ public class SonarQubeReader extends Reader {
         InputSource is = new InputSource(new ByteArrayInputStream( fixed.getBytes() ) );
         Document doc = docBuilder.parse(is);
 
-        TestResults tr = new TestResults( "SonarQube" ,false,TestResults.ToolType.SAST);
+        TestResults tr = new TestResults( "SonarQube Java Plugin" ,false,TestResults.ToolType.SAST);
 
+        // If the filename includes an elapsed time in seconds (e.g., TOOLNAME-seconds.xml), 
+		// set the compute time on the score card.
+        tr.setTime(f);
+        
         NodeList rootList = doc.getDocumentElement().getChildNodes();
 
         List<Node> issueList = getNamedNodes( "issues", rootList );

@@ -42,28 +42,31 @@ public class Report implements Comparable<Report> {
 	private final Map<String, Counter> scores;
 	private final OverallResults overallResults;
 	private final String reportPath;
-	private static int toolcount = 1;
-	private final int toolNumber;
 	
 	// The name of the file that contains this scorecard report
 	private String filename = null;
-	private String focus = null;
 	
 	public Report(TestResults actualResults, Map<String, Counter> scores, OverallResults or, int totalResults,
-			String actualResultsFileName, boolean isCommercial, ToolType toolType, String focus ) throws IOException, URISyntaxException {
-		toolNumber = toolcount++;
+			String actualResultsFileName, boolean isCommercial, ToolType toolType ) throws IOException, URISyntaxException {
 		this.isCommercial = isCommercial;
 		this.toolType = toolType;
 		this.toolName = actualResults.getTool();
 		this.toolType = actualResults.toolType;
-		this.focus = focus;
 		String version = actualResults.getToolVersion();
 		if (version != null && (!BenchmarkScore.anonymousMode || !isCommercial)) {
 			version = " v" + version;
-		} else version = "";
+		} else  {
+			version = "";
+		}
 		this.benchmarkVersion = actualResults.getBenchmarkVersion();
 
 		String fullTitle = "OWASP Benchmark Scorecard for " + getToolName() + version;
+		// If not in anonymous mode OR the tool is not commercial, at the type at the end of the name
+		// It's not added to anonymous commercial tools, because it would be redundant.
+		if (!BenchmarkScore.anonymousMode || !isCommercial) {
+			fullTitle += " (" + actualResults.toolType+ ")";			
+		}
+		
 		String shortTitle = "Benchmark v" + actualResults.getBenchmarkVersion() + " Scorecard for " + getToolName();
 		this.filename = shortTitle.replace(' ', '_');
 

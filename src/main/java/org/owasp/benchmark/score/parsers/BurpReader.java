@@ -37,6 +37,8 @@ public class BurpReader extends Reader {
 
         // String time = getAttributeValue("ScanTime", root);
         // tr.setTime( time );
+        // TODO - fix it so you can get the time out of the Burp Results filename by default.
+        // TODO - Ideally, we'd get the time out of the Burp results file, if they can provide it
 
         List<Node> issueList = getNamedChildren("issue", root);
 

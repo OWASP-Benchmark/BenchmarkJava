@@ -81,7 +81,7 @@ public class WriteTime {
 class WriteFiles {
 	private static final String USER_AGENT = "Mozilla/5.0";
 	private static final String CSV_TIMES_FILE = "out.csv";
-	private static final String VERSION_FILE = "build.properties";
+	private static final String VERSION_FILE = "benchmark.properties";
 	private static final String SONAR_FILE = "target/sonarqube.xml";
 	private static final String FINDBUGS_FILE = "target/findbugsXml.xml";
 	private static final String PMD_FILE = "target/pmd.xml";
@@ -309,7 +309,7 @@ class WriteFiles {
 		try {
 			File propsFile = new File(this.getClass().getClassLoader().getResource(VERSION_FILE).toURI().getPath());
 			benchMprops.load(new FileInputStream(propsFile));
-			String v = benchMprops.getProperty("version");
+			String v = benchMprops.getProperty("benchmark-version");
 			if (v == null) return "";
 			return v;
 		} catch (IOException | URISyntaxException e) {

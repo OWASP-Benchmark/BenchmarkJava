@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>OWASP Benchmark Scorecard for FBwFindSecBugs v1.4.0 (SAST)</title>
+    <title>OWASP Benchmark Scorecard for FBwFindSecBugs v1.4.3 (SAST)</title>
 
     <!-- Bootstrap core CSS -->
     <link href="content/css/bootstrap.min.css" rel="stylesheet">
@@ -45,7 +45,7 @@
 <li><a href="Benchmark_v1.2beta_Scorecard_for_FindBugs.html">FindBugs</a></li>
 <li><a href="Benchmark_v1.2beta_Scorecard_for_OWASP_ZAP.html">OWASP ZAP</a></li>
 <li><a href="Benchmark_v1.2beta_Scorecard_for_PMD.html">PMD</a></li>
-<li><a href="Benchmark_v1.2beta_Scorecard_for_SonarQube.html">SonarQube</a></li>
+<li><a href="Benchmark_v1.2beta_Scorecard_for_SonarQube_Java_Plugin.html">SonarQube Java Plugin</a></li>
 <li><a href="Benchmark_v1.1,1.2beta_Scorecard_for_Commercial_Tools.html">Commercial Average</a></li>
 
 	          </ul>
@@ -80,7 +80,7 @@
 <div>empty</div>
 <div>empty</div>
 
-<h3>OWASP Benchmark Scorecard for FBwFindSecBugs v1.4.0 (SAST)</h3>
+<h3>OWASP Benchmark Scorecard for FBwFindSecBugs v1.4.3 (SAST)</h3>
  
 <p>The OWASP Benchmark is a test suite designed to evaluate the speed, coverage, and accuracy of automated vulnerability detection tools. Without the ability to measure these tools, 
 it is difficult to understand their strengths and weaknesses, and compare them to each other. The Benchmark contains thousands of test cases that are fully runnable and exploitable. 
@@ -94,11 +94,11 @@ The following is the scorecard for the tool FBwFindSecBugs against version 1.2be
 <table class="table">
 <tr>
 <th>Tool elapsed analysis time</th>
-<td>0:01:50</td>
+<td>0:03:16</td>
 </tr>
 <tr>
 <th>Tool overall score (0-100)</th>
-<td>11.24%</td>
+<td>32.46%</td>
 </tr>
 <th>Total test cases</th>
 <td>2740</td>
@@ -114,18 +114,18 @@ The following is the scorecard for the tool FBwFindSecBugs against version 1.2be
 <h2>Detailed Results</h2>
 <table class="table">
 <tr><th>Category</th><th>TP</th><th>FN</th><th>TN</th><th>FP</th><th>Total</th><th>TPR</th><th>FPR</th><th>Score</th></tr>
-<tr class="danger"><td>Command Injection</td><td>93</td><td>33</td><td>30</td><td>95</td><td>251</td><td>73.81%</td><td>76.00%</td><td>-2.19%</td></tr>
+<tr class="danger"><td>Command Injection</td><td>126</td><td>0</td><td>12</td><td>113</td><td>251</td><td>100.00%</td><td>90.40%</td><td>9.60%</td></tr>
 <tr class="danger"><td>Cross-Site Scripting</td><td>3</td><td>243</td><td>209</td><td>0</td><td>455</td><td>1.22%</td><td>0.00%</td><td>1.22%</td></tr>
-<tr class="danger"><td>Insecure Cookie</td><td>3</td><td>33</td><td>27</td><td>4</td><td>67</td><td>8.33%</td><td>12.90%</td><td>-4.57%</td></tr>
-<tr ><td>LDAP Injection</td><td>4</td><td>23</td><td>23</td><td>9</td><td>59</td><td>14.81%</td><td>28.12%</td><td>-13.31%</td></tr>
+<tr class="success"><td>Insecure Cookie</td><td>36</td><td>0</td><td>31</td><td>0</td><td>67</td><td>100.00%</td><td>0.00%</td><td>100.00%</td></tr>
+<tr class="danger"><td>LDAP Injection</td><td>27</td><td>0</td><td>3</td><td>29</td><td>59</td><td>100.00%</td><td>90.62%</td><td>9.38%</td></tr>
 <tr class="danger"><td>Path Traversal</td><td>112</td><td>21</td><td>28</td><td>107</td><td>268</td><td>84.21%</td><td>79.26%</td><td>4.95%</td></tr>
-<tr class="danger"><td>SQL Injection</td><td>146</td><td>126</td><td>103</td><td>129</td><td>504</td><td>53.68%</td><td>55.60%</td><td>-1.93%</td></tr>
+<tr class="danger"><td>SQL Injection</td><td>272</td><td>0</td><td>20</td><td>212</td><td>504</td><td>100.00%</td><td>91.38%</td><td>8.62%</td></tr>
 <tr class="danger"><td>Trust Boundary Violation</td><td>0</td><td>83</td><td>43</td><td>0</td><td>126</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
-<tr ><td>Weak Encryption Algorithm</td><td>97</td><td>33</td><td>50</td><td>66</td><td>246</td><td>74.62%</td><td>56.90%</td><td>17.72%</td></tr>
-<tr ><td>Weak Hash Algorithm</td><td>28</td><td>101</td><td>107</td><td>0</td><td>236</td><td>21.71%</td><td>0.00%</td><td>21.71%</td></tr>
+<tr ><td>Weak Encryption Algorithm</td><td>130</td><td>0</td><td>63</td><td>53</td><td>246</td><td>100.00%</td><td>45.69%</td><td>54.31%</td></tr>
+<tr ><td>Weak Hash Algorithm</td><td>89</td><td>40</td><td>107</td><td>0</td><td>236</td><td>68.99%</td><td>0.00%</td><td>68.99%</td></tr>
 <tr class="success"><td>Weak Random Number</td><td>218</td><td>0</td><td>275</td><td>0</td><td>493</td><td>100.00%</td><td>0.00%</td><td>100.00%</td></tr>
 <tr class="danger"><td>XPath Injection</td><td>15</td><td>0</td><td>0</td><td>20</td><td>35</td><td>100.00%</td><td>100.00%</td><td>0.00%</td></tr>
-<th>Totals</th><th>719</th><th>696</th><th>895</th><th>430</th><th>2740</th><th>48.40%</th><th>37.16%</th><th>11.24%</th></tr>
+<th>Totals</th><th>1028</th><th>387</th><th>791</th><th>534</th><th>2740</th><th>77.67%</th><th>45.21%</th><th>32.46%</th></tr>
 </table>
 <p>
 

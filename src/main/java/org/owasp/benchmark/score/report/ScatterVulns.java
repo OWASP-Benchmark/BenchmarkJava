@@ -298,7 +298,7 @@ public class ScatterVulns extends ScatterPlot {
                 XYTextAnnotation stroketext3 = new XYTextAnnotation(msg, x, y + i * -3.3);
                 stroketext3.setTextAnchor(TextAnchor.CENTER_LEFT);
                 stroketext3.setBackgroundPaint(Color.white);
-                stroketext3.setPaint(r.getToolName().equalsIgnoreCase(focus) ? Color.green : Color.blue);
+                stroketext3.setPaint(r.getToolName().replace(' ','_').equalsIgnoreCase(focus) ? Color.green : Color.blue);
                 stroketext3.setFont(theme.getRegularFont());
                 xyplot.addAnnotation(stroketext3);
                 i++;
@@ -352,7 +352,7 @@ public class ScatterVulns extends ScatterPlot {
                 ch++;
             }
 
-            if (r.getToolName().equalsIgnoreCase(focus)) {
+            if (r.getToolName().replace(' ','_').equalsIgnoreCase(focus)) {
                 OverallResult orc = r.getOverallResults().getResults(category);
                 Point2D focusPoint = new Point2D.Double(orc.falsePositiveRate * 100, orc.truePositiveRate * 100);
                 Color green = new Color(0, 1, 0, 0.5f);

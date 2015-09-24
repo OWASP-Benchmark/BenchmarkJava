@@ -25,7 +25,7 @@ import org.w3c.dom.Node;
 public class AcunetixReader extends Reader {
 	
 	public TestResults parse( Node root ) throws Exception {
-        TestResults tr = new TestResults( "Acunetix", true, TestResults.ToolType.DAST);
+        TestResults tr = new TestResults( "Acunetix WVS", true, TestResults.ToolType.DAST);
         Node scan = getNamedChild( "Scan", root );
 
 //        <ScanGroup ExportedOn="11/9/2015, 21:42">

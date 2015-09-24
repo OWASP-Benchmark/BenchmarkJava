@@ -121,7 +121,7 @@ public class BenchmarkScore {
 		}
 
         if ( args.length > 2 ) {
-            focus = args[2];
+            focus = args[2].replace(' ','_');
         }
         
 		if (args.length > 3) {
@@ -402,7 +402,7 @@ public class BenchmarkScore {
                               
                 // This has the side effect of also generating the report on disk.
                 Report scoreCard = new Report( actualResults, scores, results, expectedResults.totalResults(), 
-                		actualResultsFileName, actualResults.isCommercial(),actualResults.getToolType(), focus);
+                		actualResultsFileName, actualResults.isCommercial(),actualResults.getToolType());
                 
                 // Add this report to the list of reports
                 toolreports.add(scoreCard);
@@ -706,7 +706,7 @@ public class BenchmarkScore {
     		
     	// If in anonymous mode, anonymize the tool name if its a commercial tool before its used to compute anything.
 	    // unless its the tool of 'focus'
-		if (BenchmarkScore.anonymousMode && actual.isCommercial && !actual.getTool().equalsIgnoreCase( focus )) {
+		if (BenchmarkScore.anonymousMode && actual.isCommercial && !actual.getTool().replace(' ','_').equalsIgnoreCase(focus)) {
 			actual.setAnonymous();
 		}
 		

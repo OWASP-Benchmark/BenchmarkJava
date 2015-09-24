@@ -327,7 +327,7 @@ public class ScatterHome extends ScatterPlot {
                 }
                 totalScore+=score;
             }           
-            if ( r.getToolName().equalsIgnoreCase( focus ) ) {
+            if ( r.getToolName().replace(' ','_').equalsIgnoreCase(focus) ) {
                 OverallResults orc = r.getOverallResults();
                 Point2D focusPoint = new Point2D.Double( orc.getFalsePositiveRate()*100, orc.getTruePositiveRate()*100 );
                 Color green = new Color(0,1,0,0.5f);

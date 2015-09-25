@@ -203,13 +203,16 @@ public class Report implements Comparable<Report> {
 			if (!Double.isNaN(r.score))
 				totalScore += r.score;
 		}
-		sb.append("<th>" + "Totals" + "</th>");
+		sb.append("<th>Totals*</th>");
 		sb.append("<th>" + totals.tp + "</th>");
 		sb.append("<th>" + totals.fn + "</th>");
 		sb.append("<th>" + totals.tn + "</th>");
 		sb.append("<th>" + totals.fp + "</th>");
 		int total = totals.tp + totals.fn + totals.tn + totals.fp;
 		sb.append("<th>" + total + "</th>");
+		sb.append("<th/><th/><th/></tr>\n");
+		
+		sb.append("<th>Overall Results*</th><th/><th/><th/><th/><th/>");
 		double tpr = (totalTPR / scores.size());
 		sb.append("<th>" + new DecimalFormat("#0.00%").format(tpr) + "</th>");
 		double fpr = (totalFPR / scores.size());
@@ -218,6 +221,12 @@ public class Report implements Comparable<Report> {
 		sb.append("<th>" + new DecimalFormat("#0.00%").format(score) + "</th>");
 		sb.append("</tr>\n");
 		sb.append("</table>");
+		sb.append("<p>*-The Overall Results are averages across all the vulnerability categories. "
+				+ " You can't compute these averages by simply calculating the TPR and FPR rates using "
+				+ " the values in the Totals row. If you did that, categories with larger number of tests would carry "
+				+ " more weight than categories with less tests. The proper calculation of the Overall Results is to"
+				+ " add up all the TPR, FPR, and Score values, "
+				+ " and then divide by the number of vulnerability categories, which is how they are calculated.<p/>");
 				
 		return sb.toString();
 	}

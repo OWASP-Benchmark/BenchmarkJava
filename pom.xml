@@ -172,6 +172,14 @@
 									<cargo.jvmargs>-XX:MaxPermSize=6G -Xms1G –Xmx8G</cargo.jvmargs>
 								</properties>
 							<configuration>
+                                <files>
+                                    <copy>
+                                        <file>${basedir}/src/config/server.xml</file>
+                                        <tofile>conf/server.xml</tofile>
+                                        <configfile>true</configfile>
+                                        <overwrite>true</overwrite>
+                                    </copy>
+                                </files>
 								<properties>
 									<cargo.servlet.port>8443</cargo.servlet.port>	
 									<cargo.protocol>https</cargo.protocol>
@@ -235,8 +243,8 @@
 								<properties>
                                     <cargo.jvmargs>
                                             -Xmx4G
-                                            -javaagent:${basedir}/forcontrast/contrast.jar=${basedir}/forcontrast/contrast.config
-                                            -Dcontrast.dir=${basedir}/forcontrast/working
+                                            -javaagent:${basedir}/tools/Contrast/contrast.jar=${basedir}/tools/Contrast/contrast.config
+                                            -Dcontrast.dir=${basedir}/tools/Contrast/working
                                             -Dcontrast.saveresults=always
                                             -Dcontrast.noteamserver.enable=true
                                             -Dcontrast.teamserver.suppress=true

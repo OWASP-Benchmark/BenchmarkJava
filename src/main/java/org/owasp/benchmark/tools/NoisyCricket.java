@@ -1,12 +1,18 @@
 package org.owasp.benchmark.tools;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.nio.charset.Charset;
+import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -45,15 +51,25 @@ public class NoisyCricket {
             vulns = report.createElement("vulnerabilities");
             docroot.appendChild(vulns);
 
-            File f = new File("/Users/jeffwilliams/git2/");
-            walk(f);
+            FileVisitor<Path> visitor = new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
+                    Objects.requireNonNull(path);
+                    Objects.requireNonNull(attrs);
+                    if ( path.toString().endsWith(".java")) {
+                        analyze(path);   
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+            };
+            Path p = FileSystems.getDefault().getPath( "/Users/jeffwilliams/git2/");
+            Files.walkFileTree(p, visitor);
             
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             DOMSource source = new DOMSource(report);
             StreamResult result = new StreamResult(new FileWriter(new File( "NoisyCricket.xml" )));
-            //StreamResult result = new StreamResult(System.out);
             transformer.transform(source, result);
 
             System.out.println("\n\nNoisyCricket.xml saved!");
@@ -63,23 +79,9 @@ public class NoisyCricket {
         }
     }
 
-    public static void walk(File f) throws IOException {
-        File[] list = f.listFiles();
-        if (list == null)
-            return;
-        for (File child : list) {
-            if (child.isDirectory()) {
-                walk(child);
-                System.out.println("Dir:" + child.getAbsoluteFile());
-            } else if ( child.getName().endsWith( ".java" )){
-                analyze(child);
-            }
-        }
-    }
-
-    public static void analyze( File f ) throws IOException {
+    public static void analyze( Path p ) throws IOException {
         Element vuln = report.createElement("vulnerability");
-        List<String> lines = getLinesFromFile( f );
+        List<String> lines = Files.readAllLines(p, Charset.defaultCharset() );
         Set<Integer> cwelist = new TreeSet<Integer>();
         
         for ( String line : lines ) {
@@ -97,7 +99,7 @@ public class NoisyCricket {
         }
         
         vuln.setAttribute("cwelist", cwelist.toString() );
-        vuln.setAttribute("file", f.getName() );
+        vuln.setAttribute("file", p.getFileName().toString() );
         vulns.appendChild(vuln);
     }
 
@@ -142,6 +144,7 @@ public class NoisyCricket {
     }
 
     private static boolean checkTrustBoundary(String line) {
+        if ( match( line, "putValue" ) ) return true;
         if ( match( line, "setAttribute" ) ) return true;
         return false;
     }
@@ -160,16 +163,5 @@ public class NoisyCricket {
     private static boolean match(String line, String string) {
         return line.toLowerCase().contains( string.toLowerCase() );
     }
-        
-    public static List<String> getLinesFromFile(File file) throws IOException {
-        List<String> sourceLines = new ArrayList<String>();
-        BufferedReader br = new BufferedReader(new FileReader(file));
-        String line;
-        while ((line = br.readLine()) != null) {
-            sourceLines.add(line);
-        }
-        return sourceLines;
-    }
-
             
 }

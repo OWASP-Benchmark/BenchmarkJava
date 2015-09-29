@@ -1,13 +1,13 @@
 #!/bin/sh
 
-if [ -f forcontrast/contrast.jar ]; then
+if [ -f tools/Contrast/contrast.jar ]; then
 
-  if [ -d forcontrast/findings ]; then
+  if [ -d tools/Contrast/findings ]; then
 
-    rm -r forcontrast/findings
-    rm -r forcontrast/working
+    rm -r tools/Contrast/findings
+    rm -r tools/Contrast/working
     echo ""
-    echo "Previous Contrast results in forcontrast/findings removed"
+    echo "Previous Contrast results in tools/Contrast/findings removed"
     echo ""
 
   fi
@@ -17,6 +17,6 @@ if [ -f forcontrast/contrast.jar ]; then
 
 else 
 
-  echo "Given that Contrast is a commercial product, you have to have a licensed version of Contrast in order to run it on the Benchmark. If you have access to Contrast, download the Java 1.5 version of contrast.jar from the Team Server and put it into the /forcontrast folder, and then rerun this script."
+  echo "Given that Contrast is a commercial product, you have to have a licensed version of Contrast in order to run it on the Benchmark. If you have access to Contrast, download the Java 1.5 version of contrast.jar from the Team Server and put it into the /tools/Contrast folder, and then rerun this script."
 
 fi

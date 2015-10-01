@@ -373,7 +373,7 @@ public class BenchmarkScore {
 	 * @param f - The results file to process. This is the native results file from the tool.
 	 * @param expectedResults - This is the expected results csv file for this version of the Benchmark.
 	 * @param toolResults - This list contains some information about the results for each tool. It is updated
-	 * in this method so that the menus across all the scorecards can be generated and an summary scorecard can be
+	 * in this method so that the menus across all the scorecards can be generated and a summary scorecard can be
 	 * computed. A new entry is added each time this method is called which adds the name of the tool, the filename of the
 	 * scorecard, and the report that was created for that tool.
 	 */
@@ -472,7 +472,7 @@ public class BenchmarkScore {
 			double tpr = (double) c.tp / (double) ( c.tp + c.fn );
 			double fpr = (double) c.fp / (double) ( c.fp + c.tn );
 //			double fdr = c.fp / ( c.tp + c.fp );
-            
+
             // category score is distance from (fpr,tpr) to the guessing line
             double side = tpr - fpr;
             double hyp = side * Math.sqrt(2); // Pythagoras
@@ -839,9 +839,10 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 		
 		try {
 			String benchmarkVersion = actual.getBenchmarkVersion();
-			resultsFile = new File(scoreCardDirName + File.separator + "Benchmark_v" 
-					+ benchmarkVersion + "_Scorecard_for_" + actual.getTool().replace( ' ', '_' )
-					+ ".csv");
+			String resultsFileName = scoreCardDirName + File.separator + "Benchmark_v" 
+					+ benchmarkVersion + "_Scorecard_for_" + actual.getToolNameAndVersion().replace( ' ', '_' ) 
+					+ ".csv";
+			resultsFile = new File(resultsFileName);
 			FileOutputStream fos = new FileOutputStream(resultsFile, false);
 			ps = new PrintStream(fos);
 	
@@ -1036,7 +1037,7 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 				else if (r.truePositiveRate > .7 && r.falsePositiveRate < .3)
 					style = "class=\"success\"";
 				sb.append("<tr " + style + ">");
-				sb.append("<td>" + toolResult.getToolName() + "</td>");
+				sb.append("<td>" + toolResult.getToolNameAndVersion() + "</td>");
 				if (mixedMode) sb.append("<td>" + toolResult.getBenchmarkVersion() + "</td>");
 				sb.append("<td>" + c.tp + "</td>");
 				sb.append("<td>" + c.fn + "</td>");
@@ -1067,14 +1068,14 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 		sb.append("<tr>");
 		sb.append("<th>Tool</th>");
 		if (mixedMode) sb.append("<th>Benchmark Version</th>");
-		sb.append("<th>TP</th>");
-		sb.append("<th>FN</th>");
-		sb.append("<th>TN</th>");
-		sb.append("<th>FP</th>");
-		sb.append("<th>Total</th>");
-		sb.append("<th>TPR</th>");
-		sb.append("<th>FPR</th>");
-		sb.append("<th>Score</th>");
+//		sb.append("<th>TP</th>");
+//		sb.append("<th>FN</th>");
+//		sb.append("<th>TN</th>");
+//		sb.append("<th>FP</th>");
+//		sb.append("<th>Total</th>");
+		sb.append("<th>TPR*</th>");
+		sb.append("<th>FPR*</th>");
+		sb.append("<th>Score*</th>");
 		sb.append("</tr>\n");
 
 		for (Report toolResult : toolResults) {
@@ -1089,14 +1090,14 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 				else if (or.getTruePositiveRate() > .7 && or.getFalsePositiveRate() < .3)
 					style = "class=\"success\"";
 				sb.append("<tr " + style + ">");
-				sb.append("<td>" + toolResult.getToolName() + "</td>");
+				sb.append("<td>" + toolResult.getToolNameAndVersion() + "</td>");
 				if (mixedMode) sb.append("<td>" + toolResult.getBenchmarkVersion() + "</td>");
-				sb.append("<td>" + c.tp + "</td>");
+/*				sb.append("<td>" + c.tp + "</td>");
 				sb.append("<td>" + c.fn + "</td>");
 				sb.append("<td>" + c.tn + "</td>");
 				sb.append("<td>" + c.fp + "</td>");
 				sb.append("<td>" + or.getTotal() + "</td>");
-				sb.append("<td>" + new DecimalFormat("#0.00%").format(or.getTruePositiveRate()) + "</td>");
+*/				sb.append("<td>" + new DecimalFormat("#0.00%").format(or.getTruePositiveRate()) + "</td>");
 				sb.append("<td>" + new DecimalFormat("#0.00%").format(or.getFalsePositiveRate()) + "</td>");
 				sb.append("<td>" + new DecimalFormat("#0.00%").format(or.getScore()) + "</td>");
 				sb.append("</tr>\n");
@@ -1105,6 +1106,8 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 
 		sb.append("</tr>\n");
 		sb.append("</table>");
+		sb.append("<p>*-Please refer to each tool's scorecard for the data used to calculate these values.");
+
 		return sb.toString();
 	}
 
@@ -1122,7 +1125,7 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 	            sb.append("<li><a href=\"");
 	            sb.append(toolReport.getFilename());
 	            sb.append(".html\">");
-	            sb.append(toolReport.getToolName());
+	            sb.append(toolReport.getToolNameAndVersion());
 	            sb.append("</a></li>");
 	            sb.append(System.lineSeparator());
 			}
@@ -1144,7 +1147,7 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
         // create vulnerability menu
         sb = new StringBuffer();
         for (String cat : catSet ) {
-            String filename = "Benchmark_v" + benchmarkVersion+"_Scorecard_for_" +cat.replace(' ', '_');  
+            String filename = "Benchmark_v" + benchmarkVersion+"_Scorecard_for_" + cat.replace(' ', '_');  
             sb.append("            <li><a href=\"");
             sb.append( filename );
             sb.append(".html\">");

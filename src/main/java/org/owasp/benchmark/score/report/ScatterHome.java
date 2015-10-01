@@ -275,9 +275,9 @@ public class ScatterHome extends ScatterPlot {
 	                printedNonCommercialLabel = true;
             	}
             	
-                String label = ( ch == 'I' ? ch + ":  " : ""+ch + ": " );
+                String label = ( ch == 'I' ? ch + ":  " : ch + ": " );
                 double score = or.getScore() * 100;
-                String msg = "\u25A0 " + label + r.getToolName() + " (" + Math.round(score) + "%)";
+                String msg = "\u25A0 " + label + r.getToolNameAndVersion() + " (" + Math.round(score) + "%)";
                 XYTextAnnotation stroketext3 = new XYTextAnnotation(msg, x, y + i * -3.3);
                 stroketext3.setTextAnchor(TextAnchor.CENTER_LEFT);
                 stroketext3.setBackgroundPaint(Color.white);

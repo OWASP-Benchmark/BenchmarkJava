@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>OWASP Benchmark Scorecard for SonarQube Java Plugin v3.5 (SAST)</title>
+    <title>OWASP Benchmark Scorecard for FBwFindSecBugs v1.4.3 (SAST)</title>
 
     <!-- Bootstrap core CSS -->
     <link href="content/css/bootstrap.min.css" rel="stylesheet">
@@ -41,11 +41,11 @@
 			<li class="dropdown">
 	          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools<span class="caret"></span></a>
 	          <ul class="dropdown-menu">
-<li><a href="Benchmark_v1.2beta_Scorecard_for_FBwFindSecBugs.html">FBwFindSecBugs</a></li>
-<li><a href="Benchmark_v1.2beta_Scorecard_for_FindBugs.html">FindBugs</a></li>
-<li><a href="Benchmark_v1.2beta_Scorecard_for_OWASP_ZAP.html">OWASP ZAP</a></li>
-<li><a href="Benchmark_v1.2beta_Scorecard_for_PMD.html">PMD</a></li>
-<li><a href="Benchmark_v1.2beta_Scorecard_for_SonarQube_Java_Plugin.html">SonarQube Java Plugin</a></li>
+<li><a href="Benchmark_v1.2beta_Scorecard_for_FBwFindSecBugs_v1.4.3.html">FBwFindSecBugs v1.4.3</a></li>
+<li><a href="Benchmark_v1.2beta_Scorecard_for_FindBugs_v3.0.1.html">FindBugs v3.0.1</a></li>
+<li><a href="Benchmark_v1.2beta_Scorecard_for_OWASP_ZAP_vD-2015-08-24.html">OWASP ZAP vD-2015-08-24</a></li>
+<li><a href="Benchmark_v1.2beta_Scorecard_for_PMD_v5.2.3.html">PMD v5.2.3</a></li>
+<li><a href="Benchmark_v1.2beta_Scorecard_for_SonarQube_Java_Plugin_v3.5.html">SonarQube Java Plugin v3.5</a></li>
 <li><a href="Benchmark_v1.1,1.2beta_Scorecard_for_Commercial_Tools.html">Commercial Average</a></li>
 
 	          </ul>
@@ -80,31 +80,31 @@
 <div>empty</div>
 <div>empty</div>
 
-<h3>OWASP Benchmark Scorecard for SonarQube Java Plugin v3.5 (SAST)</h3>
+<h3>OWASP Benchmark Scorecard for FBwFindSecBugs v1.4.3 (SAST)</h3>
  
 <p>The OWASP Benchmark is a test suite designed to evaluate the speed, coverage, and accuracy of automated vulnerability detection tools. Without the ability to measure these tools, 
 it is difficult to understand their strengths and weaknesses, and compare them to each other. The Benchmark contains thousands of test cases that are fully runnable and exploitable. 
-The following is the scorecard for the tool SonarQube Java Plugin against version 1.2beta of the Benchmark. It shows how well this tool finds true positives and avoids false positives in the Benchmark test cases.</p>
+The following is the scorecard for the tool FBwFindSecBugs against version 1.2beta of the Benchmark. It shows how well this tool finds true positives and avoids false positives in the Benchmark test cases.</p>
 
 <p>For more information, please visit the <a href="https://www.owasp.org/index.php/Benchmark">OWASP Benchmark Project Site</a>.
 
-<img align="middle" src="Benchmark_v1.2beta_Scorecard_for_SonarQube_Java_Plugin.png" />
+<img align="middle" src="Benchmark_v1.2beta_Scorecard_for_FBwFindSecBugs_v1.4.3.png" />
 
 <h2>Statistics</h2>
 <table class="table">
 <tr>
 <th>Tool elapsed analysis time</th>
-<td>0:04:49</td>
+<td>0:03:16</td>
 </tr>
 <tr>
 <th>Tool overall score (0-100)</th>
-<td>33.34%</td>
+<td>32.46%</td>
 </tr>
 <th>Total test cases</th>
 <td>2740</td>
 <tr>
 <th>Download raw results</th>
-<td><a href="Benchmark_v1.2beta_Scorecard_for_SonarQube_Java_Plugin.csv" download>Actual Results</a></td>
+<td><a href="Benchmark_v1.2beta_Scorecard_for_FBwFindSecBugs_v1.4.3.csv" download>Actual Results</a></td>
 </tr>
 </table>
 
@@ -114,19 +114,19 @@ The following is the scorecard for the tool SonarQube Java Plugin against versio
 <h2>Detailed Results</h2>
 <table class="table">
 <tr><th>Category</th><th>TP</th><th>FN</th><th>TN</th><th>FP</th><th>Total</th><th>TPR</th><th>FPR</th><th>Score</th></tr>
-<tr class="danger"><td>Command Injection</td><td>107</td><td>19</td><td>16</td><td>109</td><td>251</td><td>84.92%</td><td>87.20%</td><td>-2.28%</td></tr>
-<tr class="danger"><td>Cross-Site Scripting</td><td>0</td><td>246</td><td>209</td><td>0</td><td>455</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
+<tr class="danger"><td>Command Injection</td><td>126</td><td>0</td><td>12</td><td>113</td><td>251</td><td>100.00%</td><td>90.40%</td><td>9.60%</td></tr>
+<tr class="danger"><td>Cross-Site Scripting</td><td>3</td><td>243</td><td>209</td><td>0</td><td>455</td><td>1.22%</td><td>0.00%</td><td>1.22%</td></tr>
 <tr class="success"><td>Insecure Cookie</td><td>36</td><td>0</td><td>31</td><td>0</td><td>67</td><td>100.00%</td><td>0.00%</td><td>100.00%</td></tr>
-<tr class="danger"><td>LDAP Injection</td><td>27</td><td>0</td><td>0</td><td>32</td><td>59</td><td>100.00%</td><td>100.00%</td><td>0.00%</td></tr>
-<tr class="danger"><td>Path Traversal</td><td>0</td><td>133</td><td>135</td><td>0</td><td>268</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
-<tr class="danger"><td>SQL Injection</td><td>0</td><td>272</td><td>232</td><td>0</td><td>504</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
+<tr class="danger"><td>LDAP Injection</td><td>27</td><td>0</td><td>3</td><td>29</td><td>59</td><td>100.00%</td><td>90.62%</td><td>9.38%</td></tr>
+<tr class="danger"><td>Path Traversal</td><td>112</td><td>21</td><td>28</td><td>107</td><td>268</td><td>84.21%</td><td>79.26%</td><td>4.95%</td></tr>
+<tr class="danger"><td>SQL Injection</td><td>272</td><td>0</td><td>20</td><td>212</td><td>504</td><td>100.00%</td><td>91.38%</td><td>8.62%</td></tr>
 <tr class="danger"><td>Trust Boundary Violation</td><td>0</td><td>83</td><td>43</td><td>0</td><td>126</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
-<tr class="success"><td>Weak Encryption Algorithm</td><td>130</td><td>0</td><td>116</td><td>0</td><td>246</td><td>100.00%</td><td>0.00%</td><td>100.00%</td></tr>
+<tr ><td>Weak Encryption Algorithm</td><td>130</td><td>0</td><td>63</td><td>53</td><td>246</td><td>100.00%</td><td>45.69%</td><td>54.31%</td></tr>
 <tr ><td>Weak Hash Algorithm</td><td>89</td><td>40</td><td>107</td><td>0</td><td>236</td><td>68.99%</td><td>0.00%</td><td>68.99%</td></tr>
 <tr class="success"><td>Weak Random Number</td><td>218</td><td>0</td><td>275</td><td>0</td><td>493</td><td>100.00%</td><td>0.00%</td><td>100.00%</td></tr>
-<tr class="danger"><td>XPath Injection</td><td>0</td><td>15</td><td>20</td><td>0</td><td>35</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
-<th>Totals*</th><th>607</th><th>808</th><th>1184</th><th>141</th><th>2740</th><th/><th/><th/></tr>
-<th>Overall Results*</th><th/><th/><th/><th/><th/><th>50.36%</th><th>17.02%</th><th>33.34%</th></tr>
+<tr class="danger"><td>XPath Injection</td><td>15</td><td>0</td><td>0</td><td>20</td><td>35</td><td>100.00%</td><td>100.00%</td><td>0.00%</td></tr>
+<th>Totals*</th><th>1028</th><th>387</th><th>791</th><th>534</th><th>2740</th><th/><th/><th/></tr>
+<th>Overall Results*</th><th/><th/><th/><th/><th/><th>77.67%</th><th>45.21%</th><th>32.46%</th></tr>
 </table><p>*-The Overall Results are averages across all the vulnerability categories.  You can't compute these averages by simply calculating the TPR and FPR rates using  the values in the Totals row. If you did that, categories with larger number of tests would carry  more weight than categories with less tests. The proper calculation of the Overall Results is to add up all the TPR, FPR, and Score values,  and then divide by the number of vulnerability categories, which is how they are calculated.<p/>
 <p>
 

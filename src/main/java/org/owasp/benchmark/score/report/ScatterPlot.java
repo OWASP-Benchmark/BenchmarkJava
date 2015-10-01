@@ -69,7 +69,7 @@ public class ScatterPlot {
         rangeAxis.setLowerMargin(10);
         rangeAxis.setUpperMargin(10);
         
-        domainAxis.setRange(-5, 155);
+        domainAxis.setRange(-5, 175);
         domainAxis.setNumberFormatOverride(pctFormat);
         domainAxis.setTickLabelPaint(Color.decode("#666666"));
         domainAxis.setMinorTickCount(5);
@@ -97,7 +97,7 @@ public class ScatterPlot {
         chart.setPadding(new RectangleInsets(20, 20, 20, 20));
         
         Point2D legendLocation = new Point2D.Double( 101, -10 );
-        makeRect(xyplot, legendLocation, 120, 54, Color.WHITE );
+        makeRect(xyplot, legendLocation, 120, 74, Color.WHITE );
        
         Point2D triangleLocation = new Point2D.Double( 101, -10 );
         Color grey = new Color(0.1f,0.1f,0.1f,0.1f);
@@ -122,7 +122,7 @@ public class ScatterPlot {
     
     public void writeChartToFile(File f, int height) throws IOException {
         FileOutputStream stream = new FileOutputStream(f);
-        ChartUtilities.writeChartAsPNG(stream, chart, (int)(height*1.25), height);
+        ChartUtilities.writeChartAsPNG(stream, chart, (int)(height*1.4), height);
         stream.close();
     }
 

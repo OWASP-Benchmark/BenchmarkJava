@@ -26,6 +26,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
+import org.owasp.benchmark.score.BenchmarkScore;
+
 /*
  * This class contains the actual results for a single tool against the entire Benchmark, or the 
  * expected results, if its initialized with the expected results file.
@@ -47,12 +49,15 @@ public class TestResults {
 	// The version of the Benchmark these test results are for
 	private String benchmarkVersion = "notSet";
 	
-	private String tool = "Unknown Tool";
+	private String toolName = "Unknown Tool";
     private String toolVersion = null;
 	private String time = "Unknown";
 	public final boolean isCommercial;
 	public final ToolType toolType;
 	private Map<Integer, List<TestCaseResult>> map = new TreeMap<Integer, List<TestCaseResult>>();
+	
+	// Used to track if this tool has been anonymized
+	private boolean anonymous = false;
 	
 	public TestResults( String toolname, boolean isCommercial, ToolType toolType) {
 	    this.setTool( toolname );
@@ -99,7 +104,20 @@ public class TestResults {
 	 * @return Name of the tool.
 	 */
     public String getTool() {
-        return tool;
+        return this.toolName;
+    }
+
+	/**
+	 * Get the name of the tool and its version together. e.g., "IBM AppScan v4.2". But if the tool is commercial,
+	 * and its in anonymous mode then don't include the version number as that could give away the tool.
+	 * @return Name of the tool.
+	 */
+    public String getToolNameAndVersion() {
+    	if (!anonymous && this.toolVersion != null && !"".equals(this.toolVersion) && 
+    		!(BenchmarkScore.anonymousMode && this.isCommercial)) {
+            return this.toolName + " v" + this.toolVersion;
+    	}
+        return this.toolName;
     }
     
     public String getToolVersion() {
@@ -110,8 +128,8 @@ public class TestResults {
      * Sets the name of the tool. e.g., "HP Fortify"
      * @param tool - Name of the tool.
      */
-	public void setTool( String tool ) {
-	    this.tool = tool;
+	public void setTool( String toolName ) {
+	    this.toolName = toolName;
 	}
 
 	/**
@@ -120,6 +138,7 @@ public class TestResults {
 	 */
 	public void setAnonymous() {
 		//System.out.println("Anonymizing tool: " + this.getTool() + " which is of type: " + getToolType());
+		this.anonymous = true;
 
 		switch (getToolType()) {
 			case SAST : {
@@ -223,15 +242,7 @@ public class TestResults {
     }  
     
     public String getShortName() {
-        return tool;
-    }
-    
-    public String getFullName() {
-        if ( toolVersion != null) {
-            return tool + "_v" + toolVersion;
-        } else {
-            return tool;
-        }
+        return this.toolName;
     }
     
 }

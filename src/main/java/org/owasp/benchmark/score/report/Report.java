@@ -38,6 +38,7 @@ public class Report implements Comparable<Report> {
 	private final boolean isCommercial;
 	private ToolType toolType;
 	private String toolName = "not specified";
+	private final String toolNameAndVersion;
 	private final String benchmarkVersion;
 	private final Map<String, Counter> scores;
 	private final OverallResults overallResults;
@@ -51,24 +52,21 @@ public class Report implements Comparable<Report> {
 		this.isCommercial = isCommercial;
 		this.toolType = toolType;
 		this.toolName = actualResults.getTool();
+		this.toolNameAndVersion = actualResults.getToolNameAndVersion();
 		this.toolType = actualResults.toolType;
-		String version = actualResults.getToolVersion();
-		if (version != null && (!BenchmarkScore.anonymousMode || !isCommercial)) {
-			version = " v" + version;
-		} else  {
-			version = "";
-		}
 		this.benchmarkVersion = actualResults.getBenchmarkVersion();
 
-		String fullTitle = "OWASP Benchmark Scorecard for " + getToolName() + version;
-		// If not in anonymous mode OR the tool is not commercial, at the type at the end of the name
+		String fullTitle = "OWASP Benchmark Scorecard for " + actualResults.getToolNameAndVersion();// + getToolName() + version;
+		// If not in anonymous mode OR the tool is not commercial, add the type at the end of the name
 		// It's not added to anonymous commercial tools, because it would be redundant.
 		if (!BenchmarkScore.anonymousMode || !isCommercial) {
 			fullTitle += " (" + actualResults.toolType+ ")";			
 		}
 		
 		String shortTitle = "Benchmark v" + actualResults.getBenchmarkVersion() + " Scorecard for " + getToolName();
-		this.filename = shortTitle.replace(' ', '_');
+		this.filename = "Benchmark v" + actualResults.getBenchmarkVersion() + " Scorecard for " 
+				+ actualResults.getToolNameAndVersion();
+		this.filename = filename.replace(' ', '_');
 
 		this.scores = scores;
 		this.overallResults = or;
@@ -94,6 +92,10 @@ public class Report implements Comparable<Report> {
 		return this.toolName;
 	}
 
+	public String getToolNameAndVersion() {
+		return this.toolNameAndVersion;
+	}
+	
 	public boolean isCommercial() {
 		return this.isCommercial;
 	}
@@ -232,7 +234,7 @@ public class Report implements Comparable<Report> {
 	}
 
 	public int compareTo(Report r) {
-		return this.getToolName().toLowerCase().compareTo(r.getToolName().toLowerCase());
+		return this.getToolNameAndVersion().toLowerCase().compareTo(r.getToolNameAndVersion().toLowerCase());
 	}
 
 	public Map<String, Counter> getScores() {

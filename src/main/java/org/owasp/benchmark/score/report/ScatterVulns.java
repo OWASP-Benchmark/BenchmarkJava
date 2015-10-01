@@ -71,13 +71,12 @@ public class ScatterVulns extends ScatterPlot {
      *            - The title of the chart to be produced.
      * @param height
      *            - Height of the chart (typically 800)
-     * @param width
-     *            - Width of the chart (typically 800)
      * @param category
-     *            - The vulnerability category this chart is being generated
-     *            for.
+     *            - The vulnerability category this chart is being generated for.
      * @param toolResults
      *            - A list of each individual tool's results.
+     * @param focus
+     *            - A tool to emphasize in the chart.
      */
     public ScatterVulns(String title, int height, String category, Set<Report> toolResults, String focus) {
         this.category = category;
@@ -294,7 +293,7 @@ public class ScatterVulns extends ScatterPlot {
                 OverallResults or = r.getOverallResults();
                 String label = (ch == 'I' ? ch + ":  " : "" + ch + ": ");
                 double score = or.getResults(category).score * 100;
-                String msg = "\u25A0 " + label + r.getToolName() + " (" + (int) score + "%)";
+                String msg = "\u25A0 " + label + r.getToolNameAndVersion() + " (" + (int) score + "%)";
                 XYTextAnnotation stroketext3 = new XYTextAnnotation(msg, x, y + i * -3.3);
                 stroketext3.setTextAnchor(TextAnchor.CENTER_LEFT);
                 stroketext3.setBackgroundPaint(Color.white);
@@ -328,15 +327,20 @@ public class ScatterVulns extends ScatterPlot {
                 }
 
                 commercialToolCount++;
-                String label = (ch == 'I' ? ch + ":  " : ch + ": ");
                 double score = or.getResults(category).score * 100;
-                String msg = "\u25A0 " + label + r.getToolName() + " (" + (int) score + "%)";
-                XYTextAnnotation stroketext4 = new XYTextAnnotation(msg, x, y + i * -3.3);
-                stroketext4.setTextAnchor(TextAnchor.CENTER_LEFT);
-                stroketext4.setBackgroundPaint(Color.white);
-                stroketext4.setPaint(Color.blue);
-                stroketext4.setFont(theme.getRegularFont());
-                xyplot.addAnnotation(stroketext4);
+                // don't show the commercial tool results if in 'show ave only mode'
+                if (!BenchmarkScore.showAveOnlyMode) {
+	                String label = (ch == 'I' ? ch + ":  " : ch + ": ");
+	                String msg = "\u25A0 " + label + r.getToolName() + " (" + (int) score + "%)";
+	                XYTextAnnotation stroketext4 = new XYTextAnnotation(msg, x, y + i * -3.3);
+	                stroketext4.setTextAnchor(TextAnchor.CENTER_LEFT);
+	                stroketext4.setBackgroundPaint(Color.white);
+	                stroketext4.setPaint(Color.blue);
+	                stroketext4.setFont(theme.getRegularFont());
+	                xyplot.addAnnotation(stroketext4);
+	                i++;  // increment the location of the label
+	                ch++; // increment to the next character
+                }
                 commercialTotal += score;
 
                 if (score < commercialLow) {
@@ -346,12 +350,10 @@ public class ScatterVulns extends ScatterPlot {
                 if (score > commercialHigh) {
                     commercialHigh = score;
                     commercialHighToolType = r.getToolType();
-                }
-                
-                i++;
-                ch++;
+                }                
             }
 
+            // Add color emphasis to the tool of focus
             if (r.getToolName().replace(' ','_').equalsIgnoreCase(focus)) {
                 OverallResult orc = r.getOverallResults().getResults(category);
                 Point2D focusPoint = new Point2D.Double(orc.falsePositiveRate * 100, orc.truePositiveRate * 100);
@@ -378,7 +380,7 @@ public class ScatterVulns extends ScatterPlot {
 
     public static ScatterVulns generateComparisonChart(String category, Set<Report> toolResults, String focus) {
         try {
-            String scatterTitle = "Benchmark" + (BenchmarkScore.mixedMode ? "" : " v" + BenchmarkScore.benchmarkVersion) + " " + category + " Comparison";
+            String scatterTitle = "OWASP Benchmark" + (BenchmarkScore.mixedMode ? " -" : " v" + BenchmarkScore.benchmarkVersion) + " " + category + " Comparison";
             ScatterVulns scatter = new ScatterVulns(scatterTitle, 800, category, toolResults, focus);
             scatter.writeChartToFile(new File("scorecard/Benchmark_v" + BenchmarkScore.benchmarkVersion + "_Scorecard_for_" + category.replace(' ', '_') + ".png"), 800);
             return scatter;

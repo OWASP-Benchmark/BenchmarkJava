@@ -9,40 +9,6 @@
 	<url>https://www.owasp.org/index.php/Benchmark</url>
 	<profiles>
 		<profile>
-			<id>permute</id>
-			<properties>
-				<skipTests>true</skipTests>
-			</properties>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-clean-plugin</artifactId>
-						<version>2.6.1</version>
-						<configuration>
-							<filesets>
-								<fileset>
-									<directory>src/main/java/org/owasp/benchmark/testcode</directory>
-									<includes>
-										<include>**/BenchmarkTest*</include>
-									</includes>
-									<followSymlinks>false</followSymlinks>
-								</fileset>
-								<fileset>
-									<directory>src/main/webapp</directory>
-									<includes>
-										<include>**/BenchmarkTest*</include>
-										<include>**/*Index*</include>
-									</includes>
-									<followSymlinks>false</followSymlinks>
-								</fileset>
-							</filesets>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-
-		<profile>
 			<id>crawler</id>
 			<build>
 				<plugins>
@@ -174,7 +140,7 @@
 							<configuration>
                                 <files>
                                     <copy>
-                                        <file>${basedir}/src/config/server.xml</file>
+                                        <file>${basedir}/src/config/local/server.xml</file>
                                         <tofile>conf/server.xml</tofile>
                                         <configfile>true</configfile>
                                         <overwrite>true</overwrite>
@@ -197,6 +163,74 @@
 			</build>
 		</profile>
 
+        <profile>
+			<id>deploywremote</id>
+			<properties>
+				<skipTests>true</skipTests>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.7</version>
+						<executions>
+							<execution>
+								<id>ldap-server</id>
+								<phase>package</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<ant target="run" antfile="${basedir}/src/config/build.xml">
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+										</ant>
+									</target>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.cargo</groupId>
+						<artifactId>cargo-maven2-plugin</artifactId>
+						<version>1.4.9</version>
+						<configuration>
+							<container>
+								<timeout>300000</timeout>
+								<containerId>tomcat8x</containerId>
+								<zipUrlInstaller>
+									<url>http://archive.apache.org/dist/tomcat/tomcat-8/v8.0.21/bin/apache-tomcat-8.0.21.zip</url>
+								</zipUrlInstaller>
+							</container>
+							<properties>
+									<cargo.jvmargs>-XX:MaxPermSize=6G -Xms1G –Xmx8G</cargo.jvmargs>
+								</properties>
+							<configuration>
+                                 <files>
+                                    <copy>
+                                        <file>${basedir}/src/config/remote/server.xml</file>
+                                        <tofile>conf/server.xml</tofile>
+                                        <configfile>true</configfile>
+                                        <overwrite>true</overwrite>
+                                    </copy>
+                                </files>
+								<properties>
+									<cargo.servlet.port>8443</cargo.servlet.port>	
+									<cargo.protocol>https</cargo.protocol>
+									<cargo.tomcat.connector.clientAuth>false</cargo.tomcat.connector.clientAuth>
+									<cargo.tomcat.connector.sslProtocol>TLS</cargo.tomcat.connector.sslProtocol>
+									<cargo.tomcat.connector.keystoreFile>../../../../.keystore</cargo.tomcat.connector.keystoreFile>
+									<cargo.tomcat.connector.keystorePass>changeit</cargo.tomcat.connector.keystorePass>
+									<cargo.tomcat.connector.keyAlias>tomcat</cargo.tomcat.connector.keyAlias>
+									<cargo.tomcat.httpSecure>true</cargo.tomcat.httpSecure>
+								</properties>
+							</configuration> 
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+        
 		<profile>
 			<id>deploywcontrast</id>
 			<properties>

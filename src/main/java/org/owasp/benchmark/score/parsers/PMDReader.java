@@ -80,6 +80,7 @@ public class PMDReader extends Reader {
             
 	        tcr.setCategory( rule );
 	        tcr.setEvidence( rule );
+	        return tcr;
 		}
 					
 		return null;

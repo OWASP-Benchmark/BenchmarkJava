@@ -1268,8 +1268,11 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 	
 	private static Document getXMLDocument( File f ) throws Exception {
         DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-		// Prevent XXE
-		docBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+		// Prevent XXE = Note, disabling this entirely breaks the parsing of some XML files, like a Burp results
+        // file, so have to use the alternate defense.
+		//dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        docBuilderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+		docBuilderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
         DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
         InputSource is = new InputSource(new FileInputStream(f));
         Document doc = docBuilder.parse(is);

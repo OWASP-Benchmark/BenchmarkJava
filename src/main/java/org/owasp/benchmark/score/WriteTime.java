@@ -61,7 +61,9 @@ public class WriteTime {
 
 		if (toolName.equals("findsecbugs")) {
 			csvToolName = "findbugs";
-		} else {
+		} else if(toolName.equals("crawler")) {
+			csvToolName = "exec-maven-plugin:java";
+		}else{
 			csvToolName = toolName;
 		}
 
@@ -85,12 +87,15 @@ class WriteFiles {
 	private static final String SONAR_FILE = "target/sonarqube.xml";
 	private static final String FINDBUGS_FILE = "target/findbugsXml.xml";
 	private static final String PMD_FILE = "target/pmd.xml";
+	private static final String CONTRAST_FILE = "Benchmark_";
 
 	public String getVersionNumber(String toolName) {
 		try {
 			File findbugsFile = new File(FINDBUGS_FILE);
 			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory
 					.newInstance();
+			// Prevent XXE
+			docBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
 			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 			InputSource is = null;
 			Document doc = null;
@@ -224,6 +229,12 @@ class WriteFiles {
 				file.renameTo(new File(name));
 			}
 			break;
+		case "crawler":
+			file = new File("results/" + getFindFile("results", CONTRAST_FILE + benchmarkVersion + "-Contrast"));
+			if (file.exists()) {
+				file.renameTo(new File("results/" + file.getName().replace(".zip", "-" + times + ".zip")));
+			}
+			break;
 		}
 	}
 
@@ -317,6 +328,18 @@ class WriteFiles {
 			e.printStackTrace();
 			return "";
 		}
+	}
+	
+	private String getFindFile(String path, String name) {
+		File folder = new File(path);
+		File[] listOfFiles = folder.listFiles();
+
+		for (int i = 0; i < listOfFiles.length; i++) {
+			if (listOfFiles[i].isFile() && listOfFiles[i].getName().startsWith(name)) {
+				return listOfFiles[i].getName();
+			}
+		}
+		return "";
 	}
 
 }

@@ -82,7 +82,7 @@ public class ScatterTools extends ScatterPlot {
 		initializePlot( xyplot );
 		
 		makeDataLabels(or, xyplot);
-        makeLegend( or, 103, 100.5, dataset, xyplot );
+        makeLegend( or, 103, 93, dataset, xyplot );
 
 		XYTextAnnotation time = new XYTextAnnotation("Tool run time: " + or.getTime(), 12, -5.6);
 		time.setTextAnchor(TextAnchor.TOP_LEFT);
@@ -199,6 +199,7 @@ public class ScatterTools extends ScatterPlot {
         double totalScore = 0;
 		for (OverallResult r : or.getResults()) {
 			toolCount++;
+			// Add a bit more white space if the character is I, since its so thin.
 			String label = (ch == 'I' ? ch + ":  " : "" + ch + ": ");
 			int score = (int) (100 * (r.truePositiveRate - r.falsePositiveRate));
 			String msg = "\u25A0 " + label + r.category + " (" + score + "%)";

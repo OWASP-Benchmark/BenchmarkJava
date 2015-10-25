@@ -154,11 +154,15 @@ public class Report implements Comparable<Report> {
 		return html;
 	}
 
+	/**
+	 * The method generates a Detailed results table for whatever tool results are passed in.
+	 */
 	private String generateTable(TestResults actualResults, Map<String, Counter> scores, OverallResults or) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<table class=\"table\">\n");
 		sb.append("<tr>");
 		sb.append("<th>Category</th>");
+		sb.append("<th>CWE #</th>");
 		sb.append("<th>TP</th>");
 		sb.append("<th>FN</th>");
 		sb.append("<th>TN</th>");
@@ -185,6 +189,7 @@ public class Report implements Comparable<Report> {
 				style = "class=\"success\"";
 			sb.append("<tr " + style + ">");
 			sb.append("<td>" + category + "</td>");
+			sb.append("<td>" + BenchmarkScore.translateNameToCWE(category) + "</td>");
 			sb.append("<td>" + c.tp + "</td>");
 			sb.append("<td>" + c.fn + "</td>");
 			sb.append("<td>" + c.tn + "</td>");
@@ -205,7 +210,7 @@ public class Report implements Comparable<Report> {
 			if (!Double.isNaN(r.score))
 				totalScore += r.score;
 		}
-		sb.append("<th>Totals*</th>");
+		sb.append("<th>Totals*</th><th/>");
 		sb.append("<th>" + totals.tp + "</th>");
 		sb.append("<th>" + totals.fn + "</th>");
 		sb.append("<th>" + totals.tn + "</th>");
@@ -214,7 +219,7 @@ public class Report implements Comparable<Report> {
 		sb.append("<th>" + total + "</th>");
 		sb.append("<th/><th/><th/></tr>\n");
 		
-		sb.append("<th>Overall Results*</th><th/><th/><th/><th/><th/>");
+		sb.append("<th>Overall Results*</th><th/><th/><th/><th/><th/><th/>");
 		double tpr = (totalTPR / scores.size());
 		sb.append("<th>" + new DecimalFormat("#0.00%").format(tpr) + "</th>");
 		double fpr = (totalFPR / scores.size());

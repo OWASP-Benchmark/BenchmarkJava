@@ -315,7 +315,7 @@ public class ScatterHome extends ScatterPlot {
                 String label = ( ch == 'I' ? ch + ":  " : ""+ch + ": " );
                 double score = or.getScore() * 100;
                 if (!BenchmarkScore.showAveOnlyMode) {
-	                String msg = "\u25A0 " + label + r.getToolName() + " (" + (int)score + "%)";
+	                String msg = "\u25A0 " + label + r.getToolNameAndVersion() + " (" + (int)score + "%)";
 	                XYTextAnnotation stroketext4 = new XYTextAnnotation(msg, x, y + i * -3.3);
 	                stroketext4.setTextAnchor(TextAnchor.CENTER_LEFT);
 	                stroketext4.setBackgroundPaint(Color.white);

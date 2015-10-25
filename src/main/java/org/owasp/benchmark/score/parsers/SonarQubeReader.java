@@ -35,6 +35,8 @@ public class SonarQubeReader extends Reader {
 
     public TestResults parse(File f) throws Exception {
         DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+		// Prevent XXE
+		docBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
         DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
         byte[] bytes = Files.readAllBytes(f.toPath());
         String fixed = "<sonar>" + new String(bytes, "UTF-8") + "</sonar>";

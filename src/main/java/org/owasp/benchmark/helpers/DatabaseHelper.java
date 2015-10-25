@@ -26,9 +26,13 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
+import javax.naming.InitialContext;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
+import org.owasp.benchmark.service.pojo.StringMessage;
 import org.owasp.esapi.ESAPI;
 
 public class DatabaseHelper {
@@ -131,6 +135,13 @@ public class DatabaseHelper {
 				Class.forName("org.hsqldb.jdbcDriver");
 				String url = "jdbc:hsqldb:benchmarkDataBase;sql.enforce_size=false";
 				conn = DriverManager.getConnection(url, "sa", "");
+				
+				// TODO - Per Fortify, the connection should use the container's connection pool.
+				// Not the direct/hard coded connection used above
+				//InitialContext ctx = new InitialContext();
+				//DataSource datasource = (DataSource)ctx.lookup(DB_DATASRC_REF);
+				//conn = datasource.getConnection();
+				
 			} catch (SQLException | ClassNotFoundException e) {
 				System.out.println("Problem with getSqlConnection.");
 				e.printStackTrace();
@@ -154,6 +165,12 @@ public class DatabaseHelper {
 		out.write("<!DOCTYPE html>\n<html>\n<body>\n<p>");
 		out.write("Update complete for query: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(sql) + "<br>\n");
 		out.write("</p>\n</body>\n</html>");
+	}
+
+	public static void outputUpdateComplete(String sql, List<StringMessage> resp) throws java.sql.SQLException, IOException {
+		resp.add(new StringMessage("Message",
+				"Update complete for query: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(sql) + "<br>\n"
+		));
 	}
 
 	public static void printResults(java.sql.Statement statement, String sql, HttpServletResponse response) throws java.sql.SQLException, IOException {
@@ -208,6 +225,46 @@ public class DatabaseHelper {
 		
 	} //end printResults
 	
+public static void printResults(java.sql.Statement statement, String sql, List<StringMessage> resp) throws java.sql.SQLException, IOException {
+			try {
+			ResultSet rs = statement.getResultSet();
+			if (rs == null) {
+				resp.add(new StringMessage("Message",
+						"Results set is empty for query: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(sql)
+				));
+				return;
+			}
+			ResultSetMetaData rsmd = rs.getMetaData();
+		    int numberOfColumns = rsmd.getColumnCount();
+		    resp.add(new StringMessage("Message",
+		    		"Your results are:<br>\n"
+		    ));
+		    while (rs.next()) {
+		    	for (int i = 1; i <= numberOfColumns; i++) {
+		          if (i > 1){ 
+		        	  resp.add(new StringMessage("Message",
+		        	  ",  "
+		        			 )); 
+		          	//System.out.println(",  ");
+		          }
+		          String columnValue = rs.getString(i);
+		          resp.add(new StringMessage("Message",
+		        		  ESAPI.encoder().encodeForHTML(columnValue)
+		        		  ));
+		    	} // end for
+		    	resp.add(new StringMessage("Message",
+		    			"<br>\n"
+		    		));
+		    } // end while
+		    
+		} finally {
+			resp.add(new StringMessage("Message",
+					"</p>\n</body>\n</html>"
+	    		));
+		}
+		
+	} //end printResults
+	
 	public static void printResults(java.sql.ResultSet rs, String sql, HttpServletResponse response) throws java.sql.SQLException, IOException {
 		
 		PrintWriter out = response.getWriter();
@@ -237,7 +294,40 @@ public class DatabaseHelper {
 	    out.write("</p>\n</body>\n</html>");
 		}
 	} //end printResults
-	
+
+public static void printResults(java.sql.ResultSet rs, String sql, List<StringMessage> resp) throws java.sql.SQLException, IOException {
+		try {
+			if (rs == null) {
+	        	  resp.add(new StringMessage("Message",
+	        			  "Results set is empty for query: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(sql)
+	        			 ));
+				return;
+			}
+			ResultSetMetaData rsmd = rs.getMetaData();
+		    int numberOfColumns = rsmd.getColumnCount();
+      	  	resp.add(new StringMessage("Message",
+      	  			"Your results are:<br>\n"
+      	  		));
+		    while (rs.next()) {
+		    	for (int i = 1; i <= numberOfColumns; i++) {
+//		          if (i > 1){ out.write(",  "); System.out.println(",  ");}
+		          String columnValue = rs.getString(i);
+	        	  resp.add(new StringMessage("Message",
+	        			  ESAPI.encoder().encodeForHTML(columnValue)
+	        			));
+		    	} // end for
+	        	  resp.add(new StringMessage("Message",
+	        			  "<br>\n"
+	        			  ));
+		    } // end while
+		    
+		} finally {
+      	  resp.add(new StringMessage("Message",
+      			  "</p>\n</body>\n</html>"
+      			  ));
+		}
+	} //end printResults
+
 	public static void printResults(String query, int[] counts, HttpServletResponse response) throws IOException{
 		PrintWriter out = response.getWriter();
 		out.write("<!DOCTYPE html>\n<html>\n<body>\n<p>");
@@ -257,6 +347,36 @@ public class DatabaseHelper {
 			}
 		} finally {
 			out.write("</p>\n</body>\n</html>");
+		}
+	} //end printResults
+	
+	public static void printResults(String query, int[] counts, List<StringMessage> resp) throws IOException{
+		resp.add(new StringMessage("Message",
+				"For query: " + ESAPI.encoder().encodeForHTML(query) + "<br>"
+			));
+		try {
+			if(counts.length > 0){
+				if(counts[0] == Statement.SUCCESS_NO_INFO){
+					resp.add(new StringMessage("Message",
+							"The SQL query was processed successfully but the number of rows affected is unknown."
+						));
+					System.out.println("The SQL query was processed successfully but the number of rows affected is unknown.");
+				}else if(counts[0] == Statement.EXECUTE_FAILED){
+					resp.add(new StringMessage("Message",
+							"The SQL query failed to execute successfully and occurs only if a driver continues to process commands after a command fails"
+						));
+					System.out.println("The SQL query failed to execute successfully and occurs only if a driver continues to process commands after a command fails");
+				}else{
+					resp.add(new StringMessage("Message",
+							"The number of affected rows are: " + counts[0]
+									));
+					System.out.println("The number of affected rows are: " + counts[0]);
+				}
+			}
+		} finally {
+			resp.add(new StringMessage("Message",
+					"</p>\n</body>\n</html>"
+					));
 		}
 	} //end printResults
 	

@@ -36,6 +36,8 @@ public class NoisyCricket {
         try {
 
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+    		// Prevent XXE
+    		docFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
             report = docBuilder.newDocument();
             
@@ -62,7 +64,8 @@ public class NoisyCricket {
                     return FileVisitResult.CONTINUE;
                 }
             };
-            Path p = FileSystems.getDefault().getPath( "/Users/jeffwilliams/git2/");
+            // TODO - Change user.home to be the home directory of the Benchmark project.
+            Path p = FileSystems.getDefault().getPath( System.getProperty("user.home") );
             Files.walkFileTree(p, visitor);
             
             TransformerFactory transformerFactory = TransformerFactory.newInstance();

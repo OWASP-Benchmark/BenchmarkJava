@@ -35,6 +35,8 @@ public class VeracodeReader extends Reader {
 
     public TestResults parse(File f) throws Exception {
         DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+		// Prevent XXE
+		docBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
         DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
         InputSource is = new InputSource(new FileInputStream(f));
         Document doc = docBuilder.parse(is);

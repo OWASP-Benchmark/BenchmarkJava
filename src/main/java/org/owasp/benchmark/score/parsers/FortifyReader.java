@@ -34,13 +34,15 @@ public class FortifyReader extends Reader {
 
 	public TestResults parse( File f ) throws Exception {
 		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+		// Prevent XXE
+		docBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
 		DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 		InputSource is = new InputSource( new FileInputStream(f) );
 		Document doc = docBuilder.parse(is);
 		
 		TestResults tr = new TestResults("HP Fortify", true, TestResults.ToolType.SAST);
 		
-        // If the filename includes an elapsed time in seconds (e.g., TOOLNAME-seconds.xml), 
+        // If the filename includes an elapsed time in seconds (e.g., TOOLNAME-seconds.fpr), 
 		// set the compute time on the score card.
         tr.setFortifyTime(f);
         
@@ -48,14 +50,16 @@ public class FortifyReader extends Reader {
 
         Node root = doc.getDocumentElement();
 				
-        // try to figure out if this is Fortify On-Demand
+        // try to figure out if this is Fortify On-Demand. Note: I believe this only works for
+        // Older versions of Fortify like 4.1. BenchmarkScore contains a test for more recent
+        // versions of Fortify, like 4.3
         Node build = getNamedChild("Build", root );
         String source = getNamedChild( "SourceBasePath", build ).getTextContent();
         if ( source.contains("ronq") ) {
         	tr.setTool( tr.getTool() + "-OnDemand" );
         }
               
-        // FIXME: in the FPR there is audit.xml that has a different version number in it
+		// FIXME: in the FPR there is audit.xml that has a different version number in it
         
         // get engine build version
         Node eData = getNamedChild("EngineData", root );
@@ -67,11 +71,13 @@ public class FortifyReader extends Reader {
 
         List<Node> vulns = getNamedChildren( "Vulnerability", vulnList );		
 		
+//        int i = 0;
         for ( Node flaw : vulns ) {
             TestCaseResult tcr = parseFortifyVulnerability(flaw);
             if (tcr != null ) {
                 tr.put(tcr);
             }
+//            if (++i % 1000 == 0) System.out.println("Processed " + i + " vulns.");
         }
         
 		return tr;	

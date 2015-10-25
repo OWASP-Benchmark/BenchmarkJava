@@ -29,6 +29,7 @@ import java.io.PrintStream;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -43,6 +44,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import javax.resource.NotSupportedException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -503,7 +505,12 @@ public class BenchmarkScore {
 		return or;
 	}
 
-	public static String translate(String category) {
+    /**
+     * This method translates vulnerability categories, e.g., xss, to their long names for human consumption.
+     * @param The category to translate.
+     * @return The human readable value of that category.
+     */
+	public static String translateCategoryToName(String category) {
 		switch( category ) {
 		case "cmdi" : return "Command Injection";
 		case "xss" : return "Cross-Site Scripting";
@@ -521,6 +528,52 @@ public class BenchmarkScore {
 		}
 	}
 
+    /**
+     * This method translates vulnerability categories, e.g., xss, to their CWE number.
+     * @param The category to translate.
+     * @return The CWE # of that category.
+     */
+	public static int translateCategoryToCWE(String category) {
+		switch( category ) {
+		case "cmdi" : return 78;
+		case "xss" : return 79;
+		case "ldapi" : return 90;
+		case "securecookie" : return 614;
+		case "pathtraver" : return 22;
+		case "crypto" : return 327;
+		case "hash" : return 328;
+		case "weakrand" : return 330;
+		case "sqli" : return 89;
+		case "trustbound" : return 501;
+		case "xpathi" : return 643;
+		default : return 0;
+		}
+	}
+	
+    /**
+     * This method translates vulnerability names, e.g., Cross-Site Scripting, to their CWE number.
+     * @param The category to translate.
+     * @return The CWE # of that category.
+     */
+	public static int translateNameToCWE(String category) {
+		switch( category ) {
+		case "Command Injection" : return 78;
+		case "Cross-Site Scripting" : return 79;
+		case "LDAP Injection" : return 90;
+		case "Insecure Cookie" : return 614;
+		case "Path Traversal" : return 22;
+		case "Weak Encryption Algorithm" : return 327;
+		case "Weak Hash Algorithm" : return 328;
+		case "Weak Random Number" : return 330;
+		case "SQL Injection" : return 89;
+		case "Trust Boundary Violation" : return 501;
+		case "XPath Injection" : return 643;
+		default : 
+			System.out.println("Error: Category: " + category + " not supported.");
+			return -1;
+		}
+	}
+	
 	/**
 	 * Return map of category to array of results
 	 * @param expectedResults
@@ -531,7 +584,7 @@ public class BenchmarkScore {
 		
 		for ( Integer tn : expectedResults.keySet() ) {
 			TestCaseResult tcr = expectedResults.get(tn).get(0); // only one
-			String cat = translate( tcr.getCategory() );
+			String cat = translateCategoryToName( tcr.getCategory() );
 
 			Counter c = map.get(cat);
 			if ( c == null ) {
@@ -550,64 +603,64 @@ public class BenchmarkScore {
 	}
 
 
-	private static TestResults readActualResults(File actual) throws Exception {
-		String filename = actual.getName();
+	private static TestResults readActualResults(File fileToParse) throws Exception {
+		String filename = fileToParse.getName();
 		TestResults tr = null;
         
         if ( filename.endsWith(".ozasmt" ) ) {
-            tr = new AppScanSourceReader().parse( actual );
+            tr = new AppScanSourceReader().parse( fileToParse );
         }      
         
         else if ( filename.endsWith(".json" ) ) {
-            String line1 = getLine( actual, 0 );
-            String line2 = getLine( actual, 1 );
+            String line1 = getLine( fileToParse, 0 );
+            String line2 = getLine( fileToParse, 1 );
             if ( line2.contains("formatVersion")) {
-                tr = new CoverityReader().parse( actual );
+                tr = new CoverityReader().parse( fileToParse );
             }
         }
         
 		else if ( filename.endsWith( ".xml" ) ) {
-            String line1 = getLine( actual, 0 );
-            String line2 = getLine( actual, 1 );
+            String line1 = getLine( fileToParse, 0 );
+            String line2 = getLine( fileToParse, 1 );
 		    if ( line2.startsWith( "<pmd")) {
-                tr = new PMDReader().parse( actual );
+                tr = new PMDReader().parse( fileToParse );
 		    }
 		    
             else if ( line2.startsWith( "<BugCollection")) {
-                tr = new FindbugsReader().parse( actual );
+                tr = new FindbugsReader().parse( fileToParse );
                 
                 // change the name of the tool if the filename contains findsecbugs
-                if (actual.getName().contains("findsecbugs")) {
+                if (fileToParse.getName().contains("findsecbugs")) {
                     tr.setTool("FBwFindSecBugs");
                 }
             }
 
             else if ( line2.startsWith( "<ResultsSession")) {
-                tr = new ParasoftReader().parse( actual );
+                tr = new ParasoftReader().parse( fileToParse );
             }
 
             else if ( line2.startsWith( "<detailedreport")) {
-                tr = new VeracodeReader().parse( actual );
+                tr = new VeracodeReader().parse( fileToParse );
             }
 
             else if ( line1.startsWith( "<total")) {
-                tr = new SonarQubeReader().parse( actual );
+                tr = new SonarQubeReader().parse( fileToParse );
             }
             
             else if ( line1.contains( "<OWASPZAPReport") || line2.contains( "<OWASPZAPReport")) {
-                tr = new ZapReader().parse( actual );
+                tr = new ZapReader().parse( fileToParse );
             }
             
             else if ( line2.startsWith( "<CxXMLResults")) {
-                tr = new CheckmarxReader().parse( actual );
+                tr = new CheckmarxReader().parse( fileToParse );
             }
             
             else if ( line2.startsWith( "<report")) {
-                tr = new ArachniReader().parse( actual );
+                tr = new ArachniReader().parse( fileToParse );
             }
 		    
             else {
-                Document doc = getXMLDocument( actual );
+                Document doc = getXMLDocument( fileToParse );
                 Node root = doc.getDocumentElement();
                 if ( root.getNodeName().equals( "issues" ) ) {
                     tr = new BurpReader().parse( root );
@@ -636,20 +689,53 @@ public class BenchmarkScore {
 		}
 		
 		else if ( filename.endsWith( ".fpr" ) ) {
-			Path path = Paths.get(actual.getPath());
+			
+			// .fpr files are really .zip files. So we have to extract the .fvdl file out of it to process it
+			Path path = Paths.get(fileToParse.getPath());
 		    FileSystem fileSystem = FileSystems.newFileSystem(path, null);
 		    File outputFile = File.createTempFile( filename, ".fvdl");
 		    Path source = fileSystem.getPath("audit.fvdl");
 		    Files.copy(source, outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 			tr = new FortifyReader().parse( outputFile );
+			outputFile.delete();
+			
+			// Check to see if the results are regular Fortify or Fortify OnDemand results
+			// To check, you have to look at the filtertemplate.xml file inside the .fpr archive
+			// and see if that file contains: "Fortify-FOD-Template"
+		    outputFile = File.createTempFile( filename + "-filtertemplate", ".xml");
+		    source = fileSystem.getPath("filtertemplate.xml");
+
+			// In older versions of Fortify, like 4.1, the filtertemplate.xml file doesn't exist
+			// So only check it if it exists
+			try {
+			    Files.copy(source, outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+	
+			    BufferedReader br = new BufferedReader(new FileReader(outputFile));
+			    try {
+			        StringBuilder sb = new StringBuilder();
+			        String line = br.readLine();
+			        
+			        // Only read the first 3 lines and the answer is near the top of the file.
+			        int i = 1;
+			        while (line != null && i++ <= 3) {
+			            sb.append(line);
+			            line = br.readLine();
+			        }
+			        if ( sb.indexOf("Fortify-FOD-") > -1 ) {
+			        	tr.setTool( tr.getTool() + "-OnDemand" );
+			        }
+			    } finally {
+			        br.close();
+			    }
+			} catch (NoSuchFileException e) {
+				// Do nothing if the filtertemplate.xml file doesn't exist in the .fpr archive
+			} finally {
+				outputFile.delete();
+			}
 		}
-		
-        else if ( filename.endsWith( ".fvdl" ) ) {
-            tr = new FortifyReader().parse( actual );
-        }
         
         else if ( filename.endsWith( ".zip") ) {
-            tr = new ContrastReader().parse( actual );
+            tr = new ContrastReader().parse( fileToParse );
         }
         
         // If the version # of the tool is specified in the results file name, extract it, and set it.
@@ -910,7 +996,8 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 
                 html = html.replace("${image}", filename + ".png" );
                 html = html.replace( "${title}", fullTitle );
-                html = html.replace( "${vulnerability}", cat );
+                html = html.replace( "${vulnerability}", cat + " (CWE #" 
+                		+ BenchmarkScore.translateNameToCWE(cat) + ")" );
                 html = html.replace( "${version}", benchmarkVersion );
                 
         		String table = generateVulnStatsTable(toolResults, cat);
@@ -1181,6 +1268,8 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 	
 	private static Document getXMLDocument( File f ) throws Exception {
         DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+		// Prevent XXE
+		docBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
         DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
         InputSource is = new InputSource(new FileInputStream(f));
         Document doc = docBuilder.parse(is);

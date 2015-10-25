@@ -64,6 +64,8 @@ public class ContrastReader extends Reader {
 	
 	private TestCaseResult process( TestResults tr, InputStream stream ) throws Exception {
 		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+		// Prevent XXE
+		docBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
 		DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 		InputSource is = new InputSource( stream );
 		Document doc = docBuilder.parse(is);

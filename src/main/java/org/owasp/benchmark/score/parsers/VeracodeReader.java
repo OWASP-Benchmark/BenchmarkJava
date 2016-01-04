@@ -120,7 +120,7 @@ public class VeracodeReader extends Reader {
         tcr.setEvidence( getAttributeValue( "categoryname", flaw ) );
  
         String testcase = getAttributeValue( "sourcefile", flaw );
-        if ( testcase.startsWith( "Benchmark" ) ) {
+        if ( testcase.startsWith( "BenchmarkTest" ) ) {
             String testno = testcase.substring( "BenchmarkTest".length(), testcase.length() -5 );
             tcr.setNumber( Integer.parseInt( testno ) );
             return tcr;

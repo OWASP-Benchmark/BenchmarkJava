@@ -66,10 +66,10 @@ public class BenchmarkRunner {
 
                 // reload page, and if there's a javascript button, click that
                 driver.get(url);
-                Thread.sleep(100);
+                Thread.sleep(500);
                 String jQuerySelector = "#login-btn";
                 js.executeScript("$(\"" + jQuerySelector + "\").click();");
-                Thread.sleep(100);
+                Thread.sleep(500);
             } catch (Exception e) {
                 // This is expected since many pages do not have the jquery button
                 // System.err.println("  -> ERROR: " + e.getMessage());

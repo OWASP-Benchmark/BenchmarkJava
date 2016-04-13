@@ -121,8 +121,12 @@ public class CheckmarxReader extends Reader {
             return null;
         }
 
-		//In the output xml file from Checkmarx there is no attribute on the node "query" named SeverityIndex
-        //tcr.setConfidence( Integer.parseInt( getAttributeValue( "SeverityIndex", result) ) );
+	//Output xml file from Checkmarx (depends on version) sometimes does not
+	//contain attribute on the node "query" named SeverityIndex
+        String SeverityIndex = getAttributeValue( "SeverityIndex", result);
+	if(SeverityIndex != null && !SeverityIndex.equals("")) { 
+		tcr.setConfidence( Integer.parseInt( getAttributeValue( "SeverityIndex", result) ) );
+	}
 
         tcr.setEvidence( getAttributeValue( "name", query ) );
 

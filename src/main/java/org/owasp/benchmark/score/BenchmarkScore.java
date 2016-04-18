@@ -44,7 +44,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import javax.resource.NotSupportedException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -67,10 +66,12 @@ import org.owasp.benchmark.score.parsers.ParasoftReader;
 import org.owasp.benchmark.score.parsers.NoisyCricketReader;
 import org.owasp.benchmark.score.parsers.Rapid7Reader;
 import org.owasp.benchmark.score.parsers.SonarQubeReader;
+import org.owasp.benchmark.score.parsers.SourceMeterReader;
 import org.owasp.benchmark.score.parsers.TestCaseResult;
 import org.owasp.benchmark.score.parsers.TestResults;
 import org.owasp.benchmark.score.parsers.VeracodeReader;
 import org.owasp.benchmark.score.parsers.WebInspectReader;
+import org.owasp.benchmark.score.parsers.XanitizerReader;
 import org.owasp.benchmark.score.parsers.ZapReader;
 import org.owasp.benchmark.score.report.Report;
 import org.owasp.benchmark.score.report.ScatterHome;
@@ -387,7 +388,8 @@ public class BenchmarkScore {
             //System.out.println("Computed actual results for tool: " + actualResults.getTool());
         
             if ( expectedResults != null && actualResults != null ) {
-                // note: side effect is that "pass/fail" value is set for each expected result
+                // note: side effect is that "pass/fail" value is set for each expected result so it
+            	// can be used to produce scorecard for this tool
                 analyze( expectedResults, actualResults );
             
                 // Produce a .csv results file of the actual results, except if its a commercial tool,
@@ -619,6 +621,12 @@ public class BenchmarkScore {
             }
         }
         
+        else if ( filename.endsWith( ".txt" ) ) {
+            String line1 = getLine( fileToParse, 0 );
+            if ( line1.startsWith( "Possible " ) ) {
+                tr = new SourceMeterReader().parse( fileToParse );
+            }
+        }
 		else if ( filename.endsWith( ".xml" ) ) {
             String line1 = getLine( fileToParse, 0 );
             String line2 = getLine( fileToParse, 1 );
@@ -626,6 +634,10 @@ public class BenchmarkScore {
                 tr = new PMDReader().parse( fileToParse );
 		    }
 		    
+		    else if (line2.startsWith("<XanitizerFindingsList")) {
+		        tr = new XanitizerReader().parse(fileToParse);
+		    }
+
             else if ( line2.startsWith( "<BugCollection")) {
                 tr = new FindbugsReader().parse( fileToParse );
                 
@@ -890,7 +902,12 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 				line = fr.readLine();
 				reading = line != null;
 				if ( reading ) {
-					String[] parts = line.split(",");
+				// Normally, each line contains: test name, category, real vulnerability, cwe #
+
+//					String[] parts = line.split(",");
+// regex from http://stackoverflow.com/questions/1757065/java-splitting-a-comma-separated-string-but-ignoring-commas-in-quotes
+					// This regex needed because some 'full details' entries contain comma's inside quoted strings
+					String[] parts = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
 					if ( parts[0] != null && parts[0].startsWith("Bench" ) ) {
 						TestCaseResult tcr = new TestCaseResult();
 						tcr.setTestCaseName(parts[0]);
@@ -900,6 +917,16 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 	
 						String tcname = parts[0].substring( "BenchmarkTest".length() );
 						tcr.setNumber( Integer.parseInt(tcname));
+						
+						// Handle situation where expected results has full details
+						// Sometimes, it also has: source, data flow, data flow filename, sink
+
+						if (parts.length > 4) {
+							tcr.setSource(parts[4]);
+							tcr.setDataFlow(parts[5]);
+							tcr.setDataFlowFile(parts[6]);
+							tcr.setSink(parts[7]);
+						}
 						
 						tr.put( tcr );
 					}
@@ -932,30 +959,37 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 			FileOutputStream fos = new FileOutputStream(resultsFile, false);
 			ps = new PrintStream(fos);
 	
-			// Write actual results header
-			ps.print("# test name, category, real vulnerability, CWE, identified by tool, pass/fail");
+			Set<Integer> testCaseKeys = actual.keySet();
 
-			// Add the version # inside the file as well
-			ps.print(", Benchmark version: " + benchmarkVersion);
+			boolean fulldetails = (actual.get(testCaseKeys.iterator().next()).get(0).getSource() != null);
+				
+			// Write actual results header
+			ps.print("# test name, category, CWE, ");
+			if (fulldetails) ps.print("source, data flow, data flow filename, sink, ");
+			ps.print("real vulnerability, identified by tool, pass/fail, Benchmark version: " + benchmarkVersion);
 			
 			// Append the date YYYY-MM-DD to the header in each .csv file
 			Calendar c = Calendar.getInstance();
 			String s = String.format("%1$tY-%1$tm-%1$te", c);
 			ps.println(", Actual results generated: " + s);
 	
-			Set<Integer> testCaseKeys = actual.keySet();
-			
 			for (Integer expectedResultsKey : testCaseKeys) {
 				// Write meta data to file here.
 				TestCaseResult actualResult = actual.get(expectedResultsKey.intValue()).get(0);
 				ps.print(actualResult.getName());
 				ps.print(", " + actualResult.getCategory());
+				ps.print(", " + actualResult.getCWE());
+				if (fulldetails) {
+					ps.print("," + actualResult.getSource());
+					ps.print("," + actualResult.getDataFlow());
+					ps.print(", " + actualResult.getDataFlowFile());
+					ps.print("," + actualResult.getSink());					
+				}
 				boolean isreal = actualResult.isReal();
 				ps.print(", " + isreal);
-				ps.print(", " + actualResult.getCWE());
 				boolean passed = actualResult.isPassed();
 				boolean toolresult = !(isreal^passed);
-				ps.print(", " + toolresult );
+				ps.print(", " + toolresult);
 				ps.println(", " + (passed ? "pass" : "fail"));
 			}
 			

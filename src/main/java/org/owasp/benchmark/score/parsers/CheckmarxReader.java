@@ -121,8 +121,12 @@ public class CheckmarxReader extends Reader {
             return null;
         }
 
-		//In the output xml file from Checkmarx there is no attribute on the node "query" named SeverityIndex
-        //tcr.setConfidence( Integer.parseInt( getAttributeValue( "SeverityIndex", result) ) );
+	//Output xml file from Checkmarx (depends on version) sometimes does not contain attribute on the node "query" named SeverityIndex
+        String SeverityIndex = getAttributeValue( "SeverityIndex", result);
+	boolean isGeneratedByCxWebClient = SeverityIndex != null && !SeverityIndex.equals("");
+	if(isGeneratedByCxWebClient) { 
+		tcr.setConfidence( Integer.parseInt( getAttributeValue( "SeverityIndex", result) ) );
+	}
 
         tcr.setEvidence( getAttributeValue( "name", query ) );
 
@@ -144,9 +148,14 @@ public class CheckmarxReader extends Reader {
 
 		//If the result starts in a BenchmarkTest file
         String testcase = getAttributeValue("FileName", result);
-		//A change was made in the following line due to the paths in the xml outputs file, they are windows based '\\'
-        testcase = testcase.substring( testcase.lastIndexOf('\\') +1);
-        if ( testcase.startsWith( "BenchmarkTest" ) ) {
+		//Output xml file from Checkmarx (depends on version) may use windows based '\\' or unix based '/' delimiters for path
+		if(isGeneratedByCxWebClient) { 
+			 testcase = testcase.substring( testcase.lastIndexOf('/') +1);
+		}
+		else{
+			 testcase = testcase.substring( testcase.lastIndexOf('\\') +1);
+		}
+		if ( testcase.startsWith( "BenchmarkTest" ) ) {
             String testno = testcase.substring( "BenchmarkTest".length(), testcase.length() -5 );
             try {
                 tcr.setNumber( Integer.parseInt( testno ) );
@@ -157,15 +166,21 @@ public class CheckmarxReader extends Reader {
         }
 		//If not, then the last PastNode must end in a FileName that startsWith BenchmarkTest file
         else{
-          String testcase2 = fileNameNode.getFirstChild().getNodeValue();
-          testcase2 = testcase2.substring( testcase2.lastIndexOf('\\') +1);
-          if ( testcase2.startsWith( "BenchmarkTest" ) ) {
-              String testno2 = testcase2.substring( "BenchmarkTest".length(), testcase2.length() -5 );
-              try {
-                  tcr.setNumber( Integer.parseInt( testno2 ) );
-              } catch ( NumberFormatException e ) {
-                  e.printStackTrace();
-              }
+	        String testcase2 = fileNameNode.getFirstChild().getNodeValue();
+   			//Output xml file from Checkmarx (depends on version) may use windows based '\\' or unix based '/' delimiters for path
+			if(isGeneratedByCxWebClient) { 
+				testcase2 = testcase2.substring( testcase2.lastIndexOf('/') +1);
+		  	}
+			else{
+				testcase2 = testcase2.substring( testcase2.lastIndexOf('\\') +1);
+			}
+			if ( testcase2.startsWith( "BenchmarkTest" ) ) {
+            	String testno2 = testcase2.substring( "BenchmarkTest".length(), testcase2.length() -5 );
+            	try {
+                	tcr.setNumber( Integer.parseInt( testno2 ) );
+              	} catch ( NumberFormatException e ) {
+                	  e.printStackTrace();
+              	}
               return tcr;
           }
         }

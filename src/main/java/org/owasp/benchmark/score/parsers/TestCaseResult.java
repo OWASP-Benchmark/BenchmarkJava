@@ -24,15 +24,21 @@ package org.owasp.benchmark.score.parsers;
 
 public class TestCaseResult {
 
-	String testCaseName = "";
-	int number = 0;
-	boolean real = false;
-	boolean result = false;
-	int CWE = 0;
-	String category = null;
-	String evidence = null;
-	int confidence = 0;
+	private String testCaseName = "";
+	private int number = 0;
+	private boolean real = false;
+	private boolean result = false;
+	private int CWE = 0;
+	private String category = null;
+	private String evidence = null;
+	private int confidence = 0;
 	
+	// optional attributes
+	private String source = null;
+	private String dataflow = null;
+	private String dataflowfile = null;
+	private String sink = null;
+
 	
 	/*
 	 *  Set the name of the test case (E.g., BenchmarkTest00001). This is frequently only used for 
@@ -105,6 +111,38 @@ public class TestCaseResult {
 		this.evidence = evidence;
 	}
 	
+	public String getSource() {
+		return this.source;
+	}
+	
+	public void setSource(String source) {
+		this.source = source;
+	}
+
+	public String getDataFlow() {
+		return this.dataflow;
+	}
+	
+	public void setDataFlow(String dataflow) {
+		this.dataflow = dataflow;
+	}
+
+	public String getDataFlowFile() {
+		return this.dataflowfile;
+	}
+	
+	public void setDataFlowFile(String dataflowfile) {
+		this.dataflowfile = dataflowfile;
+	}
+
+	public String getSink() {
+		return this.sink;
+	}
+
+	public void setSink(String sink) {
+		this.sink = sink;
+	}
+
 	public String toString() {
 		return getNumber() + "," + getCategory() + "," + isReal() + "," + getCWE() + "," + isPassed() + "," + getEvidence() + "," + getConfidence();
 	}

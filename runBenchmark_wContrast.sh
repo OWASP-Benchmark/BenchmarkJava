@@ -15,6 +15,9 @@ if [ -f tools/Contrast/contrast.jar ]; then
   chmod 755 src/main/resources/insecureCmd.sh
   mvn clean package cargo:run -Pdeploywcontrast
 
+  echo "Copying Contrast report to results directory"
+  cp tools/Contrast/working/contrast.log results/Benchmark_1.2beta-Contrast.log
+
 else 
 
   echo "Given that Contrast is a commercial product, you have to have a licensed version of Contrast in order to run it on the Benchmark. If you have access to Contrast, download the Java 1.5 version of contrast.jar from the Team Server and put it into the /tools/Contrast folder, and then rerun this script."

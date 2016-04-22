@@ -23,7 +23,7 @@
 									<goal>java</goal>
 								</goals>
 								<configuration>
-									<mainClass>org.owasp.benchmark.tools.BenchmarkRunner</mainClass>
+									<mainClass>org.owasp.benchmark.tools.BenchmarkCrawler</mainClass>
 								</configuration>
 							</execution>
 						</executions>
@@ -279,7 +279,8 @@
                                             -Xmx4G
                                             -javaagent:${basedir}/tools/Contrast/contrast.jar=${basedir}/tools/Contrast/contrast.config
                                             -Dcontrast.dir=${basedir}/tools/Contrast/working
-                                            -Dcontrast.saveresults=always
+                                            -Dcontrast.log.daily=true
+                                            -Dcontrast.level=debug
                                             -Dcontrast.noteamserver.enable=true
                                             -Dcontrast.teamserver.suppress=true
                                     </cargo.jvmargs>

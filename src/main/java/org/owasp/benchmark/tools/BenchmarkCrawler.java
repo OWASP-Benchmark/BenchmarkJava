@@ -98,7 +98,7 @@ public class BenchmarkCrawler {
         System.out.println( "POST " + post.getURI() );
         try {
             HttpEntity entity = response.getEntity();
-            System.err.println( EntityUtils.toString( entity ) );
+//            System.err.println( EntityUtils.toString( entity ) );
             System.out.println("--> (" + response.getStatusLine().getStatusCode() + ") " );
             EntityUtils.consume(entity);
         } finally {

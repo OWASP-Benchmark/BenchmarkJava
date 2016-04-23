@@ -1,3 +1,3 @@
 #!/bin/sh
 
-mvn install -Pcrawler
+mvn test -Pcrawler

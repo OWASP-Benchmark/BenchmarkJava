@@ -1,2 +1,2 @@
 ﻿
-CALL mvn install -Pcrawler
+CALL mvn test -Pcrawler

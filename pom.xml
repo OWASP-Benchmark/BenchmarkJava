@@ -277,7 +277,7 @@
 								<properties>
                                     <cargo.jvmargs>
                                             -Xmx4G
-                                            -javaagent:${basedir}/tools/Contrast/contrast.jar=${basedir}/tools/Contrast/contrast.config
+                                            -javaagent:${basedir}/tools/Contrast/contrast.jar
                                             -Dcontrast.dir=${basedir}/tools/Contrast/working
                                             -Dcontrast.log.daily=true
                                             -Dcontrast.level=debug

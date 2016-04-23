@@ -61,7 +61,7 @@ public class BenchmarkTest02429 extends HttpServlet {
         	a1 = "sh";
         	a2 = "-c";
         	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("ping -c1");
-        	args = new String[]{a1, a2,cmd + bar};
+                args = new String[]{a1, a2, cmd, bar};
         }
 		
 		Runtime r = Runtime.getRuntime();

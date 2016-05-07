@@ -43,11 +43,11 @@ public class BenchmarkTest00013 extends HttpServlet {
 		
 
 		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("vector");
+		java.util.Enumeration<String> headers = request.getHeaders("referer");
 		if (headers.hasMoreElements()) {
 			param = headers.nextElement(); // just grab first element
 		}
-
+        param = java.net.URLDecoder.decode(param, "UTF-8");
 		
 		Object[] obj = { "a", "b" };
 		response.getWriter().format(java.util.Locale.US,param,obj);

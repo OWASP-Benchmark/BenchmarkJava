@@ -44,7 +44,7 @@ public class BenchmarkTest00008 extends HttpServlet {
 
 		String param = request.getHeader("vector");
 		if (param == null) param = "";
-
+        param = java.net.URLDecoder.decode(param, "UTF-8");
 		
 		String sql = "{call " + param + "}";
 				

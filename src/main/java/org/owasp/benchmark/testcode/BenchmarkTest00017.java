@@ -47,6 +47,7 @@ public class BenchmarkTest00017 extends HttpServlet {
 		if (headers.hasMoreElements()) {
 			param = headers.nextElement(); // just grab first element
 		}
+        param = java.net.URLDecoder.decode(param, "UTF-8");
 
 		
 		String cmd = "";

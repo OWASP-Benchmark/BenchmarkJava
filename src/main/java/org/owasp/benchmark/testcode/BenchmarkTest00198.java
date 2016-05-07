@@ -42,6 +42,9 @@ public class BenchmarkTest00198 extends HttpServlet {
 	
 		String param = request.getHeader("vector");
 		if (param == null) param = "";
+        param = java.net.URLDecoder.decode(param, "UTF-8");
+
+		if (param == null) param = "";
 		
 		
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();

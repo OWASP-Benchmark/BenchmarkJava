@@ -47,6 +47,7 @@ public class BenchmarkTest00018 extends HttpServlet {
 		if (headers.hasMoreElements()) {
 			param = headers.nextElement(); // just grab first element
 		}
+        param = java.net.URLDecoder.decode(param, "UTF-8");
 
 		
 		String sql = "INSERT INTO users (username, password) VALUES ('foo','"+ param + "')";

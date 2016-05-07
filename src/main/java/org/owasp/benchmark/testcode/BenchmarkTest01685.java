@@ -74,7 +74,7 @@ public class BenchmarkTest01685 extends HttpServlet {
         	a1 = "sh";
         	a2 = "-c";
         	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("ls");
-        	args = new String[]{a1, a2,cmd + bar};
+        	args = new String[]{a1, a2,cmd, bar};
         }
         
         String[] argsEnv = { "foo=bar" };

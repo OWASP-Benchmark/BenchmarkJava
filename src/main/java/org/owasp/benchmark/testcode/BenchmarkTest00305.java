@@ -45,6 +45,8 @@ public class BenchmarkTest00305 extends HttpServlet {
 		if (headers.hasMoreElements()) {
 			param = headers.nextElement(); // just grab first element
 		}
+        param = java.net.URLDecoder.decode(param, "UTF-8");
+
 		
 		
 		// Chain a bunch of propagators in sequence

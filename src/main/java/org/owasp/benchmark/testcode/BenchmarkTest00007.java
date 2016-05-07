@@ -44,6 +44,7 @@ public class BenchmarkTest00007 extends HttpServlet {
 
 		String param = request.getHeader("vector");
 		if (param == null) param = "";
+        param = java.net.URLDecoder.decode(param, "UTF-8");
 
 		
 		String cmd = org.owasp.benchmark.helpers.Utils.getInsecureOSCommandString(this.getClass().getClassLoader());

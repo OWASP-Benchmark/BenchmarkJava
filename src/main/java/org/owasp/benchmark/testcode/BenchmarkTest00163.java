@@ -42,6 +42,9 @@ public class BenchmarkTest00163 extends HttpServlet {
 	
 		String param = request.getHeader("vector");
 		if (param == null) param = "";
+        param = java.net.URLDecoder.decode(param, "UTF-8");
+
+		if (param == null) param = "";
 		
 		
 		StringBuilder sbxyz61790 = new StringBuilder(param);

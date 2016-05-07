@@ -44,7 +44,7 @@ public class BenchmarkTest00005 extends HttpServlet {
 
 		String param = request.getHeader("vector");
 		if (param == null) param = "";
-
+        param = java.net.URLDecoder.decode(param, "UTF-8");
 		
 		// Code based on example from:
 		// http://examples.javacodegeeks.com/core-java/crypto/encrypt-decrypt-file-stream-with-des/

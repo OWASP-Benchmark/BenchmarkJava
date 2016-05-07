@@ -40,9 +40,10 @@ public class BenchmarkTest00144 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String param = request.getHeader("vector");
+		String param = request.getHeader("referer");
 		if (param == null) param = "";
-		
+        param = java.net.URLDecoder.decode(param, "UTF-8");
+        
 		
 		String bar = "";
 		if (param != null) {

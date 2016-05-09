@@ -86,7 +86,7 @@
 								<plugin>
 									<groupId>com.h3xstream.findsecbugs</groupId>
 									<artifactId>findsecbugs-plugin</artifactId>
-									<version>1.4.3</version>
+									<version>1.4.5</version>
 								</plugin>
 							</plugins>
 						</configuration>

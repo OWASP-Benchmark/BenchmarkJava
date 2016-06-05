@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00783")
+@WebServlet(value="/pathtraver-00/BenchmarkTest00783")
 public class BenchmarkTest00783 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,15 +41,15 @@ public class BenchmarkTest00783 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		String queryString = request.getQueryString();
-		String paramval = "vector"+"=";
+		String paramval = "BenchmarkTest00783"+"=";
 		int paramLoc = -1;
 		if (queryString != null) paramLoc = queryString.indexOf(paramval);
 		if (paramLoc == -1) {
-			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "vector" + "' in query string.");
+			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "BenchmarkTest00783" + "' in query string.");
 			return;
 		}
 		
-		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "vector" param is last parameter in query string.
+		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "BenchmarkTest00783" param is last parameter in query string.
 		// And then check to see if its in the middle of the query string and if so, trim off what comes after.
 		int ampersandLoc = queryString.indexOf("&", paramLoc);
 		if (ampersandLoc != -1) {
@@ -59,11 +59,11 @@ public class BenchmarkTest00783 extends HttpServlet {
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map9397 = new java.util.HashMap<String,Object>();
-		map9397.put("keyA-9397", "a Value"); // put some stuff in the collection
-		map9397.put("keyB-9397", param); // put it in a collection
-		map9397.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map9397.get("keyB-9397"); // get it back out
+		java.util.HashMap<String,Object> map2299 = new java.util.HashMap<String,Object>();
+		map2299.put("keyA-2299", "a Value"); // put some stuff in the collection
+		map2299.put("keyB-2299", param); // put it in a collection
+		map2299.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map2299.get("keyB-2299"); // get it back out
 		
 		
 		String fileName = null;
@@ -74,12 +74,18 @@ public class BenchmarkTest00783 extends HttpServlet {
 			fis = new java.io.FileInputStream(new java.io.File(fileName));
 			byte[] b = new byte[1000];
 			int size = fis.read(b);
-			response.getWriter().write("The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n");
-			response.getWriter().write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size)));
+			response.getWriter().println(
+"The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n"
+);
+			response.getWriter().println(
+org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size))
+);
 		} catch (Exception e) {
             System.out.println("Couldn't open FileInputStream on file: '" + fileName + "'");
-			response.getWriter().write("Problem getting FileInputStream: " 
-				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage()));
+			response.getWriter().println(
+"Problem getting FileInputStream: " 
+				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage())
+);
         } finally {
 			if (fis != null) {
                 try {
@@ -91,4 +97,5 @@ public class BenchmarkTest00783 extends HttpServlet {
             }
         }
 	}
+	
 }

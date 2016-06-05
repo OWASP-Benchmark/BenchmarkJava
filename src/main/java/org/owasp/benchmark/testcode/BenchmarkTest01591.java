@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01591")
+@WebServlet(value="/xss-03/BenchmarkTest01591")
 public class BenchmarkTest01591 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -40,7 +40,7 @@ public class BenchmarkTest01591 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String[] values = request.getParameterValues("vector");
+		String[] values = request.getParameterValues("BenchmarkTest01591");
 		String param;
 		if (values != null && values.length > 0)
 		  param = values[0];
@@ -52,25 +52,26 @@ public class BenchmarkTest01591 extends HttpServlet {
 		response.getWriter().printf(bar,obj);
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a60565 = param; //assign
-		StringBuilder b60565 = new StringBuilder(a60565);  // stick in stringbuilder
-		b60565.append(" SafeStuff"); // append some safe content
-		b60565.replace(b60565.length()-"Chars".length(),b60565.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map60565 = new java.util.HashMap<String,Object>();
-		map60565.put("key60565", b60565.toString()); // put in a collection
-		String c60565 = (String)map60565.get("key60565"); // get it back out
-		String d60565 = c60565.substring(0,c60565.length()-1); // extract most of it
-		String e60565 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d60565.getBytes() ) )); // B64 encode and decode it
-		String f60565 = e60565.split(" ")[0]; // split it on a space
+		String a1207 = param; //assign
+		StringBuilder b1207 = new StringBuilder(a1207);  // stick in stringbuilder
+		b1207.append(" SafeStuff"); // append some safe content
+		b1207.replace(b1207.length()-"Chars".length(),b1207.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map1207 = new java.util.HashMap<String,Object>();
+		map1207.put("key1207", b1207.toString()); // put in a collection
+		String c1207 = (String)map1207.get("key1207"); // get it back out
+		String d1207 = c1207.substring(0,c1207.length()-1); // extract most of it
+		String e1207 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d1207.getBytes() ) )); // B64 encode and decode it
+		String f1207 = e1207.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g60565 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g60565); // reflection
+		String g1207 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g1207); // reflection
 
             return bar;
         }

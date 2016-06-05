@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest02376")
+@WebServlet(value="/ldapi-00/BenchmarkTest02376")
 public class BenchmarkTest02376 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,7 +41,7 @@ public class BenchmarkTest02376 extends HttpServlet {
 		response.setContentType("text/html");
 
 		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheParameter("vector");
+		String param = scr.getTheParameter("BenchmarkTest02376");
 		if (param == null) param = "";
 
 		String bar = doSomething(param);
@@ -55,7 +55,7 @@ public class BenchmarkTest02376 extends HttpServlet {
 			sc.setSearchScope(javax.naming.directory.SearchControls.SUBTREE_SCOPE);
 			String filter = "(&(objectclass=person))(|(uid="+bar+")(street={0}))";
 			Object[] filters = new Object[]{"The streetz 4 Ms bar"};
-			System.out.println("Filter " + filter);
+			// System.out.println("Filter " + filter);
 			javax.naming.NamingEnumeration<javax.naming.directory.SearchResult> results = ctx.search(base, filter,filters, sc);
 			while (results.hasMore()) {
 				javax.naming.directory.SearchResult sr = (javax.naming.directory.SearchResult) results.next();
@@ -64,11 +64,15 @@ public class BenchmarkTest02376 extends HttpServlet {
 				javax.naming.directory.Attribute attr = attrs.get("uid");
 				javax.naming.directory.Attribute attr2 = attrs.get("street");
 				if (attr != null){
-					response.getWriter().write("LDAP query results:<br>"
+					response.getWriter().println(
+"LDAP query results:<br>"
 							+ " Record found with name " + attr.get() + "<br>"
-									+ "Address: " + attr2.get() + "<br>");
-					System.out.println("record found " + attr.get());
-				}
+									+ "Address: " + attr2.get() + "<br>"
+);
+					// System.out.println("record found " + attr.get());
+				} else response.getWriter().println(
+"LDAP query results: nothing found."
+);
 			}
 	} catch (javax.naming.NamingException e) {
 		throw new ServletException(e);
@@ -81,6 +85,7 @@ public class BenchmarkTest02376 extends HttpServlet {
     }
 	}  // end doPost
 	
+		
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar;

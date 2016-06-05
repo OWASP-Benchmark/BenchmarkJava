@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<script src="https://localhost:8443/benchmark/js/jquery.min.js"></script>
+<script type="text/javascript" src="https://localhost:8443/benchmark/js/js.cookie.js"></script>
+<title>BenchmarkTest01150</title>
+</head>
+<body>
+<form action="/benchmark/crypto-01/BenchmarkTest01150" method="POST" id="FormBenchmarkTest01150">
+    <div><label>Please explain your answer:</label></div>
+    <br/>
+	<div><textarea rows="4" cols="50" id="BenchmarkTest01150Area" name="BenchmarkTest01150Area"></textarea></div>
+	<div><label>Any additional note for the reviewer:</label></div>
+	<div><input type="text" id="answer" name="answer"></input></div>
+    <br/>
+    <div><label>An AJAX request will be sent with a header named BenchmarkTest01150 and value:</label>
+    <input type="text" id="BenchmarkTest01150" name="BenchmarkTest01150" value="someSecret" class="safe"></input></div>
+	<div><input type="button" id="login-btn" value="Login" /></div>
+</form>
+<div id="ajax-form-msg1"><pre><code class="prettyprint" id="code"></code></pre></div>
+<script>
+$('.safe').keypress(function (e) {
+  if (e.which == 13) {
+    $('#login-btn').trigger('click');
+    return false;
+  }
+});
+
+$("#login-btn").click(function(){
+    var formData = $("#FormBenchmarkTest01150").serializeArray();
+    var URL = $("#FormBenchmarkTest01150").attr("action");
+    var text = $("#FormBenchmarkTest01150 input[id=BenchmarkTest01150]").val();
+    $.ajax({
+        url : URL,
+        headers: { 'BenchmarkTest01150': text },
+        type: "POST",
+        data : formData,
+        success: function(data, textStatus, jqXHR){
+			$("#code").text(data);
+        },
+        error: function (jqXHR, textStatus, errorThrown){ alert(errorThrown);}
+    });
+});
+</script>
+</body>
+</html>

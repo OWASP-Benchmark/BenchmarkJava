@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01422")
+@WebServlet(value="/xss-02/BenchmarkTest01422")
 public class BenchmarkTest01422 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -49,7 +49,7 @@ public class BenchmarkTest01422 extends HttpServlet {
 			if (values != null) {
 				for(int i=0;i<values.length && flag; i++){
 					String value = values[i];
-					if (value.equals("vector")) {
+					if (value.equals("BenchmarkTest01422")) {
 						param = name;
 					    flag = false;
 					}
@@ -63,17 +63,18 @@ public class BenchmarkTest01422 extends HttpServlet {
 		response.getWriter().printf(java.util.Locale.US,bar,obj);
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map57611 = new java.util.HashMap<String,Object>();
-		map57611.put("keyA-57611", "a_Value"); // put some stuff in the collection
-		map57611.put("keyB-57611", param); // put it in a collection
-		map57611.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map57611.get("keyB-57611"); // get it back out
-		bar = (String)map57611.get("keyA-57611"); // get safe value back out
+		java.util.HashMap<String,Object> map80775 = new java.util.HashMap<String,Object>();
+		map80775.put("keyA-80775", "a_Value"); // put some stuff in the collection
+		map80775.put("keyB-80775", param); // put it in a collection
+		map80775.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map80775.get("keyB-80775"); // get it back out
+		bar = (String)map80775.get("keyA-80775"); // get safe value back out
 
             return bar;
         }

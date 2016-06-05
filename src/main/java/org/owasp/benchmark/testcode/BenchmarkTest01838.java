@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01838")
+@WebServlet(value="/pathtraver-02/BenchmarkTest01838")
 public class BenchmarkTest01838 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -45,7 +45,7 @@ public class BenchmarkTest01838 extends HttpServlet {
 		String param = "";
 		if (theCookies != null) {
 			for (javax.servlet.http.Cookie theCookie : theCookies) {
-				if (theCookie.getName().equals("vector")) {
+				if (theCookie.getName().equals("BenchmarkTest01838")) {
 					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
 					break;
 				}
@@ -62,12 +62,18 @@ public class BenchmarkTest01838 extends HttpServlet {
 			fis = new java.io.FileInputStream(new java.io.File(fileName));
 			byte[] b = new byte[1000];
 			int size = fis.read(b);
-			response.getWriter().write("The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n");
-			response.getWriter().write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size)));
+			response.getWriter().println(
+"The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n"
+);
+			response.getWriter().println(
+org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size))
+);
 		} catch (Exception e) {
             System.out.println("Couldn't open FileInputStream on file: '" + fileName + "'");
-			response.getWriter().write("Problem getting FileInputStream: " 
-				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage()));
+			response.getWriter().println(
+"Problem getting FileInputStream: " 
+				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage())
+);
         } finally {
 			if (fis != null) {
                 try {
@@ -80,6 +86,7 @@ public class BenchmarkTest01838 extends HttpServlet {
         }
 	}  // end doPost
 	
+		
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar;

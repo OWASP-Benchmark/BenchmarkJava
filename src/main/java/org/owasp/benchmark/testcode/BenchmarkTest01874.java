@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01874")
+@WebServlet(value="/trustbound-01/BenchmarkTest01874")
 public class BenchmarkTest01874 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -45,7 +45,7 @@ public class BenchmarkTest01874 extends HttpServlet {
 		String param = "";
 		if (theCookies != null) {
 			for (javax.servlet.http.Cookie theCookie : theCookies) {
-				if (theCookie.getName().equals("vector")) {
+				if (theCookie.getName().equals("BenchmarkTest01874")) {
 					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
 					break;
 				}
@@ -57,10 +57,13 @@ public class BenchmarkTest01874 extends HttpServlet {
 		// javax.servlet.http.HttpSession.setAttribute(java.lang.String^,java.lang.Object)
 		request.getSession().setAttribute( bar, "10340");
 				
-		response.getWriter().println("Item: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
-			+ "' with value: '10340' saved in session.");
+		response.getWriter().println(
+"Item: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
+			+ "' with value: '10340' saved in session."
+);
 	}  // end doPost
 	
+		
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "";

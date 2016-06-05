@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01500")
+@WebServlet(value="/pathtraver-01/BenchmarkTest01500")
 public class BenchmarkTest01500 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,7 +41,7 @@ public class BenchmarkTest01500 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheParameter("vector");
+		String param = scr.getTheParameter("BenchmarkTest01500");
 		if (param == null) param = "";
 
 		String bar = new Test().doSomething(param);
@@ -54,13 +54,19 @@ public class BenchmarkTest01500 extends HttpServlet {
 			is = java.nio.file.Files.newInputStream(path, java.nio.file.StandardOpenOption.READ);
 			byte[] b = new byte[1000];
 			int size = is.read(b);
-			response.getWriter().write("The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n");
-			response.getWriter().write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size)));
+			response.getWriter().println(
+"The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n"
+);
+			response.getWriter().println(
+org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size))
+);
 			is.close();
 		} catch (Exception e) {
             System.out.println("Couldn't open InputStream on file: '" + fileName + "'");
-			response.getWriter().write("Problem getting InputStream: " 
-				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage()));
+			response.getWriter().println(
+"Problem getting InputStream: " 
+				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage())
+);
         } finally {
 			if (is != null) {
                 try {
@@ -73,16 +79,17 @@ public class BenchmarkTest01500 extends HttpServlet {
         }
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map96432 = new java.util.HashMap<String,Object>();
-		map96432.put("keyA-96432", "a Value"); // put some stuff in the collection
-		map96432.put("keyB-96432", param); // put it in a collection
-		map96432.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map96432.get("keyB-96432"); // get it back out
+		java.util.HashMap<String,Object> map3545 = new java.util.HashMap<String,Object>();
+		map3545.put("keyA-3545", "a Value"); // put some stuff in the collection
+		map3545.put("keyB-3545", param); // put it in a collection
+		map3545.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map3545.get("keyB-3545"); // get it back out
 
             return bar;
         }

@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest02431")
+@WebServlet(value="/cmdi-02/BenchmarkTest02431")
 public class BenchmarkTest02431 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,7 +41,7 @@ public class BenchmarkTest02431 extends HttpServlet {
 		response.setContentType("text/html");
 
 		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheParameter("vector");
+		String param = scr.getTheParameter("BenchmarkTest02431");
 		if (param == null) param = "";
 
 		String bar = doSomething(param);
@@ -61,14 +61,15 @@ public class BenchmarkTest02431 extends HttpServlet {
 		}
 	}  // end doPost
 	
+		
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map27961 = new java.util.HashMap<String,Object>();
-		map27961.put("keyA-27961", "a Value"); // put some stuff in the collection
-		map27961.put("keyB-27961", param); // put it in a collection
-		map27961.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map27961.get("keyB-27961"); // get it back out
+		java.util.HashMap<String,Object> map58889 = new java.util.HashMap<String,Object>();
+		map58889.put("keyA-58889", "a Value"); // put some stuff in the collection
+		map58889.put("keyB-58889", param); // put it in a collection
+		map58889.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map58889.get("keyB-58889"); // get it back out
 	
 		return bar;	
 	}

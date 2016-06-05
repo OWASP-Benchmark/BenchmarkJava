@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01524")
+@WebServlet(value="/securecookie-00/BenchmarkTest01524")
 public class BenchmarkTest01524 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,7 +41,7 @@ public class BenchmarkTest01524 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheParameter("vector");
+		String param = scr.getTheParameter("BenchmarkTest01524");
 		if (param == null) param = "";
 
 		String bar = new Test().doSomething(param);
@@ -53,7 +53,9 @@ public class BenchmarkTest01524 extends HttpServlet {
 		if (inputParam instanceof java.io.InputStream) {
 			int i = ((java.io.InputStream) inputParam).read(input);
 			if (i == -1) {
-				response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+				response.getWriter().println(
+"This input source requires a POST, not a GET. Incompatible UI for the InputStream source."
+);
 				return;
 			}			
 			str = new String(input, 0, i);
@@ -61,14 +63,18 @@ public class BenchmarkTest01524 extends HttpServlet {
 		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie", str);
 		
 		cookie.setSecure(true);
-		cookie.setPath("/benchmark/" + this.getClass().getSimpleName());
-		
+//		cookie.setPath("/benchmark/" + this.getClass().getSimpleName());
+		cookie.setPath(request.getRequestURI()); // i.e., set path to JUST this servlet
+												 // e.g., /benchmark/sql-01/BenchmarkTest01001
 		response.addCookie(cookie);
 
-		response.getWriter().println("Created cookie: SomeCookie: with value: '"
-		  + org.owasp.esapi.ESAPI.encoder().encodeForHTML(str) + "' and secure flag set to: true");
+		response.getWriter().println(
+			"Created cookie: 'SomeCookie': with value: '"
+			+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(str) + "' and secure flag set to: true"
+		);
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {

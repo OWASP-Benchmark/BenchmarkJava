@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00528")
+@WebServlet(value="/pathtraver-00/BenchmarkTest00528")
 public class BenchmarkTest00528 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -49,7 +49,7 @@ public class BenchmarkTest00528 extends HttpServlet {
 			if (values != null) {
 				for(int i=0;i<values.length && flag; i++){
 					String value = values[i];
-					if (value.equals("vector")) {
+					if (value.equals("BenchmarkTest00528")) {
 						param = name;
 					    flag = false;
 					}
@@ -59,11 +59,11 @@ public class BenchmarkTest00528 extends HttpServlet {
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map63802 = new java.util.HashMap<String,Object>();
-		map63802.put("keyA-63802", "a Value"); // put some stuff in the collection
-		map63802.put("keyB-63802", param); // put it in a collection
-		map63802.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map63802.get("keyB-63802"); // get it back out
+		java.util.HashMap<String,Object> map6751 = new java.util.HashMap<String,Object>();
+		map6751.put("keyA-6751", "a Value"); // put some stuff in the collection
+		map6751.put("keyB-6751", param); // put it in a collection
+		map6751.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map6751.get("keyB-6751"); // get it back out
 		
 		
 		// FILE URIs are tricky because they are different between Mac and Windows because of lack of standardization.
@@ -78,12 +78,19 @@ public class BenchmarkTest00528 extends HttpServlet {
 			java.net.URI fileURI = new java.net.URI("file", null, startURIslashes 
 				+ org.owasp.benchmark.helpers.Utils.testfileDir.replace('\\', java.io.File.separatorChar).replace(' ', '_') + bar, null, null);
 			java.io.File fileTarget = new java.io.File(fileURI);
-            response.getWriter().write("Access to file: '" + fileTarget + "' created." );
+            response.getWriter().println(
+"Access to file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileTarget.toString()) + "' created." 
+);
             if (fileTarget.exists()) {
-            response.getWriter().write(" And file already exists.");
-            } else { response.getWriter().write(" But file doesn't exist yet."); }
+            response.getWriter().println(
+" And file already exists."
+);
+            } else { response.getWriter().println(
+" But file doesn't exist yet."
+); }
 		} catch (java.net.URISyntaxException e) {
 			throw new ServletException(e);
 		}
 	}
+	
 }

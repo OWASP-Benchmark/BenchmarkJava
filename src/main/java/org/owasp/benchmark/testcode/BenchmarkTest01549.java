@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01549")
+@WebServlet(value="/trustbound-00/BenchmarkTest01549")
 public class BenchmarkTest01549 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,7 +41,7 @@ public class BenchmarkTest01549 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheParameter("vector");
+		String param = scr.getTheParameter("BenchmarkTest01549");
 		if (param == null) param = "";
 
 		String bar = new Test().doSomething(param);
@@ -49,10 +49,13 @@ public class BenchmarkTest01549 extends HttpServlet {
 		// javax.servlet.http.HttpSession.setAttribute(java.lang.String,java.lang.Object^)
 		request.getSession().setAttribute( "userid", bar);
 				
-		response.getWriter().println("Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
-			+ "' saved in session.");
+		response.getWriter().println(
+		"Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
+			+ "' saved in session."
+);
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {

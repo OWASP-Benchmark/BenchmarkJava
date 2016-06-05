@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00852")
+@WebServlet(value="/xpathi-00/BenchmarkTest00852")
 public class BenchmarkTest00852 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,15 +41,15 @@ public class BenchmarkTest00852 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		String queryString = request.getQueryString();
-		String paramval = "vector"+"=";
+		String paramval = "BenchmarkTest00852"+"=";
 		int paramLoc = -1;
 		if (queryString != null) paramLoc = queryString.indexOf(paramval);
 		if (paramLoc == -1) {
-			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "vector" + "' in query string.");
+			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "BenchmarkTest00852" + "' in query string.");
 			return;
 		}
 		
-		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "vector" param is last parameter in query string.
+		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "BenchmarkTest00852" param is last parameter in query string.
 		// And then check to see if its in the middle of the query string and if so, trim off what comes after.
 		int ampersandLoc = queryString.indexOf("&", paramLoc);
 		if (ampersandLoc != -1) {
@@ -59,25 +59,33 @@ public class BenchmarkTest00852 extends HttpServlet {
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map65281 = new java.util.HashMap<String,Object>();
-		map65281.put("keyA-65281", "a_Value"); // put some stuff in the collection
-		map65281.put("keyB-65281", param); // put it in a collection
-		map65281.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map65281.get("keyB-65281"); // get it back out
-		bar = (String)map65281.get("keyA-65281"); // get safe value back out
+		java.util.HashMap<String,Object> map47458 = new java.util.HashMap<String,Object>();
+		map47458.put("keyA-47458", "a_Value"); // put some stuff in the collection
+		map47458.put("keyB-47458", param); // put it in a collection
+		map47458.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map47458.get("keyB-47458"); // get it back out
+		bar = (String)map47458.get("keyA-47458"); // get safe value back out
 		
 		
 		try {
 			java.io.FileInputStream file = new java.io.FileInputStream(org.owasp.benchmark.helpers.Utils.getFileFromClasspath("employees.xml", this.getClass().getClassLoader()));
 			javax.xml.parsers.DocumentBuilderFactory builderFactory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+			// Prevent XXE
+			builderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
 			javax.xml.parsers.DocumentBuilder builder = builderFactory.newDocumentBuilder();
 			org.w3c.dom.Document xmlDocument = builder.parse(file);
 			javax.xml.xpath.XPathFactory xpf = javax.xml.xpath.XPathFactory.newInstance();
 			javax.xml.xpath.XPath xp = xpf.newXPath();
 			
-			response.getWriter().println("Your query results are: <br/>"); 
+			response.getWriter().println(
+"Your query results are: <br/>"
+);
+ 
 			String expression = "/Employees/Employee[@emplid='"+bar+"']";
-			response.getWriter().println(xp.evaluate(expression, xmlDocument) + "<br/>");
+			response.getWriter().println(
+xp.evaluate(expression, xmlDocument) + "<br/>"
+);
+
 			
 		} catch (javax.xml.xpath.XPathExpressionException e) {
 			// OK to swallow
@@ -88,4 +96,5 @@ public class BenchmarkTest00852 extends HttpServlet {
 			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
 		}
 	}
+	
 }

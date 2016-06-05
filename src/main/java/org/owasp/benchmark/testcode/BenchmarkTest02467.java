@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest02467")
+@WebServlet(value="/pathtraver-03/BenchmarkTest02467")
 public class BenchmarkTest02467 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -40,7 +40,7 @@ public class BenchmarkTest02467 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		String[] values = request.getParameterValues("vector");
+		String[] values = request.getParameterValues("BenchmarkTest02467");
 		String param;
 		if (values != null && values.length > 0)
 		  param = values[0];
@@ -56,8 +56,12 @@ public class BenchmarkTest02467 extends HttpServlet {
 			fis = new java.io.FileInputStream(fileName);
 			byte[] b = new byte[1000];
 			int size = fis.read(b);
-			response.getWriter().write("The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n");
-			response.getWriter().write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size)));
+			response.getWriter().println(
+"The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n"
+);
+			response.getWriter().println(
+org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size))
+);
 		} catch (Exception e) {
 			System.out.println("Couldn't open FileInputStream on file: '" + fileName + "'");
 //			System.out.println("File exception caught and swallowed: " + e.getMessage());
@@ -73,23 +77,24 @@ public class BenchmarkTest02467 extends HttpServlet {
 		}
 	}  // end doPost
 	
+		
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a71027 = param; //assign
-		StringBuilder b71027 = new StringBuilder(a71027);  // stick in stringbuilder
-		b71027.append(" SafeStuff"); // append some safe content
-		b71027.replace(b71027.length()-"Chars".length(),b71027.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map71027 = new java.util.HashMap<String,Object>();
-		map71027.put("key71027", b71027.toString()); // put in a collection
-		String c71027 = (String)map71027.get("key71027"); // get it back out
-		String d71027 = c71027.substring(0,c71027.length()-1); // extract most of it
-		String e71027 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d71027.getBytes() ) )); // B64 encode and decode it
-		String f71027 = e71027.split(" ")[0]; // split it on a space
+		String a60326 = param; //assign
+		StringBuilder b60326 = new StringBuilder(a60326);  // stick in stringbuilder
+		b60326.append(" SafeStuff"); // append some safe content
+		b60326.replace(b60326.length()-"Chars".length(),b60326.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map60326 = new java.util.HashMap<String,Object>();
+		map60326.put("key60326", b60326.toString()); // put in a collection
+		String c60326 = (String)map60326.get("key60326"); // get it back out
+		String d60326 = c60326.substring(0,c60326.length()-1); // extract most of it
+		String e60326 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d60326.getBytes() ) )); // B64 encode and decode it
+		String f60326 = e60326.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g71027 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g71027); // reflection
+		String g60326 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g60326); // reflection
 	
 		return bar;	
 	}

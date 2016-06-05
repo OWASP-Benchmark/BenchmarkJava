@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest02030")
+@WebServlet(value="/pathtraver-02/BenchmarkTest02030")
 public class BenchmarkTest02030 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,12 +41,14 @@ public class BenchmarkTest02030 extends HttpServlet {
 		response.setContentType("text/html");
 
 		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("vector");
-		if (headers.hasMoreElements()) {
+		java.util.Enumeration<String> headers = request.getHeaders("BenchmarkTest02030");
+		
+		if (headers != null && headers.hasMoreElements()) {
 			param = headers.nextElement(); // just grab first element
 		}
-        param = java.net.URLDecoder.decode(param, "UTF-8");
-
+		
+		// URL Decode the header value since req.getHeaders() doesn't. Unlike req.getParameters().
+		param = java.net.URLDecoder.decode(param, "UTF-8");
 
 		String bar = doSomething(param);
 		
@@ -62,32 +64,39 @@ public class BenchmarkTest02030 extends HttpServlet {
 			java.net.URI fileURI = new java.net.URI("file", null, startURIslashes 
 				+ org.owasp.benchmark.helpers.Utils.testfileDir.replace('\\', java.io.File.separatorChar).replace(' ', '_') + bar, null, null);
 			java.io.File fileTarget = new java.io.File(fileURI);
-            response.getWriter().write("Access to file: '" + fileTarget + "' created." );
+            response.getWriter().println(
+"Access to file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileTarget.toString()) + "' created." 
+);
             if (fileTarget.exists()) {
-            response.getWriter().write(" And file already exists.");
-            } else { response.getWriter().write(" But file doesn't exist yet."); }
+            response.getWriter().println(
+" And file already exists."
+);
+            } else { response.getWriter().println(
+" But file doesn't exist yet."
+); }
 		} catch (java.net.URISyntaxException e) {
 			throw new ServletException(e);
 		}
 	}  // end doPost
 	
+		
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a96863 = param; //assign
-		StringBuilder b96863 = new StringBuilder(a96863);  // stick in stringbuilder
-		b96863.append(" SafeStuff"); // append some safe content
-		b96863.replace(b96863.length()-"Chars".length(),b96863.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map96863 = new java.util.HashMap<String,Object>();
-		map96863.put("key96863", b96863.toString()); // put in a collection
-		String c96863 = (String)map96863.get("key96863"); // get it back out
-		String d96863 = c96863.substring(0,c96863.length()-1); // extract most of it
-		String e96863 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d96863.getBytes() ) )); // B64 encode and decode it
-		String f96863 = e96863.split(" ")[0]; // split it on a space
+		String a60868 = param; //assign
+		StringBuilder b60868 = new StringBuilder(a60868);  // stick in stringbuilder
+		b60868.append(" SafeStuff"); // append some safe content
+		b60868.replace(b60868.length()-"Chars".length(),b60868.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map60868 = new java.util.HashMap<String,Object>();
+		map60868.put("key60868", b60868.toString()); // put in a collection
+		String c60868 = (String)map60868.get("key60868"); // get it back out
+		String d60868 = c60868.substring(0,c60868.length()-1); // extract most of it
+		String e60868 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d60868.getBytes() ) )); // B64 encode and decode it
+		String f60868 = e60868.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g96863 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g96863); // reflection
+		String g60868 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g60868); // reflection
 	
 		return bar;	
 	}

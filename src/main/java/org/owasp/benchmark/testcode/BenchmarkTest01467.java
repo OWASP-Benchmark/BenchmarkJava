@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01467")
+@WebServlet(value="/sqli-03/BenchmarkTest01467")
 public class BenchmarkTest01467 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -49,7 +49,7 @@ public class BenchmarkTest01467 extends HttpServlet {
 			if (values != null) {
 				for(int i=0;i<values.length && flag; i++){
 					String value = values[i];
-					if (value.equals("vector")) {
+					if (value.equals("BenchmarkTest01467")) {
 						param = name;
 					    flag = false;
 					}
@@ -64,34 +64,41 @@ public class BenchmarkTest01467 extends HttpServlet {
 	            + bar + "'";
 	
 			java.util.List list = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.queryForList(sql);
-			java.io.PrintWriter out = response.getWriter();
-	        out.write("Your results are: <br>");
+			response.getWriter().println(
+			"Your results are: <br>"
+);
+
 	//		System.out.println("Your results are");
 			
 			for(Object o:list){
-				out.write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(o.toString()) + "<br>");
+				response.getWriter().println(
+				org.owasp.esapi.ESAPI.encoder().encodeForHTML(o.toString()) + "<br>"
+				);
 	//			System.out.println(o.toString());
 			}
 		} catch (org.springframework.dao.DataAccessException e) {
 			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
+        		response.getWriter().println(
+"Error processing request."
+);
         		return;
         	}
 			else throw new ServletException(e);
 		}
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map62287 = new java.util.HashMap<String,Object>();
-		map62287.put("keyA-62287", "a_Value"); // put some stuff in the collection
-		map62287.put("keyB-62287", param); // put it in a collection
-		map62287.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map62287.get("keyB-62287"); // get it back out
-		bar = (String)map62287.get("keyA-62287"); // get safe value back out
+		java.util.HashMap<String,Object> map34856 = new java.util.HashMap<String,Object>();
+		map34856.put("keyA-34856", "a_Value"); // put some stuff in the collection
+		map34856.put("keyB-34856", param); // put it in a collection
+		map34856.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map34856.get("keyB-34856"); // get it back out
+		bar = (String)map34856.get("keyA-34856"); // get safe value back out
 
             return bar;
         }

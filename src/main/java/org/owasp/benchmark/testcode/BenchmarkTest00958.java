@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00958")
+@WebServlet(value="/pathtraver-01/BenchmarkTest00958")
 public class BenchmarkTest00958 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -45,7 +45,7 @@ public class BenchmarkTest00958 extends HttpServlet {
 		String param = "";
 		if (theCookies != null) {
 			for (javax.servlet.http.Cookie theCookie : theCookies) {
-				if (theCookie.getName().equals("vector")) {
+				if (theCookie.getName().equals("BenchmarkTest00958")) {
 					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
 					break;
 				}
@@ -62,13 +62,19 @@ public class BenchmarkTest00958 extends HttpServlet {
 			is = java.nio.file.Files.newInputStream(path, java.nio.file.StandardOpenOption.READ);
 			byte[] b = new byte[1000];
 			int size = is.read(b);
-			response.getWriter().write("The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n");
-			response.getWriter().write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size)));
+			response.getWriter().println(
+"The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n"
+);
+			response.getWriter().println(
+org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size))
+);
 			is.close();
 		} catch (Exception e) {
             System.out.println("Couldn't open InputStream on file: '" + fileName + "'");
-			response.getWriter().write("Problem getting InputStream: " 
-				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage()));
+			response.getWriter().println(
+"Problem getting InputStream: " 
+				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage())
+);
         } finally {
 			if (is != null) {
                 try {
@@ -81,17 +87,18 @@ public class BenchmarkTest00958 extends HttpServlet {
         }
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map34640 = new java.util.HashMap<String,Object>();
-		map34640.put("keyA-34640", "a_Value"); // put some stuff in the collection
-		map34640.put("keyB-34640", param); // put it in a collection
-		map34640.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map34640.get("keyB-34640"); // get it back out
-		bar = (String)map34640.get("keyA-34640"); // get safe value back out
+		java.util.HashMap<String,Object> map37053 = new java.util.HashMap<String,Object>();
+		map37053.put("keyA-37053", "a_Value"); // put some stuff in the collection
+		map37053.put("keyB-37053", param); // put it in a collection
+		map37053.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map37053.get("keyB-37053"); // get it back out
+		bar = (String)map37053.get("keyA-37053"); // get safe value back out
 
             return bar;
         }

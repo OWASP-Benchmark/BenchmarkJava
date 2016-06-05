@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00941")
+@WebServlet(value="/xpathi-00/BenchmarkTest00941")
 public class BenchmarkTest00941 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,7 +41,7 @@ public class BenchmarkTest00941 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheValue("vector");
+		String param = scr.getTheValue("BenchmarkTest00941");
 		
 		
 		String bar = "";
@@ -54,6 +54,8 @@ public class BenchmarkTest00941 extends HttpServlet {
 		try {
 			java.io.FileInputStream file = new java.io.FileInputStream(org.owasp.benchmark.helpers.Utils.getFileFromClasspath("employees.xml", this.getClass().getClassLoader()));
 			javax.xml.parsers.DocumentBuilderFactory builderFactory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+			// Prevent XXE
+			builderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
 			javax.xml.parsers.DocumentBuilder builder = builderFactory.newDocumentBuilder();
 			org.w3c.dom.Document xmlDocument = builder.parse(file);
 			javax.xml.xpath.XPathFactory xpf = javax.xml.xpath.XPathFactory.newInstance();
@@ -61,11 +63,17 @@ public class BenchmarkTest00941 extends HttpServlet {
 			
 			String expression = "/Employees/Employee[@emplid='"+bar+"']";
 			
-			response.getWriter().println("Your query results are: <br/>"); 
+			response.getWriter().println(
+"Your query results are: <br/>"
+);
+ 
 			org.w3c.dom.NodeList nodeList = (org.w3c.dom.NodeList) xp.compile(expression).evaluate(xmlDocument, javax.xml.xpath.XPathConstants.NODESET);
 			for (int i = 0; i < nodeList.getLength(); i++) {
 				org.w3c.dom.Element value = (org.w3c.dom.Element) nodeList.item(i);
-				response.getWriter().println(value.getTextContent() + "<br/>");
+				response.getWriter().println(
+value.getTextContent() + "<br/>"
+);
+
 			}
 		} catch (javax.xml.xpath.XPathExpressionException e) {
 			// OK to swallow
@@ -76,4 +84,5 @@ public class BenchmarkTest00941 extends HttpServlet {
 			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
 		}
 	}
+	
 }

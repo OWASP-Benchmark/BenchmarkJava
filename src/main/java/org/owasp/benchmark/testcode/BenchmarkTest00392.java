@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00392")
+@WebServlet(value="/xss-00/BenchmarkTest00392")
 public class BenchmarkTest00392 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -40,14 +40,14 @@ public class BenchmarkTest00392 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String param = request.getParameter("vector");
+		String param = request.getParameter("BenchmarkTest00392");
 		if (param == null) param = "";
 		
 		
 		String bar = param;
 		if (param != null && param.length() > 1) {
-		    StringBuilder sbxyz51584 = new StringBuilder(param);
-		    bar = sbxyz51584.replace(param.length()-"Z".length(), param.length(),"Z").toString();
+		    StringBuilder sbxyz38384 = new StringBuilder(param);
+		    bar = sbxyz38384.replace(param.length()-"Z".length(), param.length(),"Z").toString();
 		}
 		
 		
@@ -57,4 +57,5 @@ public class BenchmarkTest00392 extends HttpServlet {
 			response.getWriter().write(bar.toCharArray(),0,length);
 		}
 	}
+	
 }

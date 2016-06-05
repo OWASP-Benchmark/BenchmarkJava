@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00824")
+@WebServlet(value="/cmdi-00/BenchmarkTest00824")
 public class BenchmarkTest00824 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,15 +41,15 @@ public class BenchmarkTest00824 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		String queryString = request.getQueryString();
-		String paramval = "vector"+"=";
+		String paramval = "BenchmarkTest00824"+"=";
 		int paramLoc = -1;
 		if (queryString != null) paramLoc = queryString.indexOf(paramval);
 		if (paramLoc == -1) {
-			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "vector" + "' in query string.");
+			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "BenchmarkTest00824" + "' in query string.");
 			return;
 		}
 		
-		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "vector" param is last parameter in query string.
+		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "BenchmarkTest00824" param is last parameter in query string.
 		// And then check to see if its in the middle of the query string and if so, trim off what comes after.
 		int ampersandLoc = queryString.indexOf("&", paramLoc);
 		if (ampersandLoc != -1) {
@@ -59,11 +59,11 @@ public class BenchmarkTest00824 extends HttpServlet {
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map80006 = new java.util.HashMap<String,Object>();
-		map80006.put("keyA-80006", "a Value"); // put some stuff in the collection
-		map80006.put("keyB-80006", param); // put it in a collection
-		map80006.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map80006.get("keyB-80006"); // get it back out
+		java.util.HashMap<String,Object> map57450 = new java.util.HashMap<String,Object>();
+		map57450.put("keyA-57450", "a Value"); // put some stuff in the collection
+		map57450.put("keyB-57450", param); // put it in a collection
+		map57450.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map57450.get("keyB-57450"); // get it back out
 		
 		
 		String cmd = "";	
@@ -81,7 +81,7 @@ public class BenchmarkTest00824 extends HttpServlet {
         	a1 = "sh";
         	a2 = "-c";
         	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("ls");
-                args = new String[]{a1, a2, cmd, bar};
+        	args = new String[]{a1, a2, cmd, bar};
         }
         
         String[] argsEnv = { "foo=bar" };
@@ -96,4 +96,5 @@ public class BenchmarkTest00824 extends HttpServlet {
             throw new ServletException(e);
 		}
 	}
+	
 }

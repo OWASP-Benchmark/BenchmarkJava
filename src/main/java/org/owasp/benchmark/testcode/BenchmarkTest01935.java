@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01935")
+@WebServlet(value="/securecookie-00/BenchmarkTest01935")
 public class BenchmarkTest01935 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -40,11 +40,13 @@ public class BenchmarkTest01935 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		String param = request.getHeader("vector");
-		if (param == null) param = "";
-        param = java.net.URLDecoder.decode(param, "UTF-8");
-
-		if (param == null) param = "";
+		String param = "";
+		if (request.getHeader("BenchmarkTest01935") != null) {
+			param = request.getHeader("BenchmarkTest01935");
+		}
+		
+		// URL Decode the header value since req.getHeader() doesn't. Unlike req.getParameter().
+		param = java.net.URLDecoder.decode(param, "UTF-8");
 
 		String bar = doSomething(param);
 		
@@ -55,7 +57,9 @@ public class BenchmarkTest01935 extends HttpServlet {
 		if (inputParam instanceof java.io.InputStream) {
 			int i = ((java.io.InputStream) inputParam).read(input);
 			if (i == -1) {
-				response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+				response.getWriter().println(
+"This input source requires a POST, not a GET. Incompatible UI for the InputStream source."
+);
 				return;
 			}			
 			str = new String(input, 0, i);
@@ -63,30 +67,34 @@ public class BenchmarkTest01935 extends HttpServlet {
 		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie", str);
 		
 		cookie.setSecure(true);
-		cookie.setPath("/benchmark/" + this.getClass().getSimpleName());
-		
+//		cookie.setPath("/benchmark/" + this.getClass().getSimpleName());
+		cookie.setPath(request.getRequestURI()); // i.e., set path to JUST this servlet
+												 // e.g., /benchmark/sql-01/BenchmarkTest01001
 		response.addCookie(cookie);
 
-		response.getWriter().println("Created cookie: SomeCookie: with value: '"
-		  + org.owasp.esapi.ESAPI.encoder().encodeForHTML(str) + "' and secure flag set to: true");
+		response.getWriter().println(
+			"Created cookie: 'SomeCookie': with value: '"
+			+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(str) + "' and secure flag set to: true"
+		);
 	}  // end doPost
 	
+		
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a89548 = param; //assign
-		StringBuilder b89548 = new StringBuilder(a89548);  // stick in stringbuilder
-		b89548.append(" SafeStuff"); // append some safe content
-		b89548.replace(b89548.length()-"Chars".length(),b89548.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map89548 = new java.util.HashMap<String,Object>();
-		map89548.put("key89548", b89548.toString()); // put in a collection
-		String c89548 = (String)map89548.get("key89548"); // get it back out
-		String d89548 = c89548.substring(0,c89548.length()-1); // extract most of it
-		String e89548 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d89548.getBytes() ) )); // B64 encode and decode it
-		String f89548 = e89548.split(" ")[0]; // split it on a space
+		String a17785 = param; //assign
+		StringBuilder b17785 = new StringBuilder(a17785);  // stick in stringbuilder
+		b17785.append(" SafeStuff"); // append some safe content
+		b17785.replace(b17785.length()-"Chars".length(),b17785.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map17785 = new java.util.HashMap<String,Object>();
+		map17785.put("key17785", b17785.toString()); // put in a collection
+		String c17785 = (String)map17785.get("key17785"); // get it back out
+		String d17785 = c17785.substring(0,c17785.length()-1); // extract most of it
+		String e17785 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d17785.getBytes() ) )); // B64 encode and decode it
+		String f17785 = e17785.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f89548); // reflection
+		String bar = thing.doSomething(f17785); // reflection
 	
 		return bar;	
 	}

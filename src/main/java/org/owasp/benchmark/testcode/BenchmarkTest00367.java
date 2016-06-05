@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00367")
+@WebServlet(value="/ldapi-00/BenchmarkTest00367")
 public class BenchmarkTest00367 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -40,25 +40,25 @@ public class BenchmarkTest00367 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String param = request.getParameter("vector");
+		String param = request.getParameter("BenchmarkTest00367");
 		if (param == null) param = "";
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a25370 = param; //assign
-		StringBuilder b25370 = new StringBuilder(a25370);  // stick in stringbuilder
-		b25370.append(" SafeStuff"); // append some safe content
-		b25370.replace(b25370.length()-"Chars".length(),b25370.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map25370 = new java.util.HashMap<String,Object>();
-		map25370.put("key25370", b25370.toString()); // put in a collection
-		String c25370 = (String)map25370.get("key25370"); // get it back out
-		String d25370 = c25370.substring(0,c25370.length()-1); // extract most of it
-		String e25370 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d25370.getBytes() ) )); // B64 encode and decode it
-		String f25370 = e25370.split(" ")[0]; // split it on a space
+		String a12849 = param; //assign
+		StringBuilder b12849 = new StringBuilder(a12849);  // stick in stringbuilder
+		b12849.append(" SafeStuff"); // append some safe content
+		b12849.replace(b12849.length()-"Chars".length(),b12849.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map12849 = new java.util.HashMap<String,Object>();
+		map12849.put("key12849", b12849.toString()); // put in a collection
+		String c12849 = (String)map12849.get("key12849"); // get it back out
+		String d12849 = c12849.substring(0,c12849.length()-1); // extract most of it
+		String e12849 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d12849.getBytes() ) )); // B64 encode and decode it
+		String f12849 = e12849.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g25370 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g25370); // reflection
+		String g12849 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g12849); // reflection
 		
 		
 	org.owasp.benchmark.helpers.LDAPManager ads = new org.owasp.benchmark.helpers.LDAPManager();
@@ -81,11 +81,15 @@ public class BenchmarkTest00367 extends HttpServlet {
 			javax.naming.directory.Attribute attr = attrs.get("uid");
 			javax.naming.directory.Attribute attr2 = attrs.get("street");
 			if (attr != null){
-				response.getWriter().write("LDAP query results:<br>"
+				response.getWriter().println(
+"LDAP query results:<br>"
 						+ " Record found with name " + attr.get() + "<br>"
-								+ "Address: " + attr2.get()+ "<br>");
-				System.out.println("record found " + attr.get());
-			}
+								+ "Address: " + attr2.get()+ "<br>"
+);
+				// System.out.println("record found " + attr.get());
+			} else response.getWriter().println(
+"LDAP query results: nothing found."
+);
 		}
 	} catch (javax.naming.NamingException e) {
 		throw new ServletException(e);
@@ -97,4 +101,5 @@ public class BenchmarkTest00367 extends HttpServlet {
 		}
     }
 	}
+	
 }

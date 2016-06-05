@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00460")
+@WebServlet(value="/pathtraver-00/BenchmarkTest00460")
 public class BenchmarkTest00460 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -43,27 +43,27 @@ public class BenchmarkTest00460 extends HttpServlet {
 		java.util.Map<String,String[]> map = request.getParameterMap();
 		String param = "";
 		if (!map.isEmpty()) {
-			String[] values = map.get("vector");
+			String[] values = map.get("BenchmarkTest00460");
 			if (values != null) param = values[0];
 		}
 		
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a5952 = param; //assign
-		StringBuilder b5952 = new StringBuilder(a5952);  // stick in stringbuilder
-		b5952.append(" SafeStuff"); // append some safe content
-		b5952.replace(b5952.length()-"Chars".length(),b5952.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map5952 = new java.util.HashMap<String,Object>();
-		map5952.put("key5952", b5952.toString()); // put in a collection
-		String c5952 = (String)map5952.get("key5952"); // get it back out
-		String d5952 = c5952.substring(0,c5952.length()-1); // extract most of it
-		String e5952 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d5952.getBytes() ) )); // B64 encode and decode it
-		String f5952 = e5952.split(" ")[0]; // split it on a space
+		String a62588 = param; //assign
+		StringBuilder b62588 = new StringBuilder(a62588);  // stick in stringbuilder
+		b62588.append(" SafeStuff"); // append some safe content
+		b62588.replace(b62588.length()-"Chars".length(),b62588.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map62588 = new java.util.HashMap<String,Object>();
+		map62588.put("key62588", b62588.toString()); // put in a collection
+		String c62588 = (String)map62588.get("key62588"); // get it back out
+		String d62588 = c62588.substring(0,c62588.length()-1); // extract most of it
+		String e62588 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d62588.getBytes() ) )); // B64 encode and decode it
+		String f62588 = e62588.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g5952 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g5952); // reflection
+		String g62588 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g62588); // reflection
 		
 		
 		String fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
@@ -74,13 +74,19 @@ public class BenchmarkTest00460 extends HttpServlet {
 			is = java.nio.file.Files.newInputStream(path, java.nio.file.StandardOpenOption.READ);
 			byte[] b = new byte[1000];
 			int size = is.read(b);
-			response.getWriter().write("The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n");
-			response.getWriter().write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size)));
+			response.getWriter().println(
+"The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n"
+);
+			response.getWriter().println(
+org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size))
+);
 			is.close();
 		} catch (Exception e) {
             System.out.println("Couldn't open InputStream on file: '" + fileName + "'");
-			response.getWriter().write("Problem getting InputStream: " 
-				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage()));
+			response.getWriter().println(
+"Problem getting InputStream: " 
+				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage())
+);
         } finally {
 			if (is != null) {
                 try {
@@ -92,4 +98,5 @@ public class BenchmarkTest00460 extends HttpServlet {
             }
         }
 	}
+	
 }

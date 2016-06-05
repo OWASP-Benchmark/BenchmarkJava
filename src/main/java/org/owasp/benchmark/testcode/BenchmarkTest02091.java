@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest02091")
+@WebServlet(value="/sqli-04/BenchmarkTest02091")
 public class BenchmarkTest02091 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,12 +41,14 @@ public class BenchmarkTest02091 extends HttpServlet {
 		response.setContentType("text/html");
 
 		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("vector");
-		if (headers.hasMoreElements()) {
+		java.util.Enumeration<String> headers = request.getHeaders("BenchmarkTest02091");
+		
+		if (headers != null && headers.hasMoreElements()) {
 			param = headers.nextElement(); // just grab first element
 		}
-        param = java.net.URLDecoder.decode(param, "UTF-8");
-
+		
+		// URL Decode the header value since req.getHeaders() doesn't. Unlike req.getParameters().
+		param = java.net.URLDecoder.decode(param, "UTF-8");
 
 		String bar = doSomething(param);
 		
@@ -65,23 +67,29 @@ public class BenchmarkTest02091 extends HttpServlet {
 					}
 	            }
 	        });
-			java.io.PrintWriter out = response.getWriter();
-			
-			out.write("Your results are: ");
+			response.getWriter().println(
+			"Your results are: "
+);
+
 	//		System.out.println("Your results are");
 			for(String s : results){
-				out.write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(s) + "<br>");
+				response.getWriter().println(
+					org.owasp.esapi.ESAPI.encoder().encodeForHTML(s) + "<br>"
+				);
 	//			System.out.println(s);
 			}
 		} catch (org.springframework.dao.DataAccessException e) {
 			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
+        		response.getWriter().println(
+"Error processing request."
+);
         		return;
         	}
 			else throw new ServletException(e);
 		}
 	}  // end doPost
 	
+		
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar = param;

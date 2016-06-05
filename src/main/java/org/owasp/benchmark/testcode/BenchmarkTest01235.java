@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01235")
+@WebServlet(value="/pathtraver-01/BenchmarkTest01235")
 public class BenchmarkTest01235 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -40,7 +40,7 @@ public class BenchmarkTest01235 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String param = request.getParameter("vector");
+		String param = request.getParameter("BenchmarkTest01235");
 		if (param == null) param = "";
 
 		String bar = new Test().doSomething(param);
@@ -57,25 +57,32 @@ public class BenchmarkTest01235 extends HttpServlet {
 			java.net.URI fileURI = new java.net.URI("file:" + startURIslashes 
 				+ org.owasp.benchmark.helpers.Utils.testfileDir.replace('\\', '/').replace(' ', '_') + bar);
 			java.io.File fileTarget = new java.io.File(fileURI);
-			response.getWriter().write("Access to file: '" + fileTarget + "' created." );
+			response.getWriter().println(
+"Access to file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileTarget.toString()) + "' created." 
+);
 			if (fileTarget.exists()) {
-				response.getWriter().write(" And file already exists.");
-			} else { response.getWriter().write(" But file doesn't exist yet."); }
+				response.getWriter().println(
+" And file already exists."
+);
+			} else { response.getWriter().println(
+" But file doesn't exist yet."
+); }
 		} catch (java.net.URISyntaxException e) {
 			throw new ServletException(e);
 		}
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map22897 = new java.util.HashMap<String,Object>();
-		map22897.put("keyA-22897", "a Value"); // put some stuff in the collection
-		map22897.put("keyB-22897", param); // put it in a collection
-		map22897.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map22897.get("keyB-22897"); // get it back out
+		java.util.HashMap<String,Object> map13886 = new java.util.HashMap<String,Object>();
+		map13886.put("keyA-13886", "a Value"); // put some stuff in the collection
+		map13886.put("keyB-13886", param); // put it in a collection
+		map13886.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map13886.get("keyB-13886"); // get it back out
 
             return bar;
         }

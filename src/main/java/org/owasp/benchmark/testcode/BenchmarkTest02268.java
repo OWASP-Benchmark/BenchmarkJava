@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest02268")
+@WebServlet(value="/sqli-04/BenchmarkTest02268")
 public class BenchmarkTest02268 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -43,7 +43,7 @@ public class BenchmarkTest02268 extends HttpServlet {
 		java.util.Map<String,String[]> map = request.getParameterMap();
 		String param = "";
 		if (!map.isEmpty()) {
-			String[] values = map.get("vector");
+			String[] values = map.get("BenchmarkTest02268");
 			if (values != null) param = values[0];
 		}
 		
@@ -62,22 +62,25 @@ public class BenchmarkTest02268 extends HttpServlet {
             org.owasp.benchmark.helpers.DatabaseHelper.printResults(statement, sql, response);
 		} catch (java.sql.SQLException e) {
 			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
+        		response.getWriter().println(
+"Error processing request."
+);
         		return;
         	}
 			else throw new ServletException(e);
 		}
 	}  // end doPost
 	
+		
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map71211 = new java.util.HashMap<String,Object>();
-		map71211.put("keyA-71211", "a_Value"); // put some stuff in the collection
-		map71211.put("keyB-71211", param); // put it in a collection
-		map71211.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map71211.get("keyB-71211"); // get it back out
-		bar = (String)map71211.get("keyA-71211"); // get safe value back out
+		java.util.HashMap<String,Object> map95440 = new java.util.HashMap<String,Object>();
+		map95440.put("keyA-95440", "a_Value"); // put some stuff in the collection
+		map95440.put("keyB-95440", param); // put it in a collection
+		map95440.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map95440.get("keyB-95440"); // get it back out
+		bar = (String)map95440.get("keyA-95440"); // get safe value back out
 	
 		return bar;	
 	}

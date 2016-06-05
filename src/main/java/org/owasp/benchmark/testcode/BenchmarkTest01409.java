@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01409")
+@WebServlet(value="/pathtraver-01/BenchmarkTest01409")
 public class BenchmarkTest01409 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -49,7 +49,7 @@ public class BenchmarkTest01409 extends HttpServlet {
 			if (values != null) {
 				for(int i=0;i<values.length && flag; i++){
 					String value = values[i];
-					if (value.equals("vector")) {
+					if (value.equals("BenchmarkTest01409")) {
 						param = name;
 					    flag = false;
 					}
@@ -67,13 +67,19 @@ public class BenchmarkTest01409 extends HttpServlet {
 			is = java.nio.file.Files.newInputStream(path, java.nio.file.StandardOpenOption.READ);
 			byte[] b = new byte[1000];
 			int size = is.read(b);
-			response.getWriter().write("The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n");
-			response.getWriter().write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size)));
+			response.getWriter().println(
+"The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n"
+);
+			response.getWriter().println(
+org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size))
+);
 			is.close();
 		} catch (Exception e) {
             System.out.println("Couldn't open InputStream on file: '" + fileName + "'");
-			response.getWriter().write("Problem getting InputStream: " 
-				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage()));
+			response.getWriter().println(
+"Problem getting InputStream: " 
+				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage())
+);
         } finally {
 			if (is != null) {
                 try {
@@ -86,17 +92,18 @@ public class BenchmarkTest01409 extends HttpServlet {
         }
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map96976 = new java.util.HashMap<String,Object>();
-		map96976.put("keyA-96976", "a_Value"); // put some stuff in the collection
-		map96976.put("keyB-96976", param); // put it in a collection
-		map96976.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map96976.get("keyB-96976"); // get it back out
-		bar = (String)map96976.get("keyA-96976"); // get safe value back out
+		java.util.HashMap<String,Object> map58007 = new java.util.HashMap<String,Object>();
+		map58007.put("keyA-58007", "a_Value"); // put some stuff in the collection
+		map58007.put("keyB-58007", param); // put it in a collection
+		map58007.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map58007.get("keyB-58007"); // get it back out
+		bar = (String)map58007.get("keyA-58007"); // get safe value back out
 
             return bar;
         }

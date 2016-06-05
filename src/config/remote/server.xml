@@ -36,6 +36,15 @@
          UserDatabaseRealm to authenticate users
     -->
     <Resource auth="Container" description="User database that can be updated and saved" factory="org.apache.catalina.users.MemoryUserDatabaseFactory" name="UserDatabase" pathname="conf/tomcat-users.xml" type="org.apache.catalina.UserDatabase"/>
+    <Resource name="jdbc/ApplicationContext_BenchmarkDB"
+            auth="Container"
+            type="javax.sql.DataSource"
+            username="sa"
+            password=""
+            driverClassName="org.hsqldb.jdbc.JDBCDriver"
+            url="jdbc:hsqldb:hsql://localhost/benchmarkDataBase;file:benchmark.db;sql.enforce_size=false;shutdown=false;"
+            maxActive="8"
+            maxIdle="4"/>
   </GlobalNamingResources>
 
   <!-- A "Service" is a collection of one or more "Connectors" that share

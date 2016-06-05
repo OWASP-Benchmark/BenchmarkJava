@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark v1.2beta
+* OWASP Benchmark v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00010")
+@WebServlet(value="/weakrand-00/BenchmarkTest00010")
 public class BenchmarkTest00010 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -43,21 +43,21 @@ public class BenchmarkTest00010 extends HttpServlet {
 		
 
 		String param = "";
-		boolean flag = true;
 		java.util.Enumeration<String> names = request.getHeaderNames();
-		while (names.hasMoreElements() && flag) {
+		while (names.hasMoreElements()) {
 			String name = (String) names.nextElement();
+			
+			if(org.owasp.benchmark.helpers.Utils.commonHeaders.contains(name)){
+				continue;
+			}
+			
 			java.util.Enumeration<String> values = request.getHeaders(name);
-			if (values != null) {
-				while (values.hasMoreElements() && flag) {
-					String value = (String) values.nextElement();
-					if (value.equals("vector")) {
-						param = name;
-						flag = false;
-					}
-				}
+			if (values != null && values.hasMoreElements()) {
+				param = name;
+				break;
 			}
 		}
+		// Note: We don't URL decode header names because people don't normally do that
 
 		
 		try {
@@ -84,23 +84,31 @@ public class BenchmarkTest00010 extends HttpServlet {
 				}
 			}
 
-			
 			if (foundUser) {
-				response.getWriter().println("Welcome back: " + user + "<br/>");			
+				response.getWriter().println(
+"Welcome back: " + user + "<br/>"
+);
 			} else {			
 				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
 				rememberMe.setSecure(true);
-				rememberMe.setPath("/benchmark/" + this.getClass().getSimpleName());
+	//			rememberMe.setPath("/benchmark/" + this.getClass().getSimpleName());
+				rememberMe.setPath(request.getRequestURI()); // i.e., set path to JUST this servlet 
+															 // e.g., /benchmark/sql-01/BenchmarkTest01001
 				request.getSession().setAttribute(cookieName, rememberMeKey);
 				response.addCookie(rememberMe);
-				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-						+ " whose value is: " + rememberMe.getValue() + "<br/>");
+response.getWriter().println(
+user + " has been remembered with cookie: " + rememberMe.getName() 
+						+ " whose value is: " + rememberMe.getValue() + "<br/>"
+);
 			}
-
 	    } catch (java.security.NoSuchAlgorithmException e) {
 			System.out.println("Problem executing SecureRandom.nextInt(int) - TestCase");
 			throw new ServletException(e);
 	    }		
-		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextInt(int) executed");
+		response.getWriter().println(
+"Weak Randomness Test java.security.SecureRandom.nextInt(int) executed"
+);
+
 	}
+	
 }

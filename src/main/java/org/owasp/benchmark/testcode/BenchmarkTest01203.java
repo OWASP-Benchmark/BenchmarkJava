@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01203")
+@WebServlet(value="/trustbound-00/BenchmarkTest01203")
 public class BenchmarkTest01203 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,32 +41,37 @@ public class BenchmarkTest01203 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("vector");
-		if (headers.hasMoreElements()) {
+		java.util.Enumeration<String> headers = request.getHeaders("BenchmarkTest01203");
+		
+		if (headers != null && headers.hasMoreElements()) {
 			param = headers.nextElement(); // just grab first element
 		}
-        param = java.net.URLDecoder.decode(param, "UTF-8");
-
+		
+		// URL Decode the header value since req.getHeaders() doesn't. Unlike req.getParameters().
+		param = java.net.URLDecoder.decode(param, "UTF-8");
 
 		String bar = new Test().doSomething(param);
 		
 		// javax.servlet.http.HttpSession.putValue(java.lang.String,java.lang.Object^)
 		request.getSession().putValue( "userid", bar);
 		
-		response.getWriter().println("Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
-			+ "' saved in session.");
+		response.getWriter().println(
+		"Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
+			+ "' saved in session."
+);
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map5730 = new java.util.HashMap<String,Object>();
-		map5730.put("keyA-5730", "a Value"); // put some stuff in the collection
-		map5730.put("keyB-5730", param); // put it in a collection
-		map5730.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map5730.get("keyB-5730"); // get it back out
+		java.util.HashMap<String,Object> map72700 = new java.util.HashMap<String,Object>();
+		map72700.put("keyA-72700", "a Value"); // put some stuff in the collection
+		map72700.put("keyB-72700", param); // put it in a collection
+		map72700.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map72700.get("keyB-72700"); // get it back out
 
             return bar;
         }

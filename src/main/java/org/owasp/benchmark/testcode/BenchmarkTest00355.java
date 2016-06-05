@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00355")
+@WebServlet(value="/crypto-00/BenchmarkTest00355")
 public class BenchmarkTest00355 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -40,24 +40,24 @@ public class BenchmarkTest00355 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String param = request.getParameter("vector");
+		String param = request.getParameter("BenchmarkTest00355");
 		if (param == null) param = "";
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a92874 = param; //assign
-		StringBuilder b92874 = new StringBuilder(a92874);  // stick in stringbuilder
-		b92874.append(" SafeStuff"); // append some safe content
-		b92874.replace(b92874.length()-"Chars".length(),b92874.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map92874 = new java.util.HashMap<String,Object>();
-		map92874.put("key92874", b92874.toString()); // put in a collection
-		String c92874 = (String)map92874.get("key92874"); // get it back out
-		String d92874 = c92874.substring(0,c92874.length()-1); // extract most of it
-		String e92874 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d92874.getBytes() ) )); // B64 encode and decode it
-		String f92874 = e92874.split(" ")[0]; // split it on a space
+		String a85622 = param; //assign
+		StringBuilder b85622 = new StringBuilder(a85622);  // stick in stringbuilder
+		b85622.append(" SafeStuff"); // append some safe content
+		b85622.replace(b85622.length()-"Chars".length(),b85622.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map85622 = new java.util.HashMap<String,Object>();
+		map85622.put("key85622", b85622.toString()); // put in a collection
+		String c85622 = (String)map85622.get("key85622"); // get it back out
+		String d85622 = c85622.substring(0,c85622.length()-1); // extract most of it
+		String e85622 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d85622.getBytes() ) )); // B64 encode and decode it
+		String f85622 = e85622.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f92874); // reflection
+		String bar = thing.doSomething(f85622); // reflection
 		
 		
 		try {
@@ -78,7 +78,9 @@ public class BenchmarkTest00355 extends HttpServlet {
 				byte[] strInput = new byte[1000];
 				int i = ((java.io.InputStream) inputParam).read(strInput);
 				if (i == -1) {
-					response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+					response.getWriter().println(
+"This input source requires a POST, not a GET. Incompatible UI for the InputStream source."
+);
 					return;
 				}
 				input = java.util.Arrays.copyOf(strInput, i);
@@ -90,30 +92,46 @@ public class BenchmarkTest00355 extends HttpServlet {
 			java.io.FileWriter fw = new java.io.FileWriter(fileTarget,true); //the true will append the new data
 			    fw.write("secret_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
 			fw.close();
-			response.getWriter().println("Sensitive value: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' encrypted and stored<br/>");
+			response.getWriter().println(
+"Sensitive value: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' encrypted and stored<br/>"
+);
+
 			
 		} catch (java.security.NoSuchAlgorithmException e) {
-			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			e.printStackTrace(response.getWriter());
+			response.getWriter().println(
+"Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case"
+);
+e.printStackTrace(response.getWriter());
 			throw new ServletException(e);
 		} catch (javax.crypto.NoSuchPaddingException e) {
-			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			e.printStackTrace(response.getWriter());
+			response.getWriter().println(
+"Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case"
+);
+e.printStackTrace(response.getWriter());
 			throw new ServletException(e);
 		} catch (javax.crypto.IllegalBlockSizeException e) {
-			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			e.printStackTrace(response.getWriter());
+			response.getWriter().println(
+"Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case"
+);
+e.printStackTrace(response.getWriter());
 			throw new ServletException(e);
 		} catch (javax.crypto.BadPaddingException e) {
-			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			e.printStackTrace(response.getWriter());
+			response.getWriter().println(
+"Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case"
+);
+e.printStackTrace(response.getWriter());
 			throw new ServletException(e);
 		} catch (java.security.InvalidKeyException e) {
-			response.getWriter().println("Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case");
-			e.printStackTrace(response.getWriter());
+			response.getWriter().println(
+"Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case"
+);
+e.printStackTrace(response.getWriter());
 			throw new ServletException(e);
 		}
 
-		response.getWriter().println("Crypto Test javax.crypto.Cipher.getInstance(java.lang.String) executed");
+		response.getWriter().println(
+"Crypto Test javax.crypto.Cipher.getInstance(java.lang.String) executed"
+);
 	}
+	
 }

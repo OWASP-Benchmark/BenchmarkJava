@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark v1.2beta
+* OWASP Benchmark v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00012")
+@WebServlet(value="/ldapi-00/BenchmarkTest00012")
 public class BenchmarkTest00012 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -43,11 +43,14 @@ public class BenchmarkTest00012 extends HttpServlet {
 		
 
 		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("vector");
-		if (headers.hasMoreElements()) {
+		java.util.Enumeration<String> headers = request.getHeaders("BenchmarkTest00012");
+		
+		if (headers != null && headers.hasMoreElements()) {
 			param = headers.nextElement(); // just grab first element
 		}
-        param = java.net.URLDecoder.decode(param, "UTF-8");
+		
+		// URL Decode the header value since req.getHeaders() doesn't. Unlike req.getParameters().
+		param = java.net.URLDecoder.decode(param, "UTF-8");
 
 		
 	org.owasp.benchmark.helpers.LDAPManager ads = new org.owasp.benchmark.helpers.LDAPManager();
@@ -70,11 +73,15 @@ public class BenchmarkTest00012 extends HttpServlet {
 			javax.naming.directory.Attribute attr = attrs.get("uid");
 			javax.naming.directory.Attribute attr2 = attrs.get("street");
 			if (attr != null){
-				response.getWriter().write("LDAP query results:<br>"
+				response.getWriter().println(
+"LDAP query results:<br>"
 						+ " Record found with name " + attr.get() + "<br>"
-								+ "Address: " + attr2.get()+ "<br>");
-				System.out.println("record found " + attr.get());
-			}
+								+ "Address: " + attr2.get()+ "<br>"
+);
+				// System.out.println("record found " + attr.get());
+			} else response.getWriter().println(
+"LDAP query results: nothing found."
+);
 		}
 	} catch (javax.naming.NamingException e) {
 		throw new ServletException(e);
@@ -86,4 +93,5 @@ public class BenchmarkTest00012 extends HttpServlet {
 		}
     }
 	}
+	
 }

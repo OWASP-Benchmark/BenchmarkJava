@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00532")
+@WebServlet(value="/hash-00/BenchmarkTest00532")
 public class BenchmarkTest00532 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -49,7 +49,7 @@ public class BenchmarkTest00532 extends HttpServlet {
 			if (values != null) {
 				for(int i=0;i<values.length && flag; i++){
 					String value = values[i];
-					if (value.equals("vector")) {
+					if (value.equals("BenchmarkTest00532")) {
 						param = name;
 					    flag = false;
 					}
@@ -59,19 +59,19 @@ public class BenchmarkTest00532 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a50858 = param; //assign
-		StringBuilder b50858 = new StringBuilder(a50858);  // stick in stringbuilder
-		b50858.append(" SafeStuff"); // append some safe content
-		b50858.replace(b50858.length()-"Chars".length(),b50858.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map50858 = new java.util.HashMap<String,Object>();
-		map50858.put("key50858", b50858.toString()); // put in a collection
-		String c50858 = (String)map50858.get("key50858"); // get it back out
-		String d50858 = c50858.substring(0,c50858.length()-1); // extract most of it
-		String e50858 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d50858.getBytes() ) )); // B64 encode and decode it
-		String f50858 = e50858.split(" ")[0]; // split it on a space
+		String a25409 = param; //assign
+		StringBuilder b25409 = new StringBuilder(a25409);  // stick in stringbuilder
+		b25409.append(" SafeStuff"); // append some safe content
+		b25409.replace(b25409.length()-"Chars".length(),b25409.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map25409 = new java.util.HashMap<String,Object>();
+		map25409.put("key25409", b25409.toString()); // put in a collection
+		String c25409 = (String)map25409.get("key25409"); // get it back out
+		String d25409 = c25409.substring(0,c25409.length()-1); // extract most of it
+		String e25409 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d25409.getBytes() ) )); // B64 encode and decode it
+		String f25409 = e25409.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f50858); // reflection
+		String bar = thing.doSomething(f25409); // reflection
 		
 		
 		try {
@@ -83,7 +83,9 @@ public class BenchmarkTest00532 extends HttpServlet {
 				byte[] strInput = new byte[1000];
 				int i = ((java.io.InputStream) inputParam).read(strInput);
 				if (i == -1) {
-					response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+					response.getWriter().println(
+"This input source requires a POST, not a GET. Incompatible UI for the InputStream source."
+);
 					return;
 				}
 				input = java.util.Arrays.copyOf(strInput, i);
@@ -96,7 +98,10 @@ public class BenchmarkTest00532 extends HttpServlet {
 			java.io.FileWriter fw = new java.io.FileWriter(fileTarget,true); //the true will append the new data
 			    fw.write("hash_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
 			fw.close();
-			response.getWriter().println("Sensitive value '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' hashed and stored<br/>");
+			response.getWriter().println(
+"Sensitive value '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' hashed and stored<br/>"
+);
+
 		} catch (java.security.NoSuchAlgorithmException e) {
 			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.lang.String)");
 			throw new ServletException(e);			
@@ -105,6 +110,9 @@ public class BenchmarkTest00532 extends HttpServlet {
 			throw new ServletException(e);
 		}
 
-		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.lang.String) executed");
+		response.getWriter().println(
+"Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.lang.String) executed"
+);
 	}
+	
 }

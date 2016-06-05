@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00435")
+@WebServlet(value="/sqli-00/BenchmarkTest00435")
 public class BenchmarkTest00435 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -40,16 +40,16 @@ public class BenchmarkTest00435 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String param = request.getParameter("vector");
+		String param = request.getParameter("BenchmarkTest00435");
 		if (param == null) param = "";
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map59044 = new java.util.HashMap<String,Object>();
-		map59044.put("keyA-59044", "a Value"); // put some stuff in the collection
-		map59044.put("keyB-59044", param); // put it in a collection
-		map59044.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map59044.get("keyB-59044"); // get it back out
+		java.util.HashMap<String,Object> map86691 = new java.util.HashMap<String,Object>();
+		map86691.put("keyA-86691", "a Value"); // put some stuff in the collection
+		map86691.put("keyB-86691", param); // put it in a collection
+		map86691.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map86691.get("keyB-86691"); // get it back out
 		
 		
 		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
@@ -61,10 +61,13 @@ public class BenchmarkTest00435 extends HttpServlet {
             org.owasp.benchmark.helpers.DatabaseHelper.printResults(sql, counts, response);
 		} catch (java.sql.SQLException e) {
 			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
+        		response.getWriter().println(
+"Error processing request."
+);
         		return;
         	}
 			else throw new ServletException(e);
 		}
 	}
+	
 }

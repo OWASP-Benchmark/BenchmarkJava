@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01460")
+@WebServlet(value="/sqli-03/BenchmarkTest01460")
 public class BenchmarkTest01460 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -49,7 +49,7 @@ public class BenchmarkTest01460 extends HttpServlet {
 			if (values != null) {
 				for(int i=0;i<values.length && flag; i++){
 					String value = values[i];
-					if (value.equals("vector")) {
+					if (value.equals("BenchmarkTest01460")) {
 						param = name;
 					    flag = false;
 					}
@@ -69,23 +69,26 @@ public class BenchmarkTest01460 extends HttpServlet {
             org.owasp.benchmark.helpers.DatabaseHelper.printResults(rs, sql, response);
 		} catch (java.sql.SQLException e) {
 			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
+        		response.getWriter().println(
+"Error processing request."
+);
         		return;
         	}
 			else throw new ServletException(e);
 		}
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map67600 = new java.util.HashMap<String,Object>();
-		map67600.put("keyA-67600", "a Value"); // put some stuff in the collection
-		map67600.put("keyB-67600", param); // put it in a collection
-		map67600.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map67600.get("keyB-67600"); // get it back out
+		java.util.HashMap<String,Object> map72098 = new java.util.HashMap<String,Object>();
+		map72098.put("keyA-72098", "a Value"); // put some stuff in the collection
+		map72098.put("keyB-72098", param); // put it in a collection
+		map72098.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map72098.get("keyB-72098"); // get it back out
 
             return bar;
         }

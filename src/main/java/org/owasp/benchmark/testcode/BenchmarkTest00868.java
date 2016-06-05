@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00868")
+@WebServlet(value="/hash-01/BenchmarkTest00868")
 public class BenchmarkTest00868 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,23 +41,23 @@ public class BenchmarkTest00868 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheValue("vector");
+		String param = scr.getTheValue("BenchmarkTest00868");
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a23801 = param; //assign
-		StringBuilder b23801 = new StringBuilder(a23801);  // stick in stringbuilder
-		b23801.append(" SafeStuff"); // append some safe content
-		b23801.replace(b23801.length()-"Chars".length(),b23801.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map23801 = new java.util.HashMap<String,Object>();
-		map23801.put("key23801", b23801.toString()); // put in a collection
-		String c23801 = (String)map23801.get("key23801"); // get it back out
-		String d23801 = c23801.substring(0,c23801.length()-1); // extract most of it
-		String e23801 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d23801.getBytes() ) )); // B64 encode and decode it
-		String f23801 = e23801.split(" ")[0]; // split it on a space
+		String a51118 = param; //assign
+		StringBuilder b51118 = new StringBuilder(a51118);  // stick in stringbuilder
+		b51118.append(" SafeStuff"); // append some safe content
+		b51118.replace(b51118.length()-"Chars".length(),b51118.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map51118 = new java.util.HashMap<String,Object>();
+		map51118.put("key51118", b51118.toString()); // put in a collection
+		String c51118 = (String)map51118.get("key51118"); // get it back out
+		String d51118 = c51118.substring(0,c51118.length()-1); // extract most of it
+		String e51118 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d51118.getBytes() ) )); // B64 encode and decode it
+		String f51118 = e51118.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f23801); // reflection
+		String bar = thing.doSomething(f51118); // reflection
 		
 		
 		java.security.Provider[] provider = java.security.Security.getProviders();
@@ -77,7 +77,9 @@ public class BenchmarkTest00868 extends HttpServlet {
 				byte[] strInput = new byte[1000];
 				int i = ((java.io.InputStream) inputParam).read(strInput);
 				if (i == -1) {
-					response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+					response.getWriter().println(
+"This input source requires a POST, not a GET. Incompatible UI for the InputStream source."
+);
 					return;
 				}
 				input = java.util.Arrays.copyOf(strInput, i);
@@ -90,7 +92,10 @@ public class BenchmarkTest00868 extends HttpServlet {
 			java.io.FileWriter fw = new java.io.FileWriter(fileTarget,true); //the true will append the new data
 			    fw.write("hash_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
 			fw.close();
-			response.getWriter().println("Sensitive value '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' hashed and stored<br/>");
+			response.getWriter().println(
+"Sensitive value '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' hashed and stored<br/>"
+);
+
 		} catch (java.security.NoSuchAlgorithmException e) {
 			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider)");
             throw new ServletException(e);
@@ -99,6 +104,9 @@ public class BenchmarkTest00868 extends HttpServlet {
             throw new ServletException(e);
 		}
 
-		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider) executed");
+		response.getWriter().println(
+"Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider) executed"
+);
 	}
+	
 }

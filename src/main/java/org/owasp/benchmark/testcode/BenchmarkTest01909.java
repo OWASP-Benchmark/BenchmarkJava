@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01909")
+@WebServlet(value="/ldapi-00/BenchmarkTest01909")
 public class BenchmarkTest01909 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -40,11 +40,13 @@ public class BenchmarkTest01909 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		String param = request.getHeader("vector");
-		if (param == null) param = "";
-        param = java.net.URLDecoder.decode(param, "UTF-8");
-
-		if (param == null) param = "";
+		String param = "";
+		if (request.getHeader("BenchmarkTest01909") != null) {
+			param = request.getHeader("BenchmarkTest01909");
+		}
+		
+		// URL Decode the header value since req.getHeader() doesn't. Unlike req.getParameter().
+		param = java.net.URLDecoder.decode(param, "UTF-8");
 
 		String bar = doSomething(param);
 		
@@ -69,11 +71,15 @@ public class BenchmarkTest01909 extends HttpServlet {
 			javax.naming.directory.Attribute attr = attrs.get("uid");
 			javax.naming.directory.Attribute attr2 = attrs.get("street");
 			if (attr != null){
-				response.getWriter().write("LDAP query results:<br>"
+				response.getWriter().println(
+"LDAP query results:<br>"
 						+ " Record found with name " + attr.get() + "<br>"
-								+ "Address: " + attr2.get()+ "<br>");
-				System.out.println("record found " + attr.get());
-			}
+								+ "Address: " + attr2.get()+ "<br>"
+);
+				// System.out.println("record found " + attr.get());
+			} else response.getWriter().println(
+"LDAP query results: nothing found."
+);
 		}
 	} catch (javax.naming.NamingException e) {
 		throw new ServletException(e);
@@ -86,15 +92,16 @@ public class BenchmarkTest01909 extends HttpServlet {
     }
 	}  // end doPost
 	
+		
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map76152 = new java.util.HashMap<String,Object>();
-		map76152.put("keyA-76152", "a_Value"); // put some stuff in the collection
-		map76152.put("keyB-76152", param); // put it in a collection
-		map76152.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map76152.get("keyB-76152"); // get it back out
-		bar = (String)map76152.get("keyA-76152"); // get safe value back out
+		java.util.HashMap<String,Object> map30748 = new java.util.HashMap<String,Object>();
+		map30748.put("keyA-30748", "a_Value"); // put some stuff in the collection
+		map30748.put("keyB-30748", param); // put it in a collection
+		map30748.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map30748.get("keyB-30748"); // get it back out
+		bar = (String)map30748.get("keyA-30748"); // get safe value back out
 	
 		return bar;	
 	}

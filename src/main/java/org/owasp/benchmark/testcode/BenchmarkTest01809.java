@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01809")
+@WebServlet(value="/sqli-03/BenchmarkTest01809")
 public class BenchmarkTest01809 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,7 +41,7 @@ public class BenchmarkTest01809 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheValue("vector");
+		String param = scr.getTheValue("BenchmarkTest01809");
 
 		String bar = new Test().doSomething(param);
 		
@@ -50,42 +50,49 @@ public class BenchmarkTest01809 extends HttpServlet {
 	            + bar + "'";
 	
 			java.util.List list = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.queryForList(sql);
-			java.io.PrintWriter out = response.getWriter();
-	        out.write("Your results are: <br>");
+			response.getWriter().println(
+			"Your results are: <br>"
+);
+
 	//		System.out.println("Your results are");
 			
 			for(Object o:list){
-				out.write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(o.toString()) + "<br>");
+				response.getWriter().println(
+				org.owasp.esapi.ESAPI.encoder().encodeForHTML(o.toString()) + "<br>"
+				);
 	//			System.out.println(o.toString());
 			}
 		} catch (org.springframework.dao.DataAccessException e) {
 			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
+        		response.getWriter().println(
+"Error processing request."
+);
         		return;
         	}
 			else throw new ServletException(e);
 		}
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a1766 = param; //assign
-		StringBuilder b1766 = new StringBuilder(a1766);  // stick in stringbuilder
-		b1766.append(" SafeStuff"); // append some safe content
-		b1766.replace(b1766.length()-"Chars".length(),b1766.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map1766 = new java.util.HashMap<String,Object>();
-		map1766.put("key1766", b1766.toString()); // put in a collection
-		String c1766 = (String)map1766.get("key1766"); // get it back out
-		String d1766 = c1766.substring(0,c1766.length()-1); // extract most of it
-		String e1766 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d1766.getBytes() ) )); // B64 encode and decode it
-		String f1766 = e1766.split(" ")[0]; // split it on a space
+		String a64594 = param; //assign
+		StringBuilder b64594 = new StringBuilder(a64594);  // stick in stringbuilder
+		b64594.append(" SafeStuff"); // append some safe content
+		b64594.replace(b64594.length()-"Chars".length(),b64594.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map64594 = new java.util.HashMap<String,Object>();
+		map64594.put("key64594", b64594.toString()); // put in a collection
+		String c64594 = (String)map64594.get("key64594"); // get it back out
+		String d64594 = c64594.substring(0,c64594.length()-1); // extract most of it
+		String e64594 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d64594.getBytes() ) )); // B64 encode and decode it
+		String f64594 = e64594.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g1766 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g1766); // reflection
+		String g64594 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g64594); // reflection
 
             return bar;
         }

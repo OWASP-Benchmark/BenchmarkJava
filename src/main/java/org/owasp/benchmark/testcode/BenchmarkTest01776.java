@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01776")
+@WebServlet(value="/xss-03/BenchmarkTest01776")
 public class BenchmarkTest01776 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,7 +41,7 @@ public class BenchmarkTest01776 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheValue("vector");
+		String param = scr.getTheValue("BenchmarkTest01776");
 
 		String bar = new Test().doSomething(param);
 		
@@ -52,17 +52,18 @@ public class BenchmarkTest01776 extends HttpServlet {
 		}
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map4667 = new java.util.HashMap<String,Object>();
-		map4667.put("keyA-4667", "a_Value"); // put some stuff in the collection
-		map4667.put("keyB-4667", param); // put it in a collection
-		map4667.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map4667.get("keyB-4667"); // get it back out
-		bar = (String)map4667.get("keyA-4667"); // get safe value back out
+		java.util.HashMap<String,Object> map3531 = new java.util.HashMap<String,Object>();
+		map3531.put("keyA-3531", "a_Value"); // put some stuff in the collection
+		map3531.put("keyB-3531", param); // put it in a collection
+		map3531.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map3531.get("keyB-3531"); // get it back out
+		bar = (String)map3531.get("keyA-3531"); // get safe value back out
 
             return bar;
         }

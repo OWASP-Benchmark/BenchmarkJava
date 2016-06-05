@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00739")
+@WebServlet(value="/cmdi-00/BenchmarkTest00739")
 public class BenchmarkTest00739 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -40,7 +40,7 @@ public class BenchmarkTest00739 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String[] values = request.getParameterValues("vector");
+		String[] values = request.getParameterValues("BenchmarkTest00739");
 		String param;
 		if (values != null && values.length > 0)
 		  param = values[0];
@@ -71,7 +71,7 @@ public class BenchmarkTest00739 extends HttpServlet {
         	a1 = "sh";
         	a2 = "-c";
         	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("ls");
-                args = new String[]{a1, a2, cmd, bar};
+        	args = new String[]{a1, a2, cmd, bar};
         }
         
         String[] argsEnv = { "foo=bar" };
@@ -86,4 +86,5 @@ public class BenchmarkTest00739 extends HttpServlet {
             throw new ServletException(e);
 		}
 	}
+	
 }

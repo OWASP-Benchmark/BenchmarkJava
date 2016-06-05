@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00135")
+@WebServlet(value="/pathtraver-00/BenchmarkTest00135")
 public class BenchmarkTest00135 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -40,11 +40,13 @@ public class BenchmarkTest00135 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String param = request.getHeader("vector");
-		if (param == null) param = "";
-        param = java.net.URLDecoder.decode(param, "UTF-8");
-
-		if (param == null) param = "";
+		String param = "";
+		if (request.getHeader("BenchmarkTest00135") != null) {
+			param = request.getHeader("BenchmarkTest00135");
+		}
+		
+		// URL Decode the header value since req.getHeader() doesn't. Unlike req.getParameter().
+		param = java.net.URLDecoder.decode(param, "UTF-8");
 		
 		
 		String bar;
@@ -85,7 +87,10 @@ public class BenchmarkTest00135 extends HttpServlet {
 	        java.io.FileInputStream fileInputStream = new java.io.FileInputStream(fileName);
 	        java.io.FileDescriptor fd = fileInputStream.getFD();
 	        fos = new java.io.FileOutputStream(fd);
-	        response.getWriter().write("Now ready to write to file: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName));
+	        response.getWriter().println(
+			"Now ready to write to file: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName)
+);
+
 		} catch (Exception e) {
 			System.out.println("Couldn't open FileOutputStream on file: '" + fileName + "'");
 //			System.out.println("File exception caught and swallowed: " + e.getMessage());
@@ -100,4 +105,5 @@ public class BenchmarkTest00135 extends HttpServlet {
 			}
 		}
 	}
+	
 }

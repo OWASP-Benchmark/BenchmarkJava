@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01849")
+@WebServlet(value="/hash-02/BenchmarkTest01849")
 public class BenchmarkTest01849 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -45,7 +45,7 @@ public class BenchmarkTest01849 extends HttpServlet {
 		String param = "";
 		if (theCookies != null) {
 			for (javax.servlet.http.Cookie theCookie : theCookies) {
-				if (theCookie.getName().equals("vector")) {
+				if (theCookie.getName().equals("BenchmarkTest01849")) {
 					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
 					break;
 				}
@@ -63,7 +63,9 @@ public class BenchmarkTest01849 extends HttpServlet {
 				byte[] strInput = new byte[1000];
 				int i = ((java.io.InputStream) inputParam).read(strInput);
 				if (i == -1) {
-					response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+					response.getWriter().println(
+"This input source requires a POST, not a GET. Incompatible UI for the InputStream source."
+);
 					return;
 				}
 				input = java.util.Arrays.copyOf(strInput, i);
@@ -76,7 +78,10 @@ public class BenchmarkTest01849 extends HttpServlet {
 			java.io.FileWriter fw = new java.io.FileWriter(fileTarget,true); //the true will append the new data
 			    fw.write("hash_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
 			fw.close();
-			response.getWriter().println("Sensitive value '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' hashed and stored<br/>");
+			response.getWriter().println(
+"Sensitive value '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' hashed and stored<br/>"
+);
+
 		} catch (java.security.NoSuchAlgorithmException e) {
 			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.lang.String)");
             throw new ServletException(e);
@@ -85,26 +90,29 @@ public class BenchmarkTest01849 extends HttpServlet {
             throw new ServletException(e);
 		}
 
-		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.lang.String) executed");
+		response.getWriter().println(
+"Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.lang.String) executed"
+);
 	}  // end doPost
 	
+		
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a12158 = param; //assign
-		StringBuilder b12158 = new StringBuilder(a12158);  // stick in stringbuilder
-		b12158.append(" SafeStuff"); // append some safe content
-		b12158.replace(b12158.length()-"Chars".length(),b12158.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map12158 = new java.util.HashMap<String,Object>();
-		map12158.put("key12158", b12158.toString()); // put in a collection
-		String c12158 = (String)map12158.get("key12158"); // get it back out
-		String d12158 = c12158.substring(0,c12158.length()-1); // extract most of it
-		String e12158 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d12158.getBytes() ) )); // B64 encode and decode it
-		String f12158 = e12158.split(" ")[0]; // split it on a space
+		String a45344 = param; //assign
+		StringBuilder b45344 = new StringBuilder(a45344);  // stick in stringbuilder
+		b45344.append(" SafeStuff"); // append some safe content
+		b45344.replace(b45344.length()-"Chars".length(),b45344.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map45344 = new java.util.HashMap<String,Object>();
+		map45344.put("key45344", b45344.toString()); // put in a collection
+		String c45344 = (String)map45344.get("key45344"); // get it back out
+		String d45344 = c45344.substring(0,c45344.length()-1); // extract most of it
+		String e45344 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d45344.getBytes() ) )); // B64 encode and decode it
+		String f45344 = e45344.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g12158 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g12158); // reflection
+		String g45344 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g45344); // reflection
 	
 		return bar;	
 	}

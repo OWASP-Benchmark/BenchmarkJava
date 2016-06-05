@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01362")
+@WebServlet(value="/cmdi-01/BenchmarkTest01362")
 public class BenchmarkTest01362 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -43,7 +43,7 @@ public class BenchmarkTest01362 extends HttpServlet {
 		java.util.Map<String,String[]> map = request.getParameterMap();
 		String param = "";
 		if (!map.isEmpty()) {
-			String[] values = map.get("vector");
+			String[] values = map.get("BenchmarkTest01362");
 			if (values != null) param = values[0];
 		}
 		
@@ -65,7 +65,7 @@ public class BenchmarkTest01362 extends HttpServlet {
         	a1 = "sh";
         	a2 = "-c";
         	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("ls");
-                args = new String[]{a1, a2, cmd, bar};
+        	args = new String[]{a1, a2, cmd, bar};
         }
         
         String[] argsEnv = { "foo=bar" };
@@ -81,6 +81,7 @@ public class BenchmarkTest01362 extends HttpServlet {
 		}
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {

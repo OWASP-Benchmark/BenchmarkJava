@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00085")
+@WebServlet(value="/weakrand-00/BenchmarkTest00085")
 public class BenchmarkTest00085 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -45,7 +45,7 @@ public class BenchmarkTest00085 extends HttpServlet {
 		String param = "";
 		if (theCookies != null) {
 			for (javax.servlet.http.Cookie theCookie : theCookies) {
-				if (theCookie.getName().equals("vector")) {
+				if (theCookie.getName().equals("BenchmarkTest00085")) {
 					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
 					break;
 				}
@@ -54,11 +54,11 @@ public class BenchmarkTest00085 extends HttpServlet {
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map29066 = new java.util.HashMap<String,Object>();
-		map29066.put("keyA-29066", "a Value"); // put some stuff in the collection
-		map29066.put("keyB-29066", param); // put it in a collection
-		map29066.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map29066.get("keyB-29066"); // get it back out
+		java.util.HashMap<String,Object> map43974 = new java.util.HashMap<String,Object>();
+		map43974.put("keyA-43974", "a Value"); // put some stuff in the collection
+		map43974.put("keyB-43974", param); // put it in a collection
+		map43974.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map43974.get("keyB-43974"); // get it back out
 		
 		
 		long l = new java.util.Random().nextLong();
@@ -85,17 +85,28 @@ public class BenchmarkTest00085 extends HttpServlet {
 		}
 		
 		if (foundUser) {
-			response.getWriter().println("Welcome back: " + user + "<br/>");			
+			response.getWriter().println(
+"Welcome back: " + user + "<br/>"
+);
+			
 		} else {			
 			javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
 			rememberMe.setSecure(true);
-			rememberMe.setPath("/benchmark/" + this.getClass().getSimpleName());
+//			rememberMe.setPath("/benchmark/" + this.getClass().getSimpleName());
+			rememberMe.setPath(request.getRequestURI()); // i.e., set path to JUST this servlet 
+														 // e.g., /benchmark/sql-01/BenchmarkTest01001
 			request.getSession().setAttribute(cookieName, rememberMeKey);
 			response.addCookie(rememberMe);
-			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-					+ " whose value is: " + rememberMe.getValue() + "<br/>");
+			response.getWriter().println(
+				user + " has been remembered with cookie: " + rememberMe.getName() 
+					+ " whose value is: " + rememberMe.getValue() + "<br/>"
+			);
 		}
 				
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextLong() executed");
+		response.getWriter().println(
+"Weak Randomness Test java.util.Random.nextLong() executed"
+);
+
 	}
+	
 }

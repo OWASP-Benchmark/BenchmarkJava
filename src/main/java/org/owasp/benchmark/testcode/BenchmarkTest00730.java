@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00730")
+@WebServlet(value="/xss-01/BenchmarkTest00730")
 public class BenchmarkTest00730 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -40,7 +40,7 @@ public class BenchmarkTest00730 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String[] values = request.getParameterValues("vector");
+		String[] values = request.getParameterValues("BenchmarkTest00730");
 		String param;
 		if (values != null && values.length > 0)
 		  param = values[0];
@@ -48,14 +48,15 @@ public class BenchmarkTest00730 extends HttpServlet {
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map93691 = new java.util.HashMap<String,Object>();
-		map93691.put("keyA-93691", "a_Value"); // put some stuff in the collection
-		map93691.put("keyB-93691", param); // put it in a collection
-		map93691.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map93691.get("keyB-93691"); // get it back out
-		bar = (String)map93691.get("keyA-93691"); // get safe value back out
+		java.util.HashMap<String,Object> map29173 = new java.util.HashMap<String,Object>();
+		map29173.put("keyA-29173", "a_Value"); // put some stuff in the collection
+		map29173.put("keyB-29173", param); // put it in a collection
+		map29173.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map29173.get("keyB-29173"); // get it back out
+		bar = (String)map29173.get("keyA-29173"); // get safe value back out
 		
 		
 		response.getWriter().write(bar.toCharArray());
 	}
+	
 }

@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00701")
+@WebServlet(value="/ldapi-00/BenchmarkTest00701")
 public class BenchmarkTest00701 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -40,7 +40,7 @@ public class BenchmarkTest00701 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String[] values = request.getParameterValues("vector");
+		String[] values = request.getParameterValues("BenchmarkTest00701");
 		String param;
 		if (values != null && values.length > 0)
 		  param = values[0];
@@ -48,20 +48,20 @@ public class BenchmarkTest00701 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a47313 = param; //assign
-		StringBuilder b47313 = new StringBuilder(a47313);  // stick in stringbuilder
-		b47313.append(" SafeStuff"); // append some safe content
-		b47313.replace(b47313.length()-"Chars".length(),b47313.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map47313 = new java.util.HashMap<String,Object>();
-		map47313.put("key47313", b47313.toString()); // put in a collection
-		String c47313 = (String)map47313.get("key47313"); // get it back out
-		String d47313 = c47313.substring(0,c47313.length()-1); // extract most of it
-		String e47313 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d47313.getBytes() ) )); // B64 encode and decode it
-		String f47313 = e47313.split(" ")[0]; // split it on a space
+		String a85232 = param; //assign
+		StringBuilder b85232 = new StringBuilder(a85232);  // stick in stringbuilder
+		b85232.append(" SafeStuff"); // append some safe content
+		b85232.replace(b85232.length()-"Chars".length(),b85232.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map85232 = new java.util.HashMap<String,Object>();
+		map85232.put("key85232", b85232.toString()); // put in a collection
+		String c85232 = (String)map85232.get("key85232"); // get it back out
+		String d85232 = c85232.substring(0,c85232.length()-1); // extract most of it
+		String e85232 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d85232.getBytes() ) )); // B64 encode and decode it
+		String f85232 = e85232.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g47313 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g47313); // reflection
+		String g85232 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g85232); // reflection
 		
 		
 	org.owasp.benchmark.helpers.LDAPManager ads = new org.owasp.benchmark.helpers.LDAPManager();
@@ -85,11 +85,15 @@ public class BenchmarkTest00701 extends HttpServlet {
 			javax.naming.directory.Attribute attr = attrs.get("uid");
 			javax.naming.directory.Attribute attr2 = attrs.get("street");
 			if (attr != null){
-				response.getWriter().write("LDAP query results:<br>"
+				response.getWriter().println(
+"LDAP query results:<br>"
 						+ " Record found with name " + attr.get() + "<br>"
-								+ "Address: " + attr2.get()+ "<br>");
-				System.out.println("record found " + attr.get());
-			}
+								+ "Address: " + attr2.get()+ "<br>"
+);
+				// System.out.println("record found " + attr.get());
+			} else response.getWriter().println(
+"LDAP query results: nothing found."
+);
 		}
 	} catch (javax.naming.NamingException e) {
 		throw new ServletException(e);
@@ -101,4 +105,5 @@ public class BenchmarkTest00701 extends HttpServlet {
 		}
     }
 	}
+	
 }

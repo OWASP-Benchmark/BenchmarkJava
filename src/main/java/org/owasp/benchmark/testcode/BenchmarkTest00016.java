@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark v1.2beta
+* OWASP Benchmark v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00016")
+@WebServlet(value="/securecookie-00/BenchmarkTest00016")
 public class BenchmarkTest00016 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -43,11 +43,14 @@ public class BenchmarkTest00016 extends HttpServlet {
 		
 
 		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("vector");
-		if (headers.hasMoreElements()) {
+		java.util.Enumeration<String> headers = request.getHeaders("BenchmarkTest00016");
+		
+		if (headers != null && headers.hasMoreElements()) {
 			param = headers.nextElement(); // just grab first element
 		}
-        param = java.net.URLDecoder.decode(param, "UTF-8");
+		
+		// URL Decode the header value since req.getHeaders() doesn't. Unlike req.getParameters().
+		param = java.net.URLDecoder.decode(param, "UTF-8");
 
 		
 		byte[] input = new byte[1000];
@@ -57,7 +60,9 @@ public class BenchmarkTest00016 extends HttpServlet {
 		if (inputParam instanceof java.io.InputStream) {
 			int i = ((java.io.InputStream) inputParam).read(input);
 			if (i == -1) {
-				response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+				response.getWriter().println(
+"This input source requires a POST, not a GET. Incompatible UI for the InputStream source."
+);
 				return;
 			}			
 			str = new String(input, 0, i);
@@ -65,11 +70,15 @@ public class BenchmarkTest00016 extends HttpServlet {
 		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie", str);
 		
 		cookie.setSecure(true);
-		cookie.setPath("/benchmark/" + this.getClass().getSimpleName());
-		
+//		cookie.setPath("/benchmark/" + this.getClass().getSimpleName());
+		cookie.setPath(request.getRequestURI()); // i.e., set path to JUST this servlet
+												 // e.g., /benchmark/sql-01/BenchmarkTest01001
 		response.addCookie(cookie);
 
-		response.getWriter().println("Created cookie: SomeCookie: with value: '"
-		  + org.owasp.esapi.ESAPI.encoder().encodeForHTML(str) + "' and secure flag set to: true");
+		response.getWriter().println(
+			"Created cookie: 'SomeCookie': with value: '"
+			+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(str) + "' and secure flag set to: true"
+		);
 	}
+	
 }

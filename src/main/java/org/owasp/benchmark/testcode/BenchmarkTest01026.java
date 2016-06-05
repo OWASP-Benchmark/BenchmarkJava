@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01026")
+@WebServlet(value="/pathtraver-01/BenchmarkTest01026")
 public class BenchmarkTest01026 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -40,40 +40,49 @@ public class BenchmarkTest01026 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String param = request.getHeader("vector");
-		if (param == null) param = "";
-        param = java.net.URLDecoder.decode(param, "UTF-8");
-
-		if (param == null) param = "";
+		String param = "";
+		if (request.getHeader("BenchmarkTest01026") != null) {
+			param = request.getHeader("BenchmarkTest01026");
+		}
+		
+		// URL Decode the header value since req.getHeader() doesn't. Unlike req.getParameter().
+		param = java.net.URLDecoder.decode(param, "UTF-8");
 
 		String bar = new Test().doSomething(param);
 		
 		java.io.File fileTarget = new java.io.File(bar);
-		response.getWriter().write("Access to file: '" + fileTarget + "' created." );
+		response.getWriter().println(
+"Access to file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileTarget.toString()) + "' created." 
+);
 		if (fileTarget.exists()) {
-			response.getWriter().write(" And file already exists.");
-		} else { response.getWriter().write(" But file doesn't exist yet."); }
+			response.getWriter().println(
+" And file already exists."
+);
+		} else { response.getWriter().println(
+" But file doesn't exist yet."
+); }
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a41329 = param; //assign
-		StringBuilder b41329 = new StringBuilder(a41329);  // stick in stringbuilder
-		b41329.append(" SafeStuff"); // append some safe content
-		b41329.replace(b41329.length()-"Chars".length(),b41329.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map41329 = new java.util.HashMap<String,Object>();
-		map41329.put("key41329", b41329.toString()); // put in a collection
-		String c41329 = (String)map41329.get("key41329"); // get it back out
-		String d41329 = c41329.substring(0,c41329.length()-1); // extract most of it
-		String e41329 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d41329.getBytes() ) )); // B64 encode and decode it
-		String f41329 = e41329.split(" ")[0]; // split it on a space
+		String a11433 = param; //assign
+		StringBuilder b11433 = new StringBuilder(a11433);  // stick in stringbuilder
+		b11433.append(" SafeStuff"); // append some safe content
+		b11433.replace(b11433.length()-"Chars".length(),b11433.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map11433 = new java.util.HashMap<String,Object>();
+		map11433.put("key11433", b11433.toString()); // put in a collection
+		String c11433 = (String)map11433.get("key11433"); // get it back out
+		String d11433 = c11433.substring(0,c11433.length()-1); // extract most of it
+		String e11433 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d11433.getBytes() ) )); // B64 encode and decode it
+		String f11433 = e11433.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g41329 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g41329); // reflection
+		String g11433 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g11433); // reflection
 
             return bar;
         }

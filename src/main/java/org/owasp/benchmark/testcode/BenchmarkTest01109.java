@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01109")
+@WebServlet(value="/pathtraver-01/BenchmarkTest01109")
 public class BenchmarkTest01109 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,50 +41,57 @@ public class BenchmarkTest01109 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		String param = "";
-		boolean flag = true;
 		java.util.Enumeration<String> names = request.getHeaderNames();
-		while (names.hasMoreElements() && flag) {
+		while (names.hasMoreElements()) {
 			String name = (String) names.nextElement();
+			
+			if(org.owasp.benchmark.helpers.Utils.commonHeaders.contains(name)){
+				continue;
+			}
+			
 			java.util.Enumeration<String> values = request.getHeaders(name);
-			if (values != null) {
-				while (values.hasMoreElements() && flag) {
-					String value = (String) values.nextElement();
-					if (value.equals("vector")) {
-						param = name;
-						flag = false;
-					}
-				}
+			if (values != null && values.hasMoreElements()) {
+				param = name;
+				break;
 			}
 		}
+		// Note: We don't URL decode header names because people don't normally do that
 
 		String bar = new Test().doSomething(param);
 		
 		java.io.File fileTarget = new java.io.File(bar, "/Test.txt");
-		response.getWriter().write("Access to file: '" + fileTarget + "' created." );
+		response.getWriter().println(
+"Access to file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileTarget.toString()) + "' created." 
+);
 		if (fileTarget.exists()) {
-			response.getWriter().write(" And file already exists.");
-		} else { response.getWriter().write(" But file doesn't exist yet."); }
+			response.getWriter().println(
+" And file already exists."
+);
+		} else { response.getWriter().println(
+" But file doesn't exist yet."
+); }
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a95129 = param; //assign
-		StringBuilder b95129 = new StringBuilder(a95129);  // stick in stringbuilder
-		b95129.append(" SafeStuff"); // append some safe content
-		b95129.replace(b95129.length()-"Chars".length(),b95129.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map95129 = new java.util.HashMap<String,Object>();
-		map95129.put("key95129", b95129.toString()); // put in a collection
-		String c95129 = (String)map95129.get("key95129"); // get it back out
-		String d95129 = c95129.substring(0,c95129.length()-1); // extract most of it
-		String e95129 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d95129.getBytes() ) )); // B64 encode and decode it
-		String f95129 = e95129.split(" ")[0]; // split it on a space
+		String a87030 = param; //assign
+		StringBuilder b87030 = new StringBuilder(a87030);  // stick in stringbuilder
+		b87030.append(" SafeStuff"); // append some safe content
+		b87030.replace(b87030.length()-"Chars".length(),b87030.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map87030 = new java.util.HashMap<String,Object>();
+		map87030.put("key87030", b87030.toString()); // put in a collection
+		String c87030 = (String)map87030.get("key87030"); // get it back out
+		String d87030 = c87030.substring(0,c87030.length()-1); // extract most of it
+		String e87030 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d87030.getBytes() ) )); // B64 encode and decode it
+		String f87030 = e87030.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g95129 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g95129); // reflection
+		String g87030 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g87030); // reflection
 
             return bar;
         }

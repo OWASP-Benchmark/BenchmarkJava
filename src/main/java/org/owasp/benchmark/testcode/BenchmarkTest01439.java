@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01439")
+@WebServlet(value="/xss-02/BenchmarkTest01439")
 public class BenchmarkTest01439 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -49,7 +49,7 @@ public class BenchmarkTest01439 extends HttpServlet {
 			if (values != null) {
 				for(int i=0;i<values.length && flag; i++){
 					String value = values[i];
-					if (value.equals("vector")) {
+					if (value.equals("BenchmarkTest01439")) {
 						param = name;
 					    flag = false;
 					}
@@ -62,17 +62,18 @@ public class BenchmarkTest01439 extends HttpServlet {
 		response.getWriter().write("Parameter value: " + bar);
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map54355 = new java.util.HashMap<String,Object>();
-		map54355.put("keyA-54355", "a_Value"); // put some stuff in the collection
-		map54355.put("keyB-54355", param); // put it in a collection
-		map54355.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map54355.get("keyB-54355"); // get it back out
-		bar = (String)map54355.get("keyA-54355"); // get safe value back out
+		java.util.HashMap<String,Object> map95590 = new java.util.HashMap<String,Object>();
+		map95590.put("keyA-95590", "a_Value"); // put some stuff in the collection
+		map95590.put("keyB-95590", param); // put it in a collection
+		map95590.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map95590.get("keyB-95590"); // get it back out
+		bar = (String)map95590.get("keyA-95590"); // get safe value back out
 
             return bar;
         }

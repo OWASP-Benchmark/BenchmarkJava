@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01774")
+@WebServlet(value="/xss-03/BenchmarkTest01774")
 public class BenchmarkTest01774 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,24 +41,25 @@ public class BenchmarkTest01774 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheValue("vector");
+		String param = scr.getTheValue("BenchmarkTest01774");
 
 		String bar = new Test().doSomething(param);
 		
 		response.getWriter().write(bar);
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map57149 = new java.util.HashMap<String,Object>();
-		map57149.put("keyA-57149", "a_Value"); // put some stuff in the collection
-		map57149.put("keyB-57149", param); // put it in a collection
-		map57149.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map57149.get("keyB-57149"); // get it back out
-		bar = (String)map57149.get("keyA-57149"); // get safe value back out
+		java.util.HashMap<String,Object> map58318 = new java.util.HashMap<String,Object>();
+		map58318.put("keyA-58318", "a_Value"); // put some stuff in the collection
+		map58318.put("keyB-58318", param); // put it in a collection
+		map58318.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map58318.get("keyB-58318"); // get it back out
+		bar = (String)map58318.get("keyA-58318"); // get safe value back out
 
             return bar;
         }

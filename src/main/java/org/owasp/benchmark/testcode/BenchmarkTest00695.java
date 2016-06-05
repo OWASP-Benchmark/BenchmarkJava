@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00695")
+@WebServlet(value="/ldapi-00/BenchmarkTest00695")
 public class BenchmarkTest00695 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -40,7 +40,7 @@ public class BenchmarkTest00695 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String[] values = request.getParameterValues("vector");
+		String[] values = request.getParameterValues("BenchmarkTest00695");
 		String param;
 		if (values != null && values.length > 0)
 		  param = values[0];
@@ -48,11 +48,11 @@ public class BenchmarkTest00695 extends HttpServlet {
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map3229 = new java.util.HashMap<String,Object>();
-		map3229.put("keyA-3229", "a Value"); // put some stuff in the collection
-		map3229.put("keyB-3229", param); // put it in a collection
-		map3229.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map3229.get("keyB-3229"); // get it back out
+		java.util.HashMap<String,Object> map9400 = new java.util.HashMap<String,Object>();
+		map9400.put("keyA-9400", "a Value"); // put some stuff in the collection
+		map9400.put("keyB-9400", param); // put it in a collection
+		map9400.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map9400.get("keyB-9400"); // get it back out
 		
 		
 	org.owasp.benchmark.helpers.LDAPManager ads = new org.owasp.benchmark.helpers.LDAPManager();
@@ -64,7 +64,7 @@ public class BenchmarkTest00695 extends HttpServlet {
 			sc.setSearchScope(javax.naming.directory.SearchControls.SUBTREE_SCOPE);
 			String filter = "(&(objectclass=person)(uid=" + bar
 					+ "))";
-			System.out.println("Filter " + filter);
+			// System.out.println("Filter " + filter);
 			javax.naming.NamingEnumeration<javax.naming.directory.SearchResult> results = ctx.search(base, filter, sc);
 			while (results.hasMore()) {
 				javax.naming.directory.SearchResult sr = (javax.naming.directory.SearchResult) results.next();
@@ -73,11 +73,15 @@ public class BenchmarkTest00695 extends HttpServlet {
 				javax.naming.directory.Attribute attr = attrs.get("uid");
 				javax.naming.directory.Attribute attr2 = attrs.get("street");
 				if (attr != null){
-					response.getWriter().write("LDAP query results:<br>"
+					response.getWriter().println(
+"LDAP query results:<br>"
 							+ " Record found with name " + attr.get() + "<br>"
-									+ "Address: " + attr2.get()+ "<br>");
-					System.out.println("record found " + attr.get());
-				}
+									+ "Address: " + attr2.get()+ "<br>"
+);
+					// System.out.println("record found " + attr.get());
+				} else response.getWriter().println(
+"LDAP query results: nothing found."
+);
 			}
 	} catch (javax.naming.NamingException e) {
 		throw new ServletException(e);
@@ -89,4 +93,5 @@ public class BenchmarkTest00695 extends HttpServlet {
 		}
     }
 	}
+	
 }

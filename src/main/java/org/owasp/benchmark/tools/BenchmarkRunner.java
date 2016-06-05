@@ -1,5 +1,6 @@
 package org.owasp.benchmark.tools;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -9,15 +10,22 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.owasp.benchmark.helpers.SourceUtils;
 
 public class BenchmarkRunner {
-
+	private final static String allTestCasesFile = SourceUtils.USERDIR + "/src/main/resources/allLinks.data";
+	private static List<String> allTestCases = null;
+	
     public static void main(String[] args) throws Exception {
         System.out.println( "OWASP Benchmark Runner uses the Selenium FirefoxDriver and requires Firefox to be installed.");
-        final AtomicInteger nextTest = new AtomicInteger(1);
+        final AtomicInteger nextTest = new AtomicInteger(0);
         long start = System.currentTimeMillis();
         
-        int tests = 2740;
+        allTestCases = SourceUtils.getLinesFromFile(allTestCasesFile);
+        
+        //int tests = 2740; # of test cases in Benchmark 1.2 
+        int tests = allTestCases.size();
+
         if ( args.length > 0 ) {
             tests = Integer.parseInt( args[0] );
         }
@@ -46,17 +54,17 @@ public class BenchmarkRunner {
     }
 
     public static void visitTestCases( AtomicInteger nextTest, int tests ) {
-        String baseUrl = "https://localhost:8443/benchmark/BenchmarkTest";
+        //String baseUrl = "https://localhost:8443/benchmark/BenchmarkTest";
         FirefoxDriver driver = new FirefoxDriver();
         JavascriptExecutor js = (JavascriptExecutor) driver;
 
         while( nextTest.get() <= tests ) {
-            String test = "000000" + nextTest.getAndIncrement();
-            test = test.substring(test.length() - 5);
-
+            //String test = "000000" + nextTest.getAndIncrement();
+            //test = test.substring(test.length() - 5);
+        	int test = nextTest.getAndIncrement();
             try {
-                String url = baseUrl + test + ".html";
-                System.out.println("URL: " + url);
+                //String url = baseUrl + test + ".html";
+            	String url = allTestCases.get(test);
                 driver.get(url);
                 
                 // get URL, find all buttons, and click them
@@ -64,7 +72,7 @@ public class BenchmarkRunner {
                     we.submit();
                 }
 
-                // reload page, and if there's a javascript button, click that
+                // reload page, and if there's a JavaScript button, click that
                 driver.get(url);
                 Thread.sleep(500);
                 String jQuerySelector = "#login-btn";

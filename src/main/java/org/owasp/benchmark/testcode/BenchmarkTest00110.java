@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00110")
+@WebServlet(value="/sqli-00/BenchmarkTest00110")
 public class BenchmarkTest00110 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -45,7 +45,7 @@ public class BenchmarkTest00110 extends HttpServlet {
 		String param = "";
 		if (theCookies != null) {
 			for (javax.servlet.http.Cookie theCookie : theCookies) {
-				if (theCookie.getName().equals("vector")) {
+				if (theCookie.getName().equals("BenchmarkTest00110")) {
 					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
 					break;
 				}
@@ -54,20 +54,20 @@ public class BenchmarkTest00110 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a40210 = param; //assign
-		StringBuilder b40210 = new StringBuilder(a40210);  // stick in stringbuilder
-		b40210.append(" SafeStuff"); // append some safe content
-		b40210.replace(b40210.length()-"Chars".length(),b40210.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map40210 = new java.util.HashMap<String,Object>();
-		map40210.put("key40210", b40210.toString()); // put in a collection
-		String c40210 = (String)map40210.get("key40210"); // get it back out
-		String d40210 = c40210.substring(0,c40210.length()-1); // extract most of it
-		String e40210 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d40210.getBytes() ) )); // B64 encode and decode it
-		String f40210 = e40210.split(" ")[0]; // split it on a space
+		String a69840 = param; //assign
+		StringBuilder b69840 = new StringBuilder(a69840);  // stick in stringbuilder
+		b69840.append(" SafeStuff"); // append some safe content
+		b69840.replace(b69840.length()-"Chars".length(),b69840.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map69840 = new java.util.HashMap<String,Object>();
+		map69840.put("key69840", b69840.toString()); // put in a collection
+		String c69840 = (String)map69840.get("key69840"); // get it back out
+		String d69840 = c69840.substring(0,c69840.length()-1); // extract most of it
+		String e69840 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d69840.getBytes() ) )); // B64 encode and decode it
+		String f69840 = e69840.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g40210 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g40210); // reflection
+		String g69840 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g69840); // reflection
 		
 		
 		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
@@ -78,10 +78,13 @@ public class BenchmarkTest00110 extends HttpServlet {
             org.owasp.benchmark.helpers.DatabaseHelper.printResults(statement, sql, response);
 		} catch (java.sql.SQLException e) {
 			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
+        		response.getWriter().println(
+"Error processing request."
+);
         		return;
         	}
 			else throw new ServletException(e);
 		}
 	}
+	
 }

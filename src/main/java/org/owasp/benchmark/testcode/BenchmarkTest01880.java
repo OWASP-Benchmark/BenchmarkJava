@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01880")
+@WebServlet(value="/sqli-04/BenchmarkTest01880")
 public class BenchmarkTest01880 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -45,7 +45,7 @@ public class BenchmarkTest01880 extends HttpServlet {
 		String param = "";
 		if (theCookies != null) {
 			for (javax.servlet.http.Cookie theCookie : theCookies) {
-				if (theCookie.getName().equals("vector")) {
+				if (theCookie.getName().equals("BenchmarkTest01880")) {
 					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
 					break;
 				}
@@ -66,22 +66,25 @@ public class BenchmarkTest01880 extends HttpServlet {
             org.owasp.benchmark.helpers.DatabaseHelper.printResults(statement, sql, response);
 		} catch (java.sql.SQLException e) {
 			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
+        		response.getWriter().println(
+"Error processing request."
+);
         		return;
         	}
 			else throw new ServletException(e);
 		}
 	}  // end doPost
 	
+		
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map5630 = new java.util.HashMap<String,Object>();
-		map5630.put("keyA-5630", "a_Value"); // put some stuff in the collection
-		map5630.put("keyB-5630", param); // put it in a collection
-		map5630.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map5630.get("keyB-5630"); // get it back out
-		bar = (String)map5630.get("keyA-5630"); // get safe value back out
+		java.util.HashMap<String,Object> map99153 = new java.util.HashMap<String,Object>();
+		map99153.put("keyA-99153", "a_Value"); // put some stuff in the collection
+		map99153.put("keyB-99153", param); // put it in a collection
+		map99153.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map99153.get("keyB-99153"); // get it back out
+		bar = (String)map99153.get("keyA-99153"); // get safe value back out
 	
 		return bar;	
 	}

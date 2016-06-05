@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest02486")
+@WebServlet(value="/xss-04/BenchmarkTest02486")
 public class BenchmarkTest02486 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -40,7 +40,7 @@ public class BenchmarkTest02486 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		String[] values = request.getParameterValues("vector");
+		String[] values = request.getParameterValues("BenchmarkTest02486");
 		String param;
 		if (values != null && values.length > 0)
 		  param = values[0];
@@ -52,12 +52,13 @@ public class BenchmarkTest02486 extends HttpServlet {
 		response.getWriter().printf(java.util.Locale.US,"Formatted like: %1$s and %2$s.",obj);
 	}  // end doPost
 	
+		
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar = param;
 		if (param != null && param.length() > 1) {
-		    StringBuilder sbxyz1122 = new StringBuilder(param);
-		    bar = sbxyz1122.replace(param.length()-"Z".length(), param.length(),"Z").toString();
+		    StringBuilder sbxyz61588 = new StringBuilder(param);
+		    bar = sbxyz61588.replace(param.length()-"Z".length(), param.length(),"Z").toString();
 		}
 	
 		return bar;	

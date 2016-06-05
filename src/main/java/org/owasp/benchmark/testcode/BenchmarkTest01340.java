@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01340")
+@WebServlet(value="/xss-02/BenchmarkTest01340")
 public class BenchmarkTest01340 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -43,7 +43,7 @@ public class BenchmarkTest01340 extends HttpServlet {
 		java.util.Map<String,String[]> map = request.getParameterMap();
 		String param = "";
 		if (!map.isEmpty()) {
-			String[] values = map.get("vector");
+			String[] values = map.get("BenchmarkTest01340");
 			if (values != null) param = values[0];
 		}
 		
@@ -53,17 +53,18 @@ public class BenchmarkTest01340 extends HttpServlet {
 		response.getWriter().print(bar);
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map56030 = new java.util.HashMap<String,Object>();
-		map56030.put("keyA-56030", "a_Value"); // put some stuff in the collection
-		map56030.put("keyB-56030", param); // put it in a collection
-		map56030.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map56030.get("keyB-56030"); // get it back out
-		bar = (String)map56030.get("keyA-56030"); // get safe value back out
+		java.util.HashMap<String,Object> map36950 = new java.util.HashMap<String,Object>();
+		map36950.put("keyA-36950", "a_Value"); // put some stuff in the collection
+		map36950.put("keyB-36950", param); // put it in a collection
+		map36950.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map36950.get("keyB-36950"); // get it back out
+		bar = (String)map36950.get("keyA-36950"); // get safe value back out
 
             return bar;
         }

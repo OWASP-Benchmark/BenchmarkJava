@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01253")
+@WebServlet(value="/xss-02/BenchmarkTest01253")
 public class BenchmarkTest01253 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -40,7 +40,7 @@ public class BenchmarkTest01253 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String param = request.getParameter("vector");
+		String param = request.getParameter("BenchmarkTest01253");
 		if (param == null) param = "";
 
 		String bar = new Test().doSomething(param);
@@ -49,16 +49,17 @@ public class BenchmarkTest01253 extends HttpServlet {
 		response.getWriter().format(bar,obj);
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map57849 = new java.util.HashMap<String,Object>();
-		map57849.put("keyA-57849", "a Value"); // put some stuff in the collection
-		map57849.put("keyB-57849", param); // put it in a collection
-		map57849.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map57849.get("keyB-57849"); // get it back out
+		java.util.HashMap<String,Object> map15481 = new java.util.HashMap<String,Object>();
+		map15481.put("keyA-15481", "a Value"); // put some stuff in the collection
+		map15481.put("keyB-15481", param); // put it in a collection
+		map15481.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map15481.get("keyB-15481"); // get it back out
 
             return bar;
         }

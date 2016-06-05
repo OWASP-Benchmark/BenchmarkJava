@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01805")
+@WebServlet(value="/sqli-03/BenchmarkTest01805")
 public class BenchmarkTest01805 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,7 +41,7 @@ public class BenchmarkTest01805 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheValue("vector");
+		String param = scr.getTheValue("BenchmarkTest01805");
 
 		String bar = new Test().doSomething(param);
 		
@@ -56,24 +56,27 @@ public class BenchmarkTest01805 extends HttpServlet {
             org.owasp.benchmark.helpers.DatabaseHelper.printResults(statement, sql, response);
 		} catch (java.sql.SQLException e) {
 			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
+        		response.getWriter().println(
+"Error processing request."
+);
         		return;
         	}
 			else throw new ServletException(e);
 		}
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map20030 = new java.util.HashMap<String,Object>();
-		map20030.put("keyA-20030", "a_Value"); // put some stuff in the collection
-		map20030.put("keyB-20030", param); // put it in a collection
-		map20030.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map20030.get("keyB-20030"); // get it back out
-		bar = (String)map20030.get("keyA-20030"); // get safe value back out
+		java.util.HashMap<String,Object> map10271 = new java.util.HashMap<String,Object>();
+		map10271.put("keyA-10271", "a_Value"); // put some stuff in the collection
+		map10271.put("keyB-10271", param); // put it in a collection
+		map10271.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map10271.get("keyB-10271"); // get it back out
+		bar = (String)map10271.get("keyA-10271"); // get safe value back out
 
             return bar;
         }

@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00288")
+@WebServlet(value="/xss-00/BenchmarkTest00288")
 public class BenchmarkTest00288 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,21 +41,23 @@ public class BenchmarkTest00288 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("referer");
-		if (headers.hasMoreElements()) {
+		java.util.Enumeration<String> headers = request.getHeaders("Referer");
+		
+		if (headers != null && headers.hasMoreElements()) {
 			param = headers.nextElement(); // just grab first element
 		}
-        param = java.net.URLDecoder.decode(param, "UTF-8");
-
+		
+		// URL Decode the header value since req.getHeaders() doesn't. Unlike req.getParameters().
+		param = java.net.URLDecoder.decode(param, "UTF-8");
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map60928 = new java.util.HashMap<String,Object>();
-		map60928.put("keyA-60928", "a_Value"); // put some stuff in the collection
-		map60928.put("keyB-60928", param); // put it in a collection
-		map60928.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map60928.get("keyB-60928"); // get it back out
-		bar = (String)map60928.get("keyA-60928"); // get safe value back out
+		java.util.HashMap<String,Object> map34285 = new java.util.HashMap<String,Object>();
+		map34285.put("keyA-34285", "a_Value"); // put some stuff in the collection
+		map34285.put("keyB-34285", param); // put it in a collection
+		map34285.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map34285.get("keyB-34285"); // get it back out
+		bar = (String)map34285.get("keyA-34285"); // get safe value back out
 		
 		
 		int length = 1;
@@ -64,4 +66,5 @@ public class BenchmarkTest00288 extends HttpServlet {
 			response.getWriter().write(bar.toCharArray(),0,length);
 		}
 	}
+	
 }

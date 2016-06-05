@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest02052")
+@WebServlet(value="/xss-03/BenchmarkTest02052")
 public class BenchmarkTest02052 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,12 +41,14 @@ public class BenchmarkTest02052 extends HttpServlet {
 		response.setContentType("text/html");
 
 		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("referer");
-		if (headers.hasMoreElements()) {
+		java.util.Enumeration<String> headers = request.getHeaders("Referer");
+		
+		if (headers != null && headers.hasMoreElements()) {
 			param = headers.nextElement(); // just grab first element
 		}
-        param = java.net.URLDecoder.decode(param, "UTF-8");
-
+		
+		// URL Decode the header value since req.getHeaders() doesn't. Unlike req.getParameters().
+		param = java.net.URLDecoder.decode(param, "UTF-8");
 
 		String bar = doSomething(param);
 		
@@ -54,15 +56,16 @@ public class BenchmarkTest02052 extends HttpServlet {
 		response.getWriter().printf("Formatted like: %1$s and %2$s.",obj);
 	}  // end doPost
 	
+		
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map60163 = new java.util.HashMap<String,Object>();
-		map60163.put("keyA-60163", "a_Value"); // put some stuff in the collection
-		map60163.put("keyB-60163", param); // put it in a collection
-		map60163.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map60163.get("keyB-60163"); // get it back out
-		bar = (String)map60163.get("keyA-60163"); // get safe value back out
+		java.util.HashMap<String,Object> map20081 = new java.util.HashMap<String,Object>();
+		map20081.put("keyA-20081", "a_Value"); // put some stuff in the collection
+		map20081.put("keyB-20081", param); // put it in a collection
+		map20081.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map20081.get("keyB-20081"); // get it back out
+		bar = (String)map20081.get("keyA-20081"); // get safe value back out
 	
 		return bar;	
 	}

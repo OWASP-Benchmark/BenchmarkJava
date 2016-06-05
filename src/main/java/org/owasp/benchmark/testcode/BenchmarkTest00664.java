@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00664")
+@WebServlet(value="/weakrand-01/BenchmarkTest00664")
 public class BenchmarkTest00664 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,25 +41,25 @@ public class BenchmarkTest00664 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheParameter("vector");
+		String param = scr.getTheParameter("BenchmarkTest00664");
 		if (param == null) param = "";
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a28137 = param; //assign
-		StringBuilder b28137 = new StringBuilder(a28137);  // stick in stringbuilder
-		b28137.append(" SafeStuff"); // append some safe content
-		b28137.replace(b28137.length()-"Chars".length(),b28137.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map28137 = new java.util.HashMap<String,Object>();
-		map28137.put("key28137", b28137.toString()); // put in a collection
-		String c28137 = (String)map28137.get("key28137"); // get it back out
-		String d28137 = c28137.substring(0,c28137.length()-1); // extract most of it
-		String e28137 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d28137.getBytes() ) )); // B64 encode and decode it
-		String f28137 = e28137.split(" ")[0]; // split it on a space
+		String a87833 = param; //assign
+		StringBuilder b87833 = new StringBuilder(a87833);  // stick in stringbuilder
+		b87833.append(" SafeStuff"); // append some safe content
+		b87833.replace(b87833.length()-"Chars".length(),b87833.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map87833 = new java.util.HashMap<String,Object>();
+		map87833.put("key87833", b87833.toString()); // put in a collection
+		String c87833 = (String)map87833.get("key87833"); // get it back out
+		String d87833 = c87833.substring(0,c87833.length()-1); // extract most of it
+		String e87833 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d87833.getBytes() ) )); // B64 encode and decode it
+		String f87833 = e87833.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g28137 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g28137); // reflection
+		String g87833 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g87833); // reflection
 		
 		
 		try {
@@ -86,23 +86,30 @@ public class BenchmarkTest00664 extends HttpServlet {
 				}
 			}
 
-			
 			if (foundUser) {
-				response.getWriter().println("Welcome back: " + user + "<br/>");			
+				response.getWriter().println(
+"Welcome back: " + user + "<br/>"
+);
 			} else {			
 				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
 				rememberMe.setSecure(true);
-				rememberMe.setPath("/benchmark/" + this.getClass().getSimpleName());
+	//			rememberMe.setPath("/benchmark/" + this.getClass().getSimpleName());
+				rememberMe.setPath(request.getRequestURI()); // i.e., set path to JUST this servlet 
+															 // e.g., /benchmark/sql-01/BenchmarkTest01001
 				request.getSession().setAttribute(cookieName, rememberMeKey);
-				response.addCookie(rememberMe);
-				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-						+ " whose value is: " + rememberMe.getValue() + "<br/>");
+response.addCookie(rememberMe);
+response.getWriter().println(
+user + " has been remembered with cookie: " + rememberMe.getName() 
+						+ " whose value is: " + rememberMe.getValue() + "<br/>"
+);
 			}
-
 	    } catch (java.security.NoSuchAlgorithmException e) {
 			System.out.println("Problem executing SecureRandom.nextFloat() - TestCase");
 			throw new ServletException(e);
 	    }		
-		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextFloat() executed");
+		response.getWriter().println(
+"Weak Randomness Test java.security.SecureRandom.nextFloat() executed"
+);
 	}
+	
 }

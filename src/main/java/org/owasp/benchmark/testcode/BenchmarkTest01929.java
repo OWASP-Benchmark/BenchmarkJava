@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01929")
+@WebServlet(value="/cmdi-02/BenchmarkTest01929")
 public class BenchmarkTest01929 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -40,11 +40,13 @@ public class BenchmarkTest01929 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		String param = request.getHeader("vector");
-		if (param == null) param = "";
-        param = java.net.URLDecoder.decode(param, "UTF-8");
-
-		if (param == null) param = "";
+		String param = "";
+		if (request.getHeader("BenchmarkTest01929") != null) {
+			param = request.getHeader("BenchmarkTest01929");
+		}
+		
+		// URL Decode the header value since req.getHeader() doesn't. Unlike req.getParameter().
+		param = java.net.URLDecoder.decode(param, "UTF-8");
 
 		String bar = doSomething(param);
 		
@@ -71,14 +73,15 @@ public class BenchmarkTest01929 extends HttpServlet {
 		}
 	}  // end doPost
 	
+		
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map34911 = new java.util.HashMap<String,Object>();
-		map34911.put("keyA-34911", "a Value"); // put some stuff in the collection
-		map34911.put("keyB-34911", param); // put it in a collection
-		map34911.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map34911.get("keyB-34911"); // get it back out
+		java.util.HashMap<String,Object> map44 = new java.util.HashMap<String,Object>();
+		map44.put("keyA-44", "a Value"); // put some stuff in the collection
+		map44.put("keyB-44", param); // put it in a collection
+		map44.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map44.get("keyB-44"); // get it back out
 	
 		return bar;	
 	}

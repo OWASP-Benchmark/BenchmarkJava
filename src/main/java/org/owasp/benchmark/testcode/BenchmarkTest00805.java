@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00805")
+@WebServlet(value="/xss-01/BenchmarkTest00805")
 public class BenchmarkTest00805 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,15 +41,15 @@ public class BenchmarkTest00805 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		String queryString = request.getQueryString();
-		String paramval = "vector"+"=";
+		String paramval = "BenchmarkTest00805"+"=";
 		int paramLoc = -1;
 		if (queryString != null) paramLoc = queryString.indexOf(paramval);
 		if (paramLoc == -1) {
-			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "vector" + "' in query string.");
+			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "BenchmarkTest00805" + "' in query string.");
 			return;
 		}
 		
-		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "vector" param is last parameter in query string.
+		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "BenchmarkTest00805" param is last parameter in query string.
 		// And then check to see if its in the middle of the query string and if so, trim off what comes after.
 		int ampersandLoc = queryString.indexOf("&", paramLoc);
 		if (ampersandLoc != -1) {
@@ -59,21 +59,22 @@ public class BenchmarkTest00805 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a41898 = param; //assign
-		StringBuilder b41898 = new StringBuilder(a41898);  // stick in stringbuilder
-		b41898.append(" SafeStuff"); // append some safe content
-		b41898.replace(b41898.length()-"Chars".length(),b41898.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map41898 = new java.util.HashMap<String,Object>();
-		map41898.put("key41898", b41898.toString()); // put in a collection
-		String c41898 = (String)map41898.get("key41898"); // get it back out
-		String d41898 = c41898.substring(0,c41898.length()-1); // extract most of it
-		String e41898 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d41898.getBytes() ) )); // B64 encode and decode it
-		String f41898 = e41898.split(" ")[0]; // split it on a space
+		String a72616 = param; //assign
+		StringBuilder b72616 = new StringBuilder(a72616);  // stick in stringbuilder
+		b72616.append(" SafeStuff"); // append some safe content
+		b72616.replace(b72616.length()-"Chars".length(),b72616.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map72616 = new java.util.HashMap<String,Object>();
+		map72616.put("key72616", b72616.toString()); // put in a collection
+		String c72616 = (String)map72616.get("key72616"); // get it back out
+		String d72616 = c72616.substring(0,c72616.length()-1); // extract most of it
+		String e72616 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d72616.getBytes() ) )); // B64 encode and decode it
+		String f72616 = e72616.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f41898); // reflection
+		String bar = thing.doSomething(f72616); // reflection
 		
 		
 		response.getWriter().print(bar);
 	}
+	
 }

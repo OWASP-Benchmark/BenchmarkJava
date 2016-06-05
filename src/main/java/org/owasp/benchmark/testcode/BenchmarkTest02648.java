@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest02648")
+@WebServlet(value="/sqli-06/BenchmarkTest02648")
 public class BenchmarkTest02648 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,15 +41,15 @@ public class BenchmarkTest02648 extends HttpServlet {
 		response.setContentType("text/html");
 
 		String queryString = request.getQueryString();
-		String paramval = "vector"+"=";
+		String paramval = "BenchmarkTest02648"+"=";
 		int paramLoc = -1;
 		if (queryString != null) paramLoc = queryString.indexOf(paramval);
 		if (paramLoc == -1) {
-			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "vector" + "' in query string.");
+			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "BenchmarkTest02648" + "' in query string.");
 			return;
 		}
 		
-		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "vector" param is last parameter in query string.
+		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "BenchmarkTest02648" param is last parameter in query string.
 		// And then check to see if its in the middle of the query string and if so, trim off what comes after.
 		int ampersandLoc = queryString.indexOf("&", paramLoc);
 		if (ampersandLoc != -1) {
@@ -67,22 +67,25 @@ public class BenchmarkTest02648 extends HttpServlet {
             org.owasp.benchmark.helpers.DatabaseHelper.printResults(statement, sql, response);
 		} catch (java.sql.SQLException e) {
 			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
+        		response.getWriter().println(
+"Error processing request."
+);
         		return;
         	}
 			else throw new ServletException(e);
 		}
 	}  // end doPost
 	
+		
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map78367 = new java.util.HashMap<String,Object>();
-		map78367.put("keyA-78367", "a_Value"); // put some stuff in the collection
-		map78367.put("keyB-78367", param); // put it in a collection
-		map78367.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map78367.get("keyB-78367"); // get it back out
-		bar = (String)map78367.get("keyA-78367"); // get safe value back out
+		java.util.HashMap<String,Object> map91488 = new java.util.HashMap<String,Object>();
+		map91488.put("keyA-91488", "a_Value"); // put some stuff in the collection
+		map91488.put("keyB-91488", param); // put it in a collection
+		map91488.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map91488.get("keyB-91488"); // get it back out
+		bar = (String)map91488.get("keyA-91488"); // get safe value back out
 	
 		return bar;	
 	}

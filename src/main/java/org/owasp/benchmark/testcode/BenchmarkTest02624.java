@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest02624")
+@WebServlet(value="/trustbound-01/BenchmarkTest02624")
 public class BenchmarkTest02624 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,15 +41,15 @@ public class BenchmarkTest02624 extends HttpServlet {
 		response.setContentType("text/html");
 
 		String queryString = request.getQueryString();
-		String paramval = "vector"+"=";
+		String paramval = "BenchmarkTest02624"+"=";
 		int paramLoc = -1;
 		if (queryString != null) paramLoc = queryString.indexOf(paramval);
 		if (paramLoc == -1) {
-			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "vector" + "' in query string.");
+			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "BenchmarkTest02624" + "' in query string.");
 			return;
 		}
 		
-		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "vector" param is last parameter in query string.
+		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "BenchmarkTest02624" param is last parameter in query string.
 		// And then check to see if its in the middle of the query string and if so, trim off what comes after.
 		int ampersandLoc = queryString.indexOf("&", paramLoc);
 		if (ampersandLoc != -1) {
@@ -62,18 +62,21 @@ public class BenchmarkTest02624 extends HttpServlet {
 		// javax.servlet.http.HttpSession.setAttribute(java.lang.String,java.lang.Object^)
 		request.getSession().setAttribute( "userid", bar);
 				
-		response.getWriter().println("Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
-			+ "' saved in session.");
+		response.getWriter().println(
+		"Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
+			+ "' saved in session."
+);
 	}  // end doPost
 	
+		
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map22108 = new java.util.HashMap<String,Object>();
-		map22108.put("keyA-22108", "a Value"); // put some stuff in the collection
-		map22108.put("keyB-22108", param); // put it in a collection
-		map22108.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map22108.get("keyB-22108"); // get it back out
+		java.util.HashMap<String,Object> map3141 = new java.util.HashMap<String,Object>();
+		map3141.put("keyA-3141", "a Value"); // put some stuff in the collection
+		map3141.put("keyB-3141", param); // put it in a collection
+		map3141.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map3141.get("keyB-3141"); // get it back out
 	
 		return bar;	
 	}

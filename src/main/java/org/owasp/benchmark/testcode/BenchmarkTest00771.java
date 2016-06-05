@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00771")
+@WebServlet(value="/sqli-01/BenchmarkTest00771")
 public class BenchmarkTest00771 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -40,7 +40,7 @@ public class BenchmarkTest00771 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String[] values = request.getParameterValues("vector");
+		String[] values = request.getParameterValues("BenchmarkTest00771");
 		String param;
 		if (values != null && values.length > 0)
 		  param = values[0];
@@ -48,11 +48,11 @@ public class BenchmarkTest00771 extends HttpServlet {
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map16111 = new java.util.HashMap<String,Object>();
-		map16111.put("keyA-16111", "a Value"); // put some stuff in the collection
-		map16111.put("keyB-16111", param); // put it in a collection
-		map16111.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map16111.get("keyB-16111"); // get it back out
+		java.util.HashMap<String,Object> map49960 = new java.util.HashMap<String,Object>();
+		map49960.put("keyA-49960", "a Value"); // put some stuff in the collection
+		map49960.put("keyB-49960", param); // put it in a collection
+		map49960.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map49960.get("keyB-49960"); // get it back out
 		
 		
 		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
@@ -63,10 +63,13 @@ public class BenchmarkTest00771 extends HttpServlet {
             org.owasp.benchmark.helpers.DatabaseHelper.printResults(statement, sql, response);
 		} catch (java.sql.SQLException e) {
 			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
+        		response.getWriter().println(
+"Error processing request."
+);
         		return;
         	}
 			else throw new ServletException(e);
 		}
 	}
+	
 }

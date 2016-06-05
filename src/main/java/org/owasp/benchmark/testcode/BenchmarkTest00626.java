@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00626")
+@WebServlet(value="/pathtraver-00/BenchmarkTest00626")
 public class BenchmarkTest00626 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,7 +41,7 @@ public class BenchmarkTest00626 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheParameter("vector");
+		String param = scr.getTheParameter("BenchmarkTest00626");
 		if (param == null) param = "";
 		
 		
@@ -65,7 +65,10 @@ public class BenchmarkTest00626 extends HttpServlet {
 			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
 	
 			fos = new java.io.FileOutputStream(new java.io.File(fileName));
-	        response.getWriter().write("Now ready to write to file: " + fileName);
+	        response.getWriter().println(
+			"Now ready to write to file: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName)
+);
+
 		} catch (Exception e) {
 			System.out.println("Couldn't open FileOutputStream on file: '" + fileName + "'");
 //			System.out.println("File exception caught and swallowed: " + e.getMessage());
@@ -80,4 +83,5 @@ public class BenchmarkTest00626 extends HttpServlet {
 			}
 		}
 	}
+	
 }

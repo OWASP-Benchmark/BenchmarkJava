@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<script src="https://localhost:8443/benchmark/js/jquery.min.js"></script>
+<script type="text/javascript" src="https://localhost:8443/benchmark/js/js.cookie.js"></script>
+<title>BenchmarkTest00064</title>
+</head>
+<body>
+<form action="/benchmark/pathtraver-00/BenchmarkTest00064" >
+    <div><p>Here is the image you are looking for: &nbsp;</p></div>
+    <div><img src="/benchmark/img/500px-Banner_stand.png"  style="width: 20%; height: 20%" class="img-responsive" alt="Responsive image" onload="setCookie('BenchmarkTest00064','test',1)"></div>
+    <div><p>This page automatically generated the cookie named BenchmarkTest00064 with the value displayed below,
+        if you want to generate a new cookie with a different value or use a specific value, please
+        use the text box "Value" then press the "Generate cookie" button; once you have the value you want just
+        press "Test it!" to send the cookie.</p></div>
+    <div><label>Parameter: cookie BenchmarkTest00064<BR> Value:</label>
+	<input type="text" id="BenchmarkTest00064" name="BenchmarkTest00064" value="FileName"></input></div>
+	<div><input type="button" value="Generate cookie" onclick="setCookie('BenchmarkTest00064',document.getElementById('BenchmarkTest00064').value,1)" id="cGenerator"/></div>
+    <br/>
+    <div><h5 id="cValue"></h5></div>
+	<div><input type="submit" value="Test it!" /></div>
+</form>
+<script>
+function setCookie(cname, cvalue, exdays) {
+	if (cvalue=='test') {
+		cvalue = "FileName"
+	}
+	Cookies.set(cname, cvalue,{
+		path: '',
+		version: 1
+	});
+	$("#cValue").text(document.cookie);
+}
+</script> 
+</body>
+</html>

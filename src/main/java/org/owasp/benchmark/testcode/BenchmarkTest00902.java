@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00902")
+@WebServlet(value="/weakrand-01/BenchmarkTest00902")
 public class BenchmarkTest00902 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,15 +41,15 @@ public class BenchmarkTest00902 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheValue("vector");
+		String param = scr.getTheValue("BenchmarkTest00902");
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map46076 = new java.util.HashMap<String,Object>();
-		map46076.put("keyA-46076", "a Value"); // put some stuff in the collection
-		map46076.put("keyB-46076", param); // put it in a collection
-		map46076.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map46076.get("keyB-46076"); // get it back out
+		java.util.HashMap<String,Object> map21609 = new java.util.HashMap<String,Object>();
+		map21609.put("keyA-21609", "a Value"); // put some stuff in the collection
+		map21609.put("keyB-21609", param); // put it in a collection
+		map21609.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map21609.get("keyB-21609"); // get it back out
 		
 		
 		int r = new java.util.Random().nextInt();
@@ -76,17 +76,27 @@ public class BenchmarkTest00902 extends HttpServlet {
 		}
 		
 		if (foundUser) {
-			response.getWriter().println("Welcome back: " + user + "<br/>");			
+			response.getWriter().println(
+"Welcome back: " + user + "<br/>"
+);
 		} else {			
 			javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
 			rememberMe.setSecure(true);
-			rememberMe.setPath("/benchmark/" + this.getClass().getSimpleName());
+//			rememberMe.setPath("/benchmark/" + this.getClass().getSimpleName());
+			rememberMe.setPath(request.getRequestURI()); // i.e., set path to JUST this servlet 
+														 // e.g., /benchmark/sql-01/BenchmarkTest01001
 			request.getSession().setAttribute(cookieName, rememberMeKey);
 			response.addCookie(rememberMe);
-			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-					+ " whose value is: " + rememberMe.getValue() + "<br/>");
+			response.getWriter().println(
+				user + " has been remembered with cookie: " + rememberMe.getName() 
+					+ " whose value is: " + rememberMe.getValue() + "<br/>"
+			);
 		}
 				
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextInt() executed");
+		response.getWriter().println(
+"Weak Randomness Test java.util.Random.nextInt() executed"
+);
+
 	}
+	
 }

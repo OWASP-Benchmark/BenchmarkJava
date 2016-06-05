@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark v1.2beta
+* OWASP Benchmark v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00026")
+@WebServlet(value="/sqli-00/BenchmarkTest00026")
 public class BenchmarkTest00026 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -42,7 +42,7 @@ public class BenchmarkTest00026 extends HttpServlet {
 		response.setContentType("text/html");
 		
 
-		String param = request.getParameter("vector");
+		String param = request.getParameter("BenchmarkTest00026");
 		if (param == null) param = "";
 
 		
@@ -50,19 +50,26 @@ public class BenchmarkTest00026 extends HttpServlet {
 			String sql = "SELECT  * from USERS where USERNAME='foo' and PASSWORD='"+ param + "'" ;
 	
 	        org.springframework.jdbc.support.rowset.SqlRowSet results = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.queryForRowSet(sql);
-	        java.io.PrintWriter out = response.getWriter();
-			out.write("Your results are: ");
+	        response.getWriter().println(
+				"Your results are: "
+);
+
 	//		System.out.println("Your results are");
 			while(results.next()) {
-	            out.write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(results.getString("USERNAME")) + " ");
+				response.getWriter().println(
+					org.owasp.esapi.ESAPI.encoder().encodeForHTML(results.getString("USERNAME")) + " "
+				);
 	//			System.out.println(results.getString("USERNAME"));
 			}
 		} catch (org.springframework.dao.DataAccessException e) {
 			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
+        		response.getWriter().println(
+"Error processing request."
+);
         		return;
         	}
 			else throw new ServletException(e);
 		}
 	}
+	
 }

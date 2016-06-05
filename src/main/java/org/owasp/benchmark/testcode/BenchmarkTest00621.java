@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00621")
+@WebServlet(value="/pathtraver-00/BenchmarkTest00621")
 public class BenchmarkTest00621 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,31 +41,38 @@ public class BenchmarkTest00621 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheParameter("vector");
+		String param = scr.getTheParameter("BenchmarkTest00621");
 		if (param == null) param = "";
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a72828 = param; //assign
-		StringBuilder b72828 = new StringBuilder(a72828);  // stick in stringbuilder
-		b72828.append(" SafeStuff"); // append some safe content
-		b72828.replace(b72828.length()-"Chars".length(),b72828.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map72828 = new java.util.HashMap<String,Object>();
-		map72828.put("key72828", b72828.toString()); // put in a collection
-		String c72828 = (String)map72828.get("key72828"); // get it back out
-		String d72828 = c72828.substring(0,c72828.length()-1); // extract most of it
-		String e72828 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d72828.getBytes() ) )); // B64 encode and decode it
-		String f72828 = e72828.split(" ")[0]; // split it on a space
+		String a28566 = param; //assign
+		StringBuilder b28566 = new StringBuilder(a28566);  // stick in stringbuilder
+		b28566.append(" SafeStuff"); // append some safe content
+		b28566.replace(b28566.length()-"Chars".length(),b28566.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map28566 = new java.util.HashMap<String,Object>();
+		map28566.put("key28566", b28566.toString()); // put in a collection
+		String c28566 = (String)map28566.get("key28566"); // get it back out
+		String d28566 = c28566.substring(0,c28566.length()-1); // extract most of it
+		String e28566 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d28566.getBytes() ) )); // B64 encode and decode it
+		String f28566 = e28566.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g72828 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g72828); // reflection
+		String g28566 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g28566); // reflection
 		
 		
 		java.io.File fileTarget = new java.io.File(new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),bar);
-		response.getWriter().write("Access to file: '" + fileTarget + "' created." );
+		response.getWriter().println(
+"Access to file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileTarget.toString()) + "' created." 
+);
 		if (fileTarget.exists()) {
-			response.getWriter().write(" And file already exists.");
-		} else { response.getWriter().write(" But file doesn't exist yet."); }
+			response.getWriter().println(
+" And file already exists."
+);
+		} else { response.getWriter().println(
+" But file doesn't exist yet."
+); }
 	}
+	
 }

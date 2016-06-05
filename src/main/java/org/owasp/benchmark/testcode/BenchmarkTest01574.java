@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01574")
+@WebServlet(value="/pathtraver-01/BenchmarkTest01574")
 public class BenchmarkTest01574 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -40,7 +40,7 @@ public class BenchmarkTest01574 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String[] values = request.getParameterValues("vector");
+		String[] values = request.getParameterValues("BenchmarkTest01574");
 		String param;
 		if (values != null && values.length > 0)
 		  param = values[0];
@@ -55,7 +55,10 @@ public class BenchmarkTest01574 extends HttpServlet {
 			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
 	
 			fos = new java.io.FileOutputStream(fileName, false);
-	        response.getWriter().write("Now ready to write to file: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName));
+	        response.getWriter().println(
+			"Now ready to write to file: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName)
+);
+
 		} catch (Exception e) {
 			System.out.println("Couldn't open FileOutputStream on file: '" + fileName + "'");
 //			System.out.println("File exception caught and swallowed: " + e.getMessage());
@@ -71,17 +74,18 @@ public class BenchmarkTest01574 extends HttpServlet {
 		}
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map13069 = new java.util.HashMap<String,Object>();
-		map13069.put("keyA-13069", "a_Value"); // put some stuff in the collection
-		map13069.put("keyB-13069", param); // put it in a collection
-		map13069.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map13069.get("keyB-13069"); // get it back out
-		bar = (String)map13069.get("keyA-13069"); // get safe value back out
+		java.util.HashMap<String,Object> map48244 = new java.util.HashMap<String,Object>();
+		map48244.put("keyA-48244", "a_Value"); // put some stuff in the collection
+		map48244.put("keyB-48244", param); // put it in a collection
+		map48244.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map48244.get("keyB-48244"); // get it back out
+		bar = (String)map48244.get("keyA-48244"); // get safe value back out
 
             return bar;
         }

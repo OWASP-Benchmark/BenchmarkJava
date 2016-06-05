@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01523")
+@WebServlet(value="/securecookie-00/BenchmarkTest01523")
 public class BenchmarkTest01523 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,7 +41,7 @@ public class BenchmarkTest01523 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheParameter("vector");
+		String param = scr.getTheParameter("BenchmarkTest01523");
 		if (param == null) param = "";
 
 		String bar = new Test().doSomething(param);
@@ -53,7 +53,9 @@ public class BenchmarkTest01523 extends HttpServlet {
 		if (inputParam instanceof java.io.InputStream) {
 			int i = ((java.io.InputStream) inputParam).read(input);
 			if (i == -1) {
-				response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+				response.getWriter().println(
+"This input source requires a POST, not a GET. Incompatible UI for the InputStream source."
+);
 				return;
 			}			
 			str = new String(input, 0, i);
@@ -61,32 +63,36 @@ public class BenchmarkTest01523 extends HttpServlet {
 		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie", str);
 		
 		cookie.setSecure(true);
-		cookie.setPath("/benchmark/" + this.getClass().getSimpleName());
-		
+//		cookie.setPath("/benchmark/" + this.getClass().getSimpleName());
+		cookie.setPath(request.getRequestURI()); // i.e., set path to JUST this servlet
+												 // e.g., /benchmark/sql-01/BenchmarkTest01001
 		response.addCookie(cookie);
 
-		response.getWriter().println("Created cookie: SomeCookie: with value: '"
-		  + org.owasp.esapi.ESAPI.encoder().encodeForHTML(str) + "' and secure flag set to: true");
+		response.getWriter().println(
+			"Created cookie: 'SomeCookie': with value: '"
+			+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(str) + "' and secure flag set to: true"
+		);
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a23234 = param; //assign
-		StringBuilder b23234 = new StringBuilder(a23234);  // stick in stringbuilder
-		b23234.append(" SafeStuff"); // append some safe content
-		b23234.replace(b23234.length()-"Chars".length(),b23234.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map23234 = new java.util.HashMap<String,Object>();
-		map23234.put("key23234", b23234.toString()); // put in a collection
-		String c23234 = (String)map23234.get("key23234"); // get it back out
-		String d23234 = c23234.substring(0,c23234.length()-1); // extract most of it
-		String e23234 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d23234.getBytes() ) )); // B64 encode and decode it
-		String f23234 = e23234.split(" ")[0]; // split it on a space
+		String a94015 = param; //assign
+		StringBuilder b94015 = new StringBuilder(a94015);  // stick in stringbuilder
+		b94015.append(" SafeStuff"); // append some safe content
+		b94015.replace(b94015.length()-"Chars".length(),b94015.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map94015 = new java.util.HashMap<String,Object>();
+		map94015.put("key94015", b94015.toString()); // put in a collection
+		String c94015 = (String)map94015.get("key94015"); // get it back out
+		String d94015 = c94015.substring(0,c94015.length()-1); // extract most of it
+		String e94015 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d94015.getBytes() ) )); // B64 encode and decode it
+		String f94015 = e94015.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f23234); // reflection
+		String bar = thing.doSomething(f94015); // reflection
 
             return bar;
         }

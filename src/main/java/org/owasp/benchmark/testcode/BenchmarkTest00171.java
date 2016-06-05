@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00171")
+@WebServlet(value="/cmdi-00/BenchmarkTest00171")
 public class BenchmarkTest00171 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -40,20 +40,22 @@ public class BenchmarkTest00171 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String param = request.getHeader("vector");
-		if (param == null) param = "";
-        param = java.net.URLDecoder.decode(param, "UTF-8");
-
-		if (param == null) param = "";
+		String param = "";
+		if (request.getHeader("BenchmarkTest00171") != null) {
+			param = request.getHeader("BenchmarkTest00171");
+		}
+		
+		// URL Decode the header value since req.getHeader() doesn't. Unlike req.getParameter().
+		param = java.net.URLDecoder.decode(param, "UTF-8");
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map85059 = new java.util.HashMap<String,Object>();
-		map85059.put("keyA-85059", "a_Value"); // put some stuff in the collection
-		map85059.put("keyB-85059", param); // put it in a collection
-		map85059.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map85059.get("keyB-85059"); // get it back out
-		bar = (String)map85059.get("keyA-85059"); // get safe value back out
+		java.util.HashMap<String,Object> map40534 = new java.util.HashMap<String,Object>();
+		map40534.put("keyA-40534", "a_Value"); // put some stuff in the collection
+		map40534.put("keyB-40534", param); // put it in a collection
+		map40534.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map40534.get("keyB-40534"); // get it back out
+		bar = (String)map40534.get("keyA-40534"); // get safe value back out
 		
 		
 		String cmd = "";	
@@ -71,7 +73,7 @@ public class BenchmarkTest00171 extends HttpServlet {
         	a1 = "sh";
         	a2 = "-c";
         	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("ls");
-                args = new String[]{a1, a2, cmd, bar};
+        	args = new String[]{a1, a2, cmd, bar};
         }
         
         String[] argsEnv = { "foo=bar" };
@@ -86,4 +88,5 @@ public class BenchmarkTest00171 extends HttpServlet {
             throw new ServletException(e);
 		}
 	}
+	
 }

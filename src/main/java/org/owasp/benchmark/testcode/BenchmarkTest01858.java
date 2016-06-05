@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01858")
+@WebServlet(value="/weakrand-04/BenchmarkTest01858")
 public class BenchmarkTest01858 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -45,7 +45,7 @@ public class BenchmarkTest01858 extends HttpServlet {
 		String param = "";
 		if (theCookies != null) {
 			for (javax.servlet.http.Cookie theCookie : theCookies) {
-				if (theCookie.getName().equals("vector")) {
+				if (theCookie.getName().equals("BenchmarkTest01858")) {
 					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
 					break;
 				}
@@ -78,29 +78,40 @@ public class BenchmarkTest01858 extends HttpServlet {
 		}
 		
 		if (foundUser) {
-			response.getWriter().println("Welcome back: " + user + "<br/>");			
+			response.getWriter().println(
+"Welcome back: " + user + "<br/>"
+);
+			
 		} else {			
 			javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
 			rememberMe.setSecure(true);
-			rememberMe.setPath("/benchmark/" + this.getClass().getSimpleName());
+//			rememberMe.setPath("/benchmark/" + this.getClass().getSimpleName());
+			rememberMe.setPath(request.getRequestURI()); // i.e., set path to JUST this servlet 
+														 // e.g., /benchmark/sql-01/BenchmarkTest01001
 			request.getSession().setAttribute(cookieName, rememberMeKey);
 			response.addCookie(rememberMe);
-			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-					+ " whose value is: " + rememberMe.getValue() + "<br/>");
+			response.getWriter().println(
+				user + " has been remembered with cookie: " + rememberMe.getName() 
+					+ " whose value is: " + rememberMe.getValue() + "<br/>"
+			);
 		}
 				
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextLong() executed");
+		response.getWriter().println(
+"Weak Randomness Test java.util.Random.nextLong() executed"
+);
+
 	}  // end doPost
 	
+		
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map76103 = new java.util.HashMap<String,Object>();
-		map76103.put("keyA-76103", "a_Value"); // put some stuff in the collection
-		map76103.put("keyB-76103", param); // put it in a collection
-		map76103.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map76103.get("keyB-76103"); // get it back out
-		bar = (String)map76103.get("keyA-76103"); // get safe value back out
+		java.util.HashMap<String,Object> map95052 = new java.util.HashMap<String,Object>();
+		map95052.put("keyA-95052", "a_Value"); // put some stuff in the collection
+		map95052.put("keyB-95052", param); // put it in a collection
+		map95052.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map95052.get("keyB-95052"); // get it back out
+		bar = (String)map95052.get("keyA-95052"); // get safe value back out
 	
 		return bar;	
 	}

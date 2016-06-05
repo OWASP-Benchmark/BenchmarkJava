@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00587")
+@WebServlet(value="/trustbound-00/BenchmarkTest00587")
 public class BenchmarkTest00587 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -49,7 +49,7 @@ public class BenchmarkTest00587 extends HttpServlet {
 			if (values != null) {
 				for(int i=0;i<values.length && flag; i++){
 					String value = values[i];
-					if (value.equals("vector")) {
+					if (value.equals("BenchmarkTest00587")) {
 						param = name;
 					    flag = false;
 					}
@@ -59,17 +59,20 @@ public class BenchmarkTest00587 extends HttpServlet {
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map99544 = new java.util.HashMap<String,Object>();
-		map99544.put("keyA-99544", "a Value"); // put some stuff in the collection
-		map99544.put("keyB-99544", param); // put it in a collection
-		map99544.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map99544.get("keyB-99544"); // get it back out
+		java.util.HashMap<String,Object> map44465 = new java.util.HashMap<String,Object>();
+		map44465.put("keyA-44465", "a Value"); // put some stuff in the collection
+		map44465.put("keyB-44465", param); // put it in a collection
+		map44465.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map44465.get("keyB-44465"); // get it back out
 		
 		
 		// javax.servlet.http.HttpSession.setAttribute(java.lang.String^,java.lang.Object)
 		request.getSession().setAttribute( bar, "10340");
 				
-		response.getWriter().println("Item: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
-			+ "' with value: '10340' saved in session.");
+		response.getWriter().println(
+"Item: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
+			+ "' with value: '10340' saved in session."
+);
 	}
+	
 }

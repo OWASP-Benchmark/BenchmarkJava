@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest02046")
+@WebServlet(value="/xss-03/BenchmarkTest02046")
 public class BenchmarkTest02046 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,26 +41,29 @@ public class BenchmarkTest02046 extends HttpServlet {
 		response.setContentType("text/html");
 
 		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("referer");
-		if (headers.hasMoreElements()) {
+		java.util.Enumeration<String> headers = request.getHeaders("Referer");
+		
+		if (headers != null && headers.hasMoreElements()) {
 			param = headers.nextElement(); // just grab first element
 		}
-        param = java.net.URLDecoder.decode(param, "UTF-8");
-
+		
+		// URL Decode the header value since req.getHeaders() doesn't. Unlike req.getParameters().
+		param = java.net.URLDecoder.decode(param, "UTF-8");
 
 		String bar = doSomething(param);
 		
 		response.getWriter().print(bar.toCharArray());
 	}  // end doPost
 	
+		
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map59247 = new java.util.HashMap<String,Object>();
-		map59247.put("keyA-59247", "a Value"); // put some stuff in the collection
-		map59247.put("keyB-59247", param); // put it in a collection
-		map59247.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map59247.get("keyB-59247"); // get it back out
+		java.util.HashMap<String,Object> map81510 = new java.util.HashMap<String,Object>();
+		map81510.put("keyA-81510", "a Value"); // put some stuff in the collection
+		map81510.put("keyB-81510", param); // put it in a collection
+		map81510.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map81510.get("keyB-81510"); // get it back out
 	
 		return bar;	
 	}

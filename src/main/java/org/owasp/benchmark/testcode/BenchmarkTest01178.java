@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01178")
+@WebServlet(value="/xss-02/BenchmarkTest01178")
 public class BenchmarkTest01178 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,24 +41,27 @@ public class BenchmarkTest01178 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("referer");
-		if (headers.hasMoreElements()) {
+		java.util.Enumeration<String> headers = request.getHeaders("Referer");
+		
+		if (headers != null && headers.hasMoreElements()) {
 			param = headers.nextElement(); // just grab first element
 		}
-        param = java.net.URLDecoder.decode(param, "UTF-8");
-
+		
+		// URL Decode the header value since req.getHeaders() doesn't. Unlike req.getParameters().
+		param = java.net.URLDecoder.decode(param, "UTF-8");
 
 		String bar = new Test().doSomething(param);
 		
 		response.getWriter().println(bar.toCharArray());
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		StringBuilder sbxyz25187 = new StringBuilder(param);
-		String bar = sbxyz25187.append("_SafeStuff").toString();
+		StringBuilder sbxyz69428 = new StringBuilder(param);
+		String bar = sbxyz69428.append("_SafeStuff").toString();
 
             return bar;
         }

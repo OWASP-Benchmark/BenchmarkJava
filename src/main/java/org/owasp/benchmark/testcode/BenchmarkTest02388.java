@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest02388")
+@WebServlet(value="/hash-02/BenchmarkTest02388")
 public class BenchmarkTest02388 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,7 +41,7 @@ public class BenchmarkTest02388 extends HttpServlet {
 		response.setContentType("text/html");
 
 		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheParameter("vector");
+		String param = scr.getTheParameter("BenchmarkTest02388");
 		if (param == null) param = "";
 
 		String bar = doSomething(param);
@@ -55,7 +55,9 @@ public class BenchmarkTest02388 extends HttpServlet {
 				byte[] strInput = new byte[1000];
 				int i = ((java.io.InputStream) inputParam).read(strInput);
 				if (i == -1) {
-					response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+					response.getWriter().println(
+"This input source requires a POST, not a GET. Incompatible UI for the InputStream source."
+);
 					return;
 				}
 				input = java.util.Arrays.copyOf(strInput, i);
@@ -68,24 +70,30 @@ public class BenchmarkTest02388 extends HttpServlet {
 			java.io.FileWriter fw = new java.io.FileWriter(fileTarget,true); //the true will append the new data
 			    fw.write("hash_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
 			fw.close();
-			response.getWriter().println("Sensitive value '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' hashed and stored<br/>");
+			response.getWriter().println(
+"Sensitive value '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' hashed and stored<br/>"
+);
+
 		} catch (java.security.NoSuchAlgorithmException e) {
 			System.out.println("Problem executing hash - TestCase");
 			throw new ServletException(e);
 		}
 		
-		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String) executed");
+		response.getWriter().println(
+"Hash Test java.security.MessageDigest.getInstance(java.lang.String) executed"
+);
 	}  // end doPost
 	
+		
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map39864 = new java.util.HashMap<String,Object>();
-		map39864.put("keyA-39864", "a_Value"); // put some stuff in the collection
-		map39864.put("keyB-39864", param); // put it in a collection
-		map39864.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map39864.get("keyB-39864"); // get it back out
-		bar = (String)map39864.get("keyA-39864"); // get safe value back out
+		java.util.HashMap<String,Object> map94322 = new java.util.HashMap<String,Object>();
+		map94322.put("keyA-94322", "a_Value"); // put some stuff in the collection
+		map94322.put("keyB-94322", param); // put it in a collection
+		map94322.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map94322.get("keyB-94322"); // get it back out
+		bar = (String)map94322.get("keyA-94322"); // get safe value back out
 	
 		return bar;	
 	}

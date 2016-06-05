@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01113")
+@WebServlet(value="/pathtraver-01/BenchmarkTest01113")
 public class BenchmarkTest01113 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,21 +41,21 @@ public class BenchmarkTest01113 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		String param = "";
-		boolean flag = true;
 		java.util.Enumeration<String> names = request.getHeaderNames();
-		while (names.hasMoreElements() && flag) {
+		while (names.hasMoreElements()) {
 			String name = (String) names.nextElement();
+			
+			if(org.owasp.benchmark.helpers.Utils.commonHeaders.contains(name)){
+				continue;
+			}
+			
 			java.util.Enumeration<String> values = request.getHeaders(name);
-			if (values != null) {
-				while (values.hasMoreElements() && flag) {
-					String value = (String) values.nextElement();
-					if (value.equals("vector")) {
-						param = name;
-						flag = false;
-					}
-				}
+			if (values != null && values.hasMoreElements()) {
+				param = name;
+				break;
 			}
 		}
+		// Note: We don't URL decode header names because people don't normally do that
 
 		String bar = new Test().doSomething(param);
 		
@@ -66,7 +66,10 @@ public class BenchmarkTest01113 extends HttpServlet {
 			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
 	
 			fos = new java.io.FileOutputStream(new java.io.File(fileName),false);
- 	       response.getWriter().write("Now ready to write to file: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName));
+ 	       response.getWriter().println(
+			"Now ready to write to file: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName)
+);
+
 		} catch (Exception e) {
 			System.out.println("Couldn't open FileOutputStream on file: '" + fileName + "'");
 //			System.out.println("File exception caught and swallowed: " + e.getMessage());
@@ -82,17 +85,18 @@ public class BenchmarkTest01113 extends HttpServlet {
 		}
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map74287 = new java.util.HashMap<String,Object>();
-		map74287.put("keyA-74287", "a_Value"); // put some stuff in the collection
-		map74287.put("keyB-74287", param); // put it in a collection
-		map74287.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map74287.get("keyB-74287"); // get it back out
-		bar = (String)map74287.get("keyA-74287"); // get safe value back out
+		java.util.HashMap<String,Object> map50384 = new java.util.HashMap<String,Object>();
+		map50384.put("keyA-50384", "a_Value"); // put some stuff in the collection
+		map50384.put("keyB-50384", param); // put it in a collection
+		map50384.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map50384.get("keyB-50384"); // get it back out
+		bar = (String)map50384.get("keyA-50384"); // get safe value back out
 
             return bar;
         }

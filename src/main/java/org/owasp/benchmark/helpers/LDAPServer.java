@@ -17,7 +17,6 @@ import org.apache.directory.server.protocol.shared.transport.TcpTransport;
 import org.apache.directory.server.xdbm.Index;
 import org.apache.directory.shared.ldap.entry.Entry;
 import org.apache.directory.shared.ldap.entry.ServerEntry;
-import org.apache.directory.shared.ldap.exception.LdapException;
 import org.apache.directory.shared.ldap.name.DN;
 import org.apache.directory.shared.ldap.schema.SchemaManager;
 import org.apache.directory.shared.ldap.schema.ldif.extractor.SchemaLdifExtractor;
@@ -36,8 +35,6 @@ public class LDAPServer {
 	public LDAPServer() {
 		String dir = Utils.getFileFromClasspath("benchmark.properties", LDAPManager.class.getClassLoader()).getParent();
 		File workDir = new File(dir + "/../ldap");
-		// System.out.println(dir + "/../ldap");
-		// File workDir = new File(System.getProperty("user.dir") +
 		workDir.mkdirs();
 
 		// Create the server

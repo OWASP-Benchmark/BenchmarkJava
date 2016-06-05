@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00139")
+@WebServlet(value="/ldapi-00/BenchmarkTest00139")
 public class BenchmarkTest00139 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -40,28 +40,30 @@ public class BenchmarkTest00139 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String param = request.getHeader("vector");
-		if (param == null) param = "";
-        param = java.net.URLDecoder.decode(param, "UTF-8");
-
-		if (param == null) param = "";
+		String param = "";
+		if (request.getHeader("BenchmarkTest00139") != null) {
+			param = request.getHeader("BenchmarkTest00139");
+		}
+		
+		// URL Decode the header value since req.getHeader() doesn't. Unlike req.getParameter().
+		param = java.net.URLDecoder.decode(param, "UTF-8");
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a80543 = param; //assign
-		StringBuilder b80543 = new StringBuilder(a80543);  // stick in stringbuilder
-		b80543.append(" SafeStuff"); // append some safe content
-		b80543.replace(b80543.length()-"Chars".length(),b80543.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map80543 = new java.util.HashMap<String,Object>();
-		map80543.put("key80543", b80543.toString()); // put in a collection
-		String c80543 = (String)map80543.get("key80543"); // get it back out
-		String d80543 = c80543.substring(0,c80543.length()-1); // extract most of it
-		String e80543 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d80543.getBytes() ) )); // B64 encode and decode it
-		String f80543 = e80543.split(" ")[0]; // split it on a space
+		String a48394 = param; //assign
+		StringBuilder b48394 = new StringBuilder(a48394);  // stick in stringbuilder
+		b48394.append(" SafeStuff"); // append some safe content
+		b48394.replace(b48394.length()-"Chars".length(),b48394.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map48394 = new java.util.HashMap<String,Object>();
+		map48394.put("key48394", b48394.toString()); // put in a collection
+		String c48394 = (String)map48394.get("key48394"); // get it back out
+		String d48394 = c48394.substring(0,c48394.length()-1); // extract most of it
+		String e48394 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d48394.getBytes() ) )); // B64 encode and decode it
+		String f48394 = e48394.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g80543 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g80543); // reflection
+		String g48394 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g48394); // reflection
 		
 		
 	org.owasp.benchmark.helpers.LDAPManager ads = new org.owasp.benchmark.helpers.LDAPManager();
@@ -85,11 +87,15 @@ public class BenchmarkTest00139 extends HttpServlet {
 			javax.naming.directory.Attribute attr = attrs.get("uid");
 			javax.naming.directory.Attribute attr2 = attrs.get("street");
 			if (attr != null){
-				response.getWriter().write("LDAP query results:<br>"
+				response.getWriter().println(
+"LDAP query results:<br>"
 						+ " Record found with name " + attr.get() + "<br>"
-								+ "Address: " + attr2.get()+ "<br>");
-				System.out.println("record found " + attr.get());
-			}
+								+ "Address: " + attr2.get()+ "<br>"
+);
+				// System.out.println("record found " + attr.get());
+			} else response.getWriter().println(
+"LDAP query results: nothing found."
+);
 		}
 	} catch (javax.naming.NamingException e) {
 		throw new ServletException(e);
@@ -101,4 +107,5 @@ public class BenchmarkTest00139 extends HttpServlet {
 		}
     }
 	}
+	
 }

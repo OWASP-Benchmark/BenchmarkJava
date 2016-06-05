@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest02639")
+@WebServlet(value="/sqli-05/BenchmarkTest02639")
 public class BenchmarkTest02639 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,15 +41,15 @@ public class BenchmarkTest02639 extends HttpServlet {
 		response.setContentType("text/html");
 
 		String queryString = request.getQueryString();
-		String paramval = "vector"+"=";
+		String paramval = "BenchmarkTest02639"+"=";
 		int paramLoc = -1;
 		if (queryString != null) paramLoc = queryString.indexOf(paramval);
 		if (paramLoc == -1) {
-			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "vector" + "' in query string.");
+			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "BenchmarkTest02639" + "' in query string.");
 			return;
 		}
 		
-		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "vector" param is last parameter in query string.
+		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "BenchmarkTest02639" param is last parameter in query string.
 		// And then check to see if its in the middle of the query string and if so, trim off what comes after.
 		int ampersandLoc = queryString.indexOf("&", paramLoc);
 		if (ampersandLoc != -1) {
@@ -64,36 +64,40 @@ public class BenchmarkTest02639 extends HttpServlet {
 	            + bar + "'";
 	
 			org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.execute(sql);
-			java.io.PrintWriter out = response.getWriter();
-	//		System.out.println("no results for query: " + sql + " because the Spring execute method doesn't return results.");
-			out.write("No results can be displayed for query: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(sql) + "<br>");
-			out.write(" because the Spring execute method doesn't return results.");
+			response.getWriter().println(
+				"No results can be displayed for query: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(sql) + "<br>"
+			+ " because the Spring execute method doesn't return results."
+);
+			
 		} catch (org.springframework.dao.DataAccessException e) {
 			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
+        		response.getWriter().println(
+"Error processing request."
+);
         		return;
         	}
 			else throw new ServletException(e);
 		}		
 	}  // end doPost
 	
+		
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a40918 = param; //assign
-		StringBuilder b40918 = new StringBuilder(a40918);  // stick in stringbuilder
-		b40918.append(" SafeStuff"); // append some safe content
-		b40918.replace(b40918.length()-"Chars".length(),b40918.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map40918 = new java.util.HashMap<String,Object>();
-		map40918.put("key40918", b40918.toString()); // put in a collection
-		String c40918 = (String)map40918.get("key40918"); // get it back out
-		String d40918 = c40918.substring(0,c40918.length()-1); // extract most of it
-		String e40918 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d40918.getBytes() ) )); // B64 encode and decode it
-		String f40918 = e40918.split(" ")[0]; // split it on a space
+		String a57676 = param; //assign
+		StringBuilder b57676 = new StringBuilder(a57676);  // stick in stringbuilder
+		b57676.append(" SafeStuff"); // append some safe content
+		b57676.replace(b57676.length()-"Chars".length(),b57676.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map57676 = new java.util.HashMap<String,Object>();
+		map57676.put("key57676", b57676.toString()); // put in a collection
+		String c57676 = (String)map57676.get("key57676"); // get it back out
+		String d57676 = c57676.substring(0,c57676.length()-1); // extract most of it
+		String e57676 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d57676.getBytes() ) )); // B64 encode and decode it
+		String f57676 = e57676.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g40918 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g40918); // reflection
+		String g57676 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g57676); // reflection
 	
 		return bar;	
 	}

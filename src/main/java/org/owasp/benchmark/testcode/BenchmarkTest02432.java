@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest02432")
+@WebServlet(value="/cmdi-02/BenchmarkTest02432")
 public class BenchmarkTest02432 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,7 +41,7 @@ public class BenchmarkTest02432 extends HttpServlet {
 		response.setContentType("text/html");
 
 		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheParameter("vector");
+		String param = scr.getTheParameter("BenchmarkTest02432");
 		if (param == null) param = "";
 
 		String bar = doSomething(param);
@@ -61,7 +61,7 @@ public class BenchmarkTest02432 extends HttpServlet {
         	a1 = "sh";
         	a2 = "-c";
         	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("ls");
-                args = new String[]{a1, a2, cmd, bar};
+        	args = new String[]{a1, a2, cmd, bar};
         }
         
         String[] argsEnv = { "foo=bar" };
@@ -77,14 +77,15 @@ public class BenchmarkTest02432 extends HttpServlet {
 		}
 	}  // end doPost
 	
+		
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map89677 = new java.util.HashMap<String,Object>();
-		map89677.put("keyA-89677", "a Value"); // put some stuff in the collection
-		map89677.put("keyB-89677", param); // put it in a collection
-		map89677.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map89677.get("keyB-89677"); // get it back out
+		java.util.HashMap<String,Object> map15850 = new java.util.HashMap<String,Object>();
+		map15850.put("keyA-15850", "a Value"); // put some stuff in the collection
+		map15850.put("keyB-15850", param); // put it in a collection
+		map15850.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map15850.get("keyB-15850"); // get it back out
 	
 		return bar;	
 	}

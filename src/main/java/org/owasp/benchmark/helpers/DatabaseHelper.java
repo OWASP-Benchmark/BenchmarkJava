@@ -21,7 +21,6 @@ package org.owasp.benchmark.helpers;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -29,6 +28,7 @@ import java.sql.Statement;
 import java.util.List;
 
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
@@ -39,9 +39,22 @@ public class DatabaseHelper {
 	private static Statement stmt;
 	private static Connection conn;
 	public static org.springframework.jdbc.core.JdbcTemplate JDBCtemplate;
-	public static final boolean hideSQLErrors = true; // If we want SQL Exceptions to be suppressed from being displayed to the user of the web app.
+	public static final boolean hideSQLErrors = false; // If we want SQL Exceptions to be suppressed from being displayed to the user of the web app.
 
 	static {
+		
+		initDataBase();
+		
+		System.out.println("Spring context init() ");
+		@SuppressWarnings("resource")
+		org.springframework.context.ApplicationContext ac =
+				new  org.springframework.context.support.ClassPathXmlApplicationContext("/context.xml", DatabaseHelper.class);
+		javax.sql.DataSource data = (javax.sql.DataSource) ac.getBean("dataSource");
+		JDBCtemplate = new org.springframework.jdbc.core.JdbcTemplate(data);
+		System.out.println("Spring context loaded!");
+	}
+	
+	public static void initDataBase(){
 		try {
 			executeSQLCommand("DROP PROCEDURE IF EXISTS verifyUserPassword");
 			executeSQLCommand("DROP PROCEDURE IF EXISTS verifyEmployeeSalary");
@@ -80,11 +93,8 @@ public class DatabaseHelper {
 					+ " DECLARE resultSet SCROLL CURSOR WITH RETURN FOR SELECT * FROM EMPLOYEE WHERE FIRST_NAME = user_;"
 					+ " OPEN resultSet;"
 					+"END;");
+			conn.commit();
 			initData();
-			
-			org.springframework.context.ApplicationContext ac = new  org.springframework.context.support.ClassPathXmlApplicationContext("/context.xml", DatabaseHelper.class);
-			javax.sql.DataSource data = (javax.sql.DataSource) ac.getBean("dataSource");
-			JDBCtemplate = new org.springframework.jdbc.core.JdbcTemplate(data);
 			
 			System.out.println("DataBase tables/procedures created.");
 		} catch (Exception e1) {
@@ -124,6 +134,7 @@ public class DatabaseHelper {
 			executeSQLCommand("INSERT INTO SCORE (nick, score) VALUES('foo', 40)");
 			
 			executeSQLCommand("INSERT INTO EMPLOYEE (first_name, last_name, salary) VALUES('foo', 'bar', 100)");
+			conn.commit();
 		} catch (Exception e1) {
 			System.out.println("Problem with database init/reset: " + e1.getMessage());
 		}
@@ -132,22 +143,15 @@ public class DatabaseHelper {
 	public static java.sql.Connection getSqlConnection() {
 		if (conn == null) {
 			try {
-				Class.forName("org.hsqldb.jdbcDriver");
-				String url = "jdbc:hsqldb:benchmarkDataBase;sql.enforce_size=false";
-				conn = DriverManager.getConnection(url, "sa", "");
-				
-				// TODO - Per Fortify, the connection should use the container's connection pool.
-				// Not the direct/hard coded connection used above
-				//InitialContext ctx = new InitialContext();
-				//DataSource datasource = (DataSource)ctx.lookup(DB_DATASRC_REF);
-				//conn = datasource.getConnection();
-				
-			} catch (SQLException | ClassNotFoundException e) {
+				InitialContext ctx = new InitialContext();
+				DataSource datasource = (DataSource)ctx.lookup("java:comp/env/jdbc/BenchmarkDB");
+				conn = datasource.getConnection();
+				conn.setAutoCommit(false);
+			} catch (SQLException | NamingException e) {
 				System.out.println("Problem with getSqlConnection.");
 				e.printStackTrace();
 			}
 		}
-//		initData();
 		return conn;
 	}
 

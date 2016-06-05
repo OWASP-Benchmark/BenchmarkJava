@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest02059")
+@WebServlet(value="/cmdi-02/BenchmarkTest02059")
 public class BenchmarkTest02059 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,12 +41,14 @@ public class BenchmarkTest02059 extends HttpServlet {
 		response.setContentType("text/html");
 
 		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("vector");
-		if (headers.hasMoreElements()) {
+		java.util.Enumeration<String> headers = request.getHeaders("BenchmarkTest02059");
+		
+		if (headers != null && headers.hasMoreElements()) {
 			param = headers.nextElement(); // just grab first element
 		}
-        param = java.net.URLDecoder.decode(param, "UTF-8");
-
+		
+		// URL Decode the header value since req.getHeaders() doesn't. Unlike req.getParameters().
+		param = java.net.URLDecoder.decode(param, "UTF-8");
 
 		String bar = doSomething(param);
 		
@@ -73,14 +75,15 @@ public class BenchmarkTest02059 extends HttpServlet {
 		}
 	}  // end doPost
 	
+		
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map3969 = new java.util.HashMap<String,Object>();
-		map3969.put("keyA-3969", "a Value"); // put some stuff in the collection
-		map3969.put("keyB-3969", param); // put it in a collection
-		map3969.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map3969.get("keyB-3969"); // get it back out
+		java.util.HashMap<String,Object> map36421 = new java.util.HashMap<String,Object>();
+		map36421.put("keyA-36421", "a Value"); // put some stuff in the collection
+		map36421.put("keyB-36421", param); // put it in a collection
+		map36421.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map36421.get("keyB-36421"); // get it back out
 	
 		return bar;	
 	}

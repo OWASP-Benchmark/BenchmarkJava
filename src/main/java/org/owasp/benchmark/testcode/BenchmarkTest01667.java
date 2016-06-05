@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01667")
+@WebServlet(value="/xss-03/BenchmarkTest01667")
 public class BenchmarkTest01667 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,15 +41,15 @@ public class BenchmarkTest01667 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		String queryString = request.getQueryString();
-		String paramval = "vector"+"=";
+		String paramval = "BenchmarkTest01667"+"=";
 		int paramLoc = -1;
 		if (queryString != null) paramLoc = queryString.indexOf(paramval);
 		if (paramLoc == -1) {
-			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "vector" + "' in query string.");
+			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "BenchmarkTest01667" + "' in query string.");
 			return;
 		}
 		
-		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "vector" param is last parameter in query string.
+		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "BenchmarkTest01667" param is last parameter in query string.
 		// And then check to see if its in the middle of the query string and if so, trim off what comes after.
 		int ampersandLoc = queryString.indexOf("&", paramLoc);
 		if (ampersandLoc != -1) {
@@ -62,16 +62,17 @@ public class BenchmarkTest01667 extends HttpServlet {
 		response.getWriter().println(bar);
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map60966 = new java.util.HashMap<String,Object>();
-		map60966.put("keyA-60966", "a Value"); // put some stuff in the collection
-		map60966.put("keyB-60966", param); // put it in a collection
-		map60966.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map60966.get("keyB-60966"); // get it back out
+		java.util.HashMap<String,Object> map96771 = new java.util.HashMap<String,Object>();
+		map96771.put("keyA-96771", "a Value"); // put some stuff in the collection
+		map96771.put("keyB-96771", param); // put it in a collection
+		map96771.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map96771.get("keyB-96771"); // get it back out
 
             return bar;
         }

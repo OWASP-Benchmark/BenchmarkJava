@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest02115")
+@WebServlet(value="/ldapi-00/BenchmarkTest02115")
 public class BenchmarkTest02115 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -40,7 +40,7 @@ public class BenchmarkTest02115 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 
-		String param = request.getParameter("vector");
+		String param = request.getParameter("BenchmarkTest02115");
 		if (param == null) param = "";
 
 		String bar = doSomething(param);
@@ -65,11 +65,15 @@ public class BenchmarkTest02115 extends HttpServlet {
 			javax.naming.directory.Attribute attr = attrs.get("uid");
 			javax.naming.directory.Attribute attr2 = attrs.get("street");
 			if (attr != null){
-				response.getWriter().write("LDAP query results:<br>"
+				response.getWriter().println(
+"LDAP query results:<br>"
 						+ " Record found with name " + attr.get() + "<br>"
-								+ "Address: " + attr2.get()+ "<br>");
-				System.out.println("record found " + attr.get());
-			}
+								+ "Address: " + attr2.get()+ "<br>"
+);
+				// System.out.println("record found " + attr.get());
+			} else response.getWriter().println(
+"LDAP query results: nothing found."
+);
 		}
 	} catch (javax.naming.NamingException e) {
 		throw new ServletException(e);
@@ -82,15 +86,16 @@ public class BenchmarkTest02115 extends HttpServlet {
     }
 	}  // end doPost
 	
+		
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map26244 = new java.util.HashMap<String,Object>();
-		map26244.put("keyA-26244", "a_Value"); // put some stuff in the collection
-		map26244.put("keyB-26244", param); // put it in a collection
-		map26244.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map26244.get("keyB-26244"); // get it back out
-		bar = (String)map26244.get("keyA-26244"); // get safe value back out
+		java.util.HashMap<String,Object> map89109 = new java.util.HashMap<String,Object>();
+		map89109.put("keyA-89109", "a_Value"); // put some stuff in the collection
+		map89109.put("keyB-89109", param); // put it in a collection
+		map89109.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map89109.get("keyB-89109"); // get it back out
+		bar = (String)map89109.get("keyA-89109"); // get safe value back out
 	
 		return bar;	
 	}

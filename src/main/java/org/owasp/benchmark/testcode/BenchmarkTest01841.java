@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01841")
+@WebServlet(value="/pathtraver-02/BenchmarkTest01841")
 public class BenchmarkTest01841 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -45,7 +45,7 @@ public class BenchmarkTest01841 extends HttpServlet {
 		String param = "";
 		if (theCookies != null) {
 			for (javax.servlet.http.Cookie theCookie : theCookies) {
-				if (theCookie.getName().equals("vector")) {
+				if (theCookie.getName().equals("BenchmarkTest01841")) {
 					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
 					break;
 				}
@@ -70,7 +70,10 @@ public class BenchmarkTest01841 extends HttpServlet {
 	        java.io.FileInputStream fileInputStream = new java.io.FileInputStream(fileName);
 	        java.io.FileDescriptor fd = fileInputStream.getFD();
 	        fos = new java.io.FileOutputStream(fd);
-	        response.getWriter().write("Now ready to write to file: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName));
+	        response.getWriter().println(
+			"Now ready to write to file: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName)
+);
+
 		} catch (Exception e) {
 			System.out.println("Couldn't open FileOutputStream on file: '" + fileName + "'");
 //			System.out.println("File exception caught and swallowed: " + e.getMessage());
@@ -86,23 +89,24 @@ public class BenchmarkTest01841 extends HttpServlet {
 		}
 	}  // end doPost
 	
+		
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a42979 = param; //assign
-		StringBuilder b42979 = new StringBuilder(a42979);  // stick in stringbuilder
-		b42979.append(" SafeStuff"); // append some safe content
-		b42979.replace(b42979.length()-"Chars".length(),b42979.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map42979 = new java.util.HashMap<String,Object>();
-		map42979.put("key42979", b42979.toString()); // put in a collection
-		String c42979 = (String)map42979.get("key42979"); // get it back out
-		String d42979 = c42979.substring(0,c42979.length()-1); // extract most of it
-		String e42979 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d42979.getBytes() ) )); // B64 encode and decode it
-		String f42979 = e42979.split(" ")[0]; // split it on a space
+		String a14546 = param; //assign
+		StringBuilder b14546 = new StringBuilder(a14546);  // stick in stringbuilder
+		b14546.append(" SafeStuff"); // append some safe content
+		b14546.replace(b14546.length()-"Chars".length(),b14546.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map14546 = new java.util.HashMap<String,Object>();
+		map14546.put("key14546", b14546.toString()); // put in a collection
+		String c14546 = (String)map14546.get("key14546"); // get it back out
+		String d14546 = c14546.substring(0,c14546.length()-1); // extract most of it
+		String e14546 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d14546.getBytes() ) )); // B64 encode and decode it
+		String f14546 = e14546.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g42979 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g42979); // reflection
+		String g14546 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g14546); // reflection
 	
 		return bar;	
 	}

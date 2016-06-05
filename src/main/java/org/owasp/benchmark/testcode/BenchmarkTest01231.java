@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01231")
+@WebServlet(value="/pathtraver-01/BenchmarkTest01231")
 public class BenchmarkTest01231 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -40,28 +40,35 @@ public class BenchmarkTest01231 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String param = request.getParameter("vector");
+		String param = request.getParameter("BenchmarkTest01231");
 		if (param == null) param = "";
 
 		String bar = new Test().doSomething(param);
 		
 		java.io.File fileTarget = new java.io.File(new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),bar);
-		response.getWriter().write("Access to file: '" + fileTarget + "' created." );
+		response.getWriter().println(
+"Access to file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileTarget.toString()) + "' created." 
+);
 		if (fileTarget.exists()) {
-			response.getWriter().write(" And file already exists.");
-		} else { response.getWriter().write(" But file doesn't exist yet."); }
+			response.getWriter().println(
+" And file already exists."
+);
+		} else { response.getWriter().println(
+" But file doesn't exist yet."
+); }
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map38956 = new java.util.HashMap<String,Object>();
-		map38956.put("keyA-38956", "a Value"); // put some stuff in the collection
-		map38956.put("keyB-38956", param); // put it in a collection
-		map38956.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map38956.get("keyB-38956"); // get it back out
+		java.util.HashMap<String,Object> map35717 = new java.util.HashMap<String,Object>();
+		map35717.put("keyA-35717", "a Value"); // put some stuff in the collection
+		map35717.put("keyB-35717", param); // put it in a collection
+		map35717.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map35717.get("keyB-35717"); // get it back out
 
             return bar;
         }

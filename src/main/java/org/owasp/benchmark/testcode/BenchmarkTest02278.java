@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest02278")
+@WebServlet(value="/sqli-05/BenchmarkTest02278")
 public class BenchmarkTest02278 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -43,7 +43,7 @@ public class BenchmarkTest02278 extends HttpServlet {
 		java.util.Map<String,String[]> map = request.getParameterMap();
 		String param = "";
 		if (!map.isEmpty()) {
-			String[] values = map.get("vector");
+			String[] values = map.get("BenchmarkTest02278");
 			if (values != null) param = values[0];
 		}
 		
@@ -54,29 +54,36 @@ public class BenchmarkTest02278 extends HttpServlet {
 			String sql = "SELECT TOP 1 userid from USERS where USERNAME='foo' and PASSWORD='"+ bar + "'";
 	
 			Long results = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.queryForLong(sql);
-			java.io.PrintWriter out = response.getWriter();
-			out.write("Your results are: ");
+			response.getWriter().println(
+				"Your results are: "
+);
+
 	//		System.out.println("your results are");
-			out.write(results.toString());
+			response.getWriter().println(
+				results.toString()
+			);
 	//		System.out.println(results);
 		} catch (org.springframework.dao.DataAccessException e) {
 			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
+        		response.getWriter().println(
+"Error processing request."
+);
         		return;
         	}
 			else throw new ServletException(e);
 		}
 	}  // end doPost
 	
+		
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map88908 = new java.util.HashMap<String,Object>();
-		map88908.put("keyA-88908", "a_Value"); // put some stuff in the collection
-		map88908.put("keyB-88908", param); // put it in a collection
-		map88908.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map88908.get("keyB-88908"); // get it back out
-		bar = (String)map88908.get("keyA-88908"); // get safe value back out
+		java.util.HashMap<String,Object> map96698 = new java.util.HashMap<String,Object>();
+		map96698.put("keyA-96698", "a_Value"); // put some stuff in the collection
+		map96698.put("keyB-96698", param); // put it in a collection
+		map96698.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map96698.get("keyB-96698"); // get it back out
+		bar = (String)map96698.get("keyA-96698"); // get safe value back out
 	
 		return bar;	
 	}

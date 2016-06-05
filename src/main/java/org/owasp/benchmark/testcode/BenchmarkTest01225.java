@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01225")
+@WebServlet(value="/xpathi-00/BenchmarkTest01225")
 public class BenchmarkTest01225 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,26 +41,36 @@ public class BenchmarkTest01225 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("vector");
-		if (headers.hasMoreElements()) {
+		java.util.Enumeration<String> headers = request.getHeaders("BenchmarkTest01225");
+		
+		if (headers != null && headers.hasMoreElements()) {
 			param = headers.nextElement(); // just grab first element
 		}
-        param = java.net.URLDecoder.decode(param, "UTF-8");
-
+		
+		// URL Decode the header value since req.getHeaders() doesn't. Unlike req.getParameters().
+		param = java.net.URLDecoder.decode(param, "UTF-8");
 
 		String bar = new Test().doSomething(param);
 		
 		try {
 			java.io.FileInputStream file = new java.io.FileInputStream(org.owasp.benchmark.helpers.Utils.getFileFromClasspath("employees.xml", this.getClass().getClassLoader()));
 			javax.xml.parsers.DocumentBuilderFactory builderFactory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+			// Prevent XXE
+			builderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
 			javax.xml.parsers.DocumentBuilder builder = builderFactory.newDocumentBuilder();
 			org.w3c.dom.Document xmlDocument = builder.parse(file);
 			javax.xml.xpath.XPathFactory xpf = javax.xml.xpath.XPathFactory.newInstance();
 			javax.xml.xpath.XPath xp = xpf.newXPath();
 			
-			response.getWriter().println("Your query results are: <br/>"); 
+			response.getWriter().println(
+"Your query results are: <br/>"
+);
+ 
 			String expression = "/Employees/Employee[@emplid='"+bar+"']";
-			response.getWriter().println(xp.evaluate(expression, xmlDocument) + "<br/>");
+			response.getWriter().println(
+xp.evaluate(expression, xmlDocument) + "<br/>"
+);
+
 			
 		} catch (javax.xml.xpath.XPathExpressionException e) {
 			// OK to swallow
@@ -72,6 +82,7 @@ public class BenchmarkTest01225 extends HttpServlet {
 		}
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {

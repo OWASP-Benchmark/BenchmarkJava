@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest02652")
+@WebServlet(value="/sqli-06/BenchmarkTest02652")
 public class BenchmarkTest02652 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,15 +41,15 @@ public class BenchmarkTest02652 extends HttpServlet {
 		response.setContentType("text/html");
 
 		String queryString = request.getQueryString();
-		String paramval = "vector"+"=";
+		String paramval = "BenchmarkTest02652"+"=";
 		int paramLoc = -1;
 		if (queryString != null) paramLoc = queryString.indexOf(paramval);
 		if (paramLoc == -1) {
-			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "vector" + "' in query string.");
+			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "BenchmarkTest02652" + "' in query string.");
 			return;
 		}
 		
-		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "vector" param is last parameter in query string.
+		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "BenchmarkTest02652" param is last parameter in query string.
 		// And then check to see if its in the middle of the query string and if so, trim off what comes after.
 		int ampersandLoc = queryString.indexOf("&", paramLoc);
 		if (ampersandLoc != -1) {
@@ -67,30 +67,33 @@ public class BenchmarkTest02652 extends HttpServlet {
             org.owasp.benchmark.helpers.DatabaseHelper.printResults(statement, sql, response);
 		} catch (java.sql.SQLException e) {
 			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
+        		response.getWriter().println(
+"Error processing request."
+);
         		return;
         	}
 			else throw new ServletException(e);
 		}
 	}  // end doPost
 	
+		
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a86355 = param; //assign
-		StringBuilder b86355 = new StringBuilder(a86355);  // stick in stringbuilder
-		b86355.append(" SafeStuff"); // append some safe content
-		b86355.replace(b86355.length()-"Chars".length(),b86355.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map86355 = new java.util.HashMap<String,Object>();
-		map86355.put("key86355", b86355.toString()); // put in a collection
-		String c86355 = (String)map86355.get("key86355"); // get it back out
-		String d86355 = c86355.substring(0,c86355.length()-1); // extract most of it
-		String e86355 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d86355.getBytes() ) )); // B64 encode and decode it
-		String f86355 = e86355.split(" ")[0]; // split it on a space
+		String a25323 = param; //assign
+		StringBuilder b25323 = new StringBuilder(a25323);  // stick in stringbuilder
+		b25323.append(" SafeStuff"); // append some safe content
+		b25323.replace(b25323.length()-"Chars".length(),b25323.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map25323 = new java.util.HashMap<String,Object>();
+		map25323.put("key25323", b25323.toString()); // put in a collection
+		String c25323 = (String)map25323.get("key25323"); // get it back out
+		String d25323 = c25323.substring(0,c25323.length()-1); // extract most of it
+		String e25323 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d25323.getBytes() ) )); // B64 encode and decode it
+		String f25323 = e25323.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g86355 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g86355); // reflection
+		String g25323 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g25323); // reflection
 	
 		return bar;	
 	}

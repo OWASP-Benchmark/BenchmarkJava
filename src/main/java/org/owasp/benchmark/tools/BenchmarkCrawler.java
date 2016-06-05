@@ -20,6 +20,7 @@ package org.owasp.benchmark.tools;
 
 import java.io.InputStream;
 import java.net.URLEncoder;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -98,7 +99,6 @@ public class BenchmarkCrawler {
         System.out.println( "POST " + post.getURI() );
         try {
             HttpEntity entity = response.getEntity();
-//            System.err.println( EntityUtils.toString( entity ) );
             System.out.println("--> (" + response.getStatusLine().getStatusCode() + ") " );
             EntityUtils.consume(entity);
         } finally {
@@ -142,10 +142,12 @@ public class BenchmarkCrawler {
             }
             String name = getAttributeValue( "name", field );
             String value = getAttributeValue( "value", field );
+            //System.out.println(query);
             query += name + "=" + URLEncoder.encode(value);
         }        
       
-        String fullURL = url + number;
+        String fullURL = getAttributeValue("URL", test);
+       // System.out.println(fullURL);
         if ( !query.isEmpty() ) {
             fullURL += "?" + query;
         }
@@ -153,11 +155,13 @@ public class BenchmarkCrawler {
         for ( Node header : headers ) {
             String name = getAttributeValue( "name", header );
             String value = getAttributeValue( "value", header );
+            //System.out.println("Header:" + name + "=" + value);
             httpPost.addHeader(name, value);
         }
         for ( Node cookie : cookies ) {
             String name = getAttributeValue( "name", cookie );
             String value = getAttributeValue( "value", cookie );
+            //System.out.println("Cookie:" + name + "=" + value);
             httpPost.addHeader("Cookie", name + "=" + value);
         }
         
@@ -165,6 +169,7 @@ public class BenchmarkCrawler {
         for ( Node field : formParams ) {
             String name = getAttributeValue( "name", field );
             String value = getAttributeValue( "value", field );
+            //System.out.println(name+"="+value);
             NameValuePair nvp = new BasicNameValuePair( name, value );
             fields.add( nvp );
         }
@@ -231,9 +236,28 @@ public class BenchmarkCrawler {
             Node attrnode = nnm.getNamedItem(name);
             if (attrnode != null) {
                 String value = attrnode.getNodeValue();
+                if ( value.equals( "[random]" ) ) {
+                    value = getToken();
+                }
+                //System.out.println("El value es: " + value);
                 return value;
             }
         }
         return null;
-    }    
+    }
+    
+    
+    private static SecureRandom sr = new SecureRandom();
+    
+    private static String getToken() {
+        StringBuilder sb = new StringBuilder();
+        for ( int i = 0; i < 5; i++ ) {
+            sb.append( (char)(sr.nextInt(26) +'a' ) ); 
+        }
+        for ( int i = 0; i< 3; i++ ) {
+            sb.append( (char)(sr.nextInt(10) + '0' ) );
+        }
+        return sb.toString();
+    }
+
 }

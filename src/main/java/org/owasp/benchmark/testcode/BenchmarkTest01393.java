@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01393")
+@WebServlet(value="/sqli-03/BenchmarkTest01393")
 public class BenchmarkTest01393 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -43,7 +43,7 @@ public class BenchmarkTest01393 extends HttpServlet {
 		java.util.Map<String,String[]> map = request.getParameterMap();
 		String param = "";
 		if (!map.isEmpty()) {
-			String[] values = map.get("vector");
+			String[] values = map.get("BenchmarkTest01393");
 			if (values != null) param = values[0];
 		}
 		
@@ -58,32 +58,35 @@ public class BenchmarkTest01393 extends HttpServlet {
             org.owasp.benchmark.helpers.DatabaseHelper.outputUpdateComplete(sql, response);
 		} catch (java.sql.SQLException e) {
 			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
+        		response.getWriter().println(
+"Error processing request."
+);
         		return;
         	}
 			else throw new ServletException(e);
 		}
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a44572 = param; //assign
-		StringBuilder b44572 = new StringBuilder(a44572);  // stick in stringbuilder
-		b44572.append(" SafeStuff"); // append some safe content
-		b44572.replace(b44572.length()-"Chars".length(),b44572.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map44572 = new java.util.HashMap<String,Object>();
-		map44572.put("key44572", b44572.toString()); // put in a collection
-		String c44572 = (String)map44572.get("key44572"); // get it back out
-		String d44572 = c44572.substring(0,c44572.length()-1); // extract most of it
-		String e44572 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d44572.getBytes() ) )); // B64 encode and decode it
-		String f44572 = e44572.split(" ")[0]; // split it on a space
+		String a57571 = param; //assign
+		StringBuilder b57571 = new StringBuilder(a57571);  // stick in stringbuilder
+		b57571.append(" SafeStuff"); // append some safe content
+		b57571.replace(b57571.length()-"Chars".length(),b57571.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map57571 = new java.util.HashMap<String,Object>();
+		map57571.put("key57571", b57571.toString()); // put in a collection
+		String c57571 = (String)map57571.get("key57571"); // get it back out
+		String d57571 = c57571.substring(0,c57571.length()-1); // extract most of it
+		String e57571 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d57571.getBytes() ) )); // B64 encode and decode it
+		String f57571 = e57571.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g44572 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g44572); // reflection
+		String g57571 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g57571); // reflection
 
             return bar;
         }

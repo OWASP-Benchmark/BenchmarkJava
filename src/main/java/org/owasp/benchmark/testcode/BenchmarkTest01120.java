@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01120")
+@WebServlet(value="/hash-01/BenchmarkTest01120")
 public class BenchmarkTest01120 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,21 +41,21 @@ public class BenchmarkTest01120 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		String param = "";
-		boolean flag = true;
 		java.util.Enumeration<String> names = request.getHeaderNames();
-		while (names.hasMoreElements() && flag) {
+		while (names.hasMoreElements()) {
 			String name = (String) names.nextElement();
+			
+			if(org.owasp.benchmark.helpers.Utils.commonHeaders.contains(name)){
+				continue;
+			}
+			
 			java.util.Enumeration<String> values = request.getHeaders(name);
-			if (values != null) {
-				while (values.hasMoreElements() && flag) {
-					String value = (String) values.nextElement();
-					if (value.equals("vector")) {
-						param = name;
-						flag = false;
-					}
-				}
+			if (values != null && values.hasMoreElements()) {
+				param = name;
+				break;
 			}
 		}
+		// Note: We don't URL decode header names because people don't normally do that
 
 		String bar = new Test().doSomething(param);
 		
@@ -76,7 +76,9 @@ public class BenchmarkTest01120 extends HttpServlet {
 				byte[] strInput = new byte[1000];
 				int i = ((java.io.InputStream) inputParam).read(strInput);
 				if (i == -1) {
-					response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+					response.getWriter().println(
+"This input source requires a POST, not a GET. Incompatible UI for the InputStream source."
+);
 					return;
 				}
 				input = java.util.Arrays.copyOf(strInput, i);
@@ -89,7 +91,10 @@ public class BenchmarkTest01120 extends HttpServlet {
 			java.io.FileWriter fw = new java.io.FileWriter(fileTarget,true); //the true will append the new data
 			    fw.write("hash_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
 			fw.close();
-			response.getWriter().println("Sensitive value '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' hashed and stored<br/>");
+			response.getWriter().println(
+"Sensitive value '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' hashed and stored<br/>"
+);
+
 		} catch (java.security.NoSuchAlgorithmException e) {
 			System.out.println("Problem executing hash - TestCase java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider)");
             throw new ServletException(e);
@@ -98,27 +103,30 @@ public class BenchmarkTest01120 extends HttpServlet {
             throw new ServletException(e);
 		}
 
-		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider) executed");
+		response.getWriter().println(
+"Hash Test java.security.MessageDigest.getInstance(java.lang.String,java.security.Provider) executed"
+);
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a11121 = param; //assign
-		StringBuilder b11121 = new StringBuilder(a11121);  // stick in stringbuilder
-		b11121.append(" SafeStuff"); // append some safe content
-		b11121.replace(b11121.length()-"Chars".length(),b11121.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map11121 = new java.util.HashMap<String,Object>();
-		map11121.put("key11121", b11121.toString()); // put in a collection
-		String c11121 = (String)map11121.get("key11121"); // get it back out
-		String d11121 = c11121.substring(0,c11121.length()-1); // extract most of it
-		String e11121 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d11121.getBytes() ) )); // B64 encode and decode it
-		String f11121 = e11121.split(" ")[0]; // split it on a space
+		String a99915 = param; //assign
+		StringBuilder b99915 = new StringBuilder(a99915);  // stick in stringbuilder
+		b99915.append(" SafeStuff"); // append some safe content
+		b99915.replace(b99915.length()-"Chars".length(),b99915.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map99915 = new java.util.HashMap<String,Object>();
+		map99915.put("key99915", b99915.toString()); // put in a collection
+		String c99915 = (String)map99915.get("key99915"); // get it back out
+		String d99915 = c99915.substring(0,c99915.length()-1); // extract most of it
+		String e99915 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d99915.getBytes() ) )); // B64 encode and decode it
+		String f99915 = e99915.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f11121); // reflection
+		String bar = thing.doSomething(f99915); // reflection
 
             return bar;
         }

@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00067")
+@WebServlet(value="/weakrand-00/BenchmarkTest00067")
 public class BenchmarkTest00067 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -45,7 +45,7 @@ public class BenchmarkTest00067 extends HttpServlet {
 		String param = "";
 		if (theCookies != null) {
 			for (javax.servlet.http.Cookie theCookie : theCookies) {
-				if (theCookie.getName().equals("vector")) {
+				if (theCookie.getName().equals("BenchmarkTest00067")) {
 					param = java.net.URLDecoder.decode(theCookie.getValue(), "UTF-8");
 					break;
 				}
@@ -54,20 +54,20 @@ public class BenchmarkTest00067 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a40112 = param; //assign
-		StringBuilder b40112 = new StringBuilder(a40112);  // stick in stringbuilder
-		b40112.append(" SafeStuff"); // append some safe content
-		b40112.replace(b40112.length()-"Chars".length(),b40112.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map40112 = new java.util.HashMap<String,Object>();
-		map40112.put("key40112", b40112.toString()); // put in a collection
-		String c40112 = (String)map40112.get("key40112"); // get it back out
-		String d40112 = c40112.substring(0,c40112.length()-1); // extract most of it
-		String e40112 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d40112.getBytes() ) )); // B64 encode and decode it
-		String f40112 = e40112.split(" ")[0]; // split it on a space
+		String a71153 = param; //assign
+		StringBuilder b71153 = new StringBuilder(a71153);  // stick in stringbuilder
+		b71153.append(" SafeStuff"); // append some safe content
+		b71153.replace(b71153.length()-"Chars".length(),b71153.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map71153 = new java.util.HashMap<String,Object>();
+		map71153.put("key71153", b71153.toString()); // put in a collection
+		String c71153 = (String)map71153.get("key71153"); // get it back out
+		String d71153 = c71153.substring(0,c71153.length()-1); // extract most of it
+		String e71153 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d71153.getBytes() ) )); // B64 encode and decode it
+		String f71153 = e71153.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g40112 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g40112); // reflection
+		String g71153 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g71153); // reflection
 		
 		
 		double value = java.lang.Math.random();
@@ -94,16 +94,27 @@ public class BenchmarkTest00067 extends HttpServlet {
 		}
 		
 		if (foundUser) {
-			response.getWriter().println("Welcome back: " + user + "<br/>");			
+			response.getWriter().println(
+				"Welcome back: " + user + "<br/>"
+			);
+			
 		} else {			
 			javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
 			rememberMe.setSecure(true);
-			rememberMe.setPath("/benchmark/" + this.getClass().getSimpleName());
+//			rememberMe.setPath("/benchmark/" + this.getClass().getSimpleName());
+			rememberMe.setPath(request.getRequestURI()); // i.e., set path to JUST this servlet
+														 // e.g., /benchmark/sql-01/BenchmarkTest01001
 			request.getSession().setAttribute(cookieName, rememberMeKey);
 			response.addCookie(rememberMe);
-			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-					+ " whose value is: " + rememberMe.getValue() + "<br/>");
+			response.getWriter().println(
+			user + " has been remembered with cookie: " + rememberMe.getName() 
+					+ " whose value is: " + rememberMe.getValue() + "<br/>"
+			);
 		}
-		response.getWriter().println("Weak Randomness Test java.lang.Math.random() executed");
+		response.getWriter().println(
+		"Weak Randomness Test java.lang.Math.random() executed"
+		);
+
 	}
+	
 }

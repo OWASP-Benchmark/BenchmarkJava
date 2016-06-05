@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00769")
+@WebServlet(value="/sqli-01/BenchmarkTest00769")
 public class BenchmarkTest00769 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -40,7 +40,7 @@ public class BenchmarkTest00769 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String[] values = request.getParameterValues("vector");
+		String[] values = request.getParameterValues("BenchmarkTest00769");
 		String param;
 		if (values != null && values.length > 0)
 		  param = values[0];
@@ -48,11 +48,11 @@ public class BenchmarkTest00769 extends HttpServlet {
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map72389 = new java.util.HashMap<String,Object>();
-		map72389.put("keyA-72389", "a Value"); // put some stuff in the collection
-		map72389.put("keyB-72389", param); // put it in a collection
-		map72389.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map72389.get("keyB-72389"); // get it back out
+		java.util.HashMap<String,Object> map29572 = new java.util.HashMap<String,Object>();
+		map29572.put("keyA-29572", "a Value"); // put some stuff in the collection
+		map29572.put("keyB-29572", param); // put it in a collection
+		map29572.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map29572.get("keyB-29572"); // get it back out
 		
 		
 		try {
@@ -60,16 +60,19 @@ public class BenchmarkTest00769 extends HttpServlet {
 	            + bar + "'";
 	
 			org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.batchUpdate(sql);
-			java.io.PrintWriter out = response.getWriter();
-	//		System.out.println("no results for query: " + sql + " because the Spring batchUpdate method doesn't return results.");
-			out.write("No results can be displayed for query: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(sql) + "<br>");
-			out.write(" because the Spring batchUpdate method doesn't return results.");
+			response.getWriter().println(
+				"No results can be displayed for query: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(sql) + "<br>"
+				+ " because the Spring batchUpdate method doesn't return results."
+			);
 		} catch (org.springframework.dao.DataAccessException e) {
 			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
+        		response.getWriter().println(
+"Error processing request."
+);
         		return;
         	}
 			else throw new ServletException(e);
 		}
 	}
+	
 }

@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00334")
+@WebServlet(value="/sqli-00/BenchmarkTest00334")
 public class BenchmarkTest00334 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,29 +41,31 @@ public class BenchmarkTest00334 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("vector");
-		if (headers.hasMoreElements()) {
+		java.util.Enumeration<String> headers = request.getHeaders("BenchmarkTest00334");
+		
+		if (headers != null && headers.hasMoreElements()) {
 			param = headers.nextElement(); // just grab first element
 		}
-        param = java.net.URLDecoder.decode(param, "UTF-8");
-
+		
+		// URL Decode the header value since req.getHeaders() doesn't. Unlike req.getParameters().
+		param = java.net.URLDecoder.decode(param, "UTF-8");
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a62354 = param; //assign
-		StringBuilder b62354 = new StringBuilder(a62354);  // stick in stringbuilder
-		b62354.append(" SafeStuff"); // append some safe content
-		b62354.replace(b62354.length()-"Chars".length(),b62354.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map62354 = new java.util.HashMap<String,Object>();
-		map62354.put("key62354", b62354.toString()); // put in a collection
-		String c62354 = (String)map62354.get("key62354"); // get it back out
-		String d62354 = c62354.substring(0,c62354.length()-1); // extract most of it
-		String e62354 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d62354.getBytes() ) )); // B64 encode and decode it
-		String f62354 = e62354.split(" ")[0]; // split it on a space
+		String a30608 = param; //assign
+		StringBuilder b30608 = new StringBuilder(a30608);  // stick in stringbuilder
+		b30608.append(" SafeStuff"); // append some safe content
+		b30608.replace(b30608.length()-"Chars".length(),b30608.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map30608 = new java.util.HashMap<String,Object>();
+		map30608.put("key30608", b30608.toString()); // put in a collection
+		String c30608 = (String)map30608.get("key30608"); // get it back out
+		String d30608 = c30608.substring(0,c30608.length()-1); // extract most of it
+		String e30608 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d30608.getBytes() ) )); // B64 encode and decode it
+		String f30608 = e30608.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g62354 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g62354); // reflection
+		String g30608 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g30608); // reflection
 		
 		
 		String sql = "SELECT * from USERS where USERNAME=? and PASSWORD='"+ bar +"'";
@@ -77,10 +79,13 @@ public class BenchmarkTest00334 extends HttpServlet {
             org.owasp.benchmark.helpers.DatabaseHelper.printResults(statement, sql, response);
 		} catch (java.sql.SQLException e) {
 			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
+        		response.getWriter().println(
+"Error processing request."
+);
         		return;
         	}
 			else throw new ServletException(e);
 		}
 	}
+	
 }

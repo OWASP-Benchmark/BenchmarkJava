@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01089")
+@WebServlet(value="/sqli-02/BenchmarkTest01089")
 public class BenchmarkTest01089 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -40,11 +40,13 @@ public class BenchmarkTest01089 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String param = request.getHeader("vector");
-		if (param == null) param = "";
-        param = java.net.URLDecoder.decode(param, "UTF-8");
-
-		if (param == null) param = "";
+		String param = "";
+		if (request.getHeader("BenchmarkTest01089") != null) {
+			param = request.getHeader("BenchmarkTest01089");
+		}
+		
+		// URL Decode the header value since req.getHeader() doesn't. Unlike req.getParameter().
+		param = java.net.URLDecoder.decode(param, "UTF-8");
 
 		String bar = new Test().doSomething(param);
 		
@@ -52,31 +54,38 @@ public class BenchmarkTest01089 extends HttpServlet {
 			String sql = "SELECT TOP 1 USERNAME from USERS where USERNAME='foo' and PASSWORD='"+ bar + "'";
 	
 	        Object results = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.queryForObject(sql,new Object[]{}, String.class);
-			java.io.PrintWriter out = response.getWriter();
-			out.write("Your results are: ");
+			response.getWriter().println(
+				"Your results are: "
+);
+
 	//		System.out.println("Your results are");
-			out.write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(results.toString()));
+			response.getWriter().println(
+				org.owasp.esapi.ESAPI.encoder().encodeForHTML(results.toString())
+			);
 	//		System.out.println(results.toString());
 		} catch (org.springframework.dao.DataAccessException e) {
 			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
+        		response.getWriter().println(
+"Error processing request."
+);
         		return;
         	}
 			else throw new ServletException(e);
 		}
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map79782 = new java.util.HashMap<String,Object>();
-		map79782.put("keyA-79782", "a_Value"); // put some stuff in the collection
-		map79782.put("keyB-79782", param); // put it in a collection
-		map79782.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map79782.get("keyB-79782"); // get it back out
-		bar = (String)map79782.get("keyA-79782"); // get safe value back out
+		java.util.HashMap<String,Object> map11607 = new java.util.HashMap<String,Object>();
+		map11607.put("keyA-11607", "a_Value"); // put some stuff in the collection
+		map11607.put("keyB-11607", param); // put it in a collection
+		map11607.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map11607.get("keyB-11607"); // get it back out
+		bar = (String)map11607.get("keyA-11607"); // get safe value back out
 
             return bar;
         }

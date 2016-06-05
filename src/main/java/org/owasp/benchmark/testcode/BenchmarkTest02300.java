@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest02300")
+@WebServlet(value="/pathtraver-02/BenchmarkTest02300")
 public class BenchmarkTest02300 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -49,7 +49,7 @@ public class BenchmarkTest02300 extends HttpServlet {
 			if (values != null) {
 				for(int i=0;i<values.length && flag; i++){
 					String value = values[i];
-					if (value.equals("vector")) {
+					if (value.equals("BenchmarkTest02300")) {
 						param = name;
 					    flag = false;
 					}
@@ -60,29 +60,36 @@ public class BenchmarkTest02300 extends HttpServlet {
 		String bar = doSomething(param);
 		
 		java.io.File fileTarget = new java.io.File(new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),bar);
-		response.getWriter().write("Access to file: '" + fileTarget + "' created." );
+		response.getWriter().println(
+"Access to file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileTarget.toString()) + "' created." 
+);
 		if (fileTarget.exists()) {
-			response.getWriter().write(" And file already exists.");
-		} else { response.getWriter().write(" But file doesn't exist yet."); }
+			response.getWriter().println(
+" And file already exists."
+);
+		} else { response.getWriter().println(
+" But file doesn't exist yet."
+); }
 	}  // end doPost
 	
+		
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a9481 = param; //assign
-		StringBuilder b9481 = new StringBuilder(a9481);  // stick in stringbuilder
-		b9481.append(" SafeStuff"); // append some safe content
-		b9481.replace(b9481.length()-"Chars".length(),b9481.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map9481 = new java.util.HashMap<String,Object>();
-		map9481.put("key9481", b9481.toString()); // put in a collection
-		String c9481 = (String)map9481.get("key9481"); // get it back out
-		String d9481 = c9481.substring(0,c9481.length()-1); // extract most of it
-		String e9481 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d9481.getBytes() ) )); // B64 encode and decode it
-		String f9481 = e9481.split(" ")[0]; // split it on a space
+		String a20919 = param; //assign
+		StringBuilder b20919 = new StringBuilder(a20919);  // stick in stringbuilder
+		b20919.append(" SafeStuff"); // append some safe content
+		b20919.replace(b20919.length()-"Chars".length(),b20919.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map20919 = new java.util.HashMap<String,Object>();
+		map20919.put("key20919", b20919.toString()); // put in a collection
+		String c20919 = (String)map20919.get("key20919"); // get it back out
+		String d20919 = c20919.substring(0,c20919.length()-1); // extract most of it
+		String e20919 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d20919.getBytes() ) )); // B64 encode and decode it
+		String f20919 = e20919.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g9481 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g9481); // reflection
+		String g20919 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g20919); // reflection
 	
 		return bar;	
 	}

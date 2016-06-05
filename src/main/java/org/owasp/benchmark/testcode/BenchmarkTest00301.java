@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00301")
+@WebServlet(value="/xss-00/BenchmarkTest00301")
 public class BenchmarkTest00301 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,22 +41,25 @@ public class BenchmarkTest00301 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("referer");
-		if (headers.hasMoreElements()) {
+		java.util.Enumeration<String> headers = request.getHeaders("Referer");
+		
+		if (headers != null && headers.hasMoreElements()) {
 			param = headers.nextElement(); // just grab first element
 		}
-        param = java.net.URLDecoder.decode(param, "UTF-8");
-
+		
+		// URL Decode the header value since req.getHeaders() doesn't. Unlike req.getParameters().
+		param = java.net.URLDecoder.decode(param, "UTF-8");
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map68526 = new java.util.HashMap<String,Object>();
-		map68526.put("keyA-68526", "a Value"); // put some stuff in the collection
-		map68526.put("keyB-68526", param); // put it in a collection
-		map68526.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map68526.get("keyB-68526"); // get it back out
+		java.util.HashMap<String,Object> map16074 = new java.util.HashMap<String,Object>();
+		map16074.put("keyA-16074", "a Value"); // put some stuff in the collection
+		map16074.put("keyB-16074", param); // put it in a collection
+		map16074.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map16074.get("keyB-16074"); // get it back out
 		
 		
 		response.getWriter().write("Parameter value: " + bar);
 	}
+	
 }

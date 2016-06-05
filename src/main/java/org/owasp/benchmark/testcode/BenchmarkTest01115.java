@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01115")
+@WebServlet(value="/pathtraver-01/BenchmarkTest01115")
 public class BenchmarkTest01115 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,21 +41,21 @@ public class BenchmarkTest01115 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		String param = "";
-		boolean flag = true;
 		java.util.Enumeration<String> names = request.getHeaderNames();
-		while (names.hasMoreElements() && flag) {
+		while (names.hasMoreElements()) {
 			String name = (String) names.nextElement();
+			
+			if(org.owasp.benchmark.helpers.Utils.commonHeaders.contains(name)){
+				continue;
+			}
+			
 			java.util.Enumeration<String> values = request.getHeaders(name);
-			if (values != null) {
-				while (values.hasMoreElements() && flag) {
-					String value = (String) values.nextElement();
-					if (value.equals("vector")) {
-						param = name;
-						flag = false;
-					}
-				}
+			if (values != null && values.hasMoreElements()) {
+				param = name;
+				break;
 			}
 		}
+		// Note: We don't URL decode header names because people don't normally do that
 
 		String bar = new Test().doSomething(param);
 		
@@ -66,7 +66,10 @@ public class BenchmarkTest01115 extends HttpServlet {
 			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
 	
 			fos = new java.io.FileOutputStream(new java.io.File(fileName));
-	        response.getWriter().write("Now ready to write to file: " + fileName);
+	        response.getWriter().println(
+			"Now ready to write to file: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName)
+);
+
 		} catch (Exception e) {
 			System.out.println("Couldn't open FileOutputStream on file: '" + fileName + "'");
 //			System.out.println("File exception caught and swallowed: " + e.getMessage());
@@ -82,25 +85,26 @@ public class BenchmarkTest01115 extends HttpServlet {
 		}
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a59564 = param; //assign
-		StringBuilder b59564 = new StringBuilder(a59564);  // stick in stringbuilder
-		b59564.append(" SafeStuff"); // append some safe content
-		b59564.replace(b59564.length()-"Chars".length(),b59564.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map59564 = new java.util.HashMap<String,Object>();
-		map59564.put("key59564", b59564.toString()); // put in a collection
-		String c59564 = (String)map59564.get("key59564"); // get it back out
-		String d59564 = c59564.substring(0,c59564.length()-1); // extract most of it
-		String e59564 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d59564.getBytes() ) )); // B64 encode and decode it
-		String f59564 = e59564.split(" ")[0]; // split it on a space
+		String a43762 = param; //assign
+		StringBuilder b43762 = new StringBuilder(a43762);  // stick in stringbuilder
+		b43762.append(" SafeStuff"); // append some safe content
+		b43762.replace(b43762.length()-"Chars".length(),b43762.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map43762 = new java.util.HashMap<String,Object>();
+		map43762.put("key43762", b43762.toString()); // put in a collection
+		String c43762 = (String)map43762.get("key43762"); // get it back out
+		String d43762 = c43762.substring(0,c43762.length()-1); // extract most of it
+		String e43762 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d43762.getBytes() ) )); // B64 encode and decode it
+		String f43762 = e43762.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g59564 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g59564); // reflection
+		String g43762 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g43762); // reflection
 
             return bar;
         }

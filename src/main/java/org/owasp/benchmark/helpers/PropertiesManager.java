@@ -47,6 +47,19 @@ public class PropertiesManager {
 
 		return props.getProperty(key, defaultValue);
 	}
+	
+	public int getProperty(String key, int defaultValue) {
+		Properties props = new Properties();
+		InputStream is = null;
+		try {
+			is = this.getClass().getClassLoader()
+					.getResourceAsStream(propertiesFileName);
+			props.load(is);
+		} catch (Exception e) {
+		}
+
+		return  Integer.parseInt(props.getProperty(key, Integer.toString(defaultValue)));
+	}
 
 	public void saveProperty(String key, String value) {
 		InputStream in = null;

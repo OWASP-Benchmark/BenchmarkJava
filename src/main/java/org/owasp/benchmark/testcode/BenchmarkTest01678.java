@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01678")
+@WebServlet(value="/weakrand-03/BenchmarkTest01678")
 public class BenchmarkTest01678 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,15 +41,15 @@ public class BenchmarkTest01678 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		String queryString = request.getQueryString();
-		String paramval = "vector"+"=";
+		String paramval = "BenchmarkTest01678"+"=";
 		int paramLoc = -1;
 		if (queryString != null) paramLoc = queryString.indexOf(paramval);
 		if (paramLoc == -1) {
-			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "vector" + "' in query string.");
+			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "BenchmarkTest01678" + "' in query string.");
 			return;
 		}
 		
-		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "vector" param is last parameter in query string.
+		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "BenchmarkTest01678" param is last parameter in query string.
 		// And then check to see if its in the middle of the query string and if so, trim off what comes after.
 		int ampersandLoc = queryString.indexOf("&", paramLoc);
 		if (ampersandLoc != -1) {
@@ -83,38 +83,48 @@ public class BenchmarkTest01678 extends HttpServlet {
 		}
 		
 		if (foundUser) {
-			response.getWriter().println("Welcome back: " + user + "<br/>");			
+			response.getWriter().println(
+"Welcome back: " + user + "<br/>"
+);
 		} else {			
 			javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
 			rememberMe.setSecure(true);
-            rememberMe.setPath("/benchmark/" + this.getClass().getSimpleName());
+//			rememberMe.setPath("/benchmark/" + this.getClass().getSimpleName());
+			rememberMe.setPath(request.getRequestURI()); // i.e., set path to JUST this servlet 
+														 // e.g., /benchmark/sql-01/BenchmarkTest01001
 			request.getSession().setAttribute(cookieName, rememberMeKey);
 			response.addCookie(rememberMe);
-			response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-					+ " whose value is: " + rememberMe.getValue() + "<br/>");
+			response.getWriter().println(
+				user + " has been remembered with cookie: " + rememberMe.getName() 
+					+ " whose value is: " + rememberMe.getValue() + "<br/>"
+			);
+
 		}
 		
-		response.getWriter().println("Weak Randomness Test java.util.Random.nextFloat() executed");
+		response.getWriter().println(
+"Weak Randomness Test java.util.Random.nextFloat() executed"
+);
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a87652 = param; //assign
-		StringBuilder b87652 = new StringBuilder(a87652);  // stick in stringbuilder
-		b87652.append(" SafeStuff"); // append some safe content
-		b87652.replace(b87652.length()-"Chars".length(),b87652.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map87652 = new java.util.HashMap<String,Object>();
-		map87652.put("key87652", b87652.toString()); // put in a collection
-		String c87652 = (String)map87652.get("key87652"); // get it back out
-		String d87652 = c87652.substring(0,c87652.length()-1); // extract most of it
-		String e87652 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d87652.getBytes() ) )); // B64 encode and decode it
-		String f87652 = e87652.split(" ")[0]; // split it on a space
+		String a96171 = param; //assign
+		StringBuilder b96171 = new StringBuilder(a96171);  // stick in stringbuilder
+		b96171.append(" SafeStuff"); // append some safe content
+		b96171.replace(b96171.length()-"Chars".length(),b96171.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map96171 = new java.util.HashMap<String,Object>();
+		map96171.put("key96171", b96171.toString()); // put in a collection
+		String c96171 = (String)map96171.get("key96171"); // get it back out
+		String d96171 = c96171.substring(0,c96171.length()-1); // extract most of it
+		String e96171 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d96171.getBytes() ) )); // B64 encode and decode it
+		String f96171 = e96171.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f87652); // reflection
+		String bar = thing.doSomething(f96171); // reflection
 
             return bar;
         }

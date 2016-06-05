@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01118")
+@WebServlet(value="/pathtraver-01/BenchmarkTest01118")
 public class BenchmarkTest01118 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,21 +41,21 @@ public class BenchmarkTest01118 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		String param = "";
-		boolean flag = true;
 		java.util.Enumeration<String> names = request.getHeaderNames();
-		while (names.hasMoreElements() && flag) {
+		while (names.hasMoreElements()) {
 			String name = (String) names.nextElement();
+			
+			if(org.owasp.benchmark.helpers.Utils.commonHeaders.contains(name)){
+				continue;
+			}
+			
 			java.util.Enumeration<String> values = request.getHeaders(name);
-			if (values != null) {
-				while (values.hasMoreElements() && flag) {
-					String value = (String) values.nextElement();
-					if (value.equals("vector")) {
-						param = name;
-						flag = false;
-					}
-				}
+			if (values != null && values.hasMoreElements()) {
+				param = name;
+				break;
 			}
 		}
+		// Note: We don't URL decode header names because people don't normally do that
 
 		String bar = new Test().doSomething(param);
 		
@@ -67,13 +67,19 @@ public class BenchmarkTest01118 extends HttpServlet {
 			is = java.nio.file.Files.newInputStream(path, java.nio.file.StandardOpenOption.READ);
 			byte[] b = new byte[1000];
 			int size = is.read(b);
-			response.getWriter().write("The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n");
-			response.getWriter().write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size)));
+			response.getWriter().println(
+"The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n"
+);
+			response.getWriter().println(
+org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size))
+);
 			is.close();
 		} catch (Exception e) {
             System.out.println("Couldn't open InputStream on file: '" + fileName + "'");
-			response.getWriter().write("Problem getting InputStream: " 
-				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage()));
+			response.getWriter().println(
+"Problem getting InputStream: " 
+				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage())
+);
         } finally {
 			if (is != null) {
                 try {
@@ -86,17 +92,18 @@ public class BenchmarkTest01118 extends HttpServlet {
         }
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map23458 = new java.util.HashMap<String,Object>();
-		map23458.put("keyA-23458", "a_Value"); // put some stuff in the collection
-		map23458.put("keyB-23458", param); // put it in a collection
-		map23458.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map23458.get("keyB-23458"); // get it back out
-		bar = (String)map23458.get("keyA-23458"); // get safe value back out
+		java.util.HashMap<String,Object> map63904 = new java.util.HashMap<String,Object>();
+		map63904.put("keyA-63904", "a_Value"); // put some stuff in the collection
+		map63904.put("keyB-63904", param); // put it in a collection
+		map63904.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map63904.get("keyB-63904"); // get it back out
+		bar = (String)map63904.get("keyA-63904"); // get safe value back out
 
             return bar;
         }

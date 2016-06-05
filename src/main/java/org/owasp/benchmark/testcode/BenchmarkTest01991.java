@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01991")
+@WebServlet(value="/pathtraver-02/BenchmarkTest01991")
 public class BenchmarkTest01991 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,21 +41,21 @@ public class BenchmarkTest01991 extends HttpServlet {
 		response.setContentType("text/html");
 
 		String param = "";
-		boolean flag = true;
 		java.util.Enumeration<String> names = request.getHeaderNames();
-		while (names.hasMoreElements() && flag) {
+		while (names.hasMoreElements()) {
 			String name = (String) names.nextElement();
+			
+			if(org.owasp.benchmark.helpers.Utils.commonHeaders.contains(name)){
+				continue;
+			}
+			
 			java.util.Enumeration<String> values = request.getHeaders(name);
-			if (values != null) {
-				while (values.hasMoreElements() && flag) {
-					String value = (String) values.nextElement();
-					if (value.equals("vector")) {
-						param = name;
-						flag = false;
-					}
-				}
+			if (values != null && values.hasMoreElements()) {
+				param = name;
+				break;
 			}
 		}
+		// Note: We don't URL decode header names because people don't normally do that
 
 		String bar = doSomething(param);
 		
@@ -67,13 +67,19 @@ public class BenchmarkTest01991 extends HttpServlet {
 			is = java.nio.file.Files.newInputStream(path, java.nio.file.StandardOpenOption.READ);
 			byte[] b = new byte[1000];
 			int size = is.read(b);
-			response.getWriter().write("The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n");
-			response.getWriter().write(org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size)));
+			response.getWriter().println(
+"The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n"
+);
+			response.getWriter().println(
+org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size))
+);
 			is.close();
 		} catch (Exception e) {
             System.out.println("Couldn't open InputStream on file: '" + fileName + "'");
-			response.getWriter().write("Problem getting InputStream: " 
-				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage()));
+			response.getWriter().println(
+"Problem getting InputStream: " 
+				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage())
+);
         } finally {
 			if (is != null) {
                 try {
@@ -86,23 +92,24 @@ public class BenchmarkTest01991 extends HttpServlet {
         }
 	}  // end doPost
 	
+		
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a10441 = param; //assign
-		StringBuilder b10441 = new StringBuilder(a10441);  // stick in stringbuilder
-		b10441.append(" SafeStuff"); // append some safe content
-		b10441.replace(b10441.length()-"Chars".length(),b10441.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map10441 = new java.util.HashMap<String,Object>();
-		map10441.put("key10441", b10441.toString()); // put in a collection
-		String c10441 = (String)map10441.get("key10441"); // get it back out
-		String d10441 = c10441.substring(0,c10441.length()-1); // extract most of it
-		String e10441 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d10441.getBytes() ) )); // B64 encode and decode it
-		String f10441 = e10441.split(" ")[0]; // split it on a space
+		String a81108 = param; //assign
+		StringBuilder b81108 = new StringBuilder(a81108);  // stick in stringbuilder
+		b81108.append(" SafeStuff"); // append some safe content
+		b81108.replace(b81108.length()-"Chars".length(),b81108.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map81108 = new java.util.HashMap<String,Object>();
+		map81108.put("key81108", b81108.toString()); // put in a collection
+		String c81108 = (String)map81108.get("key81108"); // get it back out
+		String d81108 = c81108.substring(0,c81108.length()-1); // extract most of it
+		String e81108 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d81108.getBytes() ) )); // B64 encode and decode it
+		String f81108 = e81108.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g10441 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g10441); // reflection
+		String g81108 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g81108); // reflection
 	
 		return bar;	
 	}

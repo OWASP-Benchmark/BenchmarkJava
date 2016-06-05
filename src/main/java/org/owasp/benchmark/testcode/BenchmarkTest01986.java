@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01986")
+@WebServlet(value="/pathtraver-02/BenchmarkTest01986")
 public class BenchmarkTest01986 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,21 +41,21 @@ public class BenchmarkTest01986 extends HttpServlet {
 		response.setContentType("text/html");
 
 		String param = "";
-		boolean flag = true;
 		java.util.Enumeration<String> names = request.getHeaderNames();
-		while (names.hasMoreElements() && flag) {
+		while (names.hasMoreElements()) {
 			String name = (String) names.nextElement();
+			
+			if(org.owasp.benchmark.helpers.Utils.commonHeaders.contains(name)){
+				continue;
+			}
+			
 			java.util.Enumeration<String> values = request.getHeaders(name);
-			if (values != null) {
-				while (values.hasMoreElements() && flag) {
-					String value = (String) values.nextElement();
-					if (value.equals("vector")) {
-						param = name;
-						flag = false;
-					}
-				}
+			if (values != null && values.hasMoreElements()) {
+				param = name;
+				break;
 			}
 		}
+		// Note: We don't URL decode header names because people don't normally do that
 
 		String bar = doSomething(param);
 		
@@ -71,24 +71,31 @@ public class BenchmarkTest01986 extends HttpServlet {
 			java.net.URI fileURI = new java.net.URI("file", null, startURIslashes 
 				+ org.owasp.benchmark.helpers.Utils.testfileDir.replace('\\', java.io.File.separatorChar).replace(' ', '_') + bar, null, null);
 			java.io.File fileTarget = new java.io.File(fileURI);
-            response.getWriter().write("Access to file: '" + fileTarget + "' created." );
+            response.getWriter().println(
+"Access to file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileTarget.toString()) + "' created." 
+);
             if (fileTarget.exists()) {
-            response.getWriter().write(" And file already exists.");
-            } else { response.getWriter().write(" But file doesn't exist yet."); }
+            response.getWriter().println(
+" And file already exists."
+);
+            } else { response.getWriter().println(
+" But file doesn't exist yet."
+); }
 		} catch (java.net.URISyntaxException e) {
 			throw new ServletException(e);
 		}
 	}  // end doPost
 	
+		
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map36342 = new java.util.HashMap<String,Object>();
-		map36342.put("keyA-36342", "a_Value"); // put some stuff in the collection
-		map36342.put("keyB-36342", param); // put it in a collection
-		map36342.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map36342.get("keyB-36342"); // get it back out
-		bar = (String)map36342.get("keyA-36342"); // get safe value back out
+		java.util.HashMap<String,Object> map83331 = new java.util.HashMap<String,Object>();
+		map83331.put("keyA-83331", "a_Value"); // put some stuff in the collection
+		map83331.put("keyB-83331", param); // put it in a collection
+		map83331.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map83331.get("keyB-83331"); // get it back out
+		bar = (String)map83331.get("keyA-83331"); // get safe value back out
 	
 		return bar;	
 	}

@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00536")
+@WebServlet(value="/hash-00/BenchmarkTest00536")
 public class BenchmarkTest00536 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -49,7 +49,7 @@ public class BenchmarkTest00536 extends HttpServlet {
 			if (values != null) {
 				for(int i=0;i<values.length && flag; i++){
 					String value = values[i];
-					if (value.equals("vector")) {
+					if (value.equals("BenchmarkTest00536")) {
 						param = name;
 					    flag = false;
 					}
@@ -59,11 +59,11 @@ public class BenchmarkTest00536 extends HttpServlet {
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map30892 = new java.util.HashMap<String,Object>();
-		map30892.put("keyA-30892", "a Value"); // put some stuff in the collection
-		map30892.put("keyB-30892", param); // put it in a collection
-		map30892.put("keyC", "another Value"); // put some stuff in the collection
-		bar = (String)map30892.get("keyB-30892"); // get it back out
+		java.util.HashMap<String,Object> map28714 = new java.util.HashMap<String,Object>();
+		map28714.put("keyA-28714", "a Value"); // put some stuff in the collection
+		map28714.put("keyB-28714", param); // put it in a collection
+		map28714.put("keyC", "another Value"); // put some stuff in the collection
+		bar = (String)map28714.get("keyB-28714"); // get it back out
 		
 		
 		try {
@@ -75,7 +75,9 @@ public class BenchmarkTest00536 extends HttpServlet {
 				byte[] strInput = new byte[1000];
 				int i = ((java.io.InputStream) inputParam).read(strInput);
 				if (i == -1) {
-					response.getWriter().println("This input source requires a POST, not a GET. Incompatible UI for the InputStream source.");
+					response.getWriter().println(
+"This input source requires a POST, not a GET. Incompatible UI for the InputStream source."
+);
 					return;
 				}
 				input = java.util.Arrays.copyOf(strInput, i);
@@ -88,12 +90,18 @@ public class BenchmarkTest00536 extends HttpServlet {
 			java.io.FileWriter fw = new java.io.FileWriter(fileTarget,true); //the true will append the new data
 			    fw.write("hash_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
 			fw.close();
-			response.getWriter().println("Sensitive value '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' hashed and stored<br/>");
+			response.getWriter().println(
+"Sensitive value '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' hashed and stored<br/>"
+);
+
 		} catch (java.security.NoSuchAlgorithmException e) {
 			System.out.println("Problem executing hash - TestCase");
 			throw new ServletException(e);
 		}
 		
-		response.getWriter().println("Hash Test java.security.MessageDigest.getInstance(java.lang.String) executed");
+		response.getWriter().println(
+"Hash Test java.security.MessageDigest.getInstance(java.lang.String) executed"
+);
 	}
+	
 }

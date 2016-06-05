@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01349")
+@WebServlet(value="/xss-02/BenchmarkTest01349")
 public class BenchmarkTest01349 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -43,7 +43,7 @@ public class BenchmarkTest01349 extends HttpServlet {
 		java.util.Map<String,String[]> map = request.getParameterMap();
 		String param = "";
 		if (!map.isEmpty()) {
-			String[] values = map.get("vector");
+			String[] values = map.get("BenchmarkTest01349");
 			if (values != null) param = values[0];
 		}
 		
@@ -53,12 +53,13 @@ public class BenchmarkTest01349 extends HttpServlet {
 		response.getWriter().println(bar);
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
-		StringBuilder sbxyz69179 = new StringBuilder(param);
-		String bar = sbxyz69179.append("_SafeStuff").toString();
+		StringBuilder sbxyz63030 = new StringBuilder(param);
+		String bar = sbxyz63030.append("_SafeStuff").toString();
 
             return bar;
         }

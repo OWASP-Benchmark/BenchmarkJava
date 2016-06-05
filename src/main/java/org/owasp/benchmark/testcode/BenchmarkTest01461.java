@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01461")
+@WebServlet(value="/sqli-03/BenchmarkTest01461")
 public class BenchmarkTest01461 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -49,7 +49,7 @@ public class BenchmarkTest01461 extends HttpServlet {
 			if (values != null) {
 				for(int i=0;i<values.length && flag; i++){
 					String value = values[i];
-					if (value.equals("vector")) {
+					if (value.equals("BenchmarkTest01461")) {
 						param = name;
 					    flag = false;
 					}
@@ -69,24 +69,27 @@ public class BenchmarkTest01461 extends HttpServlet {
             org.owasp.benchmark.helpers.DatabaseHelper.printResults(rs, sql, response);
 		} catch (java.sql.SQLException e) {
 			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
+        		response.getWriter().println(
+"Error processing request."
+);
         		return;
         	}
 			else throw new ServletException(e);
 		}
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map40514 = new java.util.HashMap<String,Object>();
-		map40514.put("keyA-40514", "a_Value"); // put some stuff in the collection
-		map40514.put("keyB-40514", param); // put it in a collection
-		map40514.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map40514.get("keyB-40514"); // get it back out
-		bar = (String)map40514.get("keyA-40514"); // get safe value back out
+		java.util.HashMap<String,Object> map96401 = new java.util.HashMap<String,Object>();
+		map96401.put("keyA-96401", "a_Value"); // put some stuff in the collection
+		map96401.put("keyB-96401", param); // put it in a collection
+		map96401.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map96401.get("keyB-96401"); // get it back out
+		bar = (String)map96401.get("keyA-96401"); // get safe value back out
 
             return bar;
         }

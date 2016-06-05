@@ -18,6 +18,12 @@
 
 package org.owasp.benchmark.helpers;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
@@ -45,5 +51,41 @@ public class SourceUtils {
 	public static String getParam( HttpServletRequest request, String paramName ) {
 		String param = request.getParameter(paramName);
 		return param;
+	}
+	
+	public static List<String> getLinesFromFile(String f) {
+
+		File file = new File(f);
+
+		if (!file.exists()) {
+			System.out.println("Can't find file to get lines from: " + f);
+			return null;
+		}
+
+		FileReader fr = null;
+		BufferedReader br = null;
+
+		List<String> sourceLines = new ArrayList<String>();
+
+		try {
+			fr = new FileReader(file);
+			br = new BufferedReader(fr);
+			String line;
+			while ((line = br.readLine()) != null) {
+				sourceLines.add(line);
+			}
+		} catch (Exception e) {
+			//
+		} finally {
+			try {
+				if (br != null)
+					br.close();
+				if (fr != null)
+					fr.close();
+			} catch (Exception ex) {
+			}
+		}
+
+		return sourceLines;
 	}
 }

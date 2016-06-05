@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01328")
+@WebServlet(value="/pathtraver-01/BenchmarkTest01328")
 public class BenchmarkTest01328 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -43,7 +43,7 @@ public class BenchmarkTest01328 extends HttpServlet {
 		java.util.Map<String,String[]> map = request.getParameterMap();
 		String param = "";
 		if (!map.isEmpty()) {
-			String[] values = map.get("vector");
+			String[] values = map.get("BenchmarkTest01328");
 			if (values != null) param = values[0];
 		}
 		
@@ -62,34 +62,41 @@ public class BenchmarkTest01328 extends HttpServlet {
 			java.net.URI fileURI = new java.net.URI("file:" + startURIslashes 
 				+ org.owasp.benchmark.helpers.Utils.testfileDir.replace('\\', '/').replace(' ', '_') + bar);
 			java.io.File fileTarget = new java.io.File(fileURI);
-			response.getWriter().write("Access to file: '" + fileTarget + "' created." );
+			response.getWriter().println(
+"Access to file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileTarget.toString()) + "' created." 
+);
 			if (fileTarget.exists()) {
-				response.getWriter().write(" And file already exists.");
-			} else { response.getWriter().write(" But file doesn't exist yet."); }
+				response.getWriter().println(
+" And file already exists."
+);
+			} else { response.getWriter().println(
+" But file doesn't exist yet."
+); }
 		} catch (java.net.URISyntaxException e) {
 			throw new ServletException(e);
 		}
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a75813 = param; //assign
-		StringBuilder b75813 = new StringBuilder(a75813);  // stick in stringbuilder
-		b75813.append(" SafeStuff"); // append some safe content
-		b75813.replace(b75813.length()-"Chars".length(),b75813.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map75813 = new java.util.HashMap<String,Object>();
-		map75813.put("key75813", b75813.toString()); // put in a collection
-		String c75813 = (String)map75813.get("key75813"); // get it back out
-		String d75813 = c75813.substring(0,c75813.length()-1); // extract most of it
-		String e75813 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d75813.getBytes() ) )); // B64 encode and decode it
-		String f75813 = e75813.split(" ")[0]; // split it on a space
+		String a17973 = param; //assign
+		StringBuilder b17973 = new StringBuilder(a17973);  // stick in stringbuilder
+		b17973.append(" SafeStuff"); // append some safe content
+		b17973.replace(b17973.length()-"Chars".length(),b17973.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map17973 = new java.util.HashMap<String,Object>();
+		map17973.put("key17973", b17973.toString()); // put in a collection
+		String c17973 = (String)map17973.get("key17973"); // get it back out
+		String d17973 = c17973.substring(0,c17973.length()-1); // extract most of it
+		String e17973 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d17973.getBytes() ) )); // B64 encode and decode it
+		String f17973 = e17973.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g75813 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g75813); // reflection
+		String g17973 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g17973); // reflection
 
             return bar;
         }

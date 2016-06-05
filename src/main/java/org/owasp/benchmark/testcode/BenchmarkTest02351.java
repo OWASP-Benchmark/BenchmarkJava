@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest02351")
+@WebServlet(value="/weakrand-05/BenchmarkTest02351")
 public class BenchmarkTest02351 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -49,7 +49,7 @@ public class BenchmarkTest02351 extends HttpServlet {
 			if (values != null) {
 				for(int i=0;i<values.length && flag; i++){
 					String value = values[i];
-					if (value.equals("vector")) {
+					if (value.equals("BenchmarkTest02351")) {
 						param = name;
 					    flag = false;
 					}
@@ -83,42 +83,50 @@ public class BenchmarkTest02351 extends HttpServlet {
 				}
 			}
 
-			
 			if (foundUser) {
-				response.getWriter().println("Welcome back: " + user + "<br/>");			
+				response.getWriter().println(
+"Welcome back: " + user + "<br/>"
+);
 			} else {			
 				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
 				rememberMe.setSecure(true);
-				rememberMe.setPath("/benchmark/" + this.getClass().getSimpleName());
+	//			rememberMe.setPath("/benchmark/" + this.getClass().getSimpleName());
+				rememberMe.setPath(request.getRequestURI()); // i.e., set path to JUST this servlet 
+															 // e.g., /benchmark/sql-01/BenchmarkTest01001
 				request.getSession().setAttribute(cookieName, rememberMeKey);
 				response.addCookie(rememberMe);
-				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-						+ " whose value is: " + rememberMe.getValue() + "<br/>");
+response.getWriter().println(
+user + " has been remembered with cookie: " + rememberMe.getName() 
+						+ " whose value is: " + rememberMe.getValue() + "<br/>"
+);
 			}
-
 	    } catch (java.security.NoSuchAlgorithmException e) {
 			System.out.println("Problem executing SecureRandom.nextLong() - TestCase");
 			throw new ServletException(e);
 	    }		
-		response.getWriter().println("Weak Randomness Test java.security.SecureRandom.nextLong() executed");
+		response.getWriter().println(
+"Weak Randomness Test java.security.SecureRandom.nextLong() executed"
+);
+
 	}  // end doPost
 	
+		
 	private static String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a2630 = param; //assign
-		StringBuilder b2630 = new StringBuilder(a2630);  // stick in stringbuilder
-		b2630.append(" SafeStuff"); // append some safe content
-		b2630.replace(b2630.length()-"Chars".length(),b2630.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map2630 = new java.util.HashMap<String,Object>();
-		map2630.put("key2630", b2630.toString()); // put in a collection
-		String c2630 = (String)map2630.get("key2630"); // get it back out
-		String d2630 = c2630.substring(0,c2630.length()-1); // extract most of it
-		String e2630 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d2630.getBytes() ) )); // B64 encode and decode it
-		String f2630 = e2630.split(" ")[0]; // split it on a space
+		String a14991 = param; //assign
+		StringBuilder b14991 = new StringBuilder(a14991);  // stick in stringbuilder
+		b14991.append(" SafeStuff"); // append some safe content
+		b14991.replace(b14991.length()-"Chars".length(),b14991.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map14991 = new java.util.HashMap<String,Object>();
+		map14991.put("key14991", b14991.toString()); // put in a collection
+		String c14991 = (String)map14991.get("key14991"); // get it back out
+		String d14991 = c14991.substring(0,c14991.length()-1); // extract most of it
+		String e14991 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d14991.getBytes() ) )); // B64 encode and decode it
+		String f14991 = e14991.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f2630); // reflection
+		String bar = thing.doSomething(f14991); // reflection
 	
 		return bar;	
 	}

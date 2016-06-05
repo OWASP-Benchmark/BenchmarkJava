@@ -31,6 +31,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,12 +45,18 @@ import javax.naming.directory.SearchResult;
 import javax.servlet.http.HttpServletResponse;
 
 import org.mockito.Mockito;
+import org.owasp.benchmark.service.pojo.StringMessage;
 import org.owasp.esapi.ESAPI;
 
 public class Utils {
+
+	public static final String testfileDir = System.getProperty("user.dir") + File.separator + "testfiles"
+			+ File.separator;
 	
-	public static final String testfileDir = System.getProperty("user.dir")
-			+ File.separator + "testfiles" + File.separator;
+	public static final Set<String> commonHeaders = new HashSet<>(
+			Arrays.asList("host", "user-agent", "accept", "accept-language", "accept-encoding", "content-type",
+					"x-requested-with", "referer", "content-length", "connection", "pragma", "cache-control",
+					"origin", "cookie"));
 	
 	static {
 		File tempDir = new File(testfileDir);
@@ -80,18 +87,18 @@ public class Utils {
 				e.printStackTrace();
 			}
 		}
-		if(!System.getProperty("os.name").contains("Windows")){
+		if (!System.getProperty("os.name").contains("Windows")) {
 			File script = getFileFromClasspath("insecureCmd.sh", Utils.class.getClassLoader());
 			Set<PosixFilePermission> perms = new HashSet<PosixFilePermission>();
-	        perms.add(PosixFilePermission.OWNER_READ);
-	        perms.add(PosixFilePermission.OWNER_WRITE);
-	        perms.add(PosixFilePermission.OWNER_EXECUTE);
-	        perms.add(PosixFilePermission.GROUP_READ);
-	        perms.add(PosixFilePermission.GROUP_EXECUTE);
-	        perms.add(PosixFilePermission.OTHERS_READ);
-	        perms.add(PosixFilePermission.OTHERS_EXECUTE);
-	         
-	        try {
+			perms.add(PosixFilePermission.OWNER_READ);
+			perms.add(PosixFilePermission.OWNER_WRITE);
+			perms.add(PosixFilePermission.OWNER_EXECUTE);
+			perms.add(PosixFilePermission.GROUP_READ);
+			perms.add(PosixFilePermission.GROUP_EXECUTE);
+			perms.add(PosixFilePermission.OTHERS_READ);
+			perms.add(PosixFilePermission.OTHERS_EXECUTE);
+
+			try {
 				Files.setPosixFilePermissions(script.toPath(), perms);
 			} catch (IOException e) {
 				System.out.println("Problem while changing executable permissions: " + e.getMessage());
@@ -111,7 +118,7 @@ public class Utils {
 
 		return command;
 	}
-	
+
 	public static String getInsecureOSCommandString(ClassLoader classLoader) {
 		String command = null;
 		String osName = System.getProperty("os.name");
@@ -146,37 +153,34 @@ public class Utils {
 	}
 
 	public static void printOSCommandResults(java.lang.Process proc, HttpServletResponse response) throws IOException {
-		
-		PrintWriter out = response.getWriter();		
-		out.write("<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n"
-		+ "<html>\n"
-		+ "<head>\n"
-		+ "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=ISO-8859-1\">\n"
-		+ "</head>\n"
-		+ "<body>\n"
-		+ "<p>\n");
-		
-		BufferedReader stdInput = new BufferedReader(new InputStreamReader(
-				proc.getInputStream()));
-		BufferedReader stdError = new BufferedReader(new InputStreamReader(
-				proc.getErrorStream()));
+		PrintWriter out = response.getWriter();
+		out.write(
+				"<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n"
+						+ "<html>\n" + "<head>\n"
+						+ "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=ISO-8859-1\">\n" + "</head>\n"
+						+ "<body>\n" + "<p>\n");
+
+		BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+		BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
 
 		try {
 			// read the output from the command
-			//System.out.println("Here is the standard output of the command:\n");
+			// System.out.println("Here is the standard output of the
+			// command:\n");
 			out.write("Here is the standard output of the command:<br>");
 			String s = null;
 			while ((s = stdInput.readLine()) != null) {
-				//System.out.println(s);
+				// System.out.println(s);
 				out.write(ESAPI.encoder().encodeForHTML(s));
 				out.write("<br>");
 			}
 
 			// read any errors from the attempted command
-			//System.out.println("Here is the standard error of the command (if any):\n");
+			// System.out.println("Here is the standard error of the command (if
+			// any):\n");
 			out.write("<br>Here is the standard error of the command (if any):<br>");
 			while ((s = stdError.readLine()) != null) {
-				//System.out.println(s);
+				// System.out.println(s);
 				out.write(ESAPI.encoder().encodeForHTML(s));
 				out.write("<br>");
 			}
@@ -185,46 +189,61 @@ public class Utils {
 		}
 	}
 
-	public static javax.naming.directory.InitialDirContext getInitialDirContext()
-			throws NamingException {
+	public static void printOSCommandResults(java.lang.Process proc, List<StringMessage> resp) throws IOException {
+		BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+		BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+
+		try {
+			// read the output from the command
+			resp.add(new StringMessage("Message", "Here is the standard output of the command:<br>"));
+			String s = null;
+			String out = null;
+			String outError = null;
+			while ((s = stdInput.readLine()) != null) {
+				out = ESAPI.encoder().encodeForHTML(s) + "<br>";
+			}
+			resp.add(new StringMessage("Message", out));
+			// read any errors from the attempted command
+			resp.add(new StringMessage("Message", "<br>Here is the standard error of the command (if any):<br>"));
+			while ((s = stdError.readLine()) != null) {
+				outError = ESAPI.encoder().encodeForHTML(s) + "<br>";
+			}
+
+			resp.add(new StringMessage("Message", outError));
+		} catch (IOException e) {
+			System.out.println("An error ocurred while printOSCommandResults");
+		}
+	}
+
+	public static javax.naming.directory.InitialDirContext getInitialDirContext() throws NamingException {
 		/* Deprecated use LDAPHelper.getInitialDirContext() */
 		InitialDirContext idc = Mockito.mock(InitialDirContext.class);
 
 		@SuppressWarnings("unchecked")
-		NamingEnumeration<SearchResult> ne = (NamingEnumeration<SearchResult>) Mockito
-				.mock(NamingEnumeration.class);
-		Mockito.when(
-				idc.search(Mockito.anyString(), Mockito.anyString(),
-						Mockito.any(SearchControls.class))).thenReturn(ne);
-		Mockito.when(
-				idc.search(Mockito.anyString(), Mockito.anyString(),
-						Mockito.any(Object[].class),
-						Mockito.any(SearchControls.class))).thenReturn(ne);
+		NamingEnumeration<SearchResult> ne = (NamingEnumeration<SearchResult>) Mockito.mock(NamingEnumeration.class);
+		Mockito.when(idc.search(Mockito.anyString(), Mockito.anyString(), Mockito.any(SearchControls.class)))
+				.thenReturn(ne);
+		Mockito.when(idc.search(Mockito.anyString(), Mockito.anyString(), Mockito.any(Object[].class),
+				Mockito.any(SearchControls.class))).thenReturn(ne);
 
 		return idc;
 	}
 
-	public static javax.naming.directory.DirContext getDirContext()
-			throws NamingException {
+	public static javax.naming.directory.DirContext getDirContext() throws NamingException {
 		/* Deprecated use LDAPHelper.getDirContext() */
 		DirContext dc = Mockito.mock(DirContext.class);
 
 		@SuppressWarnings("unchecked")
-		NamingEnumeration<SearchResult> ne = (NamingEnumeration<SearchResult>) Mockito
-				.mock(NamingEnumeration.class);
-		Mockito.when(
-				dc.search(Mockito.anyString(), Mockito.anyString(),
-						Mockito.any(SearchControls.class))).thenReturn(ne);
-		Mockito.when(
-				dc.search(Mockito.anyString(), Mockito.anyString(),
-						Mockito.any(Object[].class),
-						Mockito.any(SearchControls.class))).thenReturn(ne);
+		NamingEnumeration<SearchResult> ne = (NamingEnumeration<SearchResult>) Mockito.mock(NamingEnumeration.class);
+		Mockito.when(dc.search(Mockito.anyString(), Mockito.anyString(), Mockito.any(SearchControls.class)))
+				.thenReturn(ne);
+		Mockito.when(dc.search(Mockito.anyString(), Mockito.anyString(), Mockito.any(Object[].class),
+				Mockito.any(SearchControls.class))).thenReturn(ne);
 
 		return dc;
 	}
 
-	public static File getFileFromClasspath(String fileName,
-			ClassLoader classLoader) {
+	public static File getFileFromClasspath(String fileName, ClassLoader classLoader) {
 		URL url = classLoader.getResource(fileName);
 		try {
 			return new File(url.toURI().getPath());
@@ -267,22 +286,20 @@ public class Utils {
 
 		return sourceLines;
 	}
-	
-public static String encodeForHTML(Object param) {
-		
+
+	public static String encodeForHTML(Object param) {
+
 		String value = "objectTypeUnknown";
 		if (param instanceof String) {
-			value = (String)param;
-		}
-		else if (param instanceof java.io.InputStream) {
+		} else if (param instanceof java.io.InputStream) {
 			byte[] buff = new byte[1000];
 			int length = 0;
 			try {
 				java.io.InputStream stream = (java.io.InputStream) param;
 				stream.reset();
-				length = stream.read(buff);			
+				length = stream.read(buff);
 			} catch (IOException e) {
-				buff[0] = (byte)'?';
+				buff[0] = (byte) '?';
 				length = 1;
 			}
 			ByteArrayOutputStream b = new ByteArrayOutputStream();

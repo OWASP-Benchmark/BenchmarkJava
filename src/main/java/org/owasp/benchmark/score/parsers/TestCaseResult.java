@@ -138,7 +138,7 @@ public class TestCaseResult {
 	public String getSink() {
 		return this.sink;
 	}
-
+	
 	public void setSink(String sink) {
 		this.sink = sink;
 	}

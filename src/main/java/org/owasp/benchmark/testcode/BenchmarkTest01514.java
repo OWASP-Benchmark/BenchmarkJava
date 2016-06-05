@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01514")
+@WebServlet(value="/xss-03/BenchmarkTest01514")
 public class BenchmarkTest01514 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,7 +41,7 @@ public class BenchmarkTest01514 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheParameter("vector");
+		String param = scr.getTheParameter("BenchmarkTest01514");
 		if (param == null) param = "";
 
 		String bar = new Test().doSomething(param);
@@ -49,17 +49,18 @@ public class BenchmarkTest01514 extends HttpServlet {
 		response.getWriter().write(bar);
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map21200 = new java.util.HashMap<String,Object>();
-		map21200.put("keyA-21200", "a_Value"); // put some stuff in the collection
-		map21200.put("keyB-21200", param); // put it in a collection
-		map21200.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map21200.get("keyB-21200"); // get it back out
-		bar = (String)map21200.get("keyA-21200"); // get safe value back out
+		java.util.HashMap<String,Object> map56316 = new java.util.HashMap<String,Object>();
+		map56316.put("keyA-56316", "a_Value"); // put some stuff in the collection
+		map56316.put("keyB-56316", param); // put it in a collection
+		map56316.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map56316.get("keyB-56316"); // get it back out
+		bar = (String)map56316.get("keyA-56316"); // get safe value back out
 
             return bar;
         }

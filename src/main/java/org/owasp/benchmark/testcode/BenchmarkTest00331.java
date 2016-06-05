@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00331")
+@WebServlet(value="/sqli-00/BenchmarkTest00331")
 public class BenchmarkTest00331 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,21 +41,23 @@ public class BenchmarkTest00331 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("vector");
-		if (headers.hasMoreElements()) {
+		java.util.Enumeration<String> headers = request.getHeaders("BenchmarkTest00331");
+		
+		if (headers != null && headers.hasMoreElements()) {
 			param = headers.nextElement(); // just grab first element
 		}
-        param = java.net.URLDecoder.decode(param, "UTF-8");
-
+		
+		// URL Decode the header value since req.getHeaders() doesn't. Unlike req.getParameters().
+		param = java.net.URLDecoder.decode(param, "UTF-8");
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map16225 = new java.util.HashMap<String,Object>();
-		map16225.put("keyA-16225", "a_Value"); // put some stuff in the collection
-		map16225.put("keyB-16225", param); // put it in a collection
-		map16225.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map16225.get("keyB-16225"); // get it back out
-		bar = (String)map16225.get("keyA-16225"); // get safe value back out
+		java.util.HashMap<String,Object> map59781 = new java.util.HashMap<String,Object>();
+		map59781.put("keyA-59781", "a_Value"); // put some stuff in the collection
+		map59781.put("keyB-59781", param); // put it in a collection
+		map59781.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map59781.get("keyB-59781"); // get it back out
+		bar = (String)map59781.get("keyA-59781"); // get safe value back out
 		
 		
 		String sql = "SELECT * from USERS where USERNAME=? and PASSWORD='"+ bar +"'";
@@ -68,10 +70,13 @@ public class BenchmarkTest00331 extends HttpServlet {
             org.owasp.benchmark.helpers.DatabaseHelper.printResults(statement, sql, response);
 		} catch (java.sql.SQLException e) {
 			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
+        		response.getWriter().println(
+"Error processing request."
+);
         		return;
         	}
 			else throw new ServletException(e);
 		}
 	}
+	
 }

@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00732")
+@WebServlet(value="/cmdi-00/BenchmarkTest00732")
 public class BenchmarkTest00732 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -40,7 +40,7 @@ public class BenchmarkTest00732 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String[] values = request.getParameterValues("vector");
+		String[] values = request.getParameterValues("BenchmarkTest00732");
 		String param;
 		if (values != null && values.length > 0)
 		  param = values[0];
@@ -48,12 +48,12 @@ public class BenchmarkTest00732 extends HttpServlet {
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map92694 = new java.util.HashMap<String,Object>();
-		map92694.put("keyA-92694", "a_Value"); // put some stuff in the collection
-		map92694.put("keyB-92694", param); // put it in a collection
-		map92694.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map92694.get("keyB-92694"); // get it back out
-		bar = (String)map92694.get("keyA-92694"); // get safe value back out
+		java.util.HashMap<String,Object> map99333 = new java.util.HashMap<String,Object>();
+		map99333.put("keyA-99333", "a_Value"); // put some stuff in the collection
+		map99333.put("keyB-99333", param); // put it in a collection
+		map99333.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map99333.get("keyB-99333"); // get it back out
+		bar = (String)map99333.get("keyA-99333"); // get safe value back out
 		
 		
 		String a1 = "";
@@ -78,4 +78,5 @@ public class BenchmarkTest00732 extends HttpServlet {
             throw new ServletException(e);
 		}
 	}
+	
 }

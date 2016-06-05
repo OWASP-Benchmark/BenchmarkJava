@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00599")
+@WebServlet(value="/sqli-01/BenchmarkTest00599")
 public class BenchmarkTest00599 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -49,7 +49,7 @@ public class BenchmarkTest00599 extends HttpServlet {
 			if (values != null) {
 				for(int i=0;i<values.length && flag; i++){
 					String value = values[i];
-					if (value.equals("vector")) {
+					if (value.equals("BenchmarkTest00599")) {
 						param = name;
 					    flag = false;
 					}
@@ -59,20 +59,20 @@ public class BenchmarkTest00599 extends HttpServlet {
 		
 		
 		// Chain a bunch of propagators in sequence
-		String a83730 = param; //assign
-		StringBuilder b83730 = new StringBuilder(a83730);  // stick in stringbuilder
-		b83730.append(" SafeStuff"); // append some safe content
-		b83730.replace(b83730.length()-"Chars".length(),b83730.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map83730 = new java.util.HashMap<String,Object>();
-		map83730.put("key83730", b83730.toString()); // put in a collection
-		String c83730 = (String)map83730.get("key83730"); // get it back out
-		String d83730 = c83730.substring(0,c83730.length()-1); // extract most of it
-		String e83730 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d83730.getBytes() ) )); // B64 encode and decode it
-		String f83730 = e83730.split(" ")[0]; // split it on a space
+		String a99467 = param; //assign
+		StringBuilder b99467 = new StringBuilder(a99467);  // stick in stringbuilder
+		b99467.append(" SafeStuff"); // append some safe content
+		b99467.replace(b99467.length()-"Chars".length(),b99467.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map99467 = new java.util.HashMap<String,Object>();
+		map99467.put("key99467", b99467.toString()); // put in a collection
+		String c99467 = (String)map99467.get("key99467"); // get it back out
+		String d99467 = c99467.substring(0,c99467.length()-1); // extract most of it
+		String e99467 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d99467.getBytes() ) )); // B64 encode and decode it
+		String f99467 = e99467.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String g83730 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
-		String bar = thing.doSomething(g83730); // reflection
+		String g99467 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'
+		String bar = thing.doSomething(g99467); // reflection
 		
 		
 		try {
@@ -80,16 +80,19 @@ public class BenchmarkTest00599 extends HttpServlet {
 	            + bar + "'";
 	
 			org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.batchUpdate(sql);
-			java.io.PrintWriter out = response.getWriter();
-	//		System.out.println("no results for query: " + sql + " because the Spring batchUpdate method doesn't return results.");
-			out.write("No results can be displayed for query: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(sql) + "<br>");
-			out.write(" because the Spring batchUpdate method doesn't return results.");
+			response.getWriter().println(
+				"No results can be displayed for query: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(sql) + "<br>"
+				+ " because the Spring batchUpdate method doesn't return results."
+			);
 		} catch (org.springframework.dao.DataAccessException e) {
 			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-        		response.getWriter().println("Error processing request.");
+        		response.getWriter().println(
+"Error processing request."
+);
         		return;
         	}
 			else throw new ServletException(e);
 		}
 	}
+	
 }

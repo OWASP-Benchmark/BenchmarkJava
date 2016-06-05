@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01493")
+@WebServlet(value="/pathtraver-01/BenchmarkTest01493")
 public class BenchmarkTest01493 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,29 +41,36 @@ public class BenchmarkTest01493 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheParameter("vector");
+		String param = scr.getTheParameter("BenchmarkTest01493");
 		if (param == null) param = "";
 
 		String bar = new Test().doSomething(param);
 		
 		java.io.File fileTarget = new java.io.File(new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),bar);
-		response.getWriter().write("Access to file: '" + fileTarget + "' created." );
+		response.getWriter().println(
+"Access to file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileTarget.toString()) + "' created." 
+);
 		if (fileTarget.exists()) {
-			response.getWriter().write(" And file already exists.");
-		} else { response.getWriter().write(" But file doesn't exist yet."); }
+			response.getWriter().println(
+" And file already exists."
+);
+		} else { response.getWriter().println(
+" But file doesn't exist yet."
+); }
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map11491 = new java.util.HashMap<String,Object>();
-		map11491.put("keyA-11491", "a_Value"); // put some stuff in the collection
-		map11491.put("keyB-11491", param); // put it in a collection
-		map11491.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map11491.get("keyB-11491"); // get it back out
-		bar = (String)map11491.get("keyA-11491"); // get safe value back out
+		java.util.HashMap<String,Object> map71009 = new java.util.HashMap<String,Object>();
+		map71009.put("keyA-71009", "a_Value"); // put some stuff in the collection
+		map71009.put("keyB-71009", param); // put it in a collection
+		map71009.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map71009.get("keyB-71009"); // get it back out
+		bar = (String)map71009.get("keyA-71009"); // get safe value back out
 
             return bar;
         }

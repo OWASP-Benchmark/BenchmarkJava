@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01709")
+@WebServlet(value="/trustbound-01/BenchmarkTest01709")
 public class BenchmarkTest01709 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,15 +41,15 @@ public class BenchmarkTest01709 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		String queryString = request.getQueryString();
-		String paramval = "vector"+"=";
+		String paramval = "BenchmarkTest01709"+"=";
 		int paramLoc = -1;
 		if (queryString != null) paramLoc = queryString.indexOf(paramval);
 		if (paramLoc == -1) {
-			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "vector" + "' in query string.");
+			response.getWriter().println("getQueryString() couldn't find expected parameter '" + "BenchmarkTest01709" + "' in query string.");
 			return;
 		}
 		
-		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "vector" param is last parameter in query string.
+		String param = queryString.substring(paramLoc + paramval.length()); // 1st assume "BenchmarkTest01709" param is last parameter in query string.
 		// And then check to see if its in the middle of the query string and if so, trim off what comes after.
 		int ampersandLoc = queryString.indexOf("&", paramLoc);
 		if (ampersandLoc != -1) {
@@ -62,28 +62,31 @@ public class BenchmarkTest01709 extends HttpServlet {
 		// javax.servlet.http.HttpSession.putValue(java.lang.String,java.lang.Object^)
 		request.getSession().putValue( "userid", bar);
 		
-		response.getWriter().println("Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
-			+ "' saved in session.");
+		response.getWriter().println(
+		"Item: 'userid' with value: '" + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
+			+ "' saved in session."
+);
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
-		String a89940 = param; //assign
-		StringBuilder b89940 = new StringBuilder(a89940);  // stick in stringbuilder
-		b89940.append(" SafeStuff"); // append some safe content
-		b89940.replace(b89940.length()-"Chars".length(),b89940.length(),"Chars"); //replace some of the end content
-		java.util.HashMap<String,Object> map89940 = new java.util.HashMap<String,Object>();
-		map89940.put("key89940", b89940.toString()); // put in a collection
-		String c89940 = (String)map89940.get("key89940"); // get it back out
-		String d89940 = c89940.substring(0,c89940.length()-1); // extract most of it
-		String e89940 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d89940.getBytes() ) )); // B64 encode and decode it
-		String f89940 = e89940.split(" ")[0]; // split it on a space
+		String a15574 = param; //assign
+		StringBuilder b15574 = new StringBuilder(a15574);  // stick in stringbuilder
+		b15574.append(" SafeStuff"); // append some safe content
+		b15574.replace(b15574.length()-"Chars".length(),b15574.length(),"Chars"); //replace some of the end content
+		java.util.HashMap<String,Object> map15574 = new java.util.HashMap<String,Object>();
+		map15574.put("key15574", b15574.toString()); // put in a collection
+		String c15574 = (String)map15574.get("key15574"); // get it back out
+		String d15574 = c15574.substring(0,c15574.length()-1); // extract most of it
+		String e15574 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
+		    new sun.misc.BASE64Encoder().encode( d15574.getBytes() ) )); // B64 encode and decode it
+		String f15574 = e15574.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
-		String bar = thing.doSomething(f89940); // reflection
+		String bar = thing.doSomething(f15574); // reflection
 
             return bar;
         }

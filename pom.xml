@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.owasp</groupId>
 	<artifactId>benchmark</artifactId>
-	<version>1.2beta</version>
+    <version>1.2</version>
 	<packaging>war</packaging>
 	<name>OWASP Benchmark Project</name>
 	<url>https://www.owasp.org/index.php/Benchmark</url>
@@ -31,7 +31,6 @@
 				</plugins>
 			</build>
 		</profile>
-
 
 		<profile>
 			<id>benchmarkscore</id>
@@ -86,7 +85,7 @@
 								<plugin>
 									<groupId>com.h3xstream.findsecbugs</groupId>
 									<artifactId>findsecbugs-plugin</artifactId>
-									<version>1.4.5</version>
+									<version>1.4.6</version>
 								</plugin>
 							</plugins>
 						</configuration>
@@ -120,6 +119,34 @@
 									</target>
 								</configuration>
 							</execution>
+							<execution>
+								<id>database-server</id>
+								<phase>package</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<ant target="databaseServer" antfile="${basedir}/src/config/build.xml">
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+										</ant>
+									</target>
+								</configuration>
+							</execution>
+							<execution>
+								<id>database-init</id>
+								<phase>package</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<ant target="databaseInit" antfile="${basedir}/src/config/build.xml">
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+										</ant>
+									</target>
+								</configuration>
+							</execution>
 						</executions>
 					</plugin>
 					<plugin>
@@ -135,19 +162,19 @@
 								</zipUrlInstaller>
 							</container>
 							<properties>
-									<cargo.jvmargs>-XX:MaxPermSize=6G -Xms1G –Xmx8G</cargo.jvmargs>
-								</properties>
+								<cargo.jvmargs>-XX:MaxPermSize=6G -Xms1G –Xmx8G</cargo.jvmargs>
+							</properties>
 							<configuration>
-                                <files>
-                                    <copy>
-                                        <file>${basedir}/src/config/local/server.xml</file>
-                                        <tofile>conf/server.xml</tofile>
-                                        <configfile>true</configfile>
-                                        <overwrite>true</overwrite>
-                                    </copy>
-                                </files>
+								<files>
+									<copy>
+										<file>${basedir}/src/config/local/server.xml</file>
+										<tofile>conf/server.xml</tofile>
+										<configfile>true</configfile>
+										<overwrite>true</overwrite>
+									</copy>
+								</files>
 								<properties>
-									<cargo.servlet.port>8443</cargo.servlet.port>	
+									<cargo.servlet.port>8443</cargo.servlet.port>
 									<cargo.protocol>https</cargo.protocol>
 									<cargo.tomcat.connector.clientAuth>false</cargo.tomcat.connector.clientAuth>
 									<cargo.tomcat.connector.sslProtocol>TLS</cargo.tomcat.connector.sslProtocol>
@@ -156,14 +183,14 @@
 									<cargo.tomcat.connector.keyAlias>tomcat</cargo.tomcat.connector.keyAlias>
 									<cargo.tomcat.httpSecure>true</cargo.tomcat.httpSecure>
 								</properties>
-							</configuration> 
+							</configuration>
 						</configuration>
 					</plugin>
 				</plugins>
 			</build>
 		</profile>
 
-        <profile>
+		<profile>
 			<id>deploywremote</id>
 			<properties>
 				<skipTests>true</skipTests>
@@ -188,6 +215,34 @@
 									</target>
 								</configuration>
 							</execution>
+							<execution>
+								<id>database-server</id>
+								<phase>package</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<ant target="databaseServer" antfile="${basedir}/src/config/build.xml">
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+										</ant>
+									</target>
+								</configuration>
+							</execution>
+							<execution>
+								<id>database-init</id>
+								<phase>package</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<ant target="databaseInit" antfile="${basedir}/src/config/build.xml">
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+										</ant>
+									</target>
+								</configuration>
+							</execution>
 						</executions>
 					</plugin>
 					<plugin>
@@ -203,19 +258,19 @@
 								</zipUrlInstaller>
 							</container>
 							<properties>
-									<cargo.jvmargs>-XX:MaxPermSize=6G -Xms1G –Xmx8G</cargo.jvmargs>
-								</properties>
+								<cargo.jvmargs>-XX:MaxPermSize=6G -Xms1G –Xmx8G</cargo.jvmargs>
+							</properties>
 							<configuration>
-                                 <files>
-                                    <copy>
-                                        <file>${basedir}/src/config/remote/server.xml</file>
-                                        <tofile>conf/server.xml</tofile>
-                                        <configfile>true</configfile>
-                                        <overwrite>true</overwrite>
-                                    </copy>
-                                </files>
+								<files>
+									<copy>
+										<file>${basedir}/src/config/remote/server.xml</file>
+										<tofile>conf/server.xml</tofile>
+										<configfile>true</configfile>
+										<overwrite>true</overwrite>
+									</copy>
+								</files>
 								<properties>
-									<cargo.servlet.port>8443</cargo.servlet.port>	
+									<cargo.servlet.port>8443</cargo.servlet.port>
 									<cargo.protocol>https</cargo.protocol>
 									<cargo.tomcat.connector.clientAuth>false</cargo.tomcat.connector.clientAuth>
 									<cargo.tomcat.connector.sslProtocol>TLS</cargo.tomcat.connector.sslProtocol>
@@ -224,13 +279,13 @@
 									<cargo.tomcat.connector.keyAlias>tomcat</cargo.tomcat.connector.keyAlias>
 									<cargo.tomcat.httpSecure>true</cargo.tomcat.httpSecure>
 								</properties>
-							</configuration> 
+							</configuration>
 						</configuration>
 					</plugin>
 				</plugins>
 			</build>
 		</profile>
-        
+
 		<profile>
 			<id>deploywcontrast</id>
 			<properties>
@@ -256,6 +311,34 @@
 									</target>
 								</configuration>
 							</execution>
+							<execution>
+								<id>database-server</id>
+								<phase>package</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<ant target="databaseServer" antfile="${basedir}/src/config/build.xml">
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+										</ant>
+									</target>
+								</configuration>
+							</execution>
+							<execution>
+								<id>database-init</id>
+								<phase>package</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<ant target="databaseInit" antfile="${basedir}/src/config/build.xml">
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+										</ant>
+									</target>
+								</configuration>
+							</execution>
 						</executions>
 					</plugin>
 					<plugin>
@@ -271,20 +354,28 @@
 								</zipUrlInstaller>
 							</container>
 							<properties>
-									<cargo.jvmargs>-XX:MaxPermSize=6G -Xms1G –Xmx8G</cargo.jvmargs>
-								</properties>
+								<cargo.jvmargs>-XX:MaxPermSize=6G -Xms1G –Xmx8G</cargo.jvmargs>
+							</properties>
 							<configuration>
+								<files>
+									<copy>
+										<file>${basedir}/src/config/local/server.xml</file>
+										<tofile>conf/server.xml</tofile>
+										<configfile>true</configfile>
+										<overwrite>true</overwrite>
+									</copy>
+								</files>
 								<properties>
-                                    <cargo.jvmargs>
-                                            -Xmx4G
-                                            -javaagent:${basedir}/tools/Contrast/contrast.jar
-                                            -Dcontrast.dir=${basedir}/tools/Contrast/working
-                                            -Dcontrast.log.daily=true
-                                            -Dcontrast.level=debug
-                                            -Dcontrast.noteamserver.enable=true
-                                            -Dcontrast.teamserver.suppress=true
-                                    </cargo.jvmargs>
-                                    <cargo.servlet.port>8443</cargo.servlet.port>	
+									<cargo.jvmargs>
+										-Xmx4G
+										-javaagent:${basedir}/tools/Contrast/contrast.jar
+										-Dcontrast.dir=${basedir}/tools/Contrast/working
+										-Dcontrast.log.daily=true
+										-Dcontrast.level=debug
+										-Dcontrast.noteamserver.enable=true
+										-Dcontrast.teamserver.suppress=true
+									</cargo.jvmargs>
+									<cargo.servlet.port>8443</cargo.servlet.port>
 									<cargo.protocol>https</cargo.protocol>
 									<cargo.tomcat.connector.clientAuth>false</cargo.tomcat.connector.clientAuth>
 									<cargo.tomcat.connector.sslProtocol>TLS</cargo.tomcat.connector.sslProtocol>
@@ -293,7 +384,7 @@
 									<cargo.tomcat.connector.keyAlias>tomcat</cargo.tomcat.connector.keyAlias>
 									<cargo.tomcat.httpSecure>true</cargo.tomcat.httpSecure>
 								</properties>
-							</configuration> 
+							</configuration>
 						</configuration>
 					</plugin>
 				</plugins>
@@ -405,19 +496,16 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.12</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.7.12</version>
 		</dependency>
-
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.17</version>
 		</dependency>
-
 		<dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-api</artifactId>
@@ -461,12 +549,6 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
 			<version>3.3.2.GA</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcprov-jdk16</artifactId>
-			<version>1.46</version>
 		</dependency>
 
 		<dependency>
@@ -535,7 +617,6 @@
 			<version>1.8.2</version>
 		</dependency>
 
-
 		<dependency>
 			<groupId>org.w3c.css</groupId>
 			<artifactId>sac</artifactId>
@@ -588,6 +669,75 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
 			<version>4.1.5.RELEASE</version>
+		</dependency>
+		<!-- Begin of new dependencies -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>4.1.5.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>4.1.5.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+			<version>4.1.5.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<version>4.1.5.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-expression</artifactId>
+			<version>4.1.5.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>2.6.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.6.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>2.6.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>jsr311-api</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-server</artifactId>
+			<version>1.9</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-client</artifactId>
+			<version>1.9</version>
+		</dependency>
+
+		<!-- End of new dependencies -->
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>5.2.2.Final</version>
 		</dependency>
 
 		<dependency>
@@ -740,7 +890,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
-				<version>3.5</version>
+				<version>3.6</version>
 				<configuration>
 					<linkXref>true</linkXref>
 					<targetJdk>1.7</targetJdk>
@@ -754,6 +904,7 @@
 		<maven.compiler.target>1.7</maven.compiler.target>
 		<failOnMissingWebXml>false</failOnMissingWebXml>
 		<skipTests>false</skipTests>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 </project>

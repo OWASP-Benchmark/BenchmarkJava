@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00410")
+@WebServlet(value="/cmdi-00/BenchmarkTest00410")
 public class BenchmarkTest00410 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -40,17 +40,17 @@ public class BenchmarkTest00410 extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 	
-		String param = request.getParameter("vector");
+		String param = request.getParameter("BenchmarkTest00410");
 		if (param == null) param = "";
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map21927 = new java.util.HashMap<String,Object>();
-		map21927.put("keyA-21927", "a_Value"); // put some stuff in the collection
-		map21927.put("keyB-21927", param); // put it in a collection
-		map21927.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map21927.get("keyB-21927"); // get it back out
-		bar = (String)map21927.get("keyA-21927"); // get safe value back out
+		java.util.HashMap<String,Object> map77851 = new java.util.HashMap<String,Object>();
+		map77851.put("keyA-77851", "a_Value"); // put some stuff in the collection
+		map77851.put("keyB-77851", param); // put it in a collection
+		map77851.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map77851.get("keyB-77851"); // get it back out
+		bar = (String)map77851.get("keyA-77851"); // get safe value back out
 		
 		
 		String cmd = org.owasp.benchmark.helpers.Utils.getInsecureOSCommandString(this.getClass().getClassLoader());
@@ -66,4 +66,5 @@ public class BenchmarkTest00410 extends HttpServlet {
             throw new ServletException(e);
 		}
 	}
+	
 }

@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest00315")
+@WebServlet(value="/weakrand-00/BenchmarkTest00315")
 public class BenchmarkTest00315 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,21 +41,23 @@ public class BenchmarkTest00315 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		String param = "";
-		java.util.Enumeration<String> headers = request.getHeaders("vector");
-		if (headers.hasMoreElements()) {
+		java.util.Enumeration<String> headers = request.getHeaders("BenchmarkTest00315");
+		
+		if (headers != null && headers.hasMoreElements()) {
 			param = headers.nextElement(); // just grab first element
 		}
-        param = java.net.URLDecoder.decode(param, "UTF-8");
-
+		
+		// URL Decode the header value since req.getHeaders() doesn't. Unlike req.getParameters().
+		param = java.net.URLDecoder.decode(param, "UTF-8");
 		
 		
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map39773 = new java.util.HashMap<String,Object>();
-		map39773.put("keyA-39773", "a_Value"); // put some stuff in the collection
-		map39773.put("keyB-39773", param); // put it in a collection
-		map39773.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map39773.get("keyB-39773"); // get it back out
-		bar = (String)map39773.get("keyA-39773"); // get safe value back out
+		java.util.HashMap<String,Object> map38775 = new java.util.HashMap<String,Object>();
+		map38775.put("keyA-38775", "a_Value"); // put some stuff in the collection
+		map38775.put("keyB-38775", param); // put it in a collection
+		map38775.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map38775.get("keyB-38775"); // get it back out
+		bar = (String)map38775.get("keyA-38775"); // get safe value back out
 		
 		
 	    try {
@@ -88,22 +90,31 @@ public class BenchmarkTest00315 extends HttpServlet {
 			}
 			
 			if (foundUser) {
-				response.getWriter().println("Welcome back: " + user + "<br/>");			
+				response.getWriter().println(
+"Welcome back: " + user + "<br/>"
+);
+			
 			} else {			
 				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
 				rememberMe.setSecure(true);
-				rememberMe.setPath("/benchmark/" + this.getClass().getSimpleName());
+	//			rememberMe.setPath("/benchmark/" + this.getClass().getSimpleName());
+				rememberMe.setPath(request.getRequestURI()); // i.e., set path to JUST this servlet 
+															 // e.g., /benchmark/sql-01/BenchmarkTest01001
 				request.getSession().setAttribute(cookieName, rememberMeKey);
-				response.addCookie(rememberMe);
-				response.getWriter().println(user + " has been remembered with cookie: " + rememberMe.getName() 
-						+ " whose value is: " + rememberMe.getValue() + "<br/>");
-			}
-				    
+response.addCookie(rememberMe);
+response.getWriter().println(
+user + " has been remembered with cookie: " + rememberMe.getName() 
+						+ " whose value is: " + rememberMe.getValue() + "<br/>"
+);
+			}  
 	    } catch (java.security.NoSuchAlgorithmException e) {
 			System.out.println("Problem executing SecureRandom.nextBytes() - TestCase");
 			throw new ServletException(e);
 	    } finally {
-			response.getWriter().println("Randomness Test java.security.SecureRandom.nextBytes(byte[]) executed");	    
+			response.getWriter().println(
+"Randomness Test java.security.SecureRandom.nextBytes(byte[]) executed"
+);
 	    }
 	}
+	
 }

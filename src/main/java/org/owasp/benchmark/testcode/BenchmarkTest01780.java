@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2beta
+* OWASP Benchmark Project v1.2
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/BenchmarkTest01780")
+@WebServlet(value="/cmdi-02/BenchmarkTest01780")
 public class BenchmarkTest01780 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,7 +41,7 @@ public class BenchmarkTest01780 extends HttpServlet {
 		response.setContentType("text/html");
 	
 		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
-		String param = scr.getTheValue("vector");
+		String param = scr.getTheValue("BenchmarkTest01780");
 
 		String bar = new Test().doSomething(param);
 		
@@ -68,17 +68,18 @@ public class BenchmarkTest01780 extends HttpServlet {
 		}
 	}  // end doPost
 
+	
     private class Test {
 
         public String doSomething(String param) throws ServletException, IOException {
 
 		String bar = "safe!";
-		java.util.HashMap<String,Object> map9027 = new java.util.HashMap<String,Object>();
-		map9027.put("keyA-9027", "a_Value"); // put some stuff in the collection
-		map9027.put("keyB-9027", param); // put it in a collection
-		map9027.put("keyC", "another_Value"); // put some stuff in the collection
-		bar = (String)map9027.get("keyB-9027"); // get it back out
-		bar = (String)map9027.get("keyA-9027"); // get safe value back out
+		java.util.HashMap<String,Object> map90655 = new java.util.HashMap<String,Object>();
+		map90655.put("keyA-90655", "a_Value"); // put some stuff in the collection
+		map90655.put("keyB-90655", param); // put it in a collection
+		map90655.put("keyC", "another_Value"); // put some stuff in the collection
+		bar = (String)map90655.get("keyB-90655"); // get it back out
+		bar = (String)map90655.get("keyA-90655"); // get safe value back out
 
             return bar;
         }

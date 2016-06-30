@@ -107,10 +107,12 @@ public class BurpReader extends Reader {
         case "1051392": return 22;   // File Path Manipulation - Not sure exact difference with 1049344 above
         case "2097408": return 79;   // Stored XSS
         case "2097920": return 79;   // Reflected XSS
-        case "2097936": return 79;   // DOM-Based XSS
+        case "2097936": return 79;   // DOM-Based XSS (Probably want separate ID for this in the future)
         case "2098944": return 352;  // CSRF Vulnerability
+        case "4194560": return 9999; // Referer Dependent Response
+        case "4194576": return 9999; // X-Forwarded-For header dependency
         case "5243392": return 614;  // SSL cookie without secure flag set
-        case "5244416": return 9998; // cookie without HttpOnly flag set - There is no CWE defined for this weakness
+        case "5244416": return 9998; // Cookie without HttpOnly flag set - There is no CWE defined for this weakness
         case "5245344": return 8888; // Clickjacking - There is no CWE # for this.
         case "5247488": return 9999; // DOM Trust Boundary Violation - Map to nothing right now.
         case "6291968": return 200;  // Information Disclosure - Email Address Disclosed 
@@ -119,27 +121,27 @@ public class BurpReader extends Reader {
         case "8389120": return 9999; // HTML doesn't specify character set - Don't care. Map to nothing.
         case "8389632": return 9999; // Incorrect Content Type - Don't care. Map to nothing right now.
         
-            // //case "Build Misconfiguration" : return 00;
+            // case "Build Misconfiguration" : return 00;
             // case "Cookie Security" : return 614;
-            // //case "Dead Code" : return 00;
-            // //case "Denial of Service" : return 00;
+            // case "Dead Code" : return 00;
+            // case "Denial of Service" : return 00;
             // case "Header Manipulation" : return 113;
             // case "Insecure Randomness" : return 330;
-            // //case "J2EE Bad Practices" : return 00;
-            // //case "Missing Check against Null" : return 00;
-            // //case "Null Dereference" : return 00;
+            // case "J2EE Bad Practices" : return 00;
+            // case "Missing Check against Null" : return 00;
+            // case "Null Dereference" : return 00;
             // case "Password Management" : return 00;
-            // //case "Poor Error Handling" : return 00;
-            // //case "Poor Logging Practice" : return 00;
-            // //case "Poor Style" : return 00;
-            // //case "Resource Injection" : return 00;
-            // //case "System Information Leak" : return 00;
+            // case "Poor Error Handling" : return 00;
+            // case "Poor Logging Practice" : return 00;
+            // case "Poor Style" : return 00;
+            // case "Resource Injection" : return 00;
+            // case "System Information Leak" : return 00;
             // case "Trust Boundary Violation" : return 501;
-            // //case "Unreleased Resource" : return 00;
-            // //case "Unsafe Reflection" : return 00;
+            // case "Unreleased Resource" : return 00;
+            // case "Unsafe Reflection" : return 00;
             // case "Weak Cryptographic Hash" : return 328;
             // case "Weak Encryption" : return 327;
-        }
+        } // end switch(id)
         System.out.println("Unknown id: " + id);
         return -1;
     }

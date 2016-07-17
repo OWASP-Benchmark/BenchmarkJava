@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2
+* OWASP Benchmark Project v1.3alpha
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -38,34 +38,37 @@ public class BenchmarkTest02737 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("text/html");
+		response.setContentType("text/html;charset=UTF-8");
 
 		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
 		String param = scr.getTheValue("BenchmarkTest02737");
 
 		String bar = doSomething(param);
 		
+		String sql = "SELECT  * from USERS where USERNAME='foo' and PASSWORD='"+ bar + "'";
 		try {
-			String sql = "SELECT  * from USERS where USERNAME='foo' and PASSWORD='"+ bar + "'" ;
-	
-	        org.springframework.jdbc.support.rowset.SqlRowSet results = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.queryForRowSet(sql);
+	        org.springframework.jdbc.support.rowset.SqlRowSet results 
+	        	= org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.queryForRowSet(sql);
 	        response.getWriter().println(
 				"Your results are: "
-);
+			);
 
 	//		System.out.println("Your results are");
-			while(results.next()) {
+			while (results.next()) {
 				response.getWriter().println(
 					org.owasp.esapi.ESAPI.encoder().encodeForHTML(results.getString("USERNAME")) + " "
 				);
 	//			System.out.println(results.getString("USERNAME"));
 			}
+		} catch (org.springframework.dao.EmptyResultDataAccessException e) {
+			response.getWriter().println(
+				"No results returned for query: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(sql)
+			);
 		} catch (org.springframework.dao.DataAccessException e) {
 			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
         		response.getWriter().println(
-"Error processing request."
-);
-        		return;
+					"Error processing request."
+				);
         	}
 			else throw new ServletException(e);
 		}

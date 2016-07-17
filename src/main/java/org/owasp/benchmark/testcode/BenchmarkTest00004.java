@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark v1.2
+* OWASP Benchmark v1.3alpha
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -39,12 +39,12 @@ public class BenchmarkTest00004 extends HttpServlet {
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// some code
-		response.setContentType("text/html");
+		response.setContentType("text/html;charset=UTF-8");
 		
 
 		javax.servlet.http.Cookie[] theCookies = request.getCookies();
 		
-		String param = "";
+		String param = "noCookieValueSupplied";
 		if (theCookies != null) {
 			for (javax.servlet.http.Cookie theCookie : theCookies) {
 				if (theCookie.getName().equals("BenchmarkTest00004")) {

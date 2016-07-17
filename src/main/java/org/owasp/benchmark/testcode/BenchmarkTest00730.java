@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2
+* OWASP Benchmark Project v1.3alpha
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -38,7 +38,7 @@ public class BenchmarkTest00730 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("text/html");
+		response.setContentType("text/html;charset=UTF-8");
 	
 		String[] values = request.getParameterValues("BenchmarkTest00730");
 		String param;
@@ -56,6 +56,7 @@ public class BenchmarkTest00730 extends HttpServlet {
 		bar = (String)map29173.get("keyA-29173"); // get safe value back out
 		
 		
+response.setHeader("X-XSS-Protection", "0");
 		response.getWriter().write(bar.toCharArray());
 	}
 	

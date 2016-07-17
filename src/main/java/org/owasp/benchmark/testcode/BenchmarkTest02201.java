@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2
+* OWASP Benchmark Project v1.3alpha
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -38,7 +38,7 @@ public class BenchmarkTest02201 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("text/html");
+		response.setContentType("text/html;charset=UTF-8");
 
 		java.util.Map<String,String[]> map = request.getParameterMap();
 		String param = "";
@@ -50,28 +50,26 @@ public class BenchmarkTest02201 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
-		String fileName = null;
+        String fileName = null;
         java.io.FileInputStream fis = null;
 
         try {
-			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
-			fis = new java.io.FileInputStream(new java.io.File(fileName));
-			byte[] b = new byte[1000];
-			int size = fis.read(b);
-			response.getWriter().println(
-"The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName) + "' is:\n\n"
-);
-			response.getWriter().println(
-org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size))
-);
-		} catch (Exception e) {
+          fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
+          fis = new java.io.FileInputStream(new java.io.File(fileName));
+          byte[] b = new byte[1000];
+          int size = fis.read(b);
+          response.getWriter().println(
+            "The beginning of file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName)
+              + "' is:\n\n" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size))
+          );
+        } catch (Exception e) {
             System.out.println("Couldn't open FileInputStream on file: '" + fileName + "'");
-			response.getWriter().println(
-"Problem getting FileInputStream: " 
-				+ org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage())
-);
+            response.getWriter().println(
+              "Problem getting FileInputStream: "
+                 + org.owasp.esapi.ESAPI.encoder().encodeForHTML(e.getMessage())
+            );
         } finally {
-			if (fis != null) {
+            if (fis != null) {
                 try {
                     fis.close();
                     fis = null;

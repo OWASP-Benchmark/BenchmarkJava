@@ -16,7 +16,7 @@ if [ -f tools/Contrast/contrast.jar ]; then
   mvn clean package cargo:run -Pdeploywcontrast
 
   echo "Copying Contrast report to results directory"
-  cp tools/Contrast/working/contrast.log results/Benchmark_1.2beta-Contrast.log
+  cp tools/Contrast/working/contrast.log results/Benchmark_1.2-Contrast.log
 
 else 
 

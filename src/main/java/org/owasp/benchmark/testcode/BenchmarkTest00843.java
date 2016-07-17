@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2
+* OWASP Benchmark Project v1.3alpha
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -38,7 +38,7 @@ public class BenchmarkTest00843 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("text/html");
+		response.setContentType("text/html;charset=UTF-8");
 	
 		String queryString = request.getQueryString();
 		String paramval = "BenchmarkTest00843"+"=";
@@ -66,25 +66,27 @@ public class BenchmarkTest00843 extends HttpServlet {
 		bar = (String)map12983.get("keyB-12983"); // get it back out
 		
 		
+		String sql = "SELECT TOP 1 userid from USERS where USERNAME='foo' and PASSWORD='" + bar + "'";
 		try {
-			String sql = "SELECT TOP 1 userid from USERS where USERNAME='foo' and PASSWORD='"+ bar + "'";
-	
 			Long results = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.queryForLong(sql);
 			response.getWriter().println(
 				"Your results are: "
-);
+			);
 
 	//		System.out.println("your results are");
 			response.getWriter().println(
 				results.toString()
 			);
 	//		System.out.println(results);
+		} catch (org.springframework.dao.EmptyResultDataAccessException e) {
+			response.getWriter().println(
+				"No results returned for query: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(sql) 
+			);
 		} catch (org.springframework.dao.DataAccessException e) {
 			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
         		response.getWriter().println(
-"Error processing request."
-);
-        		return;
+					"Error processing request."
+				);
         	}
 			else throw new ServletException(e);
 		}

@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2
+* OWASP Benchmark Project v1.3alpha
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -38,11 +38,11 @@ public class BenchmarkTest01882 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("text/html");
+		response.setContentType("text/html;charset=UTF-8");
 
 		javax.servlet.http.Cookie[] theCookies = request.getCookies();
 		
-		String param = "";
+		String param = "noCookieValueSupplied";
 		if (theCookies != null) {
 			for (javax.servlet.http.Cookie theCookie : theCookies) {
 				if (theCookie.getName().equals("BenchmarkTest01882")) {
@@ -54,9 +54,8 @@ public class BenchmarkTest01882 extends HttpServlet {
 
 		String bar = doSomething(param);
 		
+ 		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='" + bar + "'";
  		try {
-	        String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='" + bar + "'";
-	
 			java.util.List<String> results = org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.query(sql,  new org.springframework.jdbc.core.RowMapper<String>() {
 	            public String mapRow(java.sql.ResultSet rs, int rowNum) throws java.sql.SQLException {
 	                try {
@@ -70,22 +69,25 @@ public class BenchmarkTest01882 extends HttpServlet {
 	            }
 	        });
 			response.getWriter().println(
-			"Your results are: "
-);
+				"Your results are: "
+			);
 
 	//		System.out.println("Your results are");
-			for(String s : results){
+			for (String s : results) {
 				response.getWriter().println(
 					org.owasp.esapi.ESAPI.encoder().encodeForHTML(s) + "<br>"
 				);
 	//			System.out.println(s);
 			}
+		} catch (org.springframework.dao.EmptyResultDataAccessException e) {
+			response.getWriter().println(
+				"No results returned for query: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(sql) 
+			);
 		} catch (org.springframework.dao.DataAccessException e) {
 			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
         		response.getWriter().println(
-"Error processing request."
-);
-        		return;
+					"Error processing request."
+				);
         	}
 			else throw new ServletException(e);
 		}

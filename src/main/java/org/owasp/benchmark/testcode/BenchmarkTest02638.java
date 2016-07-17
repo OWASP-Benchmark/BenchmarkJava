@@ -1,5 +1,5 @@
 /**
-* OWASP Benchmark Project v1.2
+* OWASP Benchmark Project v1.3alpha
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
@@ -38,7 +38,7 @@ public class BenchmarkTest02638 extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("text/html");
+		response.setContentType("text/html;charset=UTF-8");
 
 		String queryString = request.getQueryString();
 		String paramval = "BenchmarkTest02638"+"=";
@@ -60,8 +60,7 @@ public class BenchmarkTest02638 extends HttpServlet {
 		String bar = doSomething(param);
 		
 		try {
-	        String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"
-	            + bar + "'";
+	        String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='" + bar + "'";
 	
 			org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.batchUpdate(sql);
 			response.getWriter().println(
@@ -72,9 +71,8 @@ public class BenchmarkTest02638 extends HttpServlet {
 		} catch (org.springframework.dao.DataAccessException e) {
 			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
         		response.getWriter().println(
-"Error processing request."
-);
-        		return;
+					"Error processing request."
+				);
         	}
 			else throw new ServletException(e);
 		}

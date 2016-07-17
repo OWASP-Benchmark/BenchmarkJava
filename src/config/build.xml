@@ -10,11 +10,21 @@
 			</daemons>
 		</parallel>
 	</target>
+	<target name="permuteDatabaseServer">
+			<parallel>
+				<daemons>
+					<java classname="org.hsqldb.Server" fork="false" failonerror="true">
+						<arg line="--database.0 file:src/db/permute.db --dbname.0 permuteDataBase --port 9002 --remote_open true" />
+						<classpath refid="maven.compile.classpath" />
+					</java>
+				</daemons>
+			</parallel>
+	</target>
 	<target name="databaseServer">
 		<parallel>
 			<daemons>
 				<java classname="org.hsqldb.Server" fork="false" failonerror="true">
-					<arg line="--database.0 file:benchmark.db --dbname.0 benchmarkDataBase" />
+					<arg line="--database.0 file:src/db/benchmark.db --dbname.0 benchmarkDataBase" />
 					<classpath refid="maven.compile.classpath" />
 				</java>
 			</daemons>

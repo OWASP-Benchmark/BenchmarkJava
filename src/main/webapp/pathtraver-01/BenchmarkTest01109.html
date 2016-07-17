@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <script src="https://localhost:8443/benchmark/js/jquery.min.js"></script>
 <script type="text/javascript" src="https://localhost:8443/benchmark/js/js.cookie.js"></script>
 <title>BenchmarkTest01109</title>
@@ -40,11 +40,27 @@ $("#login-btn").click(function(){
         type: "POST",
         data : formData,
         success: function(data, textStatus, jqXHR){
-            $("#code").text(data);
+$("#code").text(data.decodeEscapeSequence());
         },
          error: function (jqXHR, textStatus, errorThrown){ alert(errorThrown);}
     });
 });
+
+function escapeRegExp(str) {
+    return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+}
+
+function replaceAll(str, find, replace) {
+  return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);
+}
+
+String.prototype.decodeEscapeSequence = function() {
+    var txt = replaceAll(this,";","");
+    txt = replaceAll(txt,"&#","\\");
+    return txt.replace(/\\x([0-9A-Fa-f]{2})/g, function() {
+        return String.fromCharCode(parseInt(arguments[1], 16));
+    });
+};
 </script>
 </body>
 </html>

@@ -22,13 +22,16 @@ import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,12 +55,11 @@ public class Utils {
 
 	public static final String testfileDir = System.getProperty("user.dir") + File.separator + "testfiles"
 			+ File.separator;
-	
-	public static final Set<String> commonHeaders = new HashSet<>(
-			Arrays.asList("host", "user-agent", "accept", "accept-language", "accept-encoding", "content-type",
-					"x-requested-with", "referer", "content-length", "connection", "pragma", "cache-control",
-					"origin", "cookie"));
-	
+
+	public static final Set<String> commonHeaders = new HashSet<>(Arrays.asList("host", "user-agent", "accept",
+			"accept-language", "accept-encoding", "content-type", "x-requested-with", "referer", "content-length",
+			"connection", "pragma", "cache-control", "origin", "cookie"));
+
 	static {
 		File tempDir = new File(testfileDir);
 		if (!tempDir.exists()) {
@@ -307,6 +309,31 @@ public class Utils {
 			value = b.toString();
 		}
 		return ESAPI.encoder().encodeForHTML(value);
+	}
+
+	public static boolean writeTimeFile(Path pathToFileDir, String completeName, List<String> outputLines) {
+		boolean result = true;
+
+		PrintStream os = null;
+		try {
+			Files.createDirectories(pathToFileDir);
+			File f = new File(completeName);
+
+			FileOutputStream fos = new FileOutputStream(f, false);
+			os = new PrintStream(fos);
+
+			for (String ol : outputLines) {
+				os.println(ol);
+			}
+
+		} catch (IOException e1) {
+			result = false;
+			e1.printStackTrace();
+		} finally {
+			os.close();
+		}
+
+		return result;
 	}
 
 }

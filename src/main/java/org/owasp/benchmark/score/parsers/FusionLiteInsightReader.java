@@ -45,7 +45,7 @@ public class FusionLiteInsightReader extends Reader {
         Document doc = docBuilder.parse(is);
 
         // Fusion Lite Insight specific changes by Parthi Shah
-        TestResults tr = new TestResults("Fusion Lite Insight", true, null);
+        TestResults tr = new TestResults("Fusion Lite Insight");
 
         Node root = doc.getDocumentElement();
         String version = getAttributeValue("version", root);

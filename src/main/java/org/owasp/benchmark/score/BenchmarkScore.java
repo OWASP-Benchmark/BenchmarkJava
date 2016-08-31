@@ -59,6 +59,7 @@ import org.owasp.benchmark.score.parsers.Counter;
 import org.owasp.benchmark.score.parsers.CoverityReader;
 import org.owasp.benchmark.score.parsers.FindbugsReader;
 import org.owasp.benchmark.score.parsers.FortifyReader;
+import org.owasp.benchmark.score.parsers.FusionLiteInsightReader;
 import org.owasp.benchmark.score.parsers.NoisyCricketReader;
 import org.owasp.benchmark.score.parsers.OverallResult;
 import org.owasp.benchmark.score.parsers.OverallResults;
@@ -627,18 +628,23 @@ public class BenchmarkScore {
                 tr = new SourceMeterReader().parse( fileToParse );
             }
         }
-		else if ( filename.endsWith( ".xml" ) ) {
+
+        else if ( filename.endsWith( ".xml" ) ) {
             String line1 = getLine( fileToParse, 0 );
             String line2 = getLine( fileToParse, 1 );
-		    if ( line2.startsWith( "<pmd")) {
+            if ( line2.startsWith( "<pmd")) {
                 tr = new PMDReader().parse( fileToParse );
-		    }
-		    
-		    else if (line2.startsWith("<XanitizerFindingsList")) {
-		        tr = new XanitizerReader().parse(fileToParse);
-		    }
+            }
 
-            else if ( line2.startsWith( "<BugCollection")) {
+            else if (line2.startsWith("<FusionLiteInsight")) {
+                tr = new FusionLiteInsightReader().parse( fileToParse );
+            }
+ 
+            else if (line2.startsWith("<XanitizerFindingsList")) {
+                tr = new XanitizerReader().parse(fileToParse);
+            }
+
+            else if (line2.startsWith("<BugCollection")) {
                 tr = new FindbugsReader().parse( fileToParse );
                 
                 // change the name of the tool if the filename contains findsecbugs

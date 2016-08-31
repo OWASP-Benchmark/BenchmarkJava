@@ -39,7 +39,8 @@ public class TestResults {
 	public static enum ToolType {
 		SAST,
 		DAST,
-		IAST
+		IAST,
+		Hybrid
 	}
 	
 	private static int nextCommercialSAST_ToolNumber = 1;

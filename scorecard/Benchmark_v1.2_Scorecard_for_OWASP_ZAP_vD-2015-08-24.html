@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>OWASP Benchmark Scorecard for OWASP ZAP vD-2015-08-24 (DAST)</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="content/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="content/dashboard.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="content/js/ie-emulation-modes-warning.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="OWASP_Benchmark_Home.html">OWASP Benchmark v1.2</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="OWASP_Benchmark_Home.html">Home</a></li>
+			<li class="dropdown">
+	          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools<span class="caret"></span></a>
+	          <ul class="dropdown-menu">
+<li><a href="Benchmark_v1.2_Scorecard_for_FBwFindSecBugs_v1.4.0.html">FBwFindSecBugs v1.4.0</a></li>
+<li><a href="Benchmark_v1.2_Scorecard_for_FBwFindSecBugs_v1.4.3.html">FBwFindSecBugs v1.4.3</a></li>
+<li><a href="Benchmark_v1.2_Scorecard_for_FBwFindSecBugs_v1.4.4.html">FBwFindSecBugs v1.4.4</a></li>
+<li><a href="Benchmark_v1.2_Scorecard_for_FBwFindSecBugs_v1.4.5.html">FBwFindSecBugs v1.4.5</a></li>
+<li><a href="Benchmark_v1.2_Scorecard_for_FBwFindSecBugs_v1.4.6.html">FBwFindSecBugs v1.4.6</a></li>
+<li><a href="Benchmark_v1.2_Scorecard_for_FindBugs_v3.0.1.html">FindBugs v3.0.1</a></li>
+<li><a href="Benchmark_v1.2_Scorecard_for_OWASP_ZAP_vD-2015-08-24.html">OWASP ZAP vD-2015-08-24</a></li>
+<li><a href="Benchmark_v1.2_Scorecard_for_OWASP_ZAP_vD-2016-09-05.html">OWASP ZAP vD-2016-09-05</a></li>
+<li><a href="Benchmark_v1.2_Scorecard_for_PMD_v5.2.3.html">PMD v5.2.3</a></li>
+<li><a href="Benchmark_v1.1_Scorecard_for_SAST-01.html">SAST-01</a></li>
+<li><a href="Benchmark_v1.1_Scorecard_for_SAST-02.html">SAST-02</a></li>
+<li><a href="Benchmark_v1.1_Scorecard_for_SAST-03.html">SAST-03</a></li>
+<li><a href="Benchmark_v1.1_Scorecard_for_SAST-04.html">SAST-04</a></li>
+<li><a href="Benchmark_v1.1_Scorecard_for_SAST-05.html">SAST-05</a></li>
+<li><a href="Benchmark_v1.1_Scorecard_for_SAST-06.html">SAST-06</a></li>
+<li><a href="Benchmark_v1.2_Scorecard_for_SonarQube_Java_Plugin_v3.14.html">SonarQube Java Plugin v3.14</a></li>
+<li><a href="Benchmark_v1.1,1.2_Scorecard_for_Commercial_Tools.html">Commercial Average</a></li>
+
+	          </ul>
+	        </li>
+			<li class="dropdown">
+	          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Vulnerabilities<span class="caret"></span></a>
+	          <ul class="dropdown-menu">
+            <li><a href="Benchmark_v1.1,1.2_Scorecard_for_Command_Injection.html">Command Injection</a></li>
+            <li><a href="Benchmark_v1.1,1.2_Scorecard_for_Cross-Site_Scripting.html">Cross-Site Scripting</a></li>
+            <li><a href="Benchmark_v1.1,1.2_Scorecard_for_Insecure_Cookie.html">Insecure Cookie</a></li>
+            <li><a href="Benchmark_v1.1,1.2_Scorecard_for_LDAP_Injection.html">LDAP Injection</a></li>
+            <li><a href="Benchmark_v1.1,1.2_Scorecard_for_Path_Traversal.html">Path Traversal</a></li>
+            <li><a href="Benchmark_v1.1,1.2_Scorecard_for_SQL_Injection.html">SQL Injection</a></li>
+            <li><a href="Benchmark_v1.1,1.2_Scorecard_for_Trust_Boundary_Violation.html">Trust Boundary Violation</a></li>
+            <li><a href="Benchmark_v1.1,1.2_Scorecard_for_Weak_Encryption_Algorithm.html">Weak Encryption Algorithm</a></li>
+            <li><a href="Benchmark_v1.1,1.2_Scorecard_for_Weak_Hash_Algorithm.html">Weak Hash Algorithm</a></li>
+            <li><a href="Benchmark_v1.1,1.2_Scorecard_for_Weak_Random_Number.html">Weak Random Number</a></li>
+            <li><a href="Benchmark_v1.1,1.2_Scorecard_for_XPath_Injection.html">XPath Injection</a></li>
+
+	          </ul>
+	        </li>
+            <li><a href="OWASP_Benchmark_Guide.html">Guide</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+
+      <div class="starter-template">
+
+<div>empty</div>
+<div>empty</div>
+
+<h3>OWASP Benchmark Scorecard for OWASP ZAP vD-2015-08-24 (DAST)</h3>
+ 
+<p>The OWASP Benchmark is a test suite designed to evaluate the speed, coverage, and accuracy of automated vulnerability detection tools. Without the ability to measure these tools, 
+it is difficult to understand their strengths and weaknesses, and compare them to each other. The Benchmark contains thousands of test cases that are fully runnable and exploitable. 
+The following is the scorecard for the tool OWASP ZAP against version 1.2 of the Benchmark. It shows how well this tool finds true positives and avoids false positives in the Benchmark test cases.</p>
+
+<p>For more information, please visit the <a href="https://www.owasp.org/index.php/Benchmark">OWASP Benchmark Project Site</a>.
+
+<img align="middle" src="Benchmark_v1.2_Scorecard_for_OWASP_ZAP_vD-2015-08-24.png" />
+
+<h2>Statistics</h2>
+<table class="table">
+<tr>
+<th>Tool elapsed analysis time</th>
+<td>5:00:00</td>
+</tr>
+<tr>
+<th>Tool overall score (0-100)</th>
+<td>17.99%</td>
+</tr>
+<th>Total test cases</th>
+<td>2740</td>
+<tr>
+<th>Download raw results</th>
+<td><a href="Benchmark_v1.2_Scorecard_for_OWASP_ZAP.csv" download>Actual Results</a></td>
+</tr>
+</table>
+
+<p>
+<p>
+
+<h2>Detailed Results</h2>
+<table class="table">
+<tr><th>Category</th><th>CWE #</th><th>TP</th><th>FN</th><th>TN</th><th>FP</th><th>Total</th><th>TPR</th><th>FPR</th><th>Score</th></tr>
+<tr ><td>Command Injection</td><td>78</td><td>44</td><td>82</td><td>125</td><td>0</td><td>251</td><td>34.92%</td><td>0.00%</td><td>34.92%</td></tr>
+<tr ><td>Cross-Site Scripting</td><td>79</td><td>71</td><td>175</td><td>209</td><td>0</td><td>455</td><td>28.86%</td><td>0.00%</td><td>28.86%</td></tr>
+<tr class="success"><td>Insecure Cookie</td><td>614</td><td>36</td><td>0</td><td>31</td><td>0</td><td>67</td><td>100.00%</td><td>0.00%</td><td>100.00%</td></tr>
+<tr class="danger"><td>LDAP Injection</td><td>90</td><td>0</td><td>27</td><td>32</td><td>0</td><td>59</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
+<tr class="danger"><td>Path Traversal</td><td>22</td><td>0</td><td>133</td><td>135</td><td>0</td><td>268</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
+<tr ><td>SQL Injection</td><td>89</td><td>94</td><td>178</td><td>231</td><td>1</td><td>504</td><td>34.56%</td><td>0.43%</td><td>34.13%</td></tr>
+<tr class="danger"><td>Trust Boundary Violation</td><td>501</td><td>0</td><td>83</td><td>43</td><td>0</td><td>126</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
+<tr class="danger"><td>Weak Encryption Algorithm</td><td>327</td><td>0</td><td>130</td><td>116</td><td>0</td><td>246</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
+<tr class="danger"><td>Weak Hash Algorithm</td><td>328</td><td>0</td><td>129</td><td>107</td><td>0</td><td>236</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
+<tr class="danger"><td>Weak Random Number</td><td>330</td><td>0</td><td>218</td><td>275</td><td>0</td><td>493</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
+<tr class="danger"><td>XPath Injection</td><td>643</td><td>0</td><td>15</td><td>20</td><td>0</td><td>35</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
+<th>Totals*</th><th/><th>245</th><th>1170</th><th>1324</th><th>1</th><th>2740</th><th/><th/><th/></tr>
+<th>Overall Results*</th><th/><th/><th/><th/><th/><th/><th>18.03%</th><th>0.04%</th><th>17.99%</th></tr>
+</table><p>*-The Overall Results are averages across all the vulnerability categories.  You can't compute these averages by simply calculating the TPR and FPR rates using  the values in the Totals row. If you did that, categories with larger number of tests would carry  more weight than categories with less tests. The proper calculation of the Overall Results is to add up all the TPR, FPR, and Score values,  and then divide by the number of vulnerability categories, which is how they are calculated.<p/>
+<p>
+
+
+<h2>Key</h2>
+<table class="table">
+<tr>
+<th>Common Weakness Enumeration (CWE)</th>
+<td>The primary MITRE CWE number for this vulnerability category.</td>
+</tr>
+    
+<tr>
+<th>True Positive (TP)</th>
+<td>Tests with real vulnerabilities that were correctly reported as vulnerable by the tool.</td>
+</tr>
+
+<tr>
+<th>False Negative (FN)</th>
+<td>Tests with real vulnerabilities that were not correctly reported as vulnerable by the tool.</td>
+</tr>
+
+<tr>
+<th>True Negative (TN)</th>
+<td>Tests with fake vulnerabilities that were correctly not reported as vulnerable by the tool.</td>
+</tr>
+
+<tr>
+<th>False Positive (FP)</th>
+<td>Tests with fake vulnerabilities that were incorrectly reported as vulnerable by the tool.</td>
+</tr>
+
+<tr>
+<th>True Positive Rate (TPR) = TP / ( TP + FN )</th>
+<td>The rate at which the tool correctly reports real vulnerabilities. Also referred to as Recall, as defined at 
+<a href="https://en.wikipedia.org/wiki/Precision_and_recall">Wikipedia</a>.</td>
+</tr>
+
+<tr>
+<th>False Positive Rate (FPR) = FP / ( FP + TN )</th>
+<td>The rate at which the tool incorrectly reports fake vulnerabilities as real.</td>
+</tr>
+
+<tr>
+<th>Score = TPR - FPR</th>
+<td>Normalized distance from the random guess line.</td>
+</tr>
+
+</table>
+
+      </div>
+
+    </div><!-- /.container -->
+
+	<!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="content/js/bootstrap.min.js"></script>
+  </body>
+</html>
+

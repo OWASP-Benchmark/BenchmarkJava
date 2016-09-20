@@ -48,9 +48,15 @@ public class ContrastReader extends Reader {
                 line = reader.readLine();
                 if (line != null) {
                     if (line.contains("J2EEController] DEBUG - >>> [URL 1]") && !line.endsWith(".html")) {
+                            // ok, we're starting a new URL, so process this one and start the next chunk
                             process(tr, testNumber, chunk);
                             chunk.clear();
-                            testNumber = line.substring(line.length() - 5);
+                            testNumber = "00000";
+                            String fname = "/BenchmarkTest";
+                            int idx = line.indexOf( fname );
+                            if ( idx != -1 ) {
+                                testNumber = line.substring(idx + fname.length(), idx + fname.length() + 5 );
+                            }
                             lastLine = line;
                     } else if (line.startsWith("<finding hash")) {
                         chunk.add(line);
@@ -94,7 +100,7 @@ public class ContrastReader extends Reader {
             try {
                 tcr.setNumber(Integer.parseInt(testNumber));
             } catch (NumberFormatException e) {
-                System.out.println("> Parse error: " + chunk);
+                System.out.println("> Parse error: " + line);
             }
 
             if (tcr.getCWE() != 0) {
@@ -117,7 +123,7 @@ public class ContrastReader extends Reader {
         case "header-injection":
             return 113; // header injection
         case "hql-injection":
-            return 0000; // hql injection
+            return 564; // hql injection
         case "unsafe-readline":
             return 0000; // unsafe readline
         case "reflection-injection":

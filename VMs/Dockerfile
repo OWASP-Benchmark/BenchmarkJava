@@ -17,7 +17,6 @@ ENV bench /benchmark/bench.sh
 RUN echo "#!/bin/sh" > ${bench}
 RUN echo "git clone https://github.com/OWASP/benchmark" >> ${bench}
 RUN echo "cd benchmark" >> ${bench}
-RUN echo "mvn compile" >> ${bench}
 RUN echo "chmod +x runRemoteAccessibleBenchmark.sh" >> ${bench}
 RUN echo "./runRemoteAccessibleBenchmark.sh" >> ${bench}
 RUN chmod a+x ${bench}
@@ -29,3 +28,4 @@ RUN chown -R bench /benchmark/
 ENV PATH /benchmark/benchmark/:$PATH
 
 CMD ["/benchmark/bench.sh"]
+

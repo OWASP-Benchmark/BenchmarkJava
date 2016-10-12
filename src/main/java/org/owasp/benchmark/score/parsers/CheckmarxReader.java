@@ -20,7 +20,6 @@ package org.owasp.benchmark.score.parsers;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -28,7 +27,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 public class CheckmarxReader extends Reader {
@@ -60,9 +58,14 @@ public class CheckmarxReader extends Reader {
         for ( Node query : queryList ) {            
             List<Node> resultList = getNamedChildren( "Result", query );
             for ( Node result : resultList ) {
-                TestCaseResult tcr = parseCheckmarxVulnerability(query, result);
-                if (tcr != null ) {
-                    tr.put(tcr);
+                try {
+                    TestCaseResult tcr = parseCheckmarxVulnerability(query, result);
+                    if (tcr != null ) {
+                        tr.put(tcr);
+                    }
+                } catch( Exception e ) {
+                    System.out.println( ">> Error detected. Attempting to continue parsing" );
+                    e.printStackTrace();
                 }
             }
         }
@@ -166,7 +169,10 @@ public class CheckmarxReader extends Reader {
         }
 		//If not, then the last PastNode must end in a FileName that startsWith BenchmarkTest file
         else{
-	        String testcase2 = fileNameNode.getFirstChild().getNodeValue();
+            // Skipping nodes with no filename specified <FileName></FileName>
+            if ( fileNameNode.getFirstChild() == null ) return null;
+            
+            String testcase2 = fileNameNode.getFirstChild().getNodeValue();
    			//Output xml file from Checkmarx (depends on version) may use windows based '\\' or unix based '/' delimiters for path
 			if(isGeneratedByCxWebClient) { 
 				testcase2 = testcase2.substring( testcase2.lastIndexOf('/') +1);

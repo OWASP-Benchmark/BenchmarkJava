@@ -60,6 +60,8 @@ import org.owasp.benchmark.score.parsers.CoverityReader;
 import org.owasp.benchmark.score.parsers.FindbugsReader;
 import org.owasp.benchmark.score.parsers.FortifyReader;
 import org.owasp.benchmark.score.parsers.FusionLiteInsightReader;
+import org.owasp.benchmark.score.parsers.JuliaReader;
+import org.owasp.benchmark.score.parsers.NetsparkerReader;
 import org.owasp.benchmark.score.parsers.NoisyCricketReader;
 import org.owasp.benchmark.score.parsers.OverallResult;
 import org.owasp.benchmark.score.parsers.OverallResults;
@@ -515,19 +517,20 @@ public class BenchmarkScore {
      */
 	public static String translateCategoryToName(String category) {
 		switch( category ) {
-		case "cmdi" : return "Command Injection";
-		case "xss" : return "Cross-Site Scripting";
-		case "ldapi" : return "LDAP Injection";
-		case "headeri" : return "Header Injection";
-		case "securecookie" : return "Insecure Cookie";
-		case "pathtraver" : return "Path Traversal";
-		case "crypto" : return "Weak Encryption Algorithm";
-		case "hash" : return "Weak Hash Algorithm";
-		case "weakrand" : return "Weak Random Number";
-		case "sqli" : return "SQL Injection";
-		case "trustbound" : return "Trust Boundary Violation";
-		case "xpathi" : return "XPath Injection";
-		default : return "Unknown Vulnerability: " + category;
+			case "cmdi" : return "Command Injection";
+			case "xss" : return "Cross-Site Scripting";
+			case "ldapi" : return "LDAP Injection";
+			case "headeri" : return "Header Injection";
+			case "securecookie" : return "Insecure Cookie";
+			case "pathtraver" : return "Path Traversal";
+			case "crypto" : return "Weak Encryption Algorithm";
+			case "hash" : return "Weak Hash Algorithm";
+			case "weakrand" : return "Weak Random Number";
+			case "sqli" : return "SQL Injection";
+			case "hqli" : return "Hibernate Injection";
+			case "trustbound" : return "Trust Boundary Violation";
+			case "xpathi" : return "XPath Injection";
+			default : return "Unknown Vulnerability: " + category;
 		}
 	}
 
@@ -538,18 +541,19 @@ public class BenchmarkScore {
      */
 	public static int translateCategoryToCWE(String category) {
 		switch( category ) {
-		case "cmdi" : return 78;
-		case "xss" : return 79;
-		case "ldapi" : return 90;
-		case "securecookie" : return 614;
-		case "pathtraver" : return 22;
-		case "crypto" : return 327;
-		case "hash" : return 328;
-		case "weakrand" : return 330;
-		case "sqli" : return 89;
-		case "trustbound" : return 501;
-		case "xpathi" : return 643;
-		default : return 0;
+			case "cmdi" : return 78;
+			case "xss" : return 79;
+			case "ldapi" : return 90;
+			case "securecookie" : return 614;
+			case "pathtraver" : return 22;
+			case "crypto" : return 327;
+			case "hash" : return 328;
+			case "weakrand" : return 330;
+			case "sqli" : return 89;
+			case "hqli" : return 564; // This is the real CWE for Hibernate Injection, but most tools probably report 89
+			case "trustbound" : return 501;
+			case "xpathi" : return 643;
+			default : return 0;
 		}
 	}
 	
@@ -569,6 +573,7 @@ public class BenchmarkScore {
 		case "Weak Hash Algorithm" : return 328;
 		case "Weak Random Number" : return 330;
 		case "SQL Injection" : return 89;
+		case "Hibernate Injection" : return 564; // This is the real CWE for Hibernate Injection, but most tools probably report 89
 		case "Trust Boundary Violation" : return 501;
 		case "XPath Injection" : return 643;
 		default : 
@@ -610,11 +615,11 @@ public class BenchmarkScore {
 		String filename = fileToParse.getName();
 		TestResults tr = null;
         
-        if ( filename.endsWith(".ozasmt" ) ) {
+        if ( filename.endsWith( ".ozasmt" ) ) {
             tr = new AppScanSourceReader().parse( fileToParse );
         }      
         
-        else if ( filename.endsWith(".json" ) ) {
+        else if ( filename.endsWith( ".json" ) ) {
             String line1 = getLine( fileToParse, 0 );
             String line2 = getLine( fileToParse, 1 );
             if ( line2.contains("formatVersion")) {
@@ -630,21 +635,25 @@ public class BenchmarkScore {
         }
 
         else if ( filename.endsWith( ".xml" ) ) {
+
+            // Handle XML results file where the 2nd line indicates the tool type
+
             String line1 = getLine( fileToParse, 0 );
             String line2 = getLine( fileToParse, 1 );
-            if ( line2.startsWith( "<pmd")) {
+
+            if ( line2.startsWith( "<pmd" )) {
                 tr = new PMDReader().parse( fileToParse );
             }
-
-            else if (line2.startsWith("<FusionLiteInsight")) {
+		    
+            else if ( line2.startsWith( "<FusionLiteInsight" )) {
                 tr = new FusionLiteInsightReader().parse( fileToParse );
             }
  
-            else if (line2.startsWith("<XanitizerFindingsList")) {
-                tr = new XanitizerReader().parse(fileToParse);
+            else if (line2.startsWith( "<XanitizerFindingsList" )) {
+                tr = new XanitizerReader().parse( fileToParse );
             }
 
-            else if (line2.startsWith("<BugCollection")) {
+            else if ( line2.startsWith( "<BugCollection" )) {
                 tr = new FindbugsReader().parse( fileToParse );
                 
                 // change the name of the tool if the filename contains findsecbugs
@@ -653,42 +662,46 @@ public class BenchmarkScore {
                 }
             }
 
-            else if ( line2.startsWith( "<ResultsSession")) {
+            else if ( line2.startsWith( "<ResultsSession" )) {
                 tr = new ParasoftReader().parse( fileToParse );
             }
 
-            else if ( line2.startsWith( "<detailedreport")) {
+            else if ( line2.startsWith( "<detailedreport" )) {
                 tr = new VeracodeReader().parse( fileToParse );
             }
 
-            else if ( line1.startsWith( "<total")) {
+            else if ( line1.startsWith( "<total" )) {
                 tr = new SonarQubeReader().parse( fileToParse );
             }
             
-            else if ( line1.contains( "<OWASPZAPReport") || line2.contains( "<OWASPZAPReport")) {
+            else if ( line1.contains( "<OWASPZAPReport" ) || line2.contains( "<OWASPZAPReport" )) {
                 tr = new ZapReader().parse( fileToParse );
             }
             
-            else if ( line2.startsWith( "<CxXMLResults")) {
+            else if ( line2.startsWith( "<CxXMLResults" )) {
                 tr = new CheckmarxReader().parse( fileToParse );
             }
             
-            else if ( line2.startsWith( "<report")) {
+            else if ( line2.startsWith( "<report" )) {
                 tr = new ArachniReader().parse( fileToParse );
             }
-		    
-            else {
+            else if ( line2.startsWith( "<analysisReportResult")) {
+                tr = new JuliaReader().parse( fileToParse );
+            }
+ 
+            else { // Handle XML where we have to look for a specific node to identify the tool type
+
                 Document doc = getXMLDocument( fileToParse );
                 Node root = doc.getDocumentElement();
                 if ( root.getNodeName().equals( "issues" ) ) {
                     tr = new BurpReader().parse( root );
                 }
                 
-                else if ( root.getNodeName().equals( "XmlReport") ) {
+                else if ( root.getNodeName().equals( "XmlReport" ) ) {
                     tr = new AppScanDynamicReader().parse( root );
                 }
 
-                else if ( root.getNodeName().equals( "noisycricket") ) {
+                else if ( root.getNodeName().equals( "noisycricket" ) ) {
                     tr = new NoisyCricketReader().parse( root );
                 }
 
@@ -703,19 +716,23 @@ public class BenchmarkScore {
                 else if ( root.getNodeName().equals( "VulnSummary" ) ) {
                     tr = new Rapid7Reader().parse( root );
                 }
-            }
-		}
+                else if ( root.getNodeName().equals( "netsparker" ) ) {
+                    tr = new NetsparkerReader().parse( root );
+                }
+
+            } // end else
+         } // end if endsWith ".xml"
 		
 		else if ( filename.endsWith( ".fpr" ) ) {
 			
-			// .fpr files are really .zip files. So we have to extract the .fvdl file out of it to process it
-			Path path = Paths.get(fileToParse.getPath());
+		// .fpr files are really .zip files. So we have to extract the .fvdl file out of it to process it
+		    Path path = Paths.get(fileToParse.getPath());
 		    FileSystem fileSystem = FileSystems.newFileSystem(path, null);
 		    File outputFile = File.createTempFile( filename, ".fvdl");
 		    Path source = fileSystem.getPath("audit.fvdl");
 		    Files.copy(source, outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-			tr = new FortifyReader().parse( outputFile );
-			outputFile.delete();
+		    tr = new FortifyReader().parse( outputFile );
+		    outputFile.delete();
 			
 			// Check to see if the results are regular Fortify or Fortify OnDemand results
 			// To check, you have to look at the filtertemplate.xml file inside the .fpr archive
@@ -752,7 +769,7 @@ public class BenchmarkScore {
 			}
 		}
         
-        else if ( filename.endsWith( ".log") ) {
+        else if ( filename.endsWith( ".log" ) ) {
             tr = new ContrastReader().parse( fileToParse );
         }
         
@@ -841,7 +858,7 @@ public class BenchmarkScore {
 	 * that results was found, If False Positive, that result was not found.)
 	 */
 	private static boolean compare( TestCaseResult exp, List<TestCaseResult> actList, String tool ) {
-		// return true if there are no actual results and this was a fake test
+		// return true if there are no actual results and this was a false positive test
 		if ( actList == null || actList.isEmpty() ) {
 			return !exp.isReal();
 		}
@@ -851,21 +868,30 @@ public class BenchmarkScore {
 			// Helpful in debugging
 		    //System.out.println( "  Evidence: " + act.getCWE() + " " + act.getEvidence() + "[" + act.getConfidence() + "]");
 			
-		    boolean match = act.getCWE() == exp.getCWE();
+			int actualCWE = act.getCWE();
+			int expectedCWE = exp.getCWE();
+			
+		    boolean match = actualCWE == expectedCWE;
+		    
+		    // Special case: many tools report CWE 89 for Hibernate Injection rather that actual CWE of 564
+		    // So we accept either
+		    if (!match && (expectedCWE == 564)) {
+		    	match = (actualCWE == 89);
+		    }
 			
 			// special hack since IBM/Veracode don't distinguish different kinds of weak algorithm
 			if ( tool.startsWith("AppScan") || tool.startsWith("Vera")) {
-			    if ( exp.getCWE() == 328 && act.getCWE() == 327 ) {
+			    if ( expectedCWE == 328 && actualCWE == 327 ) {
 			        match = true;
 			    }
 			}
 					
-			// return true if we find an exact match for a real test
+			// return true if we find an exact match for a True Positive test
 			if ( match ) {
 				return exp.isReal();
 			}
 		}
-		// if we couldn't find a match, then return true if it's a fake test
+		// if we couldn't find a match, then return true if it's a False Positive test
 		return !exp.isReal();
 	}
 

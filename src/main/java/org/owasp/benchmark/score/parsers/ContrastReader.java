@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.owasp.benchmark.score.BenchmarkScore;
+
 public class ContrastReader extends Reader {
 
     public static void main(String[] args) throws Exception {
@@ -52,7 +54,7 @@ public class ContrastReader extends Reader {
                             process(tr, testNumber, chunk);
                             chunk.clear();
                             testNumber = "00000";
-                            String fname = "/BenchmarkTest";
+                            String fname = "/" + BenchmarkScore.BENCHMARKTESTNAME;
                             int idx = line.indexOf( fname );
                             if ( idx != -1 ) {
                                 testNumber = line.substring(idx + fname.length(), idx + fname.length() + 5 );
@@ -69,6 +71,7 @@ public class ContrastReader extends Reader {
                 ex.printStackTrace();
             }
         }
+        reader.close();
         tr.setTime(calculateTime(firstLine, lastLine));
         return tr;
     }

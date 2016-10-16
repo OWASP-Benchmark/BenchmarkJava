@@ -24,6 +24,7 @@ import java.nio.file.Paths;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.owasp.benchmark.score.BenchmarkScore;
 
 public class CoverityReader extends Reader {
 	
@@ -55,7 +56,7 @@ public class CoverityReader extends Reader {
     	
     		String filename = finding.getJSONArray("occurrences").getJSONObject(0).getString("mainEventFilePathname");
     		filename = filename.substring( filename.lastIndexOf( '/' ) );
-    		String testNumber = filename.substring( "BenchmarkTest".length() + 1, filename.length() - 5 );
+    		String testNumber = filename.substring( BenchmarkScore.BENCHMARKTESTNAME.length() + 1, filename.length() - 5 );
     		tcr.setNumber( Integer.parseInt( testNumber ) );
     		
     		String cweNumber = finding.getString( "cweNumber" );

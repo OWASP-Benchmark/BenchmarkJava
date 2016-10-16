@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.owasp.benchmark.score.BenchmarkScore;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -57,10 +58,10 @@ public class JuliaReader extends Reader {
 		
 		return tr;
 	}
-	
-	// refactoring resilient
-	private final static String prefixOfTest = org.owasp.benchmark.testcode.BenchmarkTest00001.class.getName().substring(0, org.owasp.benchmark.testcode.BenchmarkTest00001.class.getName().length() - 5);
 
+	// refactoring resilient
+	private static final String prefixOfTest = "org.owasp.benchmark.testcode." + BenchmarkScore.BENCHMARKTESTNAME;
+	
 	private TestCaseResult parseJuliaBug(Node n) {
 		TestCaseResult tcr = new TestCaseResult();
 
@@ -71,7 +72,7 @@ public class JuliaReader extends Reader {
 			if (childName.equals("className")) {
 				String where = child.getTextContent();
 				if (where.startsWith(prefixOfTest)) {
-					String testNumber = where.substring(where.lastIndexOf('.') + 1 + "BenchmarkTest".length());
+					String testNumber = where.substring(where.lastIndexOf('.') + 1 + BenchmarkScore.BENCHMARKTESTNAME.length());
 					tcr.setNumber(Integer.parseInt(testNumber));
 				}
 			}

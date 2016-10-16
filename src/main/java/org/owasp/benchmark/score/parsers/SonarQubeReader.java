@@ -26,6 +26,7 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.owasp.benchmark.score.BenchmarkScore;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -76,8 +77,8 @@ public class SonarQubeReader extends Reader {
 
         String testfile = getNamedChild("component", flaw).getTextContent().trim();
         testfile = testfile.substring( testfile.lastIndexOf('/') +1 );
-        if ( testfile.matches( "BenchmarkTest\\d+.java" ) ) {
-            String testno = testfile.substring( "BenchmarkTest".length(), testfile.length() -5 );
+        if ( testfile.matches( BenchmarkScore.BENCHMARKTESTNAME + "\\d+.java" ) ) {
+            String testno = testfile.substring( BenchmarkScore.BENCHMARKTESTNAME.length(), testfile.length() -5 );
             tcr.setNumber( Integer.parseInt( testno ) );
             return tcr;
         }

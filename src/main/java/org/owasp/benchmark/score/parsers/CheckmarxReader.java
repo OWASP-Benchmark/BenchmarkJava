@@ -25,6 +25,7 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.owasp.benchmark.score.BenchmarkScore;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -158,8 +159,8 @@ public class CheckmarxReader extends Reader {
 		else{
 			 testcase = testcase.substring( testcase.lastIndexOf('\\') +1);
 		}
-		if ( testcase.startsWith( "BenchmarkTest" ) ) {
-            String testno = testcase.substring( "BenchmarkTest".length(), testcase.length() -5 );
+		if ( testcase.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
+            String testno = testcase.substring( BenchmarkScore.BENCHMARKTESTNAME.length(), testcase.length() -5 );
             try {
                 tcr.setNumber( Integer.parseInt( testno ) );
             } catch ( NumberFormatException e ) {
@@ -180,8 +181,8 @@ public class CheckmarxReader extends Reader {
 			else{
 				testcase2 = testcase2.substring( testcase2.lastIndexOf('\\') +1);
 			}
-			if ( testcase2.startsWith( "BenchmarkTest" ) ) {
-            	String testno2 = testcase2.substring( "BenchmarkTest".length(), testcase2.length() -5 );
+			if ( testcase2.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
+            	String testno2 = testcase2.substring( BenchmarkScore.BENCHMARKTESTNAME.length(), testcase2.length() -5 );
             	try {
                 	tcr.setNumber( Integer.parseInt( testno2 ) );
               	} catch ( NumberFormatException e ) {

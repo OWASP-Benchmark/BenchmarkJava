@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.owasp.benchmark.score.BenchmarkScore;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -74,8 +75,8 @@ public class FindbugsReader extends Reader {
 			Node cl = getNamedNode( "Class", n.getChildNodes() );
 			String classname = cl.getAttributes().getNamedItem("classname").getNodeValue();
 			classname = classname.substring( classname.lastIndexOf('.') + 1);
-			if ( classname.startsWith( "BenchmarkTest" ) ) {
-				String testNumber = classname.substring( "BenchmarkTest".length() );
+			if ( classname.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
+				String testNumber = classname.substring( BenchmarkScore.BENCHMARKTESTNAME.length() );
 				tcr.setNumber( Integer.parseInt( testNumber ) );
 			}
 			

@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.owasp.benchmark.score.BenchmarkScore;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -73,10 +74,10 @@ public class PMDReader extends Reader {
         String test = attrs.getNamedItem( "class" ).getNodeValue();
         String rule = attrs.getNamedItem( "rule" ).getNodeValue();
 		
-		if ( test.startsWith( "BenchmarkTest" ) ) {
+		if ( test.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
 	        TestCaseResult tcr = new TestCaseResult();
 	        
-			String testNumber = test.substring( "BenchmarkTest".length() );
+			String testNumber = test.substring( BenchmarkScore.BENCHMARKTESTNAME.length() );
 			tcr.setNumber( Integer.parseInt( testNumber ) );
 	        tcr.setCWE( figureCWE( tcr, rule ) );
             

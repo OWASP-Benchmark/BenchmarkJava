@@ -25,6 +25,7 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.owasp.benchmark.score.BenchmarkScore;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -94,8 +95,8 @@ public class ParasoftReader extends Reader {
 
         String testcase = getAttributeValue( "locFile", flaw );
         testcase = testcase.substring( testcase.lastIndexOf('/') );
-        if ( testcase.startsWith( "BenchmarkTest" ) ) {
-            String testno = testcase.substring( "BenchmarkTest".length(), testcase.length() -5 );
+        if ( testcase.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
+            String testno = testcase.substring( BenchmarkScore.BENCHMARKTESTNAME.length(), testcase.length() -5 );
             tcr.setNumber( Integer.parseInt( testno ) );
             return tcr;       
         }
@@ -126,8 +127,8 @@ public class ParasoftReader extends Reader {
         
         String testcase = getAttributeValue( "locFile", flaw );
         testcase = testcase.substring( testcase.lastIndexOf('/') + 1 );
-        if ( testcase.startsWith( "BenchmarkTest" ) ) {
-            String testno = testcase.substring( "BenchmarkTest".length(), testcase.length() -5 );
+        if ( testcase.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
+            String testno = testcase.substring( BenchmarkScore.BENCHMARKTESTNAME.length(), testcase.length() -5 );
             tcr.setNumber( Integer.parseInt( testno ) );
             return tcr;       
         }

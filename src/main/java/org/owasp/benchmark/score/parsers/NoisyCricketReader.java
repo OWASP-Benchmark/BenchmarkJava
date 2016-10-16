@@ -20,6 +20,7 @@ package org.owasp.benchmark.score.parsers;
 
 import java.util.List;
 
+import org.owasp.benchmark.score.BenchmarkScore;
 import org.w3c.dom.Node;
 
 public class NoisyCricketReader extends Reader {
@@ -46,8 +47,8 @@ public class NoisyCricketReader extends Reader {
 	private void parseNoisyCricketIssue(Node item, TestResults tr) {
 		int testNumber = -1;
         String testcase = getAttributeValue("file", item);
-        if (testcase.startsWith("BenchmarkTest")) {
-            String testno = testcase.substring("BenchmarkTest".length(), testcase.indexOf('.'));
+        if (testcase.startsWith(BenchmarkScore.BENCHMARKTESTNAME)) {
+            String testno = testcase.substring(BenchmarkScore.BENCHMARKTESTNAME.length(), testcase.indexOf('.'));
             try {
                 testNumber = Integer.parseInt(testno);
             } catch (NumberFormatException e) {

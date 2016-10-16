@@ -85,6 +85,9 @@ import org.xml.sax.InputSource;
 
 public class BenchmarkScore {
 
+	// The prefix for the generated test file names. Used by lots of other classes too.
+	public static final String BENCHMARKTESTNAME = "BenchmarkTest";
+	
 	private static final String GUIDEFILENAME = "OWASP_Benchmark_Guide.html";
 	private static final String HOMEFILENAME = "OWASP_Benchmark_Home.html";    
     public static final String pathToScorecardResources = "src/main/resources/scorecard/";
@@ -873,8 +876,8 @@ public class BenchmarkScore {
 			
 		    boolean match = actualCWE == expectedCWE;
 		    
-		    // Special case: many tools report CWE 89 for Hibernate Injection rather that actual CWE of 564
-		    // So we accept either
+		    // Special case: many tools report CWE 89 (sqli) for Hibernate Injection (hqli) rather than 
+		    // actual CWE of 564 So we accept either
 		    if (!match && (expectedCWE == 564)) {
 		    	match = (actualCWE == 89);
 		    }
@@ -940,14 +943,14 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 // regex from http://stackoverflow.com/questions/1757065/java-splitting-a-comma-separated-string-but-ignoring-commas-in-quotes
 					// This regex needed because some 'full details' entries contain comma's inside quoted strings
 					String[] parts = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
-					if ( parts[0] != null && parts[0].startsWith("Bench" ) ) {
+					if ( parts[0] != null && parts[0].startsWith(BENCHMARKTESTNAME) ) {
 						TestCaseResult tcr = new TestCaseResult();
 						tcr.setTestCaseName(parts[0]);
 						tcr.setCategory( parts[1]);
 						tcr.setReal( Boolean.parseBoolean( parts[2] ) );
 						tcr.setCWE( Integer.parseInt( parts[3]) );
 	
-						String tcname = parts[0].substring( "BenchmarkTest".length() );
+						String tcname = parts[0].substring( BENCHMARKTESTNAME.length() );
 						tcr.setNumber( Integer.parseInt(tcname));
 						
 						// Handle situation where expected results has full details

@@ -24,6 +24,7 @@ import javax.xml.XMLConstants;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.owasp.benchmark.score.BenchmarkScore;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -94,10 +95,10 @@ public class XanitizerReader extends Reader {
 						if (!m_Classification.equals("Information")) {
 
 							// Skip findings for non-BenchmarkTest classes.
-							if (m_Class.startsWith("BenchmarkTest")) {
+							if (m_Class.startsWith(BenchmarkScore.BENCHMARKTESTNAME)) {
 
 								final String testNumberAsString = m_Class
-										.substring("BenchmarkTest".length());
+										.substring(BenchmarkScore.BENCHMARKTESTNAME.length());
 
 								int testCaseNumber;
 								try {

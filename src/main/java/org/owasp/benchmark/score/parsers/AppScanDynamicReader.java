@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.owasp.benchmark.score.BenchmarkScore;
 import org.w3c.dom.Node;
 
 public class AppScanDynamicReader extends Reader {
@@ -149,8 +150,8 @@ public class AppScanDynamicReader extends Reader {
         String testcase = getNamedChild("Url", issue).getTextContent();
         testcase = testcase.substring(testcase.lastIndexOf('/') + 1);
         testcase = testcase.split("\\.")[0];
-        if (testcase.startsWith("BenchmarkTest")) {
-            String testno = testcase.substring("BenchmarkTest".length() );
+        if (testcase.startsWith(BenchmarkScore.BENCHMARKTESTNAME)) {
+            String testno = testcase.substring(BenchmarkScore.BENCHMARKTESTNAME.length() );
             try {
                 tcr.setNumber(Integer.parseInt(testno));
             } catch (NumberFormatException e) {

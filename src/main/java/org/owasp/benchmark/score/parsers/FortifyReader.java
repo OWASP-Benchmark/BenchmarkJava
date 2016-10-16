@@ -25,6 +25,7 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.owasp.benchmark.score.BenchmarkScore;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -110,8 +111,8 @@ public class FortifyReader extends Reader {
 		Node co = getNamedNode( "Context", un.getChildNodes() );
 		Node fu = getNamedNode( "Function", co.getChildNodes() );
 		String tc = getAttributeValue( "enclosingClass", fu );
-		if ( tc != null && tc.startsWith( "BenchmarkTest" ) ) {
-			tc = tc.substring( "BenchmarkTest".length() );
+		if ( tc != null && tc.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
+			tc = tc.substring( BenchmarkScore.BENCHMARKTESTNAME.length() );
 			int dollar = tc.indexOf( '$' );
 			if ( dollar != -1 ) {
 				tc = tc.substring( 0, dollar );

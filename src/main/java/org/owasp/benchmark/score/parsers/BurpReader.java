@@ -20,6 +20,7 @@ package org.owasp.benchmark.score.parsers;
 
 import java.util.List;
 
+import org.owasp.benchmark.score.BenchmarkScore;
 import org.w3c.dom.Node;
 
 public class BurpReader extends Reader {
@@ -80,8 +81,8 @@ public class BurpReader extends Reader {
         String testcase = getNamedChild("path", issue).getTextContent();
         testcase = testcase.substring(testcase.lastIndexOf('/') + 1);
         testcase = testcase.split("\\.")[0];        
-        if (testcase.startsWith("BenchmarkTest")) {
-            String testno = testcase.substring("BenchmarkTest".length() );
+        if (testcase.startsWith(BenchmarkScore.BENCHMARKTESTNAME)) {
+            String testno = testcase.substring(BenchmarkScore.BENCHMARKTESTNAME.length() );
             try {
                 tcr.setNumber(Integer.parseInt(testno));
             } catch (NumberFormatException e) {

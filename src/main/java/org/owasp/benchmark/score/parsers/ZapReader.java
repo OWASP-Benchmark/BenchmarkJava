@@ -27,6 +27,7 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.owasp.benchmark.score.BenchmarkScore;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -147,8 +148,8 @@ public class ZapReader extends Reader {
         String testfile = url.getPath();
         testfile = testfile.substring( testfile.lastIndexOf('/') +1 );
        
-        if ( testfile.startsWith( "BenchmarkTest" ) ) {
-            String testno = testfile.substring("BenchmarkTest".length());
+        if ( testfile.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
+            String testno = testfile.substring(BenchmarkScore.BENCHMARKTESTNAME.length());
             if ( testno.endsWith( ".html" ) ) {
                 testno = testno.substring(0, testno.length() -5 );
             }

@@ -26,6 +26,7 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.owasp.benchmark.score.BenchmarkScore;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -120,8 +121,8 @@ public class VeracodeReader extends Reader {
         tcr.setEvidence( getAttributeValue( "categoryname", flaw ) );
  
         String testcase = getAttributeValue( "sourcefile", flaw );
-        if ( testcase.startsWith( "BenchmarkTest" ) ) {
-            String testno = testcase.substring( "BenchmarkTest".length(), testcase.length() -5 );
+        if ( testcase.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
+            String testno = testcase.substring( BenchmarkScore.BENCHMARKTESTNAME.length(), testcase.length() -5 );
             tcr.setNumber( Integer.parseInt( testno ) );
             return tcr;
         }

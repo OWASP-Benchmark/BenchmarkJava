@@ -20,6 +20,7 @@ package org.owasp.benchmark.score.parsers;
 
 import java.util.List;
 
+import org.owasp.benchmark.score.BenchmarkScore;
 import org.w3c.dom.Node;
 
 public class Rapid7Reader extends Reader {
@@ -168,8 +169,8 @@ public class Rapid7Reader extends Reader {
             testfile = testfile.substring(0, testfile.indexOf( "?" ) );
         }
         
-        if ( testfile.startsWith( "BenchmarkTest" ) ) {
-            String testno = testfile.substring("BenchmarkTest".length());
+        if ( testfile.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
+            String testno = testfile.substring(BenchmarkScore.BENCHMARKTESTNAME.length());
             if ( testno.endsWith( ".html" ) ) {
                 testno = testno.substring(0, testno.length() -5 );
             }

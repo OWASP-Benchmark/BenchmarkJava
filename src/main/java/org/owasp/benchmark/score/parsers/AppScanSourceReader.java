@@ -29,6 +29,7 @@ import java.util.TreeMap;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.owasp.benchmark.score.BenchmarkScore;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -76,9 +77,9 @@ public class AppScanSourceReader extends Reader {
 			if ( filename.contains("/") ) {
 				filename = filename.substring( filename.lastIndexOf('/') + 1);
 			}
-			if ( filename.endsWith( ".java" ) && filename.startsWith( "BenchmarkTest" ) ) {
+			if ( filename.endsWith( ".java" ) && filename.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
 				filename = filename.substring( 0, filename.length() - 5 );
-				String testnum = filename.substring( "BenchmarkTest".length() );
+				String testnum = filename.substring( BenchmarkScore.BENCHMARKTESTNAME.length() );
 				tn = Integer.parseInt( testnum );
 			}
 			

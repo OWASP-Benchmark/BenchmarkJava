@@ -213,7 +213,7 @@ public class TestResults {
      */
     public static String formatTime(long millis)
     {
-        if(millis < 0)
+        if (millis < 0)
         {
             throw new IllegalArgumentException("Duration must be greater than zero!");
         }
@@ -240,7 +240,25 @@ public class TestResults {
         sb.append(seconds);
 
         return(sb.toString());
-    }  
+    }
+    
+    /**
+     * Convert the time it took to compute these results into a label to add to the scorecard.
+     * @param millis - compute time in milliseconds
+     * @return a String label of the compute time. (e.g., 1 Days 2:55:32)
+     */
+    public static String formatTime(String millis) {
+
+    	String result;
+        try {
+        	long time = Long.valueOf(millis);
+        	result = formatTime(time);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Provided value must be in integer in milliseconds. Value was: " 
+            	+ millis);
+        }
+        return result;
+    }
     
     public String getShortName() {
         return this.toolName;

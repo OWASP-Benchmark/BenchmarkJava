@@ -40,15 +40,18 @@ public class JuliaReader extends Reader {
 		Document doc = docBuilder.parse(is);
 		
 		TestResults tr = new TestResults("Julia", true, TestResults.ToolType.SAST);
-		
-		// If the filename includes an elapsed time in seconds (e.g., TOOLNAME-seconds.xml), set the compute time on the scorecard.
-		tr.setTime(f);
-
-		String fileName = f.getName();
-		String version = fileName.substring(fileName.indexOf("julia-v") + 7, fileName.lastIndexOf('-'));
-		tr.setToolVersion(version);
 
 		Node root = doc.getDocumentElement();
+		
+		// Get run time from results file
+        String runDuration = getNamedChild("runDuration", root ).getTextContent();
+		tr.setTime(TestResults.formatTime(runDuration));
+		
+		// Get the version number from the results file
+        String juliaVersion = getNamedChild("engineVersion", root ).getTextContent();
+		tr.setToolVersion(juliaVersion);
+
+		// Now pull all the test results out and return them.
 		NodeList nl = root.getChildNodes();
 		for (int i = 0; i < nl.getLength(); i++) {
 			Node n = nl.item(i);
@@ -72,8 +75,18 @@ public class JuliaReader extends Reader {
 			if (childName.equals("className")) {
 				String where = child.getTextContent();
 				if (where.startsWith(prefixOfTest)) {
-					String testNumber = where.substring(where.lastIndexOf('.') + 1 + BenchmarkScore.BENCHMARKTESTNAME.length());
-					tcr.setNumber(Integer.parseInt(testNumber));
+					// Sometimes, Julia reports results for test case names like: BenchmarkTest00951$Test
+					// When that occurs we just throw that one away.
+					// TODO: Trim off the text at the end in a way that doesn't assume the test # is length 5
+					// so that it counts against the test case, if that helps improve the tool's score.
+					String testNumber = where.substring(
+							where.lastIndexOf('.') + 1 + BenchmarkScore.BENCHMARKTESTNAME.length());
+					try {
+						tcr.setNumber(Integer.parseInt(testNumber));
+					} catch (NumberFormatException e) {
+						// Ignore
+						// System.out.println("Ignoring result for test number: " + testNumber);
+					}
 				}
 			}
 			else if (childName.equals("CWEid"))
@@ -83,4 +96,3 @@ public class JuliaReader extends Reader {
 		return tcr;
 	}
 }
-

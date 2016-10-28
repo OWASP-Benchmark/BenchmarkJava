@@ -72,21 +72,12 @@ public class JuliaReader extends Reader {
 		for (int i = 0; i < nl.getLength(); i++) {
 			Node child = nl.item(i);
 			String childName = child.getNodeName();
-			if (childName.equals("className")) {
-				String where = child.getTextContent();
+			if (childName.equals("source")) {
+				String where = child.getTextContent().replace('/', '.');
+				where = where.substring(0, where.length() - ".java".length());
 				if (where.startsWith(prefixOfTest)) {
-					// Sometimes, Julia reports results for test case names like: BenchmarkTest00951$Test
-					// When that occurs we just throw that one away.
-					// TODO: Trim off the text at the end in a way that doesn't assume the test # is length 5
-					// so that it counts against the test case, if that helps improve the tool's score.
-					String testNumber = where.substring(
-							where.lastIndexOf('.') + 1 + BenchmarkScore.BENCHMARKTESTNAME.length());
-					try {
-						tcr.setNumber(Integer.parseInt(testNumber));
-					} catch (NumberFormatException e) {
-						// Ignore
-						// System.out.println("Ignoring result for test number: " + testNumber);
-					}
+					String testNumber = where.substring(where.lastIndexOf('.') + 1 + "BenchmarkTest".length());
+					tcr.setNumber(Integer.parseInt(testNumber));
 				}
 			}
 			else if (childName.equals("CWEid"))

@@ -40,7 +40,7 @@ public class ContrastReader extends Reader {
         TestResults tr = new TestResults("Contrast", true, TestResults.ToolType.IAST);
 
         BufferedReader reader = new BufferedReader(new FileReader(f));
-        String firstLine = reader.readLine();
+        String firstLine = null;
         String lastLine = "";
         String line = "";
         ArrayList<String> chunk = new ArrayList<String>();
@@ -59,6 +59,9 @@ public class ContrastReader extends Reader {
                             if ( idx != -1 ) {
                                 testNumber = line.substring(idx + fname.length(), idx + fname.length() + 5 );
                             }
+                            if ( firstLine == null ) {
+                                firstLine = line;
+                            }
                             lastLine = line;
                     } else if (line.startsWith("<finding hash")) {
                         chunk.add(line);
@@ -69,6 +72,18 @@ public class ContrastReader extends Reader {
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
+            }
+        }
+        //Last
+        if(!chunk.isEmpty()){
+        	// ok, we're starting a new URL, so process this one and start the next chunk
+            process(tr, testNumber, chunk);
+            chunk.clear();
+            testNumber = "00000";
+            String fname = "/" + BenchmarkScore.BENCHMARKTESTNAME;
+            int idx = lastLine.indexOf( fname );
+            if ( idx != -1 ) {
+                testNumber = lastLine.substring(idx + fname.length(), idx + fname.length() + 5 );
             }
         }
         reader.close();

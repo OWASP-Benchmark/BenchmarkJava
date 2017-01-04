@@ -625,7 +625,7 @@ public class BenchmarkScore {
         else if ( filename.endsWith( ".json" ) ) {
             String line1 = getLine( fileToParse, 0 );
             String line2 = getLine( fileToParse, 1 );
-            if ( line2.contains("formatVersion")) {
+            if ( line2.contains("Coverity") || line2.contains("formatVersion") ) {
                 tr = new CoverityReader().parse( fileToParse );
             }
         }

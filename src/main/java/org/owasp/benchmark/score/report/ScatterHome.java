@@ -47,10 +47,11 @@ import org.owasp.benchmark.score.BenchmarkScore;
 import org.owasp.benchmark.score.parsers.OverallResults;
 
 public class ScatterHome extends ScatterPlot {
-    char averageLabel;
-    double afr = 0;
-    double atr = 0;
+    private static char averageLabel;
+    private double afr = 0;
+    private double atr = 0;
     public final String focus;
+    public static final char INITIAL_LABEL = 'A';
 
     
     /**
@@ -95,19 +96,19 @@ public class ScatterHome extends ScatterPlot {
                 	series.add( overallResults.getFalsePositiveRate() * 100, 
                 		overallResults.getTruePositiveRate() * 100);
                 }
-                if(toolReport.isCommercial()){
+                if (toolReport.isCommercial()) {
                     averageCommercialFalseRates.add(overallResults.getFalsePositiveRate());
                     averageCommercialTrueRates.add(overallResults.getTruePositiveRate());
                 }
             }
         }
         
-        for (double d : averageCommercialFalseRates){
+        for (double d : averageCommercialFalseRates) {
             afr += d;
         }
         afr = afr/averageCommercialFalseRates.size();
         
-        for (double d : averageCommercialTrueRates){
+        for (double d : averageCommercialTrueRates) {
             atr += d;
         }
         atr = atr/averageCommercialTrueRates.size();
@@ -153,7 +154,7 @@ public class ScatterHome extends ScatterPlot {
                 XYTextAnnotation annotation = new XYTextAnnotation( label, p.getX(), p.getY());
                 annotation.setTextAnchor( p.getX() < 3 ? TextAnchor.TOP_LEFT : TextAnchor.TOP_CENTER);
                 annotation.setBackgroundPaint(Color.white);
-                if(label.toCharArray()[0] == averageLabel)
+                if (label.toCharArray()[0] == averageLabel)
                 {
                     annotation.setPaint(Color.magenta);
                 } else {
@@ -164,10 +165,9 @@ public class ScatterHome extends ScatterPlot {
             }
         }
     }
-
+ 
     
-    
-    private String sort(String value) {
+    private static String sort(String value) {
         String[] parts = value.split( "," );
         Arrays.sort( parts );
         StringBuilder sb = new StringBuilder();
@@ -179,36 +179,39 @@ public class ScatterHome extends ScatterPlot {
     }
 
     
-    SecureRandom sr = new SecureRandom();
+    static SecureRandom sr = new SecureRandom();
+    // This method generates all the points put on the home page chart. One per tool.
     private HashMap<Point2D, String> makePointList( Set<Report> toolResults ) {          
         HashMap<Point2D,String> map = new HashMap<Point2D, String>();
-        char ch = 'A';
+        char ch = INITIAL_LABEL;
         
         // make a list of all points.  Add in a tiny random to prevent exact duplicate coordinates in map        
         int commercialToolCount = 0;
         for (Report r : toolResults ) {
-            if(!r.isCommercial()){
+            if ( !r.isCommercial() ) {
                 OverallResults or = r.getOverallResults();
                 double x = or.getFalsePositiveRate() * 100 + sr.nextDouble() * .000001;
                 double y = or.getTruePositiveRate() * 100 + sr.nextDouble() * .000001 - 1;   // this puts the label just below the point
                 Point2D p = new Point2D.Double(x,y);
-                String label = "" + ch ;
+                String label = "" + ch;
                 map.put( p, label );
-                ch++;
+                // Weak hack if there are more than 26 tools scored. This will only get us to 52.
+                if (ch == 'Z') ch = 'a'; else ch++;
             }
         }
         
         for (Report r : toolResults ) {
-            if(r.isCommercial()) {
+            if ( r.isCommercial() ) {
                 commercialToolCount++;
-                if (!BenchmarkScore.showAveOnlyMode) {
+                if ( !BenchmarkScore.showAveOnlyMode ) {
 	                OverallResults or = r.getOverallResults();
 	                double x = or.getFalsePositiveRate() * 100 + sr.nextDouble() * .000001;
 	                double y = or.getTruePositiveRate() * 100 + sr.nextDouble() * .000001 - 1;   // this puts the label just below the point
 	                Point2D p = new Point2D.Double(x,y);
 	                String label = "" + ch ;
 	                map.put( p, label );
-	                ch++;
+	                // Weak hack if there are more than 26 tools scored. This will only get us to 52.
+	                if (ch == 'Z') ch = 'a'; else ch++;
                 }
             }
         }
@@ -224,7 +227,7 @@ public class ScatterHome extends ScatterPlot {
     }
 
     
-    private void dedupify(HashMap<Point2D, String> map) {
+    private static void dedupify(HashMap<Point2D, String> map) {
         for (Entry<Point2D,String> e1 : map.entrySet() ) {
             Entry<Point2D, String> e2 = getMatch( map, e1 );
             while ( e2 != null ) {
@@ -239,8 +242,8 @@ public class ScatterHome extends ScatterPlot {
         }
     }
 
-    private Entry<Point2D, String> getMatch(HashMap<Point2D, String> map, Entry<Point2D,String> e1) {
-        for (Entry<Point2D,String> e2 : map.entrySet() ) {
+    private static Entry<Point2D, String> getMatch(HashMap<Point2D, String> map, Entry<Point2D,String> e1) {
+        for ( Entry<Point2D,String> e2 : map.entrySet() ) {
             Double xd = Math.abs( e1.getKey().getX() - e2.getKey().getX() );
             Double yd = Math.abs( e1.getKey().getY() - e2.getKey().getY() );
             boolean close = xd < 1 && yd < 3;
@@ -253,7 +256,7 @@ public class ScatterHome extends ScatterPlot {
 
 
     private void makeLegend( Set<Report> toolResults, double x, double y, XYSeriesCollection dataset, XYPlot xyplot ) {
-        char ch = 'A';	// This is the first label in the Key with all the tools processed by this scorecard
+        char ch = INITIAL_LABEL; // This is the first label in the Key with all the tools processed by this scorecard
         int i = -2; // Used to keep track of which row in the key were are processing. Helps calculate the Y axis
         			// location where to put the Key entry
         
@@ -262,7 +265,7 @@ public class ScatterHome extends ScatterPlot {
         //non-commercial results
         for (Report r : toolResults ) {
             OverallResults or = r.getOverallResults();
-            if(!r.isCommercial()) {
+            if( !r.isCommercial() ) {
             	// print non-commercial label if there is at least one non-commercial tool
             	if (!printedNonCommercialLabel) {
 	                XYTextAnnotation stroketext1 = new XYTextAnnotation("Non-Commercial", x, y + i * -3.3);
@@ -275,7 +278,8 @@ public class ScatterHome extends ScatterPlot {
 	                printedNonCommercialLabel = true;
             	}
             	
-                String label = ( ch == 'I' ? ch + ":  " : ch + ": " );
+                // Special hack to make it line up better if the letter is an 'I' or 'i'
+                String label = ( ch == 'I' || ch == 'i' ? ch + ":  " : ""+ch + ": " );
                 double score = or.getScore() * 100;
                 String msg = "\u25A0 " + label + r.getToolNameAndVersion() + " (" + Math.round(score) + "%)";
                 XYTextAnnotation stroketext3 = new XYTextAnnotation(msg, x, y + i * -3.3);
@@ -285,7 +289,8 @@ public class ScatterHome extends ScatterPlot {
                 stroketext3.setFont(theme.getRegularFont());
                 xyplot.addAnnotation(stroketext3);
                 i++;
-                ch++;
+                // Weak hack if there are more than 26 tools scored. This will only get us to 52.
+                if (ch == 'Z') ch = 'a'; else ch++;
             }
         }
         
@@ -294,13 +299,13 @@ public class ScatterHome extends ScatterPlot {
         boolean printedCommercialLabel = false;
         int commercialToolCount = 0;
         
-        for (Report r : toolResults ) {
+        for ( Report r : toolResults ) {
             
             OverallResults or = r.getOverallResults();
-            if (r.isCommercial()) {
-            	
-            	// print commercial label if there is at least one commercial tool
-            	if (!printedCommercialLabel) {
+            if ( r.isCommercial() ) {
+
+                // print commercial label if there is at least one commercial tool
+                if ( !printedCommercialLabel ) {
                     XYTextAnnotation stroketext = new XYTextAnnotation("Commercial", x, y + i * -3.3);
                     stroketext.setTextAnchor(TextAnchor.CENTER_LEFT);
                     stroketext.setBackgroundPaint(Color.white);
@@ -312,7 +317,8 @@ public class ScatterHome extends ScatterPlot {
             	}
             	
                 commercialToolCount++;
-                String label = ( ch == 'I' ? ch + ":  " : ""+ch + ": " );
+                // Special hack to make it line up better if the letter is an 'I' or 'i'
+                String label = ( ch == 'I' || ch == 'i' ? ch + ":  " : ""+ch + ": " );
                 double score = or.getScore() * 100;
                 if (!BenchmarkScore.showAveOnlyMode) {
 	                String msg = "\u25A0 " + label + r.getToolNameAndVersion() + " (" + (int)score + "%)";
@@ -322,8 +328,9 @@ public class ScatterHome extends ScatterPlot {
 	                stroketext4.setPaint(Color.blue);
 	                stroketext4.setFont(theme.getRegularFont());
 	                xyplot.addAnnotation(stroketext4);
-	                ch++;
 	                i++;
+	                // Weak hack if there are more than 26 tools scored. This will only get us to 52.
+	                if (ch == 'Z') ch = 'a'; else ch++;
                 }
                 totalScore+=score;
             }           

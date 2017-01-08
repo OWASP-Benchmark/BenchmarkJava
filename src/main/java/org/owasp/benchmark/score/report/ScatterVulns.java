@@ -131,7 +131,8 @@ public class ScatterVulns extends ScatterPlot {
 
         dataset.addSeries(series);
 
-        chart = ChartFactory.createScatterPlot(title, "False Positive Rate", "True Positive Rate", dataset, PlotOrientation.VERTICAL, true, true, false);
+        chart = ChartFactory.createScatterPlot(title, "False Positive Rate", "True Positive Rate", 
+            dataset, PlotOrientation.VERTICAL, true, true, false);
         theme.apply(chart);
 
         XYPlot xyplot = chart.getXYPlot();
@@ -149,7 +150,8 @@ public class ScatterVulns extends ScatterPlot {
             xyplot.addAnnotation(score);
         }
 
-        ChartPanel cp = new ChartPanel(chart, height, height, 400, 400, 1200, 1200, false, false, false, false, false, false);
+        ChartPanel cp = new ChartPanel(chart, height, height, 400, 400, 1200, 1200, false, false, false, 
+             false, false, false);
         f.add(cp);
         f.pack();
         f.setLocationRelativeTo(null);
@@ -194,7 +196,7 @@ public class ScatterVulns extends ScatterPlot {
 
     private HashMap<Point2D, String> makePointList(String category, Set<Report> toolResults) {
         HashMap<Point2D, String> map = new HashMap<Point2D, String>();
-        char ch = 'A';
+        char ch = ScatterHome.INITIAL_LABEL;
 
         // make a list of all points. Add in a tiny random to prevent exact
         // duplicate coordinates in map
@@ -209,7 +211,8 @@ public class ScatterVulns extends ScatterPlot {
                 Point2D p = new Point2D.Double(x, y);
                 String label = "" + ch;
                 map.put(p, label);
-                ch++;
+                // Weak hack if there are more than 26 tools scored. This will only get us to 52.
+                if (ch == 'Z') ch = 'a'; else ch++;
             }
         }
 
@@ -224,13 +227,15 @@ public class ScatterVulns extends ScatterPlot {
                     Point2D p = new Point2D.Double(x, y);
                     String label = "" + ch;
                     map.put(p, label);
-                    ch++;
+                    // Weak hack if there are more than 26 tools scored. This will only get us to 52.
+                    if (ch == 'Z') ch = 'a'; else ch++;
                 }
             }
         }
 
         if (commercialToolCount > 1 || (BenchmarkScore.showAveOnlyMode && commercialToolCount == 1)) {
-            Point2D ap = new Point2D.Double(afr * 100 + sr.nextDouble() * .000001, atr * 100 + sr.nextDouble() * .000001 - 1);
+            Point2D ap = new Point2D.Double(afr * 100 + sr.nextDouble() * .000001, atr * 100 
+               + sr.nextDouble() * .000001 - 1);
             averageLabel = ch;
             map.put(ap, "" + ch);
         }
@@ -268,8 +273,10 @@ public class ScatterVulns extends ScatterPlot {
         return null;
     }
 
-    private void makeLegend(String category, Set<Report> toolResults, double x, double y, XYSeriesCollection dataset, XYPlot xyplot) {
-        char ch = 'A';
+    private void makeLegend(String category, Set<Report> toolResults, double x, double y,
+        XYSeriesCollection dataset, XYPlot xyplot) {
+
+        char ch = ScatterHome.INITIAL_LABEL;
         int i = -2;
 
         // non-commercial results
@@ -291,17 +298,20 @@ public class ScatterVulns extends ScatterPlot {
                 }
 
                 OverallResults or = r.getOverallResults();
-                String label = (ch == 'I' ? ch + ":  " : "" + ch + ": ");
+                // Special hack to make it line up better if the letter is an 'I' or 'i'
+                String label = ( ch == 'I' || ch == 'i' ? ch + ":  " : ""+ch + ": " );
                 double score = or.getResults(category).score * 100;
                 String msg = "\u25A0 " + label + r.getToolNameAndVersion() + " (" + (int) score + "%)";
                 XYTextAnnotation stroketext3 = new XYTextAnnotation(msg, x, y + i * -3.3);
                 stroketext3.setTextAnchor(TextAnchor.CENTER_LEFT);
                 stroketext3.setBackgroundPaint(Color.white);
-                stroketext3.setPaint(r.getToolName().replace(' ','_').equalsIgnoreCase(focus) ? Color.green : Color.blue);
+                stroketext3.setPaint(r.getToolName().replace(' ','_').equalsIgnoreCase(focus) ? 
+                   Color.green : Color.blue);
                 stroketext3.setFont(theme.getRegularFont());
                 xyplot.addAnnotation(stroketext3);
                 i++;
-                ch++;
+                // Weak hack if there are more than 26 tools scored. This will only get us to 52.
+                if (ch == 'Z') ch = 'a'; else ch++;
             }
         }
 
@@ -330,8 +340,9 @@ public class ScatterVulns extends ScatterPlot {
                 double score = or.getResults(category).score * 100;
                 // don't show the commercial tool results if in 'show ave only mode'
                 if (!BenchmarkScore.showAveOnlyMode) {
-	                String label = (ch == 'I' ? ch + ":  " : ch + ": ");
-	                String msg = "\u25A0 " + label + r.getToolName() + " (" + (int) score + "%)";
+                    // Special hack to make it line up better if the letter is an 'I' or 'i'
+                    String label = ( ch == 'I' || ch == 'i' ? ch + ":  " : ""+ch + ": " );
+	                String msg = "\u25A0 " + label + r.getToolNameAndVersion() + " (" + (int) score + "%)";
 	                XYTextAnnotation stroketext4 = new XYTextAnnotation(msg, x, y + i * -3.3);
 	                stroketext4.setTextAnchor(TextAnchor.CENTER_LEFT);
 	                stroketext4.setBackgroundPaint(Color.white);
@@ -339,7 +350,8 @@ public class ScatterVulns extends ScatterPlot {
 	                stroketext4.setFont(theme.getRegularFont());
 	                xyplot.addAnnotation(stroketext4);
 	                i++;  // increment the location of the label
-	                ch++; // increment to the next character
+                    // Weak hack if there are more than 26 tools scored. This will only get us to 52.
+                    if (ch == 'Z') ch = 'a'; else ch++;
                 }
                 commercialTotal += score;
 
@@ -365,7 +377,8 @@ public class ScatterVulns extends ScatterPlot {
         // commercial average
         if (commercialToolCount > 1 || (BenchmarkScore.showAveOnlyMode && commercialToolCount == 1)) {
             commercialAve = commercialTotal / commercialToolCount;
-            XYTextAnnotation stroketext2 = new XYTextAnnotation("\u25A0 " + ch + ": Commercial Average" + " (" + (int) commercialAve + "%)", x, y + i * -3.3);
+            XYTextAnnotation stroketext2 = new XYTextAnnotation("\u25A0 " + ch + ": Commercial Average" 
+               + " (" + (int) commercialAve + "%)", x, y + i * -3.3);
             stroketext2.setTextAnchor(TextAnchor.CENTER_LEFT);
             stroketext2.setBackgroundPaint(Color.white);
             stroketext2.setPaint(Color.magenta);
@@ -380,9 +393,11 @@ public class ScatterVulns extends ScatterPlot {
 
     public static ScatterVulns generateComparisonChart(String category, Set<Report> toolResults, String focus) {
         try {
-            String scatterTitle = "OWASP Benchmark" + (BenchmarkScore.mixedMode ? " -" : " v" + BenchmarkScore.benchmarkVersion) + " " + category + " Comparison";
+            String scatterTitle = "OWASP Benchmark" + (BenchmarkScore.mixedMode ? " -" : " v" 
+               + BenchmarkScore.benchmarkVersion) + " " + category + " Comparison";
             ScatterVulns scatter = new ScatterVulns(scatterTitle, 800, category, toolResults, focus);
-            scatter.writeChartToFile(new File("scorecard/Benchmark_v" + BenchmarkScore.benchmarkVersion + "_Scorecard_for_" + category.replace(' ', '_') + ".png"), 800);
+            scatter.writeChartToFile(new File("scorecard/Benchmark_v" + BenchmarkScore.benchmarkVersion 
+               + "_Scorecard_for_" + category.replace(' ', '_') + ".png"), 800);
             return scatter;
         } catch (IOException e) {
             System.out.println("Couldn't generate Benchmark vulnerability chart for some reason.");

@@ -135,7 +135,7 @@ public class ScatterTools extends ScatterPlot {
 
 	private HashMap<Point2D, String> makePointList(OverallResults or) {
 		HashMap<Point2D, String> map = new HashMap<Point2D, String>();
-		char ch = 'A';
+		char ch = ScatterHome.INITIAL_LABEL;
 		int size = 0;
 		// make a list of all points. Add in a tiny random to prevent exact
 		// duplicate coordinates in map
@@ -147,7 +147,8 @@ public class ScatterTools extends ScatterPlot {
 			Point2D p = new Point2D.Double(x, y);
 			String label = "" + ch;
 			map.put(p, label);
-			ch++;
+            // Weak hack if there are more than 26 tools scored. This will only get us to 52.
+            if (ch == 'Z') ch = 'a'; else ch++;
 		}
 		// add  average point
 		if(size>1){
@@ -193,14 +194,14 @@ public class ScatterTools extends ScatterPlot {
 	}
 
 	private void makeLegend(OverallResults or, double x, double y, XYSeriesCollection dataset, XYPlot xyplot) {
-		char ch = 'A';
+		char ch = ScatterHome.INITIAL_LABEL;
 		int i = 0;
 		int toolCount = 0;
         double totalScore = 0;
 		for (OverallResult r : or.getResults()) {
 			toolCount++;
-			// Add a bit more white space if the character is I, since its so thin.
-			String label = (ch == 'I' ? ch + ":  " : "" + ch + ": ");
+            // Special hack to make it line up better if the letter is an 'I' or 'i'
+            String label = ( ch == 'I' || ch == 'i' ? ch + ":  " : ""+ch + ": " );
 			int score = (int) (100 * (r.truePositiveRate - r.falsePositiveRate));
 			String msg = "\u25A0 " + label + r.category + " (" + score + "%)";
 			totalScore += score;
@@ -211,10 +212,11 @@ public class ScatterTools extends ScatterPlot {
 			stroketext.setFont(theme.getRegularFont());
 			xyplot.addAnnotation(stroketext);
 			i++;
-			ch++;
+            // Weak hack if there are more than 26 tools scored. This will only get us to 52.
+            if (ch == 'Z') ch = 'a'; else ch++;
 		}
 		
-		if(toolCount>1) {
+		if ( toolCount > 1 ) {
             double averageScore = totalScore/toolCount;
     		XYTextAnnotation stroketext = new XYTextAnnotation("\u25A0 " + ch + ": Average Score for this Tool"+ " (" + (int)averageScore + "%)", x, y + i * -3.3);
     		stroketext.setTextAnchor(TextAnchor.CENTER_LEFT);

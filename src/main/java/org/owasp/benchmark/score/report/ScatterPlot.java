@@ -32,12 +32,13 @@ import org.jfree.ui.TextAnchor;
 
 public class ScatterPlot {
 
+	// This variable is directly accessed by ScatterHome.java
     JFreeChart chart = null;
-    StandardChartTheme theme = initializeTheme();
-    DecimalFormat pctFormat = new DecimalFormat("0'%'");
-    Stroke dashed = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] { 6, 3 }, 0);
+    static final StandardChartTheme theme = initializeTheme();
+    static final DecimalFormat pctFormat = new DecimalFormat("0'%'");
+    static final Stroke dashed = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] { 6, 3 }, 0);
 
-    public StandardChartTheme initializeTheme() {
+    public static StandardChartTheme initializeTheme() {
         String fontName = "Arial";
         StandardChartTheme theme = (StandardChartTheme) org.jfree.chart.StandardChartTheme.createJFreeTheme();
         theme.setExtraLargeFont(new Font(fontName, Font.PLAIN, 24)); // title
@@ -107,7 +108,7 @@ public class ScatterPlot {
     }
     
     
-    public XYPointerAnnotation makePointer(int x, int y, String msg, TextAnchor anchor, int angle ) {
+    public static XYPointerAnnotation makePointer(int x, int y, String msg, TextAnchor anchor, int angle ) {
         XYPointerAnnotation pointer = new XYPointerAnnotation(msg, x, y, Math.toRadians(angle));
         pointer.setBackgroundPaint(Color.white);
         pointer.setTextAnchor(anchor);
@@ -126,7 +127,7 @@ public class ScatterPlot {
         stream.close();
     }
 
-    public void makePoint(XYPlot xyplot, Point2D location, double radius, Color color ) {
+    public static void makePoint(XYPlot xyplot, Point2D location, double radius, Color color ) {
         double x = location.getX() - radius/2;
         double y = location.getY() - radius/2;
         Shape dot = new Ellipse2D.Double(x, y, radius, radius);
@@ -134,13 +135,13 @@ public class ScatterPlot {
         xyplot.addAnnotation( area );
     }    
     
-    public void makeRect(XYPlot xyplot, Point2D location, double height, double width, Color color ) {
+    public static void makeRect(XYPlot xyplot, Point2D location, double height, double width, Color color ) {
         Shape rect = new Rectangle2D.Double(location.getX(), location.getY(), width, height);
         XYShapeAnnotation area = new XYShapeAnnotation(rect, new BasicStroke(), color, color );
         xyplot.addAnnotation( area );
     }    
 
-    public void makeTriangle(XYPlot xyplot, Point2D location, Color color ) {
+    public static void makeTriangle(XYPlot xyplot, Point2D location, Color color ) {
         Polygon p = new Polygon();
         p.addPoint(0,0);
         p.addPoint(100,0);
@@ -149,7 +150,7 @@ public class ScatterPlot {
         xyplot.addAnnotation( area );
     }
     
-    public void makeGuessingLine(XYPlot xyplot) {
+    public static void makeGuessingLine(XYPlot xyplot) {
         // draw guessing line
         XYLineAnnotation guessing = new XYLineAnnotation(-5, -5, 100, 100, dashed, Color.red);
         xyplot.addAnnotation(guessing);
@@ -172,10 +173,8 @@ public class ScatterPlot {
         xyplot.addAnnotation(strokekey);
     }
     
-    
-    
     // Note that rotation is for the entire G2D, so put in coordinates accordingly
-    public void makeOval(XYPlot xyplot, double x, double y, double w, int h, int angle) {
+    public static void makeOval(XYPlot xyplot, double x, double y, double w, int h, int angle) {
         x = x * Math.sqrt(2);
         Shape oval = new Ellipse2D.Double(x, y, w, h);
         Shape diag = rotate( oval, angle );
@@ -194,7 +193,7 @@ public class ScatterPlot {
         return rotated;   
     }
     
-    public void makePointer(XYPlot plot, double x, double y, String msg, TextAnchor anchor, int angle ) {
+    public static void makePointer(XYPlot plot, double x, double y, String msg, TextAnchor anchor, int angle ) {
 //        TextTitle textTitle = new TextTitle(msg, theme.getSmallFont(), Color.red, RectangleEdge.TOP, HorizontalAlignment.LEFT, VerticalAlignment.TOP, new RectangleInsets(2, 2, 2, 2));
 //        XYTitleAnnotation title = new XYTitleAnnotation(x/100, y/100, textTitle, RectangleAnchor.TOP_LEFT);
 //        plot.addAnnotation( title );

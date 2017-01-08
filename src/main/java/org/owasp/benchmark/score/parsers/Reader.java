@@ -27,7 +27,7 @@ import org.w3c.dom.NodeList;
 
 public class Reader {
 
-    public Node getNamedNode(String name, NodeList list) {
+    public static Node getNamedNode(String name, NodeList list) {
         for (int i = 0; i < list.getLength(); i++) {
             Node n = list.item(i);
             if (n.getNodeName().equals(name)) {
@@ -37,12 +37,27 @@ public class Reader {
         return null;
     }
 
-    public Node getNamedChild(String name, Node parent) {
+    // Returns the node inside this nodelist whose name matches 'name', that also has an attribute
+    // called 'key' whose value matches 'keyvalue'
+    public static Node getNamedNode(String name, String keyValue, NodeList list) {
+        if ((name == null) || (keyValue == null) || (list == null)) return null;
+        for (int i = 0; i < list.getLength(); i++) {
+            Node n = list.item(i);
+            if (n.getNodeName().equals(name)) {
+                if (keyValue.equals(getAttributeValue( "key", n ))) {
+                    return n;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static Node getNamedChild(String name, Node parent) {
         NodeList children = parent.getChildNodes();
         return getNamedNode( name, children );
     }
 
-    public List<Node> getNamedChildren(String name, List<Node> list) {
+    public static List<Node> getNamedChildren(String name, List<Node> list) {
         List<Node> results = new ArrayList<Node>();
         for (Node n : list) {
             NodeList children = n.getChildNodes();
@@ -57,12 +72,12 @@ public class Reader {
         return results;
     }
 
-    public List<Node> getNamedChildren(String name, Node parent) {
+    public static List<Node> getNamedChildren(String name, Node parent) {
         NodeList children = parent.getChildNodes();
         return getNamedNodes( name, children );
     }
         
-    public List<Node> getNamedNodes(String name, NodeList list) {
+    public static List<Node> getNamedNodes(String name, NodeList list) {
         List<Node> results = new ArrayList<Node>();
         for (int i = 0; i < list.getLength(); i++) {
             Node n = list.item(i);

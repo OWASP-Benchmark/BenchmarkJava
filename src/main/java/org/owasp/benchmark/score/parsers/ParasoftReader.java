@@ -41,12 +41,12 @@ public class ParasoftReader extends Reader {
         InputSource is = new InputSource(new FileInputStream(f));
         Document doc = docBuilder.parse(is);
 
-        TestResults tr = new TestResults( "Parasoft Jtest" ,true,TestResults.ToolType.SAST);
+        TestResults tr = new TestResults( "Parasoft Jtest", true,TestResults.ToolType.SAST);
 
         Node root = doc.getDocumentElement();
 
         // <ResultsSession time="06/03/15 10:10:09" toolName="Jtest" toolVer="9.5.13.20140908>
-        String version = this.getAttributeValue("toolVer", root);
+        String version = getAttributeValue("toolVer", root);
         tr.setToolVersion( version );
 
         NodeList rootList = root.getChildNodes();
@@ -81,24 +81,31 @@ public class ParasoftReader extends Reader {
         // <StdViol sev="2" ln="49" cat="SECURITY.IBA" hash="395273668" tool="jtest" locType="sr" 
         // msg="'getName()' is a dangerous data-returning method and should be encapsulated by a validation" 
         // lang="java" rule="SECURITY.IBA.VPPD" config="1" auth="kupsch" locOffs="1749" locLen="7"
-        // locFile="/TempProject/java/org/owasp/benchmark/testcode/BenchmarkTest00003.java" />
+        // locFile="/temp/java/org/owasp/benchmark/testcode/BenchmarkTest00003.java" />
         
         TestCaseResult tcr = new TestCaseResult();
         String cat = getAttributeValue("cat", flaw);
-        tcr.setCWE( cweLookup( cat ) );
+        if ( cat == null ) {
+            String rule = getAttributeValue("rule", flaw);
+            int idx = rule.lastIndexOf('.');
+            if ( idx != -1 ) {
+                cat = rule.substring(0, idx);
+            }
+        }
         
-        tcr.setCategory( getAttributeValue( "rule", flaw ) );
- 
-        tcr.setConfidence( Integer.parseInt( getAttributeValue( "sev", flaw) ) );
+        if ( cat != null ) {
+            tcr.setCWE( cweLookup( cat ) );
+            tcr.setCategory( getAttributeValue( "rule", flaw ) );
+            tcr.setConfidence( Integer.parseInt( getAttributeValue( "sev", flaw) ) );
+            tcr.setEvidence( getAttributeValue( "msg", flaw ) );
 
-        tcr.setEvidence( getAttributeValue( "msg", flaw ) );
-
-        String testcase = getAttributeValue( "locFile", flaw );
-        testcase = testcase.substring( testcase.lastIndexOf('/') );
-        if ( testcase.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
-            String testno = testcase.substring( BenchmarkScore.BENCHMARKTESTNAME.length(), testcase.length() -5 );
-            tcr.setNumber( Integer.parseInt( testno ) );
-            return tcr;       
+            String testcase = getAttributeValue( "locFile", flaw );
+            testcase = testcase.substring( testcase.lastIndexOf('/') );
+            if ( testcase.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
+                String testno = testcase.substring( BenchmarkScore.BENCHMARKTESTNAME.length(), testcase.length() -5 );
+                tcr.setNumber( Integer.parseInt( testno ) );
+                return tcr;       
+            }
         }
         return null;
     }
@@ -109,8 +116,8 @@ public class ParasoftReader extends Reader {
         // msg="Injection of data received from servlet request (&quot;param&quot;) to filename setting method"
         // id="924224628" rule="BD.SECURITY.TDFNAMES" config="1" dumpId="37" ruleSAFMsg="Dangerous Method Call"
         // auth="kupsch" FirstElSrcRngOffs="1570" FirstElSrcRngLen="30" 
-        // FirstElSrcRngFile="/TempProject/java/org/owasp/benchmark/testcode/BenchmarkTest00002.java" locOffs="1970" locLen="95"
-        // locFile="/TempProject/java/org/owasp/benchmark/testcode/BenchmarkTest00002.java">
+        // FirstElSrcRngFile="/temp/java/org/owasp/benchmark/testcode/BenchmarkTest00002.java" locOffs="1970" locLen="95"
+        // locFile="/temp/java/org/owasp/benchmark/testcode/BenchmarkTest00002.java">
 
         TestCaseResult tcr = new TestCaseResult();
         String cat = getAttributeValue("rule", flaw);
@@ -130,12 +137,12 @@ public class ParasoftReader extends Reader {
         if ( testcase.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
             String testno = testcase.substring( BenchmarkScore.BENCHMARKTESTNAME.length(), testcase.length() -5 );
             tcr.setNumber( Integer.parseInt( testno ) );
-            return tcr;       
+            return tcr;
         }
         return null;
     }
 
-
+    //https://www.securecoding.cert.org/confluence/display/java/Parasoft
     private int cweLookup(String cat) {
 
         switch( cat ) {
@@ -158,7 +165,7 @@ public class ParasoftReader extends Reader {
         
 //        case "Cookie Security" : return 614;
 //        case "Header Manipulation" : return 113;
-//        case "Insecure Randomness" : return 330;
+        case "SECURITY.WSC.SRD" : return 330;
 //        case "Password Management" : return 00;
 //        case "Trust Boundary Violation" : return 501;
 //        case "Weak Cryptographic Hash" : return 328;
@@ -166,7 +173,5 @@ public class ParasoftReader extends Reader {
         }
         return -1;
     }
-    
+
 }
-    
-    

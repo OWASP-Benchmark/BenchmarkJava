@@ -33,7 +33,7 @@ import org.xml.sax.InputSource;
 
 public class FortifyReader extends Reader {
 
-	public TestResults parse( File f ) throws Exception {
+	public static TestResults parse( File f ) throws Exception {
 		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 		// Prevent XXE
 		docBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
@@ -41,7 +41,7 @@ public class FortifyReader extends Reader {
 		InputSource is = new InputSource( new FileInputStream(f) );
 		Document doc = docBuilder.parse(is);
 		
-		TestResults tr = new TestResults("HP Fortify", true, TestResults.ToolType.SAST);
+		TestResults tr = new TestResults("Fortify", true, TestResults.ToolType.SAST);
 		
         // If the filename includes an elapsed time in seconds (e.g., TOOLNAME-seconds.fpr), 
 		// set the compute time on the score card.
@@ -59,14 +59,15 @@ public class FortifyReader extends Reader {
         if ( source.contains("ronq") ) {
         	tr.setTool( tr.getTool() + "-OnDemand" );
         }
-              
-		// FIXME: in the FPR there is audit.xml that has a different version number in it
         
-        // get engine build version
+        // get engine build version and rulepack version
         Node eData = getNamedChild("EngineData", root );
         String version = getNamedChild( "EngineVersion", eData ).getTextContent();
+        Node rps = getNamedChild("RulePacks", eData );
+        Node rp = getNamedChild("RulePack", rps );
+        version += "-rp" + getNamedChild( "Version", rp ).getTextContent();
         tr.setToolVersion( version );
-          
+
         NodeList rootList = root.getChildNodes();
         List<Node> vulnList = getNamedNodes( "Vulnerabilities", rootList );
 
@@ -84,7 +85,7 @@ public class FortifyReader extends Reader {
 		return tr;	
 	}
 	
-	private TestCaseResult parseFortifyVulnerability(Node vuln) {
+	private static TestCaseResult parseFortifyVulnerability(Node vuln) {
 		TestCaseResult tcr = new TestCaseResult();
 		
         Node ci = getNamedNode("ClassInfo", vuln.getChildNodes() );
@@ -92,10 +93,9 @@ public class FortifyReader extends Reader {
         String vulnType = type.getTextContent();
         tcr.setCategory( vulnType );
         
-        Node ii = getNamedNode("InstanceInfo", vuln.getChildNodes() );
-        Node cn = getNamedNode( "Confidence", ii.getChildNodes() );
-        int conf = Integer.parseInt(cn.getTextContent().substring(0,1));
-        tcr.setConfidence( conf );
+        // We grab this as sometimes we need to dig into this to verify the details of an issue
+		Node ai = getNamedNode( "AnalysisInfo", vuln.getChildNodes() );
+		Node un = getNamedNode( "Unified", ai.getChildNodes() );
         
 		Node subtype = getNamedNode( "Subtype", ci.getChildNodes() );
 		String vulnSubType = "";
@@ -104,10 +104,8 @@ public class FortifyReader extends Reader {
 		}
 		tcr.setEvidence( vulnType + "::" + vulnSubType );
 		
-		tcr.setCWE( cweLookup( vulnType, vulnSubType ) );
+		tcr.setCWE( cweLookup( vulnType, vulnSubType, un ) );
 		
-		Node ai = getNamedNode( "AnalysisInfo", vuln.getChildNodes() );
-		Node un = getNamedNode( "Unified", ai.getChildNodes() );
 		Node co = getNamedNode( "Context", un.getChildNodes() );
 		Node fu = getNamedNode( "Function", co.getChildNodes() );
 		String tc = getAttributeValue( "enclosingClass", fu );
@@ -124,37 +122,92 @@ public class FortifyReader extends Reader {
 		return null;
 	}
 
-	private int cweLookup(String vtype, String subtype) {
-		switch( vtype ) {
-		
-		//case "Build Misconfiguration" : return 00;
-		case "Command Injection" : return 78;
-		case "Cookie Security" : return 614;
-		case "Cross-Site Scripting" : return 79;
-		//case "Dead Code" : return 00;
-		//case "Denial of Service" : return 00;
-		case "Header Manipulation" : return 113;
-		case "Insecure Randomness" : return 330;
-		//case "J2EE Bad Practices" : return 00;
-		case "LDAP Injection" : return 90;
-		//case "Missing Check against Null" : return 00;
-		//case "Null Dereference" : return 00;
-		case "Password Management" : return 00;
-		case "Path Manipulation" : return 22;
-		//case "Poor Error Handling" : return 00;
-		//case "Poor Logging Practice" : return 00;
-		//case "Poor Style" : return 00;
-		//case "Resource Injection" : return 00;
-		case "SQL Injection" : return 89;
-		//case "System Information Leak" : return 00;
-		case "Trust Boundary Violation" : return 501;
-		//case "Unreleased Resource" : return 00;
-		//case "Unsafe Reflection" : return 00;
-		case "Weak Cryptographic Hash" : return 328;
-		case "Weak Encryption" : return 327;
-		case "XPath Injection" : return 643;
-		
-		}
+	private static int cweLookup(String vtype, String subtype, Node unifiedNode) {
+
+		switch ( vtype ) {
+
+			//case "Build Misconfiguration" : return 00;
+			case "Command Injection" : return 78;
+
+			case "Cookie Security" : {
+				// Verify its the exact type we are looking for (e.g., not HttpOnly finding)
+				if ( "Cookie not Sent Over SSL".equals( subtype )) return 614;
+			}
+
+			case "Cross-Site Scripting" : {
+				switch ( subtype ) {
+					// Not a type of XSS weakness we are testing for. Causes False Positives for Fortify.
+					case "Poor Validation" : return 83;
+				}
+				return 79;
+			}
+
+			//case "Dead Code" : return 00;
+			//case "Denial of Service" : return 00;
+			case "Header Manipulation" : return 113;
+			case "Insecure Randomness" : return 330;
+			//case "J2EE Bad Practices" : return 00;
+
+			case "LDAP Injection" : return 90;
+
+			// Fortify reports weak randomness issues under Obsolete by ESAPI, rather than in the
+			// Insecure Randomness category if it thinks you are using ESAPI. However, its behavior isn't
+			// consistent. For Benchmark, we've seen it report it both ways. As such, we are adding this
+			// other way to determine if Fortify is reporting weak randomness. Given that Fortify reports 
+			// many different types of issues under this category, we actually look to see the name of the
+			// method they are flagging. If its 'random()', then we count it as reported.
+			case "Obsolete" : {
+				if ("Deprecated by ESAPI".equals(subtype)) {
+					Node rd = getNamedNode( "ReplacementDefinitions", unifiedNode.getChildNodes() );
+					Node def = getNamedNode( "Def", "PrimaryCall.name", rd.getChildNodes() );
+					String methodName = getAttributeValue( "value", def );
+
+					// First check grants credit for flagging uses of: java.lang.Math.random()
+					if ( "random()".equals(methodName) ||
+
+					// Following grants credit for flagging use of any method that generates random #'s using the 
+					// java.util.Random or java.security.SecureRandom classes. e.g., nextWHATEVER().
+					   (methodName != null && methodName.startsWith("next"))) {
+					  return 330;
+					}
+				}
+			}
+
+			//case "Missing Check against Null" : return 00;
+			//case "Null Dereference" : return 00;
+			case "Password Management" : return 00;
+			case "Path Manipulation" : return 22;
+
+			//case "Poor Error Handling" : return 00;
+			//case "Poor Logging Practice" : return 00;
+			//case "Poor Style" : return 00;
+			//case "Resource Injection" : return 00;
+
+			case "SQL Injection" : return 89;
+			//case "System Information Leak" : return 00;
+			case "Trust Boundary Violation" : return 501;
+			//case "Unreleased Resource" : return 00;
+			//case "Unsafe Reflection" : return 00;
+
+			case "Weak Cryptographic Hash" : return 328;
+
+			case "Weak Encryption" :
+			{
+				switch ( subtype ) {
+					// These 2 are not types of Encryption weakness we are testing for. Cause False Positives for Fortify.
+					case "Missing Required Step" : return 325;
+					case "Inadequate RSA Padding" : return 780;
+					//TODO: Assuming this Fortify rule is valid, we might need to fix Benchmark itself to eliminate
+					// unintended vulns.
+					case "Insecure Mode of Operation" : return 0; // Disable so it doesn't count against Fortify.
+				}
+				return 327;
+			}
+
+			case "XPath Injection" : return 643;
+
+			} // end switch
+
 		return 0;
 	}
 }

@@ -43,7 +43,7 @@ public class BenchmarkTest01274 extends HttpServlet {
 		String param = request.getParameter("BenchmarkTest01274");
 		if (param == null) param = "";
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		int randNumber = new java.util.Random().nextInt(99);
 		String rememberMeKey = Integer.toString(randNumber);
@@ -96,7 +96,7 @@ public class BenchmarkTest01274 extends HttpServlet {
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = param;
 

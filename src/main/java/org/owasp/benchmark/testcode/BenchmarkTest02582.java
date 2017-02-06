@@ -57,14 +57,14 @@ public class BenchmarkTest02582 extends HttpServlet {
 		}
 		param = java.net.URLDecoder.decode(param, "UTF-8");
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 response.setHeader("X-XSS-Protection", "0");
 		response.getWriter().print(bar.toCharArray());
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		StringBuilder sbxyz18070 = new StringBuilder(param);
 		String bar = sbxyz18070.append("_SafeStuff").toString();

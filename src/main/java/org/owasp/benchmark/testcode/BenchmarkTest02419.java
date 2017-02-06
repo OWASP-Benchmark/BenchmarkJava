@@ -44,7 +44,7 @@ public class BenchmarkTest02419 extends HttpServlet {
 		String param = scr.getTheParameter("BenchmarkTest02419");
 		if (param == null) param = "";
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		float rand = new java.util.Random().nextFloat();
 		String rememberMeKey = Float.toString(rand).substring(2); // Trim off the 0. at the front.
@@ -94,7 +94,7 @@ public class BenchmarkTest02419 extends HttpServlet {
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
 		String a8935 = param; //assign

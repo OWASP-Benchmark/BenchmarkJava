@@ -43,7 +43,7 @@ public class BenchmarkTest02698 extends HttpServlet {
 		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
 		String param = scr.getTheValue("BenchmarkTest02698");
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		java.util.List<String> argList = new java.util.ArrayList<String>();
 		
@@ -71,7 +71,7 @@ public class BenchmarkTest02698 extends HttpServlet {
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
 		String bar = thing.doSomething(param);

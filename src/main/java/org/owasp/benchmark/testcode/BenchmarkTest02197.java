@@ -48,7 +48,7 @@ public class BenchmarkTest02197 extends HttpServlet {
 		}
 		
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		java.io.File fileTarget = new java.io.File(new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),bar);
 		response.getWriter().println(
@@ -64,13 +64,13 @@ public class BenchmarkTest02197 extends HttpServlet {
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "safe!";
 		java.util.HashMap<String,Object> map35951 = new java.util.HashMap<String,Object>();
-		map35951.put("keyA-35951", "a Value"); // put some stuff in the collection
+		map35951.put("keyA-35951", "a-Value"); // put some stuff in the collection
 		map35951.put("keyB-35951", param); // put it in a collection
-		map35951.put("keyC", "another Value"); // put some stuff in the collection
+		map35951.put("keyC", "another-Value"); // put some stuff in the collection
 		bar = (String)map35951.get("keyB-35951"); // get it back out
 	
 		return bar;	

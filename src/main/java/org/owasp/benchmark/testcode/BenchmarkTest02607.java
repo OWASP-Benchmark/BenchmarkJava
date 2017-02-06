@@ -57,7 +57,7 @@ public class BenchmarkTest02607 extends HttpServlet {
 		}
 		param = java.net.URLDecoder.decode(param, "UTF-8");
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		byte[] input = new byte[1000];
 		String str = "?";
@@ -89,7 +89,7 @@ public class BenchmarkTest02607 extends HttpServlet {
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		StringBuilder sbxyz75490 = new StringBuilder(param);
 		String bar = sbxyz75490.append("_SafeStuff").toString();

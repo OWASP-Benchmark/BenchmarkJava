@@ -50,7 +50,7 @@ public class BenchmarkTest01156 extends HttpServlet {
 		// URL Decode the header value since req.getHeaders() doesn't. Unlike req.getParameters().
 		param = java.net.URLDecoder.decode(param, "UTF-8");
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		// FILE URIs are tricky because they are different between Mac and Windows because of lack of standardization.
 		// Mac requires an extra slash for some reason.
@@ -82,13 +82,13 @@ public class BenchmarkTest01156 extends HttpServlet {
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "safe!";
 		java.util.HashMap<String,Object> map55476 = new java.util.HashMap<String,Object>();
-		map55476.put("keyA-55476", "a Value"); // put some stuff in the collection
+		map55476.put("keyA-55476", "a-Value"); // put some stuff in the collection
 		map55476.put("keyB-55476", param); // put it in a collection
-		map55476.put("keyC", "another Value"); // put some stuff in the collection
+		map55476.put("keyC", "another-Value"); // put some stuff in the collection
 		bar = (String)map55476.get("keyB-55476"); // get it back out
 
             return bar;

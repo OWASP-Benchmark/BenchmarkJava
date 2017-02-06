@@ -50,7 +50,7 @@ public class BenchmarkTest01162 extends HttpServlet {
 		// URL Decode the header value since req.getHeaders() doesn't. Unlike req.getParameters().
 		param = java.net.URLDecoder.decode(param, "UTF-8");
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		double value = java.lang.Math.random();
         String rememberMeKey = Double.toString(value).substring(2);  // Trim off the 0. at the front.
@@ -102,7 +102,7 @@ public class BenchmarkTest01162 extends HttpServlet {
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "safe!";
 		java.util.HashMap<String,Object> map72162 = new java.util.HashMap<String,Object>();

@@ -33,7 +33,11 @@ public class BenchmarkTest00062 extends HttpServlet {
 	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doPost(request, response);
+		javax.servlet.http.Cookie userCookie = new javax.servlet.http.Cookie("BenchmarkTest00062", "FileName");
+		userCookie.setMaxAge(60*3); //Store cookie for 3 minutes
+		response.addCookie(userCookie);
+		javax.servlet.RequestDispatcher rd = request.getRequestDispatcher("/pathtraver-00/BenchmarkTest00062.html");
+		rd.include(request, response);
 	}
 
 	@Override
@@ -55,9 +59,9 @@ public class BenchmarkTest00062 extends HttpServlet {
 		
 		String bar = "safe!";
 		java.util.HashMap<String,Object> map77232 = new java.util.HashMap<String,Object>();
-		map77232.put("keyA-77232", "a Value"); // put some stuff in the collection
+		map77232.put("keyA-77232", "a-Value"); // put some stuff in the collection
 		map77232.put("keyB-77232", param); // put it in a collection
-		map77232.put("keyC", "another Value"); // put some stuff in the collection
+		map77232.put("keyC", "another-Value"); // put some stuff in the collection
 		bar = (String)map77232.get("keyB-77232"); // get it back out
 		
 		

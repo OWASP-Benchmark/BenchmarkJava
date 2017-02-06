@@ -46,7 +46,7 @@ public class BenchmarkTest02539 extends HttpServlet {
 		  param = values[0];
 		else param = "";
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		String sql = "SELECT  * from USERS where USERNAME='foo' and PASSWORD='"+ bar + "'";
 		try {
@@ -78,7 +78,7 @@ public class BenchmarkTest02539 extends HttpServlet {
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
 		String a9290 = param; //assign

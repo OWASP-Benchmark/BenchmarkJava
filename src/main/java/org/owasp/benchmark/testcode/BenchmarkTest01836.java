@@ -33,7 +33,11 @@ public class BenchmarkTest01836 extends HttpServlet {
 	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doPost(request, response);
+		javax.servlet.http.Cookie userCookie = new javax.servlet.http.Cookie("BenchmarkTest01836", "FileName");
+		userCookie.setMaxAge(60*3); //Store cookie for 3 minutes
+		response.addCookie(userCookie);
+		javax.servlet.RequestDispatcher rd = request.getRequestDispatcher("/pathtraver-02/BenchmarkTest01836.html");
+		rd.include(request, response);
 	}
 
 	@Override
@@ -52,7 +56,7 @@ public class BenchmarkTest01836 extends HttpServlet {
 			}
 		}
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		// FILE URIs are tricky because they are different between Mac and Windows because of lack of standardization.
 		// Mac requires an extra slash for some reason.
@@ -82,13 +86,13 @@ public class BenchmarkTest01836 extends HttpServlet {
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "safe!";
 		java.util.HashMap<String,Object> map78713 = new java.util.HashMap<String,Object>();
-		map78713.put("keyA-78713", "a Value"); // put some stuff in the collection
+		map78713.put("keyA-78713", "a-Value"); // put some stuff in the collection
 		map78713.put("keyB-78713", param); // put it in a collection
-		map78713.put("keyC", "another Value"); // put some stuff in the collection
+		map78713.put("keyC", "another-Value"); // put some stuff in the collection
 		bar = (String)map78713.get("keyB-78713"); // get it back out
 	
 		return bar;	

@@ -57,7 +57,7 @@ public class BenchmarkTest01646 extends HttpServlet {
 		}
 		param = java.net.URLDecoder.decode(param, "UTF-8");
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		String fileName = null;
 		java.io.FileOutputStream fos = null;
@@ -88,7 +88,7 @@ public class BenchmarkTest01646 extends HttpServlet {
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "safe!";
 		java.util.HashMap<String,Object> map84260 = new java.util.HashMap<String,Object>();

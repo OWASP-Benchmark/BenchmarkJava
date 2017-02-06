@@ -43,7 +43,7 @@ public class BenchmarkTest02168 extends HttpServlet {
 		String param = request.getParameter("BenchmarkTest02168");
 		if (param == null) param = "";
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		// javax.servlet.http.HttpSession.setAttribute(java.lang.String,java.lang.Object^)
 		request.getSession().setAttribute( "userid", bar);
@@ -55,7 +55,7 @@ public class BenchmarkTest02168 extends HttpServlet {
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "alsosafe";
 		if (param != null) {

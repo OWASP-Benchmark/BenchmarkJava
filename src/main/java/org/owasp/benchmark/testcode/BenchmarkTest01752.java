@@ -43,7 +43,7 @@ public class BenchmarkTest01752 extends HttpServlet {
 		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
 		String param = scr.getTheValue("BenchmarkTest01752");
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		String fileName = null;
 		java.io.FileOutputStream fos = null;
@@ -83,13 +83,13 @@ public class BenchmarkTest01752 extends HttpServlet {
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "safe!";
 		java.util.HashMap<String,Object> map11351 = new java.util.HashMap<String,Object>();
-		map11351.put("keyA-11351", "a Value"); // put some stuff in the collection
+		map11351.put("keyA-11351", "a-Value"); // put some stuff in the collection
 		map11351.put("keyB-11351", param); // put it in a collection
-		map11351.put("keyC", "another Value"); // put some stuff in the collection
+		map11351.put("keyC", "another-Value"); // put some stuff in the collection
 		bar = (String)map11351.get("keyB-11351"); // get it back out
 
             return bar;

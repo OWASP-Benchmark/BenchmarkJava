@@ -43,7 +43,7 @@ public class BenchmarkTest02113 extends HttpServlet {
 		String param = request.getParameter("BenchmarkTest02113");
 		if (param == null) param = "";
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		String fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
         java.io.InputStream is = null;
@@ -79,7 +79,7 @@ org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size))
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar;
 		String guess = "ABC";

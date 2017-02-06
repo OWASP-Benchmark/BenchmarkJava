@@ -57,7 +57,7 @@ public class BenchmarkTest02014 extends HttpServlet {
 		}
 		// Note: We don't URL decode header names because people don't normally do that
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		try {
 			long l = java.security.SecureRandom.getInstance("SHA1PRNG").nextLong();
@@ -111,13 +111,13 @@ user + " has been remembered with cookie: " + rememberMe.getName()
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "safe!";
 		java.util.HashMap<String,Object> map37065 = new java.util.HashMap<String,Object>();
-		map37065.put("keyA-37065", "a Value"); // put some stuff in the collection
+		map37065.put("keyA-37065", "a-Value"); // put some stuff in the collection
 		map37065.put("keyB-37065", param); // put it in a collection
-		map37065.put("keyC", "another Value"); // put some stuff in the collection
+		map37065.put("keyC", "another-Value"); // put some stuff in the collection
 		bar = (String)map37065.get("keyB-37065"); // get it back out
 	
 		return bar;	

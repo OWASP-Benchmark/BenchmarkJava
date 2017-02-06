@@ -43,7 +43,7 @@ public class BenchmarkTest01295 extends HttpServlet {
 		String param = request.getParameter("BenchmarkTest01295");
 		if (param == null) param = "";
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		try {
 			float rand = java.security.SecureRandom.getInstance("SHA1PRNG").nextFloat();
@@ -98,7 +98,7 @@ user + " has been remembered with cookie: " + rememberMe.getName()
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
 		String a22205 = param; //assign

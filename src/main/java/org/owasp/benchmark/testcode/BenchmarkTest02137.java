@@ -43,7 +43,7 @@ public class BenchmarkTest02137 extends HttpServlet {
 		String param = request.getParameter("BenchmarkTest02137");
 		if (param == null) param = "";
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		java.util.List<String> argList = new java.util.ArrayList<String>();
 		
@@ -71,7 +71,7 @@ public class BenchmarkTest02137 extends HttpServlet {
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar;
 		

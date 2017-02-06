@@ -43,14 +43,14 @@ public class BenchmarkTest02145 extends HttpServlet {
 		String param = request.getParameter("BenchmarkTest02145");
 		if (param == null) param = "";
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 response.setHeader("X-XSS-Protection", "0");
 		response.getWriter().write("Parameter value: " + bar);
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
 		String a32743 = param; //assign

@@ -48,7 +48,7 @@ public class BenchmarkTest02210 extends HttpServlet {
 		}
 		
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		java.security.Provider[] provider = java.security.Security.getProviders();
 		java.security.MessageDigest md;
@@ -100,7 +100,7 @@ public class BenchmarkTest02210 extends HttpServlet {
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = org.apache.commons.lang.StringEscapeUtils.escapeHtml(param);
 	

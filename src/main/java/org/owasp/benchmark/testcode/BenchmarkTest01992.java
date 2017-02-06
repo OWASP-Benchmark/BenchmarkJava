@@ -57,7 +57,7 @@ public class BenchmarkTest01992 extends HttpServlet {
 		}
 		// Note: We don't URL decode header names because people don't normally do that
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		double value = java.lang.Math.random();
         String rememberMeKey = Double.toString(value).substring(2);  // Trim off the 0. at the front.
@@ -107,7 +107,7 @@ public class BenchmarkTest01992 extends HttpServlet {
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
 		String a82010 = param; //assign

@@ -50,7 +50,7 @@ public class BenchmarkTest02062 extends HttpServlet {
 		// URL Decode the header value since req.getHeaders() doesn't. Unlike req.getParameters().
 		param = java.net.URLDecoder.decode(param, "UTF-8");
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		int r = new java.util.Random().nextInt();
 		String rememberMeKey = Integer.toString(r);
@@ -100,7 +100,7 @@ public class BenchmarkTest02062 extends HttpServlet {
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
 		String a60435 = param; //assign

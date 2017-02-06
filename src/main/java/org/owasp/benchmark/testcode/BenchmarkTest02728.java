@@ -43,7 +43,7 @@ public class BenchmarkTest02728 extends HttpServlet {
 		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
 		String param = scr.getTheValue("BenchmarkTest02728");
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		String sql = "SELECT * from USERS where USERNAME=? and PASSWORD='"+ bar +"'";
 				
@@ -67,13 +67,13 @@ public class BenchmarkTest02728 extends HttpServlet {
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "safe!";
 		java.util.HashMap<String,Object> map55235 = new java.util.HashMap<String,Object>();
-		map55235.put("keyA-55235", "a Value"); // put some stuff in the collection
+		map55235.put("keyA-55235", "a-Value"); // put some stuff in the collection
 		map55235.put("keyB-55235", param); // put it in a collection
-		map55235.put("keyC", "another Value"); // put some stuff in the collection
+		map55235.put("keyC", "another-Value"); // put some stuff in the collection
 		bar = (String)map55235.get("keyB-55235"); // get it back out
 	
 		return bar;	

@@ -46,7 +46,7 @@ public class BenchmarkTest02479 extends HttpServlet {
 		  param = values[0];
 		else param = "";
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		try {
 		    java.util.Properties benchmarkprops = new java.util.Properties();
@@ -90,7 +90,7 @@ public class BenchmarkTest02479 extends HttpServlet {
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = org.owasp.esapi.ESAPI.encoder().encodeForHTML(param);
 	

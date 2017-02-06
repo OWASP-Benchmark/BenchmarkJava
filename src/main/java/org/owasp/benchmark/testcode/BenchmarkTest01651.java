@@ -57,7 +57,7 @@ public class BenchmarkTest01651 extends HttpServlet {
 		}
 		param = java.net.URLDecoder.decode(param, "UTF-8");
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		try {
 			java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA1", "SUN");
@@ -103,7 +103,7 @@ public class BenchmarkTest01651 extends HttpServlet {
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = org.apache.commons.lang.StringEscapeUtils.escapeHtml(param);
 

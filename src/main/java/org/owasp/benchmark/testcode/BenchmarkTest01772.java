@@ -43,7 +43,7 @@ public class BenchmarkTest01772 extends HttpServlet {
 		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
 		String param = scr.getTheValue("BenchmarkTest01772");
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 response.setHeader("X-XSS-Protection", "0");
 		response.getWriter().write(bar.toCharArray());
@@ -52,7 +52,7 @@ response.setHeader("X-XSS-Protection", "0");
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		StringBuilder sbxyz76680 = new StringBuilder(param);
 		String bar = sbxyz76680.append("_SafeStuff").toString();

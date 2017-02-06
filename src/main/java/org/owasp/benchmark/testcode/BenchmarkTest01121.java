@@ -57,7 +57,7 @@ public class BenchmarkTest01121 extends HttpServlet {
 		}
 		// Note: We don't URL decode header names because people don't normally do that
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		java.security.Provider[] provider = java.security.Security.getProviders();
 		java.security.MessageDigest md;
@@ -111,7 +111,7 @@ public class BenchmarkTest01121 extends HttpServlet {
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		StringBuilder sbxyz22801 = new StringBuilder(param);
 		String bar = sbxyz22801.append("_SafeStuff").toString();

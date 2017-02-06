@@ -57,7 +57,7 @@ public class BenchmarkTest01667 extends HttpServlet {
 		}
 		param = java.net.URLDecoder.decode(param, "UTF-8");
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 response.setHeader("X-XSS-Protection", "0");
 		response.getWriter().println(bar);
@@ -66,13 +66,13 @@ response.setHeader("X-XSS-Protection", "0");
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "safe!";
 		java.util.HashMap<String,Object> map96771 = new java.util.HashMap<String,Object>();
-		map96771.put("keyA-96771", "a Value"); // put some stuff in the collection
+		map96771.put("keyA-96771", "a-Value"); // put some stuff in the collection
 		map96771.put("keyB-96771", param); // put it in a collection
-		map96771.put("keyC", "another Value"); // put some stuff in the collection
+		map96771.put("keyC", "another-Value"); // put some stuff in the collection
 		bar = (String)map96771.get("keyB-96771"); // get it back out
 
             return bar;

@@ -48,7 +48,7 @@ public class BenchmarkTest02247 extends HttpServlet {
 		}
 		
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		byte[] input = new byte[1000];
 		String str = "?";
@@ -80,7 +80,7 @@ public class BenchmarkTest02247 extends HttpServlet {
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "alsosafe";
 		if (param != null) {

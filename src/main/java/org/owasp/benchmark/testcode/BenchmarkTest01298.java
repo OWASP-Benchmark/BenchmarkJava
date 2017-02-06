@@ -43,7 +43,7 @@ public class BenchmarkTest01298 extends HttpServlet {
 		String param = request.getParameter("BenchmarkTest01298");
 		if (param == null) param = "";
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		try {
 			int r = java.security.SecureRandom.getInstance("SHA1PRNG").nextInt();
@@ -99,7 +99,7 @@ user + " has been remembered with cookie: " + rememberMe.getName()
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = org.springframework.web.util.HtmlUtils.htmlEscape(param);
 

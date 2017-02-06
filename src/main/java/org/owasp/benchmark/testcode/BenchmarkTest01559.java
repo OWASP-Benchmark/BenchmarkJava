@@ -44,7 +44,7 @@ public class BenchmarkTest01559 extends HttpServlet {
 		String param = scr.getTheParameter("BenchmarkTest01559");
 		if (param == null) param = "";
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
 				
@@ -66,13 +66,13 @@ public class BenchmarkTest01559 extends HttpServlet {
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "safe!";
 		java.util.HashMap<String,Object> map31651 = new java.util.HashMap<String,Object>();
-		map31651.put("keyA-31651", "a Value"); // put some stuff in the collection
+		map31651.put("keyA-31651", "a-Value"); // put some stuff in the collection
 		map31651.put("keyB-31651", param); // put it in a collection
-		map31651.put("keyC", "another Value"); // put some stuff in the collection
+		map31651.put("keyC", "another-Value"); // put some stuff in the collection
 		bar = (String)map31651.get("keyB-31651"); // get it back out
 
             return bar;

@@ -43,7 +43,7 @@ public class BenchmarkTest02119 extends HttpServlet {
 		String param = request.getParameter("BenchmarkTest02119");
 		if (param == null) param = "";
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		try {
 			java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA-512", "SUN");
@@ -87,13 +87,13 @@ public class BenchmarkTest02119 extends HttpServlet {
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "safe!";
 		java.util.HashMap<String,Object> map70096 = new java.util.HashMap<String,Object>();
-		map70096.put("keyA-70096", "a Value"); // put some stuff in the collection
+		map70096.put("keyA-70096", "a-Value"); // put some stuff in the collection
 		map70096.put("keyB-70096", param); // put it in a collection
-		map70096.put("keyC", "another Value"); // put some stuff in the collection
+		map70096.put("keyC", "another-Value"); // put some stuff in the collection
 		bar = (String)map70096.get("keyB-70096"); // get it back out
 	
 		return bar;	

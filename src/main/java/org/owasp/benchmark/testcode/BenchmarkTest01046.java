@@ -48,7 +48,7 @@ public class BenchmarkTest01046 extends HttpServlet {
 		// URL Decode the header value since req.getHeader() doesn't. Unlike req.getParameter().
 		param = java.net.URLDecoder.decode(param, "UTF-8");
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 response.setHeader("X-XSS-Protection", "0");
 		Object[] obj = { "a", bar };
@@ -61,13 +61,13 @@ response.setHeader("X-XSS-Protection", "0");
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "safe!";
 		java.util.HashMap<String,Object> map95803 = new java.util.HashMap<String,Object>();
-		map95803.put("keyA-95803", "a Value"); // put some stuff in the collection
+		map95803.put("keyA-95803", "a-Value"); // put some stuff in the collection
 		map95803.put("keyB-95803", param); // put it in a collection
-		map95803.put("keyC", "another Value"); // put some stuff in the collection
+		map95803.put("keyC", "another-Value"); // put some stuff in the collection
 		bar = (String)map95803.get("keyB-95803"); // get it back out
 
             return bar;

@@ -43,7 +43,7 @@ public class BenchmarkTest02671 extends HttpServlet {
 		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
 		String param = scr.getTheValue("BenchmarkTest02671");
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		java.security.Provider[] provider = java.security.Security.getProviders();
 		java.security.MessageDigest md;
@@ -95,13 +95,13 @@ public class BenchmarkTest02671 extends HttpServlet {
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "safe!";
 		java.util.HashMap<String,Object> map7984 = new java.util.HashMap<String,Object>();
-		map7984.put("keyA-7984", "a Value"); // put some stuff in the collection
+		map7984.put("keyA-7984", "a-Value"); // put some stuff in the collection
 		map7984.put("keyB-7984", param); // put it in a collection
-		map7984.put("keyC", "another Value"); // put some stuff in the collection
+		map7984.put("keyC", "another-Value"); // put some stuff in the collection
 		bar = (String)map7984.get("keyB-7984"); // get it back out
 	
 		return bar;	

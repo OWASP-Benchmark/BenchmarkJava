@@ -57,7 +57,7 @@ public class BenchmarkTest01708 extends HttpServlet {
 		}
 		param = java.net.URLDecoder.decode(param, "UTF-8");
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		// javax.servlet.http.HttpSession.putValue(java.lang.String^,java.lang.Object)
 		request.getSession().putValue( bar, "10340");
@@ -71,7 +71,7 @@ public class BenchmarkTest01708 extends HttpServlet {
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = param;
 		if (param != null && param.length() > 1) {

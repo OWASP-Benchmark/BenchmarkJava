@@ -43,7 +43,7 @@ public class BenchmarkTest01243 extends HttpServlet {
 		String param = request.getParameter("BenchmarkTest01243");
 		if (param == null) param = "";
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 	org.owasp.benchmark.helpers.LDAPManager ads = new org.owasp.benchmark.helpers.LDAPManager();
 	try {
@@ -90,7 +90,7 @@ public class BenchmarkTest01243 extends HttpServlet {
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar;
 		

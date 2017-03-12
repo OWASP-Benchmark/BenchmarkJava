@@ -43,7 +43,7 @@ public class BenchmarkTest02663 extends HttpServlet {
 		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
 		String param = scr.getTheValue("BenchmarkTest02663");
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		try {
 		    java.util.Properties benchmarkprops = new java.util.Properties();
@@ -120,7 +120,7 @@ e.printStackTrace(response.getWriter());
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = org.apache.commons.lang.StringEscapeUtils.escapeHtml(param);
 	

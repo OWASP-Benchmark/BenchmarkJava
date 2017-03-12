@@ -57,7 +57,7 @@ public class BenchmarkTest01696 extends HttpServlet {
 		}
 		param = java.net.URLDecoder.decode(param, "UTF-8");
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		try {
 			double rand = java.security.SecureRandom.getInstance("SHA1PRNG").nextDouble();
@@ -115,13 +115,13 @@ user + " has been remembered with cookie: " + rememberMe.getName()
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "safe!";
 		java.util.HashMap<String,Object> map83181 = new java.util.HashMap<String,Object>();
-		map83181.put("keyA-83181", "a Value"); // put some stuff in the collection
+		map83181.put("keyA-83181", "a-Value"); // put some stuff in the collection
 		map83181.put("keyB-83181", param); // put it in a collection
-		map83181.put("keyC", "another Value"); // put some stuff in the collection
+		map83181.put("keyC", "another-Value"); // put some stuff in the collection
 		bar = (String)map83181.get("keyB-83181"); // get it back out
 
             return bar;

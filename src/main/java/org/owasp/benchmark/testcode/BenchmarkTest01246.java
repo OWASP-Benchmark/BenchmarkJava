@@ -43,7 +43,7 @@ public class BenchmarkTest01246 extends HttpServlet {
 		String param = request.getParameter("BenchmarkTest01246");
 		if (param == null) param = "";
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		try {
 			java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA1", "SUN");
@@ -89,7 +89,7 @@ public class BenchmarkTest01246 extends HttpServlet {
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar;
 		String guess = "ABC";

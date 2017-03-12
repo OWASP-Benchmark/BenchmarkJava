@@ -46,7 +46,7 @@ public class BenchmarkTest02477 extends HttpServlet {
 		  param = values[0];
 		else param = "";
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		try {
 			java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA-256");
@@ -87,7 +87,7 @@ public class BenchmarkTest02477 extends HttpServlet {
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
 		String a40743 = param; //assign

@@ -44,7 +44,7 @@ public class BenchmarkTest01494 extends HttpServlet {
 		String param = scr.getTheParameter("BenchmarkTest01494");
 		if (param == null) param = "";
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		java.io.File fileTarget = new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir, bar);
 		response.getWriter().println(
@@ -62,7 +62,7 @@ public class BenchmarkTest01494 extends HttpServlet {
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar;
 		String guess = "ABC";

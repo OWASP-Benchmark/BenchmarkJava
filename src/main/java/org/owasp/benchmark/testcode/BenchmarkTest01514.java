@@ -44,7 +44,7 @@ public class BenchmarkTest01514 extends HttpServlet {
 		String param = scr.getTheParameter("BenchmarkTest01514");
 		if (param == null) param = "";
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 response.setHeader("X-XSS-Protection", "0");
 		response.getWriter().write(bar);
@@ -53,7 +53,7 @@ response.setHeader("X-XSS-Protection", "0");
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "safe!";
 		java.util.HashMap<String,Object> map56316 = new java.util.HashMap<String,Object>();

@@ -57,7 +57,7 @@ public class BenchmarkTest02308 extends HttpServlet {
 			}
 		}
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		try {
 			java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA1", "SUN");
@@ -101,7 +101,7 @@ public class BenchmarkTest02308 extends HttpServlet {
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = param;
 	

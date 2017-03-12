@@ -57,7 +57,7 @@ public class BenchmarkTest01999 extends HttpServlet {
 		}
 		// Note: We don't URL decode header names because people don't normally do that
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		byte[] bytes = new byte[10];
 		new java.util.Random().nextBytes(bytes);
@@ -108,13 +108,13 @@ public class BenchmarkTest01999 extends HttpServlet {
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "safe!";
 		java.util.HashMap<String,Object> map28743 = new java.util.HashMap<String,Object>();
-		map28743.put("keyA-28743", "a Value"); // put some stuff in the collection
+		map28743.put("keyA-28743", "a-Value"); // put some stuff in the collection
 		map28743.put("keyB-28743", param); // put it in a collection
-		map28743.put("keyC", "another Value"); // put some stuff in the collection
+		map28743.put("keyC", "another-Value"); // put some stuff in the collection
 		bar = (String)map28743.get("keyB-28743"); // get it back out
 	
 		return bar;	

@@ -50,7 +50,7 @@ public class BenchmarkTest01182 extends HttpServlet {
 		// URL Decode the header value since req.getHeaders() doesn't. Unlike req.getParameters().
 		param = java.net.URLDecoder.decode(param, "UTF-8");
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		java.util.List<String> argList = new java.util.ArrayList<String>();
 		
@@ -78,7 +78,7 @@ public class BenchmarkTest01182 extends HttpServlet {
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "alsosafe";
 		if (param != null) {

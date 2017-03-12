@@ -57,7 +57,7 @@ public class BenchmarkTest01460 extends HttpServlet {
 			}
 		}
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		String sql = "{call " + bar + "}";
 						
@@ -81,13 +81,13 @@ public class BenchmarkTest01460 extends HttpServlet {
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "safe!";
 		java.util.HashMap<String,Object> map72098 = new java.util.HashMap<String,Object>();
-		map72098.put("keyA-72098", "a Value"); // put some stuff in the collection
+		map72098.put("keyA-72098", "a-Value"); // put some stuff in the collection
 		map72098.put("keyB-72098", param); // put it in a collection
-		map72098.put("keyC", "another Value"); // put some stuff in the collection
+		map72098.put("keyC", "another-Value"); // put some stuff in the collection
 		bar = (String)map72098.get("keyB-72098"); // get it back out
 
             return bar;

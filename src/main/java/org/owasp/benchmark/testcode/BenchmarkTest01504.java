@@ -44,7 +44,7 @@ public class BenchmarkTest01504 extends HttpServlet {
 		String param = scr.getTheParameter("BenchmarkTest01504");
 		if (param == null) param = "";
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		try {
 			java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
@@ -87,7 +87,7 @@ public class BenchmarkTest01504 extends HttpServlet {
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar;
 		

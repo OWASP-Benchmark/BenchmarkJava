@@ -48,7 +48,7 @@ public class BenchmarkTest02257 extends HttpServlet {
 		}
 		
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		try {
 			double rand = java.security.SecureRandom.getInstance("SHA1PRNG").nextDouble();
@@ -104,7 +104,7 @@ user + " has been remembered with cookie: " + rememberMe.getName()
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
 		String bar = thing.doSomething(param);

@@ -44,7 +44,7 @@ public class BenchmarkTest02375 extends HttpServlet {
 		String param = scr.getTheParameter("BenchmarkTest02375");
 		if (param == null) param = "";
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		try {
 		    java.util.Properties benchmarkprops = new java.util.Properties();
@@ -121,7 +121,7 @@ e.printStackTrace(response.getWriter());
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar;
 		

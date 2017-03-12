@@ -57,7 +57,7 @@ public class BenchmarkTest01136 extends HttpServlet {
 		}
 		// Note: We don't URL decode header names because people don't normally do that
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 	    try {
 		    java.security.SecureRandom secureRandomGenerator = java.security.SecureRandom.getInstance("SHA1PRNG");
@@ -119,7 +119,7 @@ user + " has been remembered with cookie: " + rememberMe.getName()
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
 		String a58606 = param; //assign

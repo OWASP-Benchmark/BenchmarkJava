@@ -48,7 +48,7 @@ public class BenchmarkTest02253 extends HttpServlet {
 		}
 		
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		String cmd = "";	
 		String a1 = "";
@@ -85,7 +85,7 @@ public class BenchmarkTest02253 extends HttpServlet {
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar;
 		String guess = "ABC";

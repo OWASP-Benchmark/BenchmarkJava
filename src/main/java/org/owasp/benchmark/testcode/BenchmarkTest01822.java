@@ -33,7 +33,11 @@ public class BenchmarkTest01822 extends HttpServlet {
 	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doPost(request, response);
+		javax.servlet.http.Cookie userCookie = new javax.servlet.http.Cookie("BenchmarkTest01822", "someSecret");
+		userCookie.setMaxAge(60*3); //Store cookie for 3 minutes
+		response.addCookie(userCookie);
+		javax.servlet.RequestDispatcher rd = request.getRequestDispatcher("/crypto-02/BenchmarkTest01822.html");
+		rd.include(request, response);
 	}
 
 	@Override
@@ -52,7 +56,7 @@ public class BenchmarkTest01822 extends HttpServlet {
 			}
 		}
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		// Code based on example from:
 		// http://examples.javacodegeeks.com/core-java/crypto/encrypt-decrypt-file-stream-with-des/
@@ -141,13 +145,13 @@ e.printStackTrace(response.getWriter());
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "safe!";
 		java.util.HashMap<String,Object> map20550 = new java.util.HashMap<String,Object>();
-		map20550.put("keyA-20550", "a Value"); // put some stuff in the collection
+		map20550.put("keyA-20550", "a-Value"); // put some stuff in the collection
 		map20550.put("keyB-20550", param); // put it in a collection
-		map20550.put("keyC", "another Value"); // put some stuff in the collection
+		map20550.put("keyC", "another-Value"); // put some stuff in the collection
 		bar = (String)map20550.get("keyB-20550"); // get it back out
 	
 		return bar;	

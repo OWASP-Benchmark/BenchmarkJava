@@ -46,7 +46,7 @@ public class BenchmarkTest01633 extends HttpServlet {
 		  param = values[0];
 		else param = "";
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		try {
 			java.io.FileInputStream file = new java.io.FileInputStream(org.owasp.benchmark.helpers.Utils.getFileFromClasspath("employees.xml", this.getClass().getClassLoader()));
@@ -81,7 +81,7 @@ xp.evaluate(expression, xmlDocument) + "<br/>"
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
 		String a31144 = param; //assign

@@ -48,7 +48,7 @@ public class BenchmarkTest01082 extends HttpServlet {
 		// URL Decode the header value since req.getHeader() doesn't. Unlike req.getParameter().
 		param = java.net.URLDecoder.decode(param, "UTF-8");
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		// javax.servlet.http.HttpSession.setAttribute(java.lang.String^,java.lang.Object)
 		request.getSession().setAttribute( bar, "10340");
@@ -62,7 +62,7 @@ public class BenchmarkTest01082 extends HttpServlet {
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = param;
 		if (param != null && param.length() > 1) {

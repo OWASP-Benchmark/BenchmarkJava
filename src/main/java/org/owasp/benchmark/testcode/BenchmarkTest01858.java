@@ -33,7 +33,11 @@ public class BenchmarkTest01858 extends HttpServlet {
 	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doPost(request, response);
+		javax.servlet.http.Cookie userCookie = new javax.servlet.http.Cookie("BenchmarkTest01858", "whatever");
+		userCookie.setMaxAge(60*3); //Store cookie for 3 minutes
+		response.addCookie(userCookie);
+		javax.servlet.RequestDispatcher rd = request.getRequestDispatcher("/weakrand-04/BenchmarkTest01858.html");
+		rd.include(request, response);
 	}
 
 	@Override
@@ -52,7 +56,7 @@ public class BenchmarkTest01858 extends HttpServlet {
 			}
 		}
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		long l = new java.util.Random().nextLong();
 		String rememberMeKey = Long.toString(l);
@@ -103,7 +107,7 @@ public class BenchmarkTest01858 extends HttpServlet {
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "safe!";
 		java.util.HashMap<String,Object> map95052 = new java.util.HashMap<String,Object>();

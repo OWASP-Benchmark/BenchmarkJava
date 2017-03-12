@@ -48,7 +48,7 @@ public class BenchmarkTest01947 extends HttpServlet {
 		// URL Decode the header value since req.getHeader() doesn't. Unlike req.getParameter().
 		param = java.net.URLDecoder.decode(param, "UTF-8");
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 	    try {
 		    java.security.SecureRandom secureRandomGenerator = java.security.SecureRandom.getInstance("SHA1PRNG");
@@ -108,7 +108,7 @@ user + " has been remembered with cookie: " + rememberMe.getName()
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "";
 		if (param != null) {

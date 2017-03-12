@@ -43,7 +43,7 @@ public class BenchmarkTest01287 extends HttpServlet {
 		String param = request.getParameter("BenchmarkTest01287");
 		if (param == null) param = "";
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		String cmd = org.owasp.benchmark.helpers.Utils.getInsecureOSCommandString(this.getClass().getClassLoader());
 		String[] args = {cmd};
@@ -66,7 +66,7 @@ public class BenchmarkTest01287 extends HttpServlet {
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "";
 		if (param != null) {

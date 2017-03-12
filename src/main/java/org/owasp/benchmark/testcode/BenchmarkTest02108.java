@@ -43,7 +43,7 @@ public class BenchmarkTest02108 extends HttpServlet {
 		String param = request.getParameter("BenchmarkTest02108");
 		if (param == null) param = "";
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		String fileName = null;
 		java.io.FileOutputStream fos = null;
@@ -72,7 +72,7 @@ public class BenchmarkTest02108 extends HttpServlet {
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "safe!";
 		java.util.HashMap<String,Object> map44255 = new java.util.HashMap<String,Object>();

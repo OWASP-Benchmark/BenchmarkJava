@@ -48,7 +48,7 @@ public class BenchmarkTest01036 extends HttpServlet {
 		// URL Decode the header value since req.getHeader() doesn't. Unlike req.getParameter().
 		param = java.net.URLDecoder.decode(param, "UTF-8");
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		String fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
         java.io.InputStream is = null;
@@ -86,7 +86,7 @@ org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size))
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "safe!";
 		java.util.HashMap<String,Object> map8487 = new java.util.HashMap<String,Object>();

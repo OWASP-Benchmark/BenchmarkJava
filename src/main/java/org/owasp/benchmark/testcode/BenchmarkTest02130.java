@@ -43,7 +43,7 @@ public class BenchmarkTest02130 extends HttpServlet {
 		String param = request.getParameter("BenchmarkTest02130");
 		if (param == null) param = "";
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 response.setHeader("X-XSS-Protection", "0");
 		Object[] obj = { "a", bar};
@@ -51,7 +51,7 @@ response.setHeader("X-XSS-Protection", "0");
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		StringBuilder sbxyz60224 = new StringBuilder(param);
 		String bar = sbxyz60224.append("_SafeStuff").toString();

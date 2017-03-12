@@ -44,7 +44,7 @@ public class BenchmarkTest02444 extends HttpServlet {
 		String param = scr.getTheParameter("BenchmarkTest02444");
 		if (param == null) param = "";
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		try {
 			int randNumber = java.security.SecureRandom.getInstance("SHA1PRNG").nextInt(99);
@@ -98,7 +98,7 @@ user + " has been remembered with cookie: " + rememberMe.getName()
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar;
 		

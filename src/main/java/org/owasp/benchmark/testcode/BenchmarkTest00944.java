@@ -33,7 +33,11 @@ public class BenchmarkTest00944 extends HttpServlet {
 	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doPost(request, response);
+		javax.servlet.http.Cookie userCookie = new javax.servlet.http.Cookie("BenchmarkTest00944", "someSecret");
+		userCookie.setMaxAge(60*3); //Store cookie for 3 minutes
+		response.addCookie(userCookie);
+		javax.servlet.RequestDispatcher rd = request.getRequestDispatcher("/crypto-01/BenchmarkTest00944.html");
+		rd.include(request, response);
 	}
 
 	@Override
@@ -52,7 +56,7 @@ public class BenchmarkTest00944 extends HttpServlet {
 			}
 		}
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		// Code based on example from:
 		// http://examples.javacodegeeks.com/core-java/crypto/encrypt-decrypt-file-stream-with-des/
@@ -131,7 +135,7 @@ e.printStackTrace(response.getWriter());
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = org.springframework.web.util.HtmlUtils.htmlEscape(param);
 

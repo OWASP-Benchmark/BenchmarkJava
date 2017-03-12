@@ -46,7 +46,7 @@ public class BenchmarkTest01603 extends HttpServlet {
 		  param = values[0];
 		else param = "";
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		long l = new java.util.Random().nextLong();
 		String rememberMeKey = Long.toString(l);
@@ -99,7 +99,7 @@ public class BenchmarkTest01603 extends HttpServlet {
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
 		String a74856 = param; //assign

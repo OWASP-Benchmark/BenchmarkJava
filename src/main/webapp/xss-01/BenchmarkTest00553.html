@@ -7,7 +7,7 @@
 <title>BenchmarkTest00553</title>
 </head>
 <body>
-<form action="/benchmark/xss-01/BenchmarkTest00553" method="POST" id="FormBenchmarkTest00553">
+<form action="/benchmark/xss-01/BenchmarkTest00553"  method="POST" id="FormBenchmarkTest00553">
     <div><label>Please explain your answer:</label></div>
     <br/>
     <div><textarea rows="4" cols="50" id="BenchmarkTest00553Area" name="BenchmarkTest00553Area" value=""></textarea></div>
@@ -16,18 +16,19 @@
     <br/>
     <div><label>An AJAX request will be sent with a parameter value 'BenchmarkTest00553' and name:</label>
     <input type="text" id="BenchmarkTest00553" name="BenchmarkTest00553" value="SafeText" class="safe"></input></div>
-    <div><input type="button" id="login-btn" value="Login" /></div>
+    <div><input type="button" id="login-btn" value="Login" onclick="submitForm()"/></div>
 </form>
 <div id="ajax-form-msg1"><pre><code class="prettyprint" id="code"></code></pre></div>
 <script>
 $('.safe').keypress(function (e) {
   if (e.which == 13) {
-    $('#login-btn').trigger('click');
+    submitForm();
     return false;
   }
 });
 
-$("#login-btn").click(function(){
+//$("#login-btn").click(function(){
+function submitForm() {
 	var text = $("#FormBenchmarkTest00553 input[id=BenchmarkTest00553]").val();
 	
 	$("input.headerClass").remove();
@@ -38,19 +39,33 @@ $("#login-btn").click(function(){
      .addClass("headerClass")
      .appendTo("#FormBenchmarkTest00553");
 
-    var formData = $("#FormBenchmarkTest00553").serializeArray();
+    var formData = $("#FormBenchmarkTest00553").serialize();
     var URL = $("#FormBenchmarkTest00553").attr("action");
 
+	var xhr = new XMLHttpRequest();
+    xhr.open("POST", URL, true);
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+$("#code").text((xhr.responseText).decodeEscapeSequence());
+        }else{
+        	$("#code").text("Error " + xhr.status + " " + xhr.statusText + " ocurred.");
+        }
+    }
+    xhr.send(formData);
+/*
     $.ajax({
         url : URL,
         type: "POST",
         data : formData,
         success: function(data, textStatus, jqXHR){
-$("#code").text(data.decodeEscapeSequence());
+$("#code").text((xhr.responseText).decodeEscapeSequence());
         },
          error: function (jqXHR, textStatus, errorThrown){ alert(errorThrown);}
     });
-});
+    */
+//});
+}
 
 function escapeRegExp(str) {
     return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");

@@ -33,7 +33,11 @@ public class BenchmarkTest01881 extends HttpServlet {
 	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doPost(request, response);
+		javax.servlet.http.Cookie userCookie = new javax.servlet.http.Cookie("BenchmarkTest01881", "bar");
+		userCookie.setMaxAge(60*3); //Store cookie for 3 minutes
+		response.addCookie(userCookie);
+		javax.servlet.RequestDispatcher rd = request.getRequestDispatcher("/sqli-04/BenchmarkTest01881.html");
+		rd.include(request, response);
 	}
 
 	@Override
@@ -52,7 +56,7 @@ public class BenchmarkTest01881 extends HttpServlet {
 			}
 		}
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		try {
 	        String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='" + bar + "'";
@@ -74,13 +78,13 @@ public class BenchmarkTest01881 extends HttpServlet {
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "safe!";
 		java.util.HashMap<String,Object> map20027 = new java.util.HashMap<String,Object>();
-		map20027.put("keyA-20027", "a Value"); // put some stuff in the collection
+		map20027.put("keyA-20027", "a-Value"); // put some stuff in the collection
 		map20027.put("keyB-20027", param); // put it in a collection
-		map20027.put("keyC", "another Value"); // put some stuff in the collection
+		map20027.put("keyC", "another-Value"); // put some stuff in the collection
 		bar = (String)map20027.get("keyB-20027"); // get it back out
 	
 		return bar;	

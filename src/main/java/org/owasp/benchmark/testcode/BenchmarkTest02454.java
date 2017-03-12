@@ -44,7 +44,7 @@ public class BenchmarkTest02454 extends HttpServlet {
 		String param = scr.getTheParameter("BenchmarkTest02454");
 		if (param == null) param = "";
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='"+ bar +"'";
 				
@@ -65,7 +65,7 @@ public class BenchmarkTest02454 extends HttpServlet {
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = param;
 	

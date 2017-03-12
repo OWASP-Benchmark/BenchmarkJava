@@ -43,7 +43,7 @@ public class BenchmarkTest01236 extends HttpServlet {
 		String param = request.getParameter("BenchmarkTest01236");
 		if (param == null) param = "";
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		// FILE URIs are tricky because they are different between Mac and Windows because of lack of standardization.
 		// Mac requires an extra slash for some reason.
@@ -75,7 +75,7 @@ public class BenchmarkTest01236 extends HttpServlet {
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
 		String bar = thing.doSomething(param);

@@ -57,7 +57,7 @@ public class BenchmarkTest02016 extends HttpServlet {
 		}
 		// Note: We don't URL decode header names because people don't normally do that
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		// javax.servlet.http.HttpSession.putValue(java.lang.String,java.lang.Object^)
 		request.getSession().putValue( "userid", bar);
@@ -69,7 +69,7 @@ public class BenchmarkTest02016 extends HttpServlet {
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
 		String bar = thing.doSomething(param);

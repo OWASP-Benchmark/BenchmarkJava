@@ -7,44 +7,46 @@
 <title>BenchmarkTest01101</title>
 </head>
 <body>
-<form action="/benchmark/crypto-01/BenchmarkTest01101" method="POST" id="FormBenchmarkTest01101">
+<form action="/benchmark/crypto-01/BenchmarkTest01101"  method="POST" id="FormBenchmarkTest01101">
     <div><label>Please explain your answer:</label></div>
     <br/>
 	<div><textarea rows="4" cols="50" id="BenchmarkTest01101Area" name="BenchmarkTest01101Area" value=""></textarea></div>
 	<div><label>Any additional note for the reviewer:</label></div>
 	<div><input type="text" id="answer" name="answer"></input></div>
     <br/>
-    <div><label>An AJAX request will be sent with a header named BenchmarkTest01101 and value:</label>
-    <input type="text" id="BenchmarkTest01101" name="BenchmarkTest01101" value="someSecret" class="safe"></input></div>
-	<div><input type="button" id="login-btn" value="Login" /></div>
+    <div><label>An AJAX request will be sent with a header named <input type="text" id="BenchmarkTest01101" name="BenchmarkTest01101" value="someSecret" class="safe"></input>
+    and value of BenchmarkTest01101.</label>
+    </div>
+	<div><input type="button" id="login-btn" value="Login" onclick="submitForm()" /></div>
 </form>
 <div id="ajax-form-msg1"><pre><code class="prettyprint" id="code"></code></pre></div>
 <script>
 $('.safe').keypress(function (e) {
   if (e.which == 13) {
-    $('#login-btn').trigger('click');
+    submitForm();
     return false;
   }
 });
 
-$("#login-btn").click(function(){
-    var formData = $("#FormBenchmarkTest01101").serializeArray();
+function submitForm() {
+    var formData = $("#FormBenchmarkTest01101").serialize();
     var URL = $("#FormBenchmarkTest01101").attr("action");
     var text = $("#FormBenchmarkTest01101 input[id=BenchmarkTest01101]").val();
     
-    $.ajax({
-        beforeSend: function (request){
-			request.setRequestHeader($("#FormBenchmarkTest01101 input[id=BenchmarkTest01101]").val(), 'BenchmarkTest01101');
-		},
-        url : URL,
-        type: "POST",
-        data : formData,
-        success: function(data, textStatus, jqXHR){
-$("#code").text(data.decodeEscapeSequence());
-        },
-         error: function (jqXHR, textStatus, errorThrown){ alert(errorThrown);}
-    });
-});
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", URL, true);
+
+    xhr.setRequestHeader( text, 'BenchmarkTest01101');
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+$("#code").text((xhr.responseText).decodeEscapeSequence());
+        }else{
+        	$("#code").html("Error " + xhr.status + " ocurred.");
+        }
+    }
+    xhr.send(formData);
+}
 
 function escapeRegExp(str) {
     return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");

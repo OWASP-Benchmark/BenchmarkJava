@@ -43,7 +43,7 @@ public class BenchmarkTest02701 extends HttpServlet {
 		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
 		String param = scr.getTheValue("BenchmarkTest02701");
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		byte[] bytes = new byte[10];
 		new java.util.Random().nextBytes(bytes);
@@ -94,7 +94,7 @@ public class BenchmarkTest02701 extends HttpServlet {
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		StringBuilder sbxyz86795 = new StringBuilder(param);
 		String bar = sbxyz86795.append("_SafeStuff").toString();

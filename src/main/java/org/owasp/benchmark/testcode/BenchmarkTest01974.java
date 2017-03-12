@@ -48,7 +48,7 @@ public class BenchmarkTest01974 extends HttpServlet {
 		// URL Decode the header value since req.getHeader() doesn't. Unlike req.getParameter().
 		param = java.net.URLDecoder.decode(param, "UTF-8");
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		try {
 			java.io.FileInputStream file = new java.io.FileInputStream(org.owasp.benchmark.helpers.Utils.getFileFromClasspath("employees.xml", this.getClass().getClassLoader()));
@@ -85,13 +85,13 @@ value.getTextContent() + "<br/>"
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "safe!";
 		java.util.HashMap<String,Object> map11821 = new java.util.HashMap<String,Object>();
-		map11821.put("keyA-11821", "a Value"); // put some stuff in the collection
+		map11821.put("keyA-11821", "a-Value"); // put some stuff in the collection
 		map11821.put("keyB-11821", param); // put it in a collection
-		map11821.put("keyC", "another Value"); // put some stuff in the collection
+		map11821.put("keyC", "another-Value"); // put some stuff in the collection
 		bar = (String)map11821.get("keyB-11821"); // get it back out
 	
 		return bar;	

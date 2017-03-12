@@ -46,7 +46,7 @@ public class BenchmarkTest01571 extends HttpServlet {
 		  param = values[0];
 		else param = "";
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		java.io.File fileTarget = new java.io.File(bar, "/Test.txt");
 		response.getWriter().println(
@@ -64,7 +64,7 @@ public class BenchmarkTest01571 extends HttpServlet {
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar;
 		String guess = "ABC";

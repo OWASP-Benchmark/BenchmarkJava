@@ -43,7 +43,7 @@ public class BenchmarkTest01309 extends HttpServlet {
 		String param = request.getParameter("BenchmarkTest01309");
 		if (param == null) param = "";
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		String sql = "SELECT TOP 1 USERNAME from USERS where USERNAME='foo' and PASSWORD='" + bar + "'";
 		try {
@@ -74,7 +74,7 @@ public class BenchmarkTest01309 extends HttpServlet {
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
 		String a9334 = param; //assign

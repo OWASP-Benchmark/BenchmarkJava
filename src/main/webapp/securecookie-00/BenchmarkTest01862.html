@@ -7,25 +7,17 @@
 <title>BenchmarkTest01862</title>
 </head>
 <body>
-<form action="/benchmark/securecookie-00/BenchmarkTest01862" >
+<form action="/benchmark/securecookie-00/BenchmarkTest01862"  method="POST" id="FormBenchmarkTest01862" >
     <div><p>Here is the image you are looking for: &nbsp;</p></div>
-    <div><img src="/benchmark/img/500px-Banner_stand.png"  style="width: 20%; height: 20%" class="img-responsive" alt="Responsive image" onload="setCookie('BenchmarkTest01862','test',1)"></div>
+    <div><img src="/benchmark/img/500px-Banner_stand.png"  style="width: 20%; height: 20%" class="img-responsive" alt="Responsive image" onload=""></div>
     <div><p>This page automatically generated the cookie named BenchmarkTest01862 with the value displayed below,
         if you want to generate a new cookie with a different value or use a specific value, please
         use the text box "Value" then press the "Generate cookie" button; once you have the value you want just
         press "Test it!" to send the cookie.</p></div>
-    <div><label>Parameter: cookie BenchmarkTest01862<BR> Value:</label>
-	<input type="text" id="BenchmarkTest01862" name="BenchmarkTest01862" value="whatever"></input></div>
-	<div><input type="button" value="Generate cookie" onclick="setCookie('BenchmarkTest01862',document.getElementById('BenchmarkTest01862').value,1)" id="cGenerator"/></div>
-    <br/>
-    <div><h5 id="cValue"></h5></div>
 	<div><input type="submit" value="Test it!" /></div>
 </form>
 <script>
 function setCookie(cname, cvalue, exdays) {
-	if (cvalue=='test') {
-		cvalue = "FileName"
-	}
 	Cookies.set(cname, cvalue,{
 		path: 'BenchmarkTest01862',
 		version: 1

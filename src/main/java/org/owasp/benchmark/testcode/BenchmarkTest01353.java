@@ -48,7 +48,7 @@ public class BenchmarkTest01353 extends HttpServlet {
 		}
 		
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		java.util.List<String> argList = new java.util.ArrayList<String>();
 		
@@ -78,7 +78,7 @@ public class BenchmarkTest01353 extends HttpServlet {
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar;
 		String guess = "ABC";

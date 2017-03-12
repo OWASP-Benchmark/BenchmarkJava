@@ -57,7 +57,7 @@ public class BenchmarkTest01129 extends HttpServlet {
 		}
 		// Note: We don't URL decode header names because people don't normally do that
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		int randNumber = new java.util.Random().nextInt(99);
 		String rememberMeKey = Integer.toString(randNumber);
@@ -110,7 +110,7 @@ public class BenchmarkTest01129 extends HttpServlet {
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar;
 		

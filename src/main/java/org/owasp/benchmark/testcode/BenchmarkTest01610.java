@@ -46,7 +46,7 @@ public class BenchmarkTest01610 extends HttpServlet {
 		  param = values[0];
 		else param = "";
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		String cmd = "";
         String osName = System.getProperty("os.name");
@@ -72,7 +72,7 @@ public class BenchmarkTest01610 extends HttpServlet {
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "";
 		if (param != null) {

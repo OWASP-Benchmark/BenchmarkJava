@@ -48,7 +48,7 @@ public class BenchmarkTest01357 extends HttpServlet {
 		}
 		
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		int r = new java.util.Random().nextInt();
 		String rememberMeKey = Integer.toString(r);
@@ -100,7 +100,7 @@ public class BenchmarkTest01357 extends HttpServlet {
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "";
 		if (param != null) {

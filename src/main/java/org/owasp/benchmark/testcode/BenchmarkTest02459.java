@@ -46,7 +46,7 @@ public class BenchmarkTest02459 extends HttpServlet {
 		  param = values[0];
 		else param = "";
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		// Code based on example from:
 		// http://examples.javacodegeeks.com/core-java/crypto/encrypt-decrypt-file-stream-with-des/
@@ -139,13 +139,13 @@ e.printStackTrace(response.getWriter());
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "safe!";
 		java.util.HashMap<String,Object> map56716 = new java.util.HashMap<String,Object>();
-		map56716.put("keyA-56716", "a Value"); // put some stuff in the collection
+		map56716.put("keyA-56716", "a-Value"); // put some stuff in the collection
 		map56716.put("keyB-56716", param); // put it in a collection
-		map56716.put("keyC", "another Value"); // put some stuff in the collection
+		map56716.put("keyC", "another-Value"); // put some stuff in the collection
 		bar = (String)map56716.get("keyB-56716"); // get it back out
 	
 		return bar;	

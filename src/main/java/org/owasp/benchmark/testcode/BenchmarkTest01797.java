@@ -43,7 +43,7 @@ public class BenchmarkTest01797 extends HttpServlet {
 		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
 		String param = scr.getTheValue("BenchmarkTest01797");
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		try {
 			double rand = java.security.SecureRandom.getInstance("SHA1PRNG").nextDouble();
@@ -101,7 +101,7 @@ user + " has been remembered with cookie: " + rememberMe.getName()
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "safe!";
 		java.util.HashMap<String,Object> map85341 = new java.util.HashMap<String,Object>();

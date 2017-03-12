@@ -43,7 +43,7 @@ public class BenchmarkTest02730 extends HttpServlet {
 		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
 		String param = scr.getTheValue("BenchmarkTest02730");
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		String sql = "SELECT * from USERS where USERNAME=? and PASSWORD='"+ bar +"'";
 				
@@ -65,7 +65,7 @@ public class BenchmarkTest02730 extends HttpServlet {
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
 		String a81593 = param; //assign

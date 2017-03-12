@@ -43,7 +43,7 @@ public class BenchmarkTest01754 extends HttpServlet {
 		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
 		String param = scr.getTheValue("BenchmarkTest01754");
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 	org.owasp.benchmark.helpers.LDAPManager ads = new org.owasp.benchmark.helpers.LDAPManager();
 	try {
@@ -89,13 +89,13 @@ public class BenchmarkTest01754 extends HttpServlet {
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "safe!";
 		java.util.HashMap<String,Object> map91865 = new java.util.HashMap<String,Object>();
-		map91865.put("keyA-91865", "a Value"); // put some stuff in the collection
+		map91865.put("keyA-91865", "a-Value"); // put some stuff in the collection
 		map91865.put("keyB-91865", param); // put it in a collection
-		map91865.put("keyC", "another Value"); // put some stuff in the collection
+		map91865.put("keyC", "another-Value"); // put some stuff in the collection
 		bar = (String)map91865.get("keyB-91865"); // get it back out
 
             return bar;

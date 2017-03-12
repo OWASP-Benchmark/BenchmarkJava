@@ -44,7 +44,7 @@ public class BenchmarkTest02415 extends HttpServlet {
 		String param = scr.getTheParameter("BenchmarkTest02415");
 		if (param == null) param = "";
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		byte[] bytes = new byte[10];
 		new java.util.Random().nextBytes(bytes);
@@ -95,7 +95,7 @@ public class BenchmarkTest02415 extends HttpServlet {
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = org.owasp.esapi.ESAPI.encoder().encodeForHTML(param);
 	

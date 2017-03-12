@@ -43,7 +43,7 @@ public class BenchmarkTest01230 extends HttpServlet {
 		String param = request.getParameter("BenchmarkTest01230");
 		if (param == null) param = "";
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		try {
 		    java.util.Properties benchmarkprops = new java.util.Properties();
@@ -122,7 +122,7 @@ e.printStackTrace(response.getWriter());
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		StringBuilder sbxyz45958 = new StringBuilder(param);
 		String bar = sbxyz45958.append("_SafeStuff").toString();

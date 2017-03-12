@@ -43,7 +43,7 @@ public class BenchmarkTest01301 extends HttpServlet {
 		String param = request.getParameter("BenchmarkTest01301");
 		if (param == null) param = "";
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		String sql = "{call " + bar + "}";
 						
@@ -67,7 +67,7 @@ public class BenchmarkTest01301 extends HttpServlet {
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
 		String a11416 = param; //assign

@@ -57,7 +57,7 @@ public class BenchmarkTest02624 extends HttpServlet {
 		}
 		param = java.net.URLDecoder.decode(param, "UTF-8");
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		// javax.servlet.http.HttpSession.setAttribute(java.lang.String,java.lang.Object^)
 		request.getSession().setAttribute( "userid", bar);
@@ -69,13 +69,13 @@ public class BenchmarkTest02624 extends HttpServlet {
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "safe!";
 		java.util.HashMap<String,Object> map3141 = new java.util.HashMap<String,Object>();
-		map3141.put("keyA-3141", "a Value"); // put some stuff in the collection
+		map3141.put("keyA-3141", "a-Value"); // put some stuff in the collection
 		map3141.put("keyB-3141", param); // put it in a collection
-		map3141.put("keyC", "another Value"); // put some stuff in the collection
+		map3141.put("keyC", "another-Value"); // put some stuff in the collection
 		bar = (String)map3141.get("keyB-3141"); // get it back out
 	
 		return bar;	

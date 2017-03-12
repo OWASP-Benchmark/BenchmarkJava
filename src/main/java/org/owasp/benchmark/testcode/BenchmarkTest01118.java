@@ -57,7 +57,7 @@ public class BenchmarkTest01118 extends HttpServlet {
 		}
 		// Note: We don't URL decode header names because people don't normally do that
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		String fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
         java.io.InputStream is = null;
@@ -95,7 +95,7 @@ org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size))
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "safe!";
 		java.util.HashMap<String,Object> map63904 = new java.util.HashMap<String,Object>();

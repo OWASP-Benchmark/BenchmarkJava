@@ -43,7 +43,7 @@ public class BenchmarkTest01269 extends HttpServlet {
 		String param = request.getParameter("BenchmarkTest01269");
 		if (param == null) param = "";
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		String a1 = "";
 		String a2 = "";
@@ -73,7 +73,7 @@ public class BenchmarkTest01269 extends HttpServlet {
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar;
 		

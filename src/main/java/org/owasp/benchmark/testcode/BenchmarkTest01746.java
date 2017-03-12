@@ -43,7 +43,7 @@ public class BenchmarkTest01746 extends HttpServlet {
 		org.owasp.benchmark.helpers.SeparateClassRequest scr = new org.owasp.benchmark.helpers.SeparateClassRequest( request );
 		String param = scr.getTheValue("BenchmarkTest01746");
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		// FILE URIs are tricky because they are different between Mac and Windows because of lack of standardization.
 		// Mac requires an extra slash for some reason.
@@ -75,7 +75,7 @@ public class BenchmarkTest01746 extends HttpServlet {
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar;
 		

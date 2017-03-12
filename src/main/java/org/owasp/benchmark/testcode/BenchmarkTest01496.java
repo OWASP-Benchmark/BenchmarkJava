@@ -44,7 +44,7 @@ public class BenchmarkTest01496 extends HttpServlet {
 		String param = scr.getTheParameter("BenchmarkTest01496");
 		if (param == null) param = "";
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		String fileName = null;
 		java.io.FileInputStream fis = null;
@@ -78,7 +78,7 @@ org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size))
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar;
 		String guess = "ABC";

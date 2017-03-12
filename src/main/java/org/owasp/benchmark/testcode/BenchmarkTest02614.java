@@ -57,7 +57,7 @@ public class BenchmarkTest02614 extends HttpServlet {
 		}
 		param = java.net.URLDecoder.decode(param, "UTF-8");
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 	    try {
 		    java.util.Random numGen = java.security.SecureRandom.getInstance("SHA1PRNG");
@@ -120,7 +120,7 @@ user + " has been remembered with cookie: " + rememberMe.getName()
 		generator.nextBytes(barray);
 	}
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "";
 		if (param != null) bar = param.split(" ")[0];

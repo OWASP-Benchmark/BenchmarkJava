@@ -43,7 +43,7 @@ public class BenchmarkTest01252 extends HttpServlet {
 		String param = request.getParameter("BenchmarkTest01252");
 		if (param == null) param = "";
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 response.setHeader("X-XSS-Protection", "0");
 		Object[] obj = { "a", "b" };
@@ -53,7 +53,7 @@ response.setHeader("X-XSS-Protection", "0");
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar;
 		String guess = "ABC";

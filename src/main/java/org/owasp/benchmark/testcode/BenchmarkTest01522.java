@@ -44,7 +44,7 @@ public class BenchmarkTest01522 extends HttpServlet {
 		String param = scr.getTheParameter("BenchmarkTest01522");
 		if (param == null) param = "";
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		byte[] input = new byte[1000];
 		String str = "?";
@@ -78,7 +78,7 @@ public class BenchmarkTest01522 extends HttpServlet {
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = org.owasp.esapi.ESAPI.encoder().encodeForHTML(param);
 

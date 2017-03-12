@@ -44,7 +44,7 @@ public class BenchmarkTest01500 extends HttpServlet {
 		String param = scr.getTheParameter("BenchmarkTest01500");
 		if (param == null) param = "";
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		String fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
         java.io.InputStream is = null;
@@ -82,13 +82,13 @@ org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size))
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "safe!";
 		java.util.HashMap<String,Object> map3545 = new java.util.HashMap<String,Object>();
-		map3545.put("keyA-3545", "a Value"); // put some stuff in the collection
+		map3545.put("keyA-3545", "a-Value"); // put some stuff in the collection
 		map3545.put("keyB-3545", param); // put it in a collection
-		map3545.put("keyC", "another Value"); // put some stuff in the collection
+		map3545.put("keyC", "another-Value"); // put some stuff in the collection
 		bar = (String)map3545.get("keyB-3545"); // get it back out
 
             return bar;

@@ -57,7 +57,7 @@ public class BenchmarkTest02011 extends HttpServlet {
 		}
 		// Note: We don't URL decode header names because people don't normally do that
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		try {
 			double rand = java.security.SecureRandom.getInstance("SHA1PRNG").nextDouble();
@@ -113,7 +113,7 @@ user + " has been remembered with cookie: " + rememberMe.getName()
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		StringBuilder sbxyz64726 = new StringBuilder(param);
 		String bar = sbxyz64726.append("_SafeStuff").toString();

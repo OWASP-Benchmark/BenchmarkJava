@@ -43,7 +43,7 @@ public class BenchmarkTest01316 extends HttpServlet {
 		String param = request.getParameter("BenchmarkTest01316");
 		if (param == null) param = "";
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 		try {
 			java.io.FileInputStream file = new java.io.FileInputStream(org.owasp.benchmark.helpers.Utils.getFileFromClasspath("employees.xml", this.getClass().getClassLoader()));
@@ -78,7 +78,7 @@ xp.evaluate(expression, xmlDocument) + "<br/>"
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar;
 		

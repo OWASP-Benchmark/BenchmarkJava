@@ -44,7 +44,7 @@ public class BenchmarkTest01491 extends HttpServlet {
 		String param = scr.getTheParameter("BenchmarkTest01491");
 		if (param == null) param = "";
 
-		String bar = new Test().doSomething(param);
+		String bar = new Test().doSomething(request, param);
 		
 	org.owasp.benchmark.helpers.LDAPManager ads = new org.owasp.benchmark.helpers.LDAPManager();
 	try {
@@ -88,7 +88,7 @@ public class BenchmarkTest01491 extends HttpServlet {
 	
     private class Test {
 
-        public String doSomething(String param) throws ServletException, IOException {
+        public String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		// Chain a bunch of propagators in sequence
 		String a55812 = param; //assign

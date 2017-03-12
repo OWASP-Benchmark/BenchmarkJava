@@ -50,7 +50,7 @@ public class BenchmarkTest02071 extends HttpServlet {
 		// URL Decode the header value since req.getHeaders() doesn't. Unlike req.getParameters().
 		param = java.net.URLDecoder.decode(param, "UTF-8");
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 	    try {
 		    java.security.SecureRandom secureRandomGenerator = java.security.SecureRandom.getInstance("SHA1PRNG");
@@ -110,13 +110,13 @@ user + " has been remembered with cookie: " + rememberMe.getName()
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		String bar = "safe!";
 		java.util.HashMap<String,Object> map68280 = new java.util.HashMap<String,Object>();
-		map68280.put("keyA-68280", "a Value"); // put some stuff in the collection
+		map68280.put("keyA-68280", "a-Value"); // put some stuff in the collection
 		map68280.put("keyB-68280", param); // put it in a collection
-		map68280.put("keyC", "another Value"); // put some stuff in the collection
+		map68280.put("keyC", "another-Value"); // put some stuff in the collection
 		bar = (String)map68280.get("keyB-68280"); // get it back out
 	
 		return bar;	

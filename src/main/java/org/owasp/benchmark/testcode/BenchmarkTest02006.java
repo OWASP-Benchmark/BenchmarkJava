@@ -57,7 +57,7 @@ public class BenchmarkTest02006 extends HttpServlet {
 		}
 		// Note: We don't URL decode header names because people don't normally do that
 
-		String bar = doSomething(param);
+		String bar = doSomething(request, param);
 		
 		byte[] input = new byte[1000];
 		String str = "?";
@@ -89,7 +89,7 @@ public class BenchmarkTest02006 extends HttpServlet {
 	}  // end doPost
 	
 		
-	private static String doSomething(String param) throws ServletException, IOException {
+	private static String doSomething(HttpServletRequest request, String param) throws ServletException, IOException {
 
 		StringBuilder sbxyz44058 = new StringBuilder(param);
 		String bar = sbxyz44058.append("_SafeStuff").toString();

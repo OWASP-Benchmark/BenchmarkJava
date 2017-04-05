@@ -301,7 +301,7 @@ public class ScatterVulns extends ScatterPlot {
                 // Special hack to make it line up better if the letter is an 'I' or 'i'
                 String label = ( ch == 'I' || ch == 'i' ? ch + ":  " : ""+ch + ": " );
                 double score = or.getResults(category).score * 100;
-                String msg = "\u25A0 " + label + r.getToolNameAndVersion() + " (" + (int) score + "%)";
+                String msg = "\u25A0 " + label + r.getToolNameAndVersion() + " (" + Math.round(score) + "%)";
                 XYTextAnnotation stroketext3 = new XYTextAnnotation(msg, x, y + i * -3.3);
                 stroketext3.setTextAnchor(TextAnchor.CENTER_LEFT);
                 stroketext3.setBackgroundPaint(Color.white);
@@ -342,7 +342,7 @@ public class ScatterVulns extends ScatterPlot {
                 if (!BenchmarkScore.showAveOnlyMode) {
                     // Special hack to make it line up better if the letter is an 'I' or 'i'
                     String label = ( ch == 'I' || ch == 'i' ? ch + ":  " : ""+ch + ": " );
-	                String msg = "\u25A0 " + label + r.getToolNameAndVersion() + " (" + (int) score + "%)";
+	                String msg = "\u25A0 " + label + r.getToolNameAndVersion() + " (" + Math.round(score) + "%)";
 	                XYTextAnnotation stroketext4 = new XYTextAnnotation(msg, x, y + i * -3.3);
 	                stroketext4.setTextAnchor(TextAnchor.CENTER_LEFT);
 	                stroketext4.setBackgroundPaint(Color.white);
@@ -378,7 +378,7 @@ public class ScatterVulns extends ScatterPlot {
         if (commercialToolCount > 1 || (BenchmarkScore.showAveOnlyMode && commercialToolCount == 1)) {
             commercialAve = commercialTotal / commercialToolCount;
             XYTextAnnotation stroketext2 = new XYTextAnnotation("\u25A0 " + ch + ": Commercial Average" 
-               + " (" + (int) commercialAve + "%)", x, y + i * -3.3);
+               + " (" + Math.round(commercialAve) + "%)", x, y + i * -3.3);
             stroketext2.setTextAnchor(TextAnchor.CENTER_LEFT);
             stroketext2.setBackgroundPaint(Color.white);
             stroketext2.setPaint(Color.magenta);
@@ -413,7 +413,7 @@ public class ScatterVulns extends ScatterPlot {
     }
 
     public int getCommercialLow() {
-        return (int) commercialLow;
+        return (int) Math.round(commercialLow);
     }
 
     public TestResults.ToolType getCommercialLowToolType() {
@@ -421,11 +421,11 @@ public class ScatterVulns extends ScatterPlot {
     }
 
     public int getCommercialAve() {
-        return (int) commercialAve;
+        return (int) Math.round(commercialAve);
     }
 
     public int getCommercialHigh() {
-        return (int) commercialHigh;
+        return (int) Math.round(commercialHigh);
     }
 
     public TestResults.ToolType getCommercialHighToolType() {

@@ -123,7 +123,7 @@ public class ScatterPlot {
     
     public void writeChartToFile(File f, int height) throws IOException {
         FileOutputStream stream = new FileOutputStream(f);
-        ChartUtilities.writeChartAsPNG(stream, chart, (int)(height*1.4), height);
+        ChartUtilities.writeChartAsPNG(stream, chart, (int)Math.round(height*1.4), height);
         stream.close();
     }
 

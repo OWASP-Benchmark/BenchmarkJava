@@ -202,8 +202,8 @@ public class ScatterTools extends ScatterPlot {
 			toolCount++;
             // Special hack to make it line up better if the letter is an 'I' or 'i'
             String label = ( ch == 'I' || ch == 'i' ? ch + ":  " : ""+ch + ": " );
-			int score = (int) (100 * (r.truePositiveRate - r.falsePositiveRate));
-			String msg = "\u25A0 " + label + r.category + " (" + score + "%)";
+			double score = 100 * (r.truePositiveRate - r.falsePositiveRate);
+			String msg = "\u25A0 " + label + r.category + " (" + Math.round(score) + "%)";
 			totalScore += score;
 			XYTextAnnotation stroketext = new XYTextAnnotation(msg, x, y + i * -3.3);
 			stroketext.setTextAnchor(TextAnchor.CENTER_LEFT);
@@ -218,7 +218,7 @@ public class ScatterTools extends ScatterPlot {
 		
 		if ( toolCount > 1 ) {
             double averageScore = totalScore/toolCount;
-    		XYTextAnnotation stroketext = new XYTextAnnotation("\u25A0 " + ch + ": Average Score for this Tool"+ " (" + (int)averageScore + "%)", x, y + i * -3.3);
+    		XYTextAnnotation stroketext = new XYTextAnnotation("\u25A0 " + ch + ": Average Score for this Tool"+ " (" + Math.round(averageScore) + "%)", x, y + i * -3.3);
     		stroketext.setTextAnchor(TextAnchor.CENTER_LEFT);
     		stroketext.setBackgroundPaint(Color.white);
     		stroketext.setPaint(Color.magenta);

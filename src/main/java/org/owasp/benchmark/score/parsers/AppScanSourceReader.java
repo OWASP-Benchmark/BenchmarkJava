@@ -50,7 +50,11 @@ public class AppScanSourceReader extends Reader {
 		//printPool( vulns );
 		Map<Integer,String> file = parsePool( root, "FilePool", "id", "value", "" );
         Map<Integer,String> finding = parsePool( root, "FindingDataPool", "id", "vtype", "" );
+        // Get the 'confidence' values for all the findings.
         Map<Integer,String> conf = parsePool( root, "FindingDataPool", "id", "conf", "" );
+        // Following gets each finding's severity. Values 2, 1, 0. We tried filtering out Severity 0 or 0 & 1
+        // but AppScan's score went down.
+        //Map<Integer,String> sev = parsePool( root, "FindingDataPool", "id", "sev", "" );
 		Map<Integer,Set<Integer>> assess = parseAssessments( root );
 
 		TestResults tr = new TestResults( "IBM AppScan Source",true,TestResults.ToolType.SAST);
@@ -98,7 +102,10 @@ public class AppScanSourceReader extends Reader {
 				tcr.setEvidence( vtype );
 				tcr.setConfidence( confidence );
 				
-				// Exclude 3 and above - apparently these are "scan coverage"
+				// Exclude Confidence 3 - apparently these are "scan coverage"
+				// We tried excluding Confidence 2 as well - as these are "suspect", but AppScan's score actually 
+				// went down because it excludes ALL of the weak randomness findings.
+				// Confidence 1 - are "definitive" findings
 				if ( confidence < 3 ) {
 				    tr.put(tcr);
 				}
@@ -107,7 +114,7 @@ public class AppScanSourceReader extends Reader {
 		return tr;
 	}
 	
-	// 3 Hour(s) 7 Minute(s) 58 Second(s)
+	// e.g., 3 Hour(s) 7 Minute(s) 58 Second(s)
 	private String parseTime(String message) {
 	    String[] parts = message.split( "\\) ");
         String hours = parts[0].substring( 0, parts[0].indexOf(' ') ).trim();
@@ -126,15 +133,13 @@ public class AppScanSourceReader extends Reader {
 		
 	}
 
-
-
 	private static int cweLookup(String vtype) {
 		switch( vtype ) {
 //		case "Vulnerability.AppDOS" : return 00;
 //		case "Vulnerability.Authentication.Entity" : return 00;
 		case "Vulnerability.Cryptography.InsecureAlgorithm" : return 327;
         case "Vulnerability.Cryptography.PoorEntropy" : return 330;
-        case "Vulnerability.Cryptography.????WeakHash" : return 328;  // FIXME
+        case "Vulnerability.Cryptography.????WeakHash" : return 328;  // They don't have a weak hashing rule
 //		case "Vulnerability.ErrorHandling.RevealDetails.Message" : return 00;
 //		case "Vulnerability.ErrorHandling.RevealDetails.StackTrace" : return 00;
 		case "Vulnerability.Injection.HttpResponseSplitting" : return 113;

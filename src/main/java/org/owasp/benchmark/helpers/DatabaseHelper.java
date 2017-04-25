@@ -43,8 +43,7 @@ public class DatabaseHelper {
 
 	static {
 		
-		initDataBase();
-		
+		initDataBase();		
 		System.out.println("Spring context init() ");
 		@SuppressWarnings("resource")
 		org.springframework.context.ApplicationContext ac =

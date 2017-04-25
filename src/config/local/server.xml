@@ -43,8 +43,10 @@
             password=""
             driverClassName="org.hsqldb.jdbc.JDBCDriver"
             url="jdbc:hsqldb:hsql://localhost/benchmarkDataBase;file:benchmark.db;sql.enforce_size=false;shutdown=false;"
-            maxActive="8"
-            maxIdle="4"/>
+            maxTotal="12"
+            maxIdle="2"
+            maxWaitMillis="5000"
+            removeAbandonedOnBorrow="true"/>
   </GlobalNamingResources>
 
   <!-- A "Service" is a collection of one or more "Connectors" that share

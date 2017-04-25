@@ -1,2 +1,1 @@
-﻿
-CALL mvn test -Pcrawler
+﻿CALL mvn compile -Pcrawler

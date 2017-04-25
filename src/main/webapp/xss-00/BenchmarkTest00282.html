@@ -14,8 +14,8 @@
 	<div><label>Any additional note for the reviewer:</label></div>
 	<div><input type="text" id="answer" name="answer"></input></div>
     <br/>
-    <div><label>An AJAX request will be sent with a header named BenchmarkTest00282 and value:</label>
-    <input type="text" id="BenchmarkTest00282" name="BenchmarkTest00282" value="SafeText" class="safe"></input></div>
+
+    <br><div><label>NOTE: This test case actually takes the Referer value as the source of input since normal headers are not considered a valid source for XSS attacks. To change the input to this test case, update the URL above, reload the page, and then submit a request.</label></div>
 	<div><input type="button" id="login-btn" value="Login" onclick="submitForm()" /></div>
 </form>
 <div id="ajax-form-msg1"><pre><code class="prettyprint" id="code"></code></pre></div>

@@ -4,7 +4,7 @@ if [[ $status != *"SonarQube is running"* ]];then
     echo "Attempting to start service....."
     sudo -u root -p password /etc/init.d/sonar start
 fi;
-    mvn compile sonar:sonar -Dbuildtime.output.csv=true -Dbuildtime.oifutput.csv.file=classes/out.csv -Dsonar.scm.disabled=true -Dsonar.skipDesign=true -Dsonar.cpd.exclusions=**/*.java -Dsonar.importSources=false -Dsonar.exclusions=**/*.xml
+    mvn compile sonar:sonar -Dbuildtime.output.csv=true -Dbuildtime.output.csv.file=classes/out.csv -Dsonar.scm.disabled=true -Dsonar.skipDesign=true -Dsonar.cpd.exclusions=**/*.java -Dsonar.importSources=false -Dsonar.exclusions=**/*.xml
     done=false
     while [ "$done" != "true" ]
     do

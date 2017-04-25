@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<Context>
+	<Resource auth="Container" factory="org.objectweb.jotm.UserTransactionFactory"
+		jotm.timeout="60" name="UserTransaction" type="javax.transaction.UserTransaction" />
+	<CookieProcessor className="org.apache.tomcat.util.http.Rfc6265CookieProcessor" />
+</Context>

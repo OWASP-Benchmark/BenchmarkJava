@@ -321,7 +321,7 @@ public class ScatterHome extends ScatterPlot {
                 String label = ( ch == 'I' || ch == 'i' ? ch + ":  " : ""+ch + ": " );
                 double score = or.getScore() * 100;
                 if (!BenchmarkScore.showAveOnlyMode) {
-	                String msg = "\u25A0 " + label + r.getToolNameAndVersion() + " (" + (int)score + "%)";
+	                String msg = "\u25A0 " + label + r.getToolNameAndVersion() + " (" + Math.round(score) + "%)";
 	                XYTextAnnotation stroketext4 = new XYTextAnnotation(msg, x, y + i * -3.3);
 	                stroketext4.setTextAnchor(TextAnchor.CENTER_LEFT);
 	                stroketext4.setBackgroundPaint(Color.white);
@@ -346,7 +346,7 @@ public class ScatterHome extends ScatterPlot {
         if (commercialToolCount > 1 || (BenchmarkScore.showAveOnlyMode && commercialToolCount == 1)) {
             double averageScore = totalScore/commercialToolCount;
             XYTextAnnotation stroketext2 = new XYTextAnnotation("\u25A0 " + ch 
-            	+ ": Commercial Average" + " (" + (int)averageScore + "%)", x, y + i * -3.3);
+            	+ ": Commercial Average" + " (" + Math.round(averageScore) + "%)", x, y + i * -3.3);
             stroketext2.setTextAnchor(TextAnchor.CENTER_LEFT);
             stroketext2.setBackgroundPaint(Color.white);
             stroketext2.setPaint(Color.magenta);

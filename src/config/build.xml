@@ -24,7 +24,7 @@
 		<parallel>
 			<daemons>
 				<java classname="org.hsqldb.Server" fork="false" failonerror="true">
-					<arg line="--database.0 file:src/db/benchmark.db --dbname.0 benchmarkDataBase" />
+					<arg line="--database.0 file:target/db/benchmark.db --dbname.0 benchmarkDataBase" />
 					<classpath refid="maven.compile.classpath" />
 				</java>
 			</daemons>

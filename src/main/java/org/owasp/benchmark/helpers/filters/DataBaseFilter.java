@@ -11,9 +11,11 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 public class DataBaseFilter implements Filter {
+	protected FilterConfig config;
 
 	@Override
-	public void init(FilterConfig arg0) throws ServletException {
+	public void init(FilterConfig config) throws ServletException {
+		this.config = config;
 	}
 
 	/**
@@ -29,11 +31,12 @@ public class DataBaseFilter implements Filter {
 			org.owasp.benchmark.helpers.DatabaseHelper.getSqlConnection().rollback();
 		} catch (SQLException e) {
 			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-				response.getWriter().println("Problem while rolling back!");
+				System.out.println("Problem while rolling back the database");
 				return;
 			} else
 				throw new ServletException(e);
 		}
+
 	}
 
 	@Override

@@ -53,18 +53,6 @@ $("#code").text((xhr.responseText).decodeEscapeSequence());
         }
     }
     xhr.send(formData);
-/*
-    $.ajax({
-        url : URL,
-        type: "POST",
-        data : formData,
-        success: function(data, textStatus, jqXHR){
-$("#code").text((xhr.responseText).decodeEscapeSequence());
-        },
-         error: function (jqXHR, textStatus, errorThrown){ alert(errorThrown);}
-    });
-    */
-//});
 }
 
 function escapeRegExp(str) {

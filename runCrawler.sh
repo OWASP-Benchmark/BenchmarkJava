@@ -1,3 +1,2 @@
 #!/bin/sh
-
-mvn test -Pcrawler
+mvn compile -Pcrawler

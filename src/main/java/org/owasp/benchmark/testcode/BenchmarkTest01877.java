@@ -35,6 +35,8 @@ public class BenchmarkTest01877 extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		javax.servlet.http.Cookie userCookie = new javax.servlet.http.Cookie("BenchmarkTest01877", "verifyUserPassword%28%27foo%27%2C%27bar%27%29");
 		userCookie.setMaxAge(60*3); //Store cookie for 3 minutes
+		userCookie.setSecure(true);
+		userCookie.setPath(request.getRequestURI());
 		response.addCookie(userCookie);
 		javax.servlet.RequestDispatcher rd = request.getRequestDispatcher("/sqli-04/BenchmarkTest01877.html");
 		rd.include(request, response);

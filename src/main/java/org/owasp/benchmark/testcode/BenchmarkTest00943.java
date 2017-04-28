@@ -35,6 +35,8 @@ public class BenchmarkTest00943 extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		javax.servlet.http.Cookie userCookie = new javax.servlet.http.Cookie("BenchmarkTest00943", "someSecret");
 		userCookie.setMaxAge(60*3); //Store cookie for 3 minutes
+		userCookie.setSecure(true);
+		userCookie.setPath(request.getRequestURI());
 		response.addCookie(userCookie);
 		javax.servlet.RequestDispatcher rd = request.getRequestDispatcher("/crypto-01/BenchmarkTest00943.html");
 		rd.include(request, response);
@@ -62,13 +64,7 @@ public class BenchmarkTest00943 extends HttpServlet {
 		// http://examples.javacodegeeks.com/core-java/crypto/encrypt-decrypt-file-stream-with-des/
 
 		try {
-			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("RSA/ECB/PKCS1Padding", "SunJCE");
-            // Prepare the cipher to encrypt
-            java.security.KeyPairGenerator keyGen = java.security.KeyPairGenerator.getInstance("RSA");
-            keyGen.initialize(4096);
-            java.security.PublicKey publicKey= keyGen.genKeyPair().getPublic();
-            c.init(javax.crypto.Cipher.ENCRYPT_MODE, publicKey);
-			
+			javax.crypto.Cipher c = org.owasp.benchmark.helpers.Utils.getCipher();
 			// encrypt and store the results
 			byte[] input = { (byte)'?' };
 			Object inputParam = bar;
@@ -95,25 +91,6 @@ public class BenchmarkTest00943 extends HttpServlet {
 "Sensitive value: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(input)) + "' encrypted and stored<br/>"
 );
 
-			
-		} catch (java.security.NoSuchAlgorithmException e) {
-			response.getWriter().println(
-"Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case"
-);
-e.printStackTrace(response.getWriter());
-			throw new ServletException(e);
-		} catch (java.security.NoSuchProviderException e) {
-			response.getWriter().println(
-"Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case"
-);
-e.printStackTrace(response.getWriter());
-			throw new ServletException(e);
-		} catch (javax.crypto.NoSuchPaddingException e) {
-			response.getWriter().println(
-"Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case"
-);
-e.printStackTrace(response.getWriter());
-			throw new ServletException(e);
 		} catch (javax.crypto.IllegalBlockSizeException e) {
 			response.getWriter().println(
 "Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case"
@@ -121,12 +98,6 @@ e.printStackTrace(response.getWriter());
 e.printStackTrace(response.getWriter());
 			throw new ServletException(e);
 		} catch (javax.crypto.BadPaddingException e) {
-			response.getWriter().println(
-"Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case"
-);
-e.printStackTrace(response.getWriter());
-			throw new ServletException(e);
-		} catch (java.security.InvalidKeyException e) {
 			response.getWriter().println(
 "Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case"
 );

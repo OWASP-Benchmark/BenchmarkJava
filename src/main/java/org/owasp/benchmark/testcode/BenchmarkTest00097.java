@@ -35,6 +35,8 @@ public class BenchmarkTest00097 extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		javax.servlet.http.Cookie userCookie = new javax.servlet.http.Cookie("BenchmarkTest00097", "color");
 		userCookie.setMaxAge(60*3); //Store cookie for 3 minutes
+		userCookie.setSecure(true);
+		userCookie.setPath(request.getRequestURI());
 		response.addCookie(userCookie);
 		javax.servlet.RequestDispatcher rd = request.getRequestDispatcher("/trustbound-00/BenchmarkTest00097.html");
 		rd.include(request, response);

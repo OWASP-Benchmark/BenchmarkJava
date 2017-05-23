@@ -85,7 +85,7 @@
 								<plugin>
 									<groupId>com.h3xstream.findsecbugs</groupId>
 									<artifactId>findsecbugs-plugin</artifactId>
-									<version>1.4.6</version>
+									<version>1.6.0</version>
 								</plugin>
 							</plugins>
 						</configuration>
@@ -288,6 +288,7 @@
 										-Dcontrast.noteamserver.enable=true
 										-Dcontrast.teamserver.suppress=true
 										-Dcontrast.assess.threshold.entries=100000
+										-Dcontrast.featureJSON=${basedir}/tools/Contrast/assess.json
 									</cargo.jvmargs>
 									<cargo.servlet.port>8443</cargo.servlet.port>
 									<cargo.protocol>https</cargo.protocol>
@@ -832,7 +833,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
-				<version>3.6</version>
+				<version>3.8</version>
 				<configuration>
 					<linkXref>true</linkXref>
 					<targetJdk>1.7</targetJdk>

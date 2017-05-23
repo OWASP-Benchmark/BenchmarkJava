@@ -67,7 +67,7 @@ public class ContrastReader extends Reader {
                         chunk.add(line);
                     } else if (line.contains("Agent Version:")) {
                         String version = line.substring(line.indexOf("Version:") + 8);
-                        tr.setToolVersion(version);
+                        tr.setToolVersion(version.trim());
                     }
                 }
             } catch (Exception ex) {

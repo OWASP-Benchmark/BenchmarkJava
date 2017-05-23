@@ -1,0 +1,38 @@
+{
+  "inventory": {
+     "monitor-ldap": false,
+     "monitor-db": false,
+     "montior-web-calls": false,
+     "activity": false,
+     "libraries": false
+  },
+  "assessment": {
+     "enabled":true,
+     "sources": true,
+     "dynamicSources": true,
+     "propagators": true,
+     "taggers": true,
+     "triggers": true,
+     "rules": true,
+     "responseScanning": true,
+     "identityTagging": false,
+     "validatorScopes": true,
+     "stacktraces":"NONE",
+     "sanitizers": [
+     ],
+     "validators": [
+     ],
+     "disabledRules": [
+     ],
+     "sampling": {
+        "enabled": false,
+        "baseline": 5,
+        "window": 180,
+        "request-frequency": 15,
+        "response-frequency": 35
+     }
+  },
+  "defend": {
+     "enabled": false
+  }
+}

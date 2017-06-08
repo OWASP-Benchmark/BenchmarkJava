@@ -607,8 +607,8 @@ public class BenchmarkScore {
 			else if ( tcr.isReal() && !tcr.isPassed() ) c.fn++; // fn
 			
 			// fake vulnerabilities
-			else if (!tcr.isReal() && tcr.isPassed() ) c.tn++;  // tn
-			else if (!tcr.isReal() && !tcr.isPassed() ) c.fp++; // fp
+			else if (!tcr.isReal() && tcr.isPassed() ) c.fp++;  // fp
+			else if (!tcr.isReal() && !tcr.isPassed() ) c.tn++; // tn
 		}
 		return map;
 	}

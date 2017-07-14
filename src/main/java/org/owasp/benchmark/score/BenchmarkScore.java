@@ -60,6 +60,7 @@ import org.owasp.benchmark.score.parsers.CoverityReader;
 import org.owasp.benchmark.score.parsers.FindbugsReader;
 import org.owasp.benchmark.score.parsers.FortifyReader;
 import org.owasp.benchmark.score.parsers.FusionLiteInsightReader;
+import org.owasp.benchmark.score.parsers.HdivReader;
 import org.owasp.benchmark.score.parsers.JuliaReader;
 import org.owasp.benchmark.score.parsers.NetsparkerReader;
 import org.owasp.benchmark.score.parsers.NoisyCricketReader;
@@ -775,6 +776,9 @@ public class BenchmarkScore {
         else if ( filename.endsWith( ".log" ) ) {
             tr = new ContrastReader().parse( fileToParse );
         }
+        else if (filename.endsWith(".hlg")) {
+			tr = new HdivReader().parse(fileToParse);
+		}
         
         // If the version # of the tool is specified in the results file name, extract it, and set it.
         // For example: Benchmark-1.1-Coverity-results-v1.3.2661-6720.json  (the version # is 1.3.2661 in this example). 

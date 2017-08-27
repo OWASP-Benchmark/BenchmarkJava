@@ -53,6 +53,7 @@ import org.owasp.benchmark.score.parsers.AppScanDynamicReader;
 import org.owasp.benchmark.score.parsers.AppScanSourceReader;
 import org.owasp.benchmark.score.parsers.ArachniReader;
 import org.owasp.benchmark.score.parsers.BurpReader;
+import org.owasp.benchmark.score.parsers.CASTAIPReader;
 import org.owasp.benchmark.score.parsers.CheckmarxReader;
 import org.owasp.benchmark.score.parsers.ContrastReader;
 import org.owasp.benchmark.score.parsers.Counter;
@@ -220,6 +221,7 @@ public class BenchmarkScore {
     	    					
     	    					// read in the expected results for this directory of results
     	    					expectedResults = readExpectedResults( resultsDirFile );
+    	    					System.out.println("Getting expected results from: " + resultsDirFile);
         	    				if (expectedResults == null) {
         	    					System.out.println( "Couldn't read expected results file: " 
         	    							+ resultsDirFile.getAbsolutePath());
@@ -272,10 +274,11 @@ public class BenchmarkScore {
     			}  // end for loop through all files in the directory
 
     		// process the results the normal way with a single results directory
-			} else {
+			} else { // Not "mixed"
 			
 		        // Step 4b: Read the expected results so we know what each tool 'should do'
 				File expected = new File( args[0] );
+				System.out.println("Getting expected results from: " + args[0]);
 				TestResults expectedResults = readExpectedResults( expected );
 				if (expectedResults == null) {
 					System.out.println( "Couldn't read expected results file: " + expected);
@@ -647,6 +650,10 @@ public class BenchmarkScore {
             if ( line2.startsWith( "<pmd" )) {
                 tr = new PMDReader().parse( fileToParse );
             }
+            
+            else if ( line2.startsWith( "<castaip" ) ) {
+                tr = new CASTAIPReader().parse( fileToParse );
+            }
 		    
             else if ( line2.startsWith( "<FusionLiteInsight" )) {
                 tr = new FusionLiteInsightReader().parse( fileToParse );
@@ -734,7 +741,7 @@ public class BenchmarkScore {
 		    File outputFile = File.createTempFile( filename, ".fvdl");
 		    Path source = fileSystem.getPath("audit.fvdl");
 		    Files.copy(source, outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-		    tr = new FortifyReader().parse( outputFile );
+		    tr = FortifyReader.parse( outputFile );
 		    outputFile.delete();
 			
 			// Check to see if the results are regular Fortify or Fortify OnDemand results
@@ -959,8 +966,8 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 						if (parts.length > 4) {
 							tcr.setSource(parts[4]);
 							tcr.setDataFlow(parts[5]);
-							tcr.setDataFlowFile(parts[6]);
-							tcr.setSink(parts[7]);
+							//tcr.setDataFlowFile(parts[6]);
+							tcr.setSink(parts[6]);
 						}
 						
 						tr.put( tcr );
@@ -1000,7 +1007,7 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 				
 			// Write actual results header
 			ps.print("# test name, category, CWE, ");
-			if (fulldetails) ps.print("source, data flow, data flow filename, sink, ");
+			if (fulldetails) ps.print("source, data flow, sink, ");
 			ps.print("real vulnerability, identified by tool, pass/fail, Benchmark version: " + benchmarkVersion);
 			
 			// Append the date YYYY-MM-DD to the header in each .csv file
@@ -1017,7 +1024,6 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 				if (fulldetails) {
 					ps.print("," + actualResult.getSource());
 					ps.print("," + actualResult.getDataFlow());
-					ps.print(", " + actualResult.getDataFlowFile());
 					ps.print("," + actualResult.getSink());					
 				}
 				boolean isreal = actualResult.isReal();
@@ -1224,11 +1230,6 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 		sb.append("<tr>");
 		sb.append("<th>Tool</th>");
 		if (mixedMode) sb.append("<th>Benchmark Version</th>");
-//		sb.append("<th>TP</th>");
-//		sb.append("<th>FN</th>");
-//		sb.append("<th>TN</th>");
-//		sb.append("<th>FP</th>");
-//		sb.append("<th>Total</th>");
 		sb.append("<th>TPR*</th>");
 		sb.append("<th>FPR*</th>");
 		sb.append("<th>Score*</th>");
@@ -1238,7 +1239,6 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 			
 			if (!(showAveOnlyMode && toolResult.isCommercial())) {
 				OverallResults or = toolResult.getOverallResults();
-				Counter c = or.getFindingCounts();
 				String style = "";
 				
 				if (Math.abs(or.getTruePositiveRate() - or.getFalsePositiveRate()) < .1)
@@ -1248,12 +1248,7 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 				sb.append("<tr " + style + ">");
 				sb.append("<td>" + toolResult.getToolNameAndVersion() + "</td>");
 				if (mixedMode) sb.append("<td>" + toolResult.getBenchmarkVersion() + "</td>");
-/*				sb.append("<td>" + c.tp + "</td>");
-				sb.append("<td>" + c.fn + "</td>");
-				sb.append("<td>" + c.tn + "</td>");
-				sb.append("<td>" + c.fp + "</td>");
-				sb.append("<td>" + or.getTotal() + "</td>");
-*/				sb.append("<td>" + new DecimalFormat("#0.00%").format(or.getTruePositiveRate()) + "</td>");
+				sb.append("<td>" + new DecimalFormat("#0.00%").format(or.getTruePositiveRate()) + "</td>");
 				sb.append("<td>" + new DecimalFormat("#0.00%").format(or.getFalsePositiveRate()) + "</td>");
 				sb.append("<td>" + new DecimalFormat("#0.00%").format(or.getScore()) + "</td>");
 				sb.append("</tr>\n");

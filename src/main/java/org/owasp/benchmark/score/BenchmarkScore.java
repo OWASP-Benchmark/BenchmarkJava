@@ -651,10 +651,10 @@ public class BenchmarkScore {
                 tr = new PMDReader().parse( fileToParse );
             }
             
-            else if ( line2.startsWith( "<castaip" ) ) {
+            else if ( line2.toLowerCase().startsWith( "<cast" ) ) {
                 tr = new CASTAIPReader().parse( fileToParse );
             }
-		    
+	    	
             else if ( line2.startsWith( "<FusionLiteInsight" )) {
                 tr = new FusionLiteInsightReader().parse( fileToParse );
             }
@@ -782,6 +782,7 @@ public class BenchmarkScore {
         else if ( filename.endsWith( ".log" ) ) {
             tr = new ContrastReader().parse( fileToParse );
         }
+        else System.out.println("Error: No matching parser found for file: " + filename);
         
         // If the version # of the tool is specified in the results file name, extract it, and set it.
         // For example: Benchmark-1.1-Coverity-results-v1.3.2661-6720.json  (the version # is 1.3.2661 in this example). 

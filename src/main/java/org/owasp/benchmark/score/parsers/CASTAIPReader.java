@@ -44,7 +44,7 @@ public class CASTAIPReader extends Reader {
         Node root = doc.getDocumentElement();
 
 //      <?xml version="1.0" encoding="UTF-8"?>
-//      <castaip version="CAST_AIP_8.2.3" timestamp="2017-07-31T12:22:23.010">
+//      <CASTAIP version="8.2.3" timestamp="2017-09-18 11:55:12.312+00">
 
 //      Only start time available in XML, per above. No stop time
 //        String duration = getNamedChild("timestamp", root ).getTextContent();
@@ -56,8 +56,9 @@ public class CASTAIPReader extends Reader {
 //        }
         
         String version = getAttributeValue("version", root);
-        version = version.substring( version.indexOf( "CAST_AIP_" ) + "CAST_AIP_".length() );
-        tr.setToolVersion( version );
+        if (version != null) {
+        	tr.setToolVersion( version );
+        }
         
         List<Node> issueList = getNamedChildren( "file", root );
         
@@ -117,9 +118,10 @@ public class CASTAIPReader extends Reader {
 	        return 0000;
 	    }
 	    switch( name.trim() ) {
-//	      case "Cross site scripting vulnerability" : return 79;   // xss
 //        case "insecure-cookie"           :  return 614;  // insecure cookie use
           case "78"                        :  return 78;   // command injection
+          case "79"                        :  return 79;   // xss
+//        case "insecure-cookie"           :  return 614;  // insecure cookie use
           case "89"                        :  return 89;   // sql injection
           case "90"                        :  return 90;   // ldap injection
 //        case "header-injection"          :  return 113;  // header injection

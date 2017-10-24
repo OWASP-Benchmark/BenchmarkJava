@@ -647,6 +647,10 @@ public class BenchmarkScore {
 
             String line1 = getLine( fileToParse, 0 );
             String line2 = getLine( fileToParse, 1 );
+		
+            if (line2.startsWith("  <ProjectName>")) {
+                tr = new ThunderScanReader().parse(fileToParse);
+	    }
 
             if ( line2.startsWith( "<pmd" )) {
                 tr = new PMDReader().parse( fileToParse );

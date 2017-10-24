@@ -74,6 +74,7 @@ import org.owasp.benchmark.score.parsers.SonarQubeReader;
 import org.owasp.benchmark.score.parsers.SourceMeterReader;
 import org.owasp.benchmark.score.parsers.TestCaseResult;
 import org.owasp.benchmark.score.parsers.TestResults;
+import org.owasp.benchmark.score.parsers.ThunderScanReader;
 import org.owasp.benchmark.score.parsers.VeracodeReader;
 import org.owasp.benchmark.score.parsers.WebInspectReader;
 import org.owasp.benchmark.score.parsers.XanitizerReader;

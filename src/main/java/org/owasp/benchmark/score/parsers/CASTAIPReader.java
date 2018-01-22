@@ -118,7 +118,7 @@ public class CASTAIPReader extends Reader {
 	        return 0000;
 	    }
 	    switch( name.trim() ) {
-//        case "insecure-cookie"           :  return 614;  // insecure cookie use
+          case "614"                       :  return 614;  // insecure cookie use
           case "78"                        :  return 78;   // command injection
           case "79"                        :  return 79;   // xss
 //        case "insecure-cookie"           :  return 614;  // insecure cookie use
@@ -134,9 +134,11 @@ public class CASTAIPReader extends Reader {
 //        case "crypto-bad-mac"            :  return 328;  // weak hash
 //        case "crypto-weak-randomness"    :  return 330;  // weak random
 //        case "crypto-bad-ciphers"        :  return 327;  // weak encryption
-//        case "trust-boundary-violation"  :  return 501;  // trust boundary
+          case "501"                       :  return 501;  // trust boundary
 //        case "xxe"                       :  return 611;  // xml entity
-          case "134"                       :  return 134;  // Use of Externally-Controlled Format String - Which really isn't a Java vuln 
+          case "134"                       :  return 134;  // Use of Externally-Controlled Format String - Which really isn't a Java vuln
+          case "22"                        :  return 22;
+          case "643"                       :  return 643;
           default         : System.out.println("No matching CWE # found in CAST AIP Reader for: 'CWE-" + name +"'");
         }
 		return 0000;

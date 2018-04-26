@@ -701,7 +701,7 @@ public class BenchmarkScore {
             else if ( line2.startsWith( "<report" )) {
                 tr = new ArachniReader().parse( fileToParse );
             }
-            else if ( line2.startsWith( "<analysisReportResult")) {
+            else if ( line2.startsWith( "<analysisResult") || line2.startsWith( "<analysisReportResult")) {
                 tr = new JuliaReader().parse( fileToParse );
             }
  

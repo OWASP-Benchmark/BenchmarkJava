@@ -61,6 +61,7 @@ import org.owasp.benchmark.score.parsers.CoverityReader;
 import org.owasp.benchmark.score.parsers.FindbugsReader;
 import org.owasp.benchmark.score.parsers.FortifyReader;
 import org.owasp.benchmark.score.parsers.FusionLiteInsightReader;
+import org.owasp.benchmark.score.parsers.HdivReader;
 import org.owasp.benchmark.score.parsers.JuliaReader;
 import org.owasp.benchmark.score.parsers.NetsparkerReader;
 import org.owasp.benchmark.score.parsers.NoisyCricketReader;
@@ -651,10 +652,10 @@ public class BenchmarkScore {
                 tr = new PMDReader().parse( fileToParse );
             }
             
-            else if ( line2.toLowerCase().startsWith( "<cast" ) ) {
+            else if ( line2.toLowerCase().startsWith( "<castaip" ) ) {
                 tr = new CASTAIPReader().parse( fileToParse );
             }
-	    	
+
             else if ( line2.startsWith( "<FusionLiteInsight" )) {
                 tr = new FusionLiteInsightReader().parse( fileToParse );
             }
@@ -782,6 +783,9 @@ public class BenchmarkScore {
         else if ( filename.endsWith( ".log" ) ) {
             tr = new ContrastReader().parse( fileToParse );
         }
+        else if ( filename.endsWith( ".hlg" ) ) {
+			tr = new HdivReader().parse(fileToParse);
+		}
         else System.out.println("Error: No matching parser found for file: " + filename);
         
         // If the version # of the tool is specified in the results file name, extract it, and set it.

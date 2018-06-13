@@ -74,6 +74,7 @@ import org.owasp.benchmark.score.parsers.SonarQubeReader;
 import org.owasp.benchmark.score.parsers.SourceMeterReader;
 import org.owasp.benchmark.score.parsers.TestCaseResult;
 import org.owasp.benchmark.score.parsers.TestResults;
+import org.owasp.benchmark.score.parsers.ThunderScanReader;
 import org.owasp.benchmark.score.parsers.VeracodeReader;
 import org.owasp.benchmark.score.parsers.WebInspectReader;
 import org.owasp.benchmark.score.parsers.XanitizerReader;
@@ -647,6 +648,10 @@ public class BenchmarkScore {
 
             String line1 = getLine( fileToParse, 0 );
             String line2 = getLine( fileToParse, 1 );
+		
+            if (line2.startsWith("  <ProjectName>")) {
+                tr = new ThunderScanReader().parse(fileToParse);
+	    }
 
             if ( line2.startsWith( "<pmd" )) {
                 tr = new PMDReader().parse( fileToParse );
@@ -696,7 +701,7 @@ public class BenchmarkScore {
             else if ( line2.startsWith( "<report" )) {
                 tr = new ArachniReader().parse( fileToParse );
             }
-            else if ( line2.startsWith( "<analysisReportResult")) {
+            else if ( line2.startsWith( "<analysisResult") || line2.startsWith( "<analysisReportResult")) {
                 tr = new JuliaReader().parse( fileToParse );
             }
  
@@ -784,8 +789,8 @@ public class BenchmarkScore {
             tr = new ContrastReader().parse( fileToParse );
         }
         else if ( filename.endsWith( ".hlg" ) ) {
-			tr = new HdivReader().parse(fileToParse);
-		}
+            tr = new HdivReader().parse( fileToParse );
+	}
         else System.out.println("Error: No matching parser found for file: " + filename);
         
         // If the version # of the tool is specified in the results file name, extract it, and set it.

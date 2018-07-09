@@ -51,6 +51,7 @@ import org.apache.commons.io.FileUtils;
 import org.owasp.benchmark.score.parsers.AcunetixReader;
 import org.owasp.benchmark.score.parsers.AppScanDynamicReader;
 import org.owasp.benchmark.score.parsers.AppScanSourceReader;
+import org.owasp.benchmark.score.parsers.AppScanSourceReader2;
 import org.owasp.benchmark.score.parsers.ArachniReader;
 import org.owasp.benchmark.score.parsers.BurpReader;
 import org.owasp.benchmark.score.parsers.CASTAIPReader;
@@ -644,28 +645,32 @@ public class BenchmarkScore {
 
         else if ( filename.endsWith( ".xml" ) ) {
 
-            // Handle XML results file where the 2nd line indicates the tool type
+            // Handle XML results files where the 1st or 2nd line indicates the tool type
 
             String line1 = getLine( fileToParse, 0 );
             String line2 = getLine( fileToParse, 1 );
 		
-            if (line2.startsWith("  <ProjectName>")) {
+            if ( line2.startsWith( "  <ProjectName>" )) {
                 tr = new ThunderScanReader().parse(fileToParse);
-	    }
-
-            if ( line2.startsWith( "<pmd" )) {
+	        }
+            
+            else if ( line1.contains( "<xml-report name=\"AppScan Report\"" )) {
+                tr = new AppScanSourceReader2().parse( fileToParse );
+            }
+            
+            else if ( line2.startsWith( "<pmd" )) {
                 tr = new PMDReader().parse( fileToParse );
             }
             
             else if ( line2.toLowerCase().startsWith( "<castaip" ) ) {
                 tr = new CASTAIPReader().parse( fileToParse );
             }
-
+            
             else if ( line2.startsWith( "<FusionLiteInsight" )) {
                 tr = new FusionLiteInsightReader().parse( fileToParse );
             }
- 
-            else if (line2.startsWith( "<XanitizerFindingsList" )) {
+            
+            else if ( line2.startsWith( "<XanitizerFindingsList" )) {
                 tr = new XanitizerReader().parse( fileToParse );
             }
 

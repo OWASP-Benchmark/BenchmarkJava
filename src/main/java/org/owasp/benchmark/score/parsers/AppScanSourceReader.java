@@ -36,6 +36,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 public class AppScanSourceReader extends Reader {
+	
+	// This is the original AppScan Source reader, when they generated ".ozasmt" files.
 
 	public TestResults parse( File f ) throws Exception {
 		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();

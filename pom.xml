@@ -15,7 +15,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.5.0</version>
+						<version>${version.exec.maven}</version>
 						<executions>
 							<execution>
 								<phase>compile</phase>
@@ -39,7 +39,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.4.0</version>
+						<version>${version.exec.maven}</version>
 						<executions>
 							<execution>
 								<phase>validate</phase>
@@ -66,7 +66,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>findbugs-maven-plugin</artifactId>
-						<version>3.0.1</version>
+						<version>${version.findbugs.maven}</version>
 						<executions>
 							<execution>
 								<phase>compile</phase>
@@ -85,7 +85,7 @@
 								<plugin>
 									<groupId>com.h3xstream.findsecbugs</groupId>
 									<artifactId>findsecbugs-plugin</artifactId>
-									<version>1.6.0</version>
+									<version>1.8.0</version>
 								</plugin>
 							</plugins>
 						</configuration>
@@ -104,7 +104,7 @@
 				<plugins>
 					<plugin>
 						<artifactId>maven-antrun-plugin</artifactId>
-						<version>1.7</version>
+						<version>1.8</version>
 						<executions>
 							<execution>
 								<id>ldap-server</id>
@@ -153,13 +153,13 @@
 					<plugin>
 						<groupId>org.codehaus.cargo</groupId>
 						<artifactId>cargo-maven2-plugin</artifactId>
-						<version>1.6.0</version>
+						<version>1.6.8</version>
 						<configuration>
 							<container>
 								<timeout>300000</timeout>
-								<containerId>tomcat8x</containerId>
+								<containerId>tomcat${version.tomcat}</containerId>
 								<zipUrlInstaller>
-									<url>http://archive.apache.org/dist/tomcat/tomcat-8/v8.0.38/bin/apache-tomcat-8.0.38.zip</url>
+									<url>${tomcat.url}</url>
 								</zipUrlInstaller>
 							</container>
 							<properties>
@@ -204,7 +204,7 @@
 				<plugins>
 					<plugin>
 						<artifactId>maven-antrun-plugin</artifactId>
-						<version>1.7</version>
+						<version>1.8</version>
 						<executions>
 							<execution>
 								<id>ldap-server</id>
@@ -253,13 +253,13 @@
 					<plugin>
 						<groupId>org.codehaus.cargo</groupId>
 						<artifactId>cargo-maven2-plugin</artifactId>
-						<version>1.6.0</version>
+						<version>1.6.8</version>
 						<configuration>
 							<container>
 								<timeout>300000</timeout>
-								<containerId>tomcat8x</containerId>
+								<containerId>tomcat${version.tomcat}</containerId>
 								<zipUrlInstaller>
-									<url>http://archive.apache.org/dist/tomcat/tomcat-8/v8.0.38/bin/apache-tomcat-8.0.38.zip</url>
+									<url>${tomcat.url}</url>
 								</zipUrlInstaller>
 							</container>
 							<properties>
@@ -313,7 +313,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.4.0</version>
+						<version>${version.exec.maven}</version>
 						<executions>
 							<execution>
 								<phase>validate</phase>
@@ -417,6 +417,43 @@
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-server-standalone</artifactId>
 			<version>2.46.0</version>
+		</dependency>
+
+		<!-- Including the bcprov-jdk16 version of bouncycastle to explicitly avoid a weird, sometimes random, cyclic dependency as documented here:
+		     https://stackoverflow.com/questions/17584495/unable-to-complete-the-scan-for-annotations-for-web-application-app-due-to-a
+		     Used the solution to explicitly add a version of this library, rather than exclude one of the versions causing the cyclic
+		     dependency I because I couldn't figure out what to exclude. Worked for me, so going with it. 
+
+		     Including bcprov-jdk15on of bouncy castle, which is the supported version, causes this informational message to be thrown:
+ 
+		     [INFO] [talledLocalContainer] INFO: Initializing ProtocolHandler ["https-jsse-nio-127.0.0.1-8443"]
+     [java] Exception in thread "main" java.lang.ExceptionInInitializerError
+     [java]     at org.apache.directory.server.core.DefaultDirectoryService.createBootstrapEntries(DefaultDirectoryService.java:1118)
+     [java]     at org.apache.directory.server.core.DefaultDirectoryService.initialize(DefaultDirectoryService.java:1444)
+     [java]     at org.apache.directory.server.core.DefaultDirectoryService.startup(DefaultDirectoryService.java:907)
+     [java]     at org.owasp.benchmark.helpers.LDAPServer.initDirectoryService(LDAPServer.java:148)
+     [java]     at org.owasp.benchmark.helpers.LDAPServer.<init>(LDAPServer.java:42)
+     [java]     at org.owasp.benchmark.helpers.LDAPServer.main(LDAPServer.java:320)
+     [java] Caused by: java.lang.SecurityException: class "org.bouncycastle.jcajce.provider.symmetric.IDEA$Mappings"'s signer information does not match signer information of other classes in the same package
+ 
+		I tried adding all these other bcp*-jdk15on jars and couldn't get the above warning to go away. Ideally, we'd figure out what component is bringing in the old
+		version of bouncycastle so we wouldn't need to import anything at all like before. I suspect it might be Spring, but moving beyond the 4.1.X.RELEASE of
+		Spring is an API breaking change, so for now, just adding this older bcprov-jdk16 lib, becuause it seems to work without errors.
+
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk15on</artifactId>
+			<artifactId>bcprov-ext-jdk15on</artifactId>
+			<artifactId>bcpg-jdk15on</artifactId>
+			<artifactId>bcpkix-jdk15on</artifactId>
+			<artifactId>bcmail-jdk15on</artifactId>
+			<version>${version.bouncy}</version>
+		</dependency>
+-->
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk16</artifactId>
+			<version>1.46</version>
 		</dependency>
 
 		<dependency>
@@ -595,45 +632,49 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
-			<version>4.1.7.RELEASE</version>
+			<version>${version.springframework}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
-			<version>4.1.7.RELEASE</version>
+			<version>${version.springframework}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
-			<version>4.1.7.RELEASE</version>
+			<version>${version.springframework}</version>
 		</dependency>
-		<!-- Begin of new dependencies -->
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-			<version>4.1.7.RELEASE</version>
+			<version>${version.springframework}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
-			<version>4.1.7.RELEASE</version>
+			<version>${version.springframework}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aop</artifactId>
-			<version>4.1.7.RELEASE</version>
+			<version>${version.springframework}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-beans</artifactId>
-			<version>4.1.7.RELEASE</version>
+			<version>${version.springframework}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-expression</artifactId>
-			<version>4.1.7.RELEASE</version>
+			<version>${version.springframework}</version>
 		</dependency>
 
 		<dependency>
@@ -645,19 +686,19 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
-			<version>2.6.2</version>
+			<version>${version.jackson}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.6.2</version>
+			<version>${version.jackson}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
-			<version>2.6.2</version>
+			<version>${version.jackson}</version>
 		</dependency>
 
 		<dependency>
@@ -805,7 +846,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>3.0.1</version>
+				<version>${version.findbugs.maven}</version>
 				<configuration>
 					<effort>Max</effort>
 					<threshold>Low</threshold>
@@ -820,7 +861,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>3.0.1</version>
+				<version>${version.findbugs.maven}</version>
 				<configuration>
 					<argLine>-debug -maxHeap 2048 -include findbugsfilter.xml</argLine>
 				</configuration>
@@ -851,5 +892,13 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.war.webxml>${basedir}/src/config/web.xml</maven.war.webxml>
 		<runenv>local</runenv>
+		<version.bouncy>1.60</version.bouncy>
+		<version.bouncy.type>jdk15on</version.bouncy.type>
+		<version.exec.maven>1.6.0</version.exec.maven>
+		<version.findbugs.maven>3.0.5</version.findbugs.maven>
+		<version.jackson>2.9.6</version.jackson>
+		<version.springframework>4.1.9.RELEASE</version.springframework>
+		<version.tomcat>9x</version.tomcat>
+		<tomcat.url>http://archive.apache.org/dist/tomcat/tomcat-9/v9.0.10/bin/apache-tomcat-9.0.10.zip</tomcat.url>
 	</properties>
 </project>

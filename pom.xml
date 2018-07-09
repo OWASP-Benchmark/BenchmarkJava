@@ -449,12 +449,18 @@
 			<artifactId>bcmail-jdk15on</artifactId>
 			<version>${version.bouncy}</version>
 		</dependency>
--->
+
+		Adding the following dependency eliminates the error "illegal cyclic inheritance dependencies. The class hierarchy being processed was
+		[org.bouncycastle.asn1.ASN1EncodableVector->org.bouncycastle.asn1.DEREncodableVector->org.bouncycastle.asn1.ASN1EncodableVector]"
+		on Mac, but introduces this error on Linux. Given that Mac usage is more rare, I'm turning this back off. Doesn't seem to 
+		affect Windows usage either way.
+
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk16</artifactId>
 			<version>1.46</version>
 		</dependency>
+-->
 
 		<dependency>
 			<groupId>org.slf4j</groupId>

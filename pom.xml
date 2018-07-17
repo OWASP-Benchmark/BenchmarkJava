@@ -391,11 +391,9 @@
 		</profile>
 
 		<profile>
+			<id>Unix</id>
 			<activation>
-				<os>
-					<family>Linux</family>
-					<!-- <arch>x64</arch> -->
-				</os>
+				<os><family>unix</family></os>  <!-- The unix family includes mac. -->
 			</activation>
 
 		<!-- Including the bcprov-jdk16 version of bouncycastle to explicitly avoid a weird, sometimes random, cyclic dependency as documented here:
@@ -443,7 +441,6 @@
 					<version>1.46</version>
 				</dependency>
 			</dependencies>
-
 		</profile>
 
 	</profiles>

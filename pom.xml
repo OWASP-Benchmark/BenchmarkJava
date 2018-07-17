@@ -389,38 +389,21 @@
 				</pluginManagement>
 			</build>
 		</profile>
-	</profiles>
 
-	<repositories>
-		<repository>
-			<id>jenkins-releases</id>
-			<url>http://repo.jenkins-ci.org/releases/</url>
-		</repository>
-	</repositories>
-
-	<dependencies>
-		<dependency>
-			<groupId>javax</groupId>
-			<artifactId>javaee-api</artifactId>
-			<version>7.0</version>
-			<scope>provided</scope>
-		</dependency>
-		
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>3.1.0</version>
-			<scope>provided</scope>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.seleniumhq.selenium</groupId>
-			<artifactId>selenium-server-standalone</artifactId>
-			<version>2.46.0</version>
-		</dependency>
+		<profile>
+			<activation>
+				<os>
+					<family>Linux</family>
+					<!-- <arch>x64</arch> -->
+				</os>
+			</activation>
 
 		<!-- Including the bcprov-jdk16 version of bouncycastle to explicitly avoid a weird, sometimes random, cyclic dependency as documented here:
 		     https://stackoverflow.com/questions/17584495/unable-to-complete-the-scan-for-annotations-for-web-application-app-due-to-a
+
+		     This issue seems to only occur on Linux, but adding this dependency introduces this error on Windows. So, I've included this dependency 
+		     only when running Benchmark on Linux via this OS specific profile.
+
 		     Used the solution to explicitly add a version of this library, rather than exclude one of the versions causing the cyclic
 		     dependency I because I couldn't figure out what to exclude. Worked for me, so going with it. 
 
@@ -452,15 +435,46 @@
 
 		Adding the following dependency eliminates the error "illegal cyclic inheritance dependencies. The class hierarchy being processed was
 		[org.bouncycastle.asn1.ASN1EncodableVector->org.bouncycastle.asn1.DEREncodableVector->org.bouncycastle.asn1.ASN1EncodableVector]"
-		on Mac, but introduces this error on Linux. Given that Mac usage is more rare, I'm turning this back off. Doesn't seem to 
-		affect Windows usage either way.
-
-		<dependency>
-			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcprov-jdk16</artifactId>
-			<version>1.46</version>
-		</dependency>
 -->
+			<dependencies>
+				<dependency>
+					<groupId>org.bouncycastle</groupId>
+					<artifactId>bcprov-jdk16</artifactId>
+					<version>1.46</version>
+				</dependency>
+			</dependencies>
+
+		</profile>
+
+	</profiles>
+
+	<repositories>
+		<repository>
+			<id>jenkins-releases</id>
+			<url>http://repo.jenkins-ci.org/releases/</url>
+		</repository>
+	</repositories>
+
+	<dependencies>
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-api</artifactId>
+			<version>7.0</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-server-standalone</artifactId>
+			<version>2.46.0</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -477,6 +491,12 @@
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.17</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.11</version>
 		</dependency>
 
 		<dependency>

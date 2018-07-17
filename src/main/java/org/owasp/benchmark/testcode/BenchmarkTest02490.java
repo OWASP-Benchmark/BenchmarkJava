@@ -65,8 +65,8 @@ response.setHeader("X-XSS-Protection", "0");
 		map28523.put("key28523", b28523.toString()); // put in a collection
 		String c28523 = (String)map28523.get("key28523"); // get it back out
 		String d28523 = c28523.substring(0,c28523.length()-1); // extract most of it
-		String e28523 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d28523.getBytes() ) )); // B64 encode and decode it
+		String e28523 = new String( org.apache.commons.codec.binary.Base64.decodeBase64(
+		    org.apache.commons.codec.binary.Base64.encodeBase64( d28523.getBytes() ) )); // B64 encode and decode it
 		String f28523 = e28523.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
 		String g28523 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'

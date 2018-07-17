@@ -63,8 +63,8 @@ response.setHeader("X-XSS-Protection", "0");
 		map34194.put("key34194", b34194.toString()); // put in a collection
 		String c34194 = (String)map34194.get("key34194"); // get it back out
 		String d34194 = c34194.substring(0,c34194.length()-1); // extract most of it
-		String e34194 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d34194.getBytes() ) )); // B64 encode and decode it
+		String e34194 = new String( org.apache.commons.codec.binary.Base64.decodeBase64(
+		    org.apache.commons.codec.binary.Base64.encodeBase64( d34194.getBytes() ) )); // B64 encode and decode it
 		String f34194 = e34194.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
 		String bar = thing.doSomething(f34194); // reflection

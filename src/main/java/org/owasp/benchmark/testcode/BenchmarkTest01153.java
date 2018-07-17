@@ -158,8 +158,8 @@ e.printStackTrace(response.getWriter());
 		map2387.put("key2387", b2387.toString()); // put in a collection
 		String c2387 = (String)map2387.get("key2387"); // get it back out
 		String d2387 = c2387.substring(0,c2387.length()-1); // extract most of it
-		String e2387 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d2387.getBytes() ) )); // B64 encode and decode it
+		String e2387 = new String( org.apache.commons.codec.binary.Base64.decodeBase64(
+		    org.apache.commons.codec.binary.Base64.encodeBase64( d2387.getBytes() ) )); // B64 encode and decode it
 		String f2387 = e2387.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
 		String g2387 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'

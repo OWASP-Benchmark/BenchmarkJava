@@ -53,8 +53,8 @@ public class BenchmarkTest00355 extends HttpServlet {
 		map85622.put("key85622", b85622.toString()); // put in a collection
 		String c85622 = (String)map85622.get("key85622"); // get it back out
 		String d85622 = c85622.substring(0,c85622.length()-1); // extract most of it
-		String e85622 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d85622.getBytes() ) )); // B64 encode and decode it
+		String e85622 = new String( org.apache.commons.codec.binary.Base64.decodeBase64(
+		    org.apache.commons.codec.binary.Base64.encodeBase64( d85622.getBytes() ) )); // B64 encode and decode it
 		String f85622 = e85622.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
 		String bar = thing.doSomething(f85622); // reflection

@@ -104,7 +104,7 @@ public class BenchmarkTest02245 extends HttpServlet {
 		String bar = "";
 		if (param != null) {
 			bar = new String( org.apache.commons.codec.binary.Base64.decodeBase64(
-		    	org.apache.commons.codec.binary.Base64.encodeBase64( param.getBytes() ) ));
+			org.apache.commons.codec.binary.Base64.encodeBase64( param.getBytes() ) ));
 		}
 	
 		return bar;	

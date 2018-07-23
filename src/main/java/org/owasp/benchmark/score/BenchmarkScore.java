@@ -50,6 +50,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.commons.io.FileUtils;
 import org.owasp.benchmark.score.parsers.AcunetixReader;
 import org.owasp.benchmark.score.parsers.AppScanDynamicReader;
+import org.owasp.benchmark.score.parsers.AppScanDynamicReader2;
 import org.owasp.benchmark.score.parsers.AppScanSourceReader;
 import org.owasp.benchmark.score.parsers.AppScanSourceReader2;
 import org.owasp.benchmark.score.parsers.ArachniReader;
@@ -71,6 +72,7 @@ import org.owasp.benchmark.score.parsers.OverallResults;
 import org.owasp.benchmark.score.parsers.PMDReader;
 import org.owasp.benchmark.score.parsers.ParasoftReader;
 import org.owasp.benchmark.score.parsers.Rapid7Reader;
+import org.owasp.benchmark.score.parsers.Reader;
 import org.owasp.benchmark.score.parsers.SonarQubeReader;
 import org.owasp.benchmark.score.parsers.SourceMeterReader;
 import org.owasp.benchmark.score.parsers.TestCaseResult;
@@ -654,10 +656,6 @@ public class BenchmarkScore {
                 tr = new ThunderScanReader().parse(fileToParse);
 	        }
             
-            else if ( line1.contains( "<xml-report name=\"AppScan Report\"" )) {
-                tr = new AppScanSourceReader2().parse( fileToParse );
-            }
-            
             else if ( line2.startsWith( "<pmd" )) {
                 tr = new PMDReader().parse( fileToParse );
             }
@@ -714,32 +712,49 @@ public class BenchmarkScore {
 
                 Document doc = getXMLDocument( fileToParse );
                 Node root = doc.getDocumentElement();
-                if ( root.getNodeName().equals( "issues" ) ) {
+		String nodeName = root.getNodeName();
+
+                if ( nodeName.equals( "issues" ) ) {
                     tr = new BurpReader().parse( root );
                 }
                 
-                else if ( root.getNodeName().equals( "XmlReport" ) ) {
+                else if ( nodeName.equals( "XmlReport" ) ) { 
                     tr = new AppScanDynamicReader().parse( root );
                 }
 
-                else if ( root.getNodeName().equals( "noisycricket" ) ) {
+                else if ( nodeName.equals( "xml-report" ) ) {
+                    // For Appscan, this node has name="AppScan Report" and technology="SAST" or "DAST"
+                    String name = Reader.getAttributeValue( "name", root );
+                    if ("AppScan Report".equals(name)) {
+                        String tech = Reader.getAttributeValue( "technology", root );
+                        if ("SAST".equals(tech)) {
+                            tr = new AppScanSourceReader2().parse( fileToParse );
+                        } else if ("DAST".equals(tech)) {
+                            tr = new AppScanDynamicReader2().parse( fileToParse );
+                        } else System.out.println("Found AppScan Report with unfamiliar technology type: " + tech);
+                    } else System.out.println("Found xml-report that was expected to have a name 'AppScan Report "
+                                + " but had name: " + name);
+                }
+
+                else if ( nodeName.equals( "noisycricket" ) ) {
                     tr = new NoisyCricketReader().parse( root );
                 }
 
-                else if ( root.getNodeName().equals( "Scan" ) ) {
+                else if ( nodeName.equals( "Scan" ) ) {
                     tr = new WebInspectReader().parse( root );
                 }
                 
-                else if ( root.getNodeName().equals( "ScanGroup" ) ) {
+                else if ( nodeName.equals( "ScanGroup" ) ) {
                     tr = new AcunetixReader().parse( root );
                 }
 
-                else if ( root.getNodeName().equals( "VulnSummary" ) ) {
+                else if ( nodeName.equals( "VulnSummary" ) ) {
                     tr = new Rapid7Reader().parse( root );
                 }
-                else if ( root.getNodeName().equals( "netsparker" ) ) {
+                else if ( nodeName.equals( "netsparker" ) ) {
                     tr = new NetsparkerReader().parse( root );
                 }
+                else System.out.println("Error: No matching parser found for XML file: " + filename);
 
             } // end else
          } // end if endsWith ".xml"
@@ -795,7 +810,7 @@ public class BenchmarkScore {
         }
         else if ( filename.endsWith( ".hlg" ) ) {
             tr = new HdivReader().parse( fileToParse );
-	}
+        }
         else System.out.println("Error: No matching parser found for file: " + filename);
         
         // If the version # of the tool is specified in the results file name, extract it, and set it.

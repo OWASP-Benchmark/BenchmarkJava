@@ -13,18 +13,14 @@
 * GNU General Public License for more details
 *
 * @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
-* @created 2015
+* @created 2018
 */
 
 package org.owasp.benchmark.score.parsers;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -32,7 +28,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.owasp.benchmark.score.BenchmarkScore;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 public class AppScanSourceReader2 extends Reader {
@@ -49,14 +44,14 @@ public class AppScanSourceReader2 extends Reader {
 		Document doc = docBuilder.parse(is);
 
 		Node root = doc.getDocumentElement();
-        Node scanInfo = getNamedChild( "scan-information", root );
+		Node scanInfo = getNamedChild( "scan-information", root );
 		TestResults tr = new TestResults( "IBM AppScan Cloud", true, TestResults.ToolType.SAST);
 
 		Node version = getNamedChild( "product-version", scanInfo );
 //    System.out.println("Product version is: " + version.getTextContent());
-        tr.setToolVersion( version.getTextContent() );
+		tr.setToolVersion( version.getTextContent() );
         
-        Node allIssues = getNamedChild( "issue-group", root);
+		Node allIssues = getNamedChild( "issue-group", root);
 		List<Node> vulnerabilities = getNamedChildren( "item", allIssues );
 		
 		// Loop through all the vulnerabilities
@@ -72,29 +67,33 @@ public class AppScanSourceReader2 extends Reader {
 			Node itemNode = getNamedChild( "item", getNamedChild( "variant-group", vulnerability));
 			Node methodSigNode = getNamedChild( "method-signature2", getNamedChild( "issue-information", itemNode));
 			int tn = -1; // -1 means vuln not found in a Benchmark test case
-			String filename = getAttributeValue( "filename", methodSigNode);
+			if (methodSigNode != null) {
 
-			// Some method signatures have a filename attribute, others do not, depending on the vuln type.
-			if (filename != null) {
-				// Parse out test number from: BenchmarkTest02603:99
-				if ( filename.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
-					filename = filename.substring( 0, filename.indexOf(":") );
-					String testnum = filename.substring( BenchmarkScore.BENCHMARKTESTNAME.length() );
-					tn = Integer.parseInt( testnum );
-					//System.out.println("Found a result in filename for test: " + tn);
+				String filename = getAttributeValue( "filename", methodSigNode );
+
+				// Some method signatures have a filename attribute, others do not, depending on the vuln type.
+				if (filename != null) {
+					// Parse out test number from: BenchmarkTest02603:99
+					if ( filename.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
+						filename = filename.substring( 0, filename.indexOf(":") );
+						String testnum = filename.substring( BenchmarkScore.BENCHMARKTESTNAME.length() );
+						tn = Integer.parseInt( testnum );
+						//System.out.println("Found a result in filename for test: " + tn);
+					}
+				} else {
+					// Parse out test # from: org.owasp.benchmark.testcode.BenchmarkTest01484.doPost(HttpServletRequest;HttpServletResponse):void
+					String methodSig = methodSigNode.getTextContent();
+					if ( methodSig != null && methodSig.contains(BenchmarkScore.BENCHMARKTESTNAME)) {
+						String s = methodSig.substring(methodSig.indexOf(BenchmarkScore.BENCHMARKTESTNAME) +
+							BenchmarkScore.BENCHMARKTESTNAME.length());
+						String testnum = s.substring(0, s.indexOf("."));
+						tn = Integer.parseInt( testnum );
+						//System.out.println("Found a result in method location2 for test: " + tn);
+					}
+					//else System.out.println("Didn't find Benchmark test case in method signature2: " + methodSig);
+					else if ( methodSig == null ) System.out.println("itemNode: " + itemNode + " has no method signature2");
 				}
-			} else {
-				// Parse out test # from: org.owasp.benchmark.testcode.BenchmarkTest01484.doPost(HttpServletRequest;HttpServletResponse):void
-				String methodSig = methodSigNode.getTextContent();
-				if ( methodSig.contains(BenchmarkScore.BENCHMARKTESTNAME)) {
-					String s = methodSig.substring(methodSig.indexOf(BenchmarkScore.BENCHMARKTESTNAME) +
-						BenchmarkScore.BENCHMARKTESTNAME.length());
-					String testnum = s.substring(0, s.indexOf("."));
-					tn = Integer.parseInt( testnum );
-					//System.out.println("Found a result in method location2 for test: " + tn);
-				}
-				//else System.out.println("DRW: Didn't find Benchmark test case in method signature2: " + methodSig);
-			}
+			} else System.out.println("itemNode: " + itemNode + " has no method signature node");
 			
 //			if (tn == -1) System.out.println("Found vuln outside of test case of type: " + issueType);
 			
@@ -133,7 +132,7 @@ public class AppScanSourceReader2 extends Reader {
 		switch( vtype ) {
 //			case "AppDOS" : return 00;
 //			case "Authentication.Entity" : return 00;
-		
+
 			case "CrossSiteScripting" : return 79;
 			case "Cryptography.InsecureAlgorithm" : return 327;
 			case "Cryptography.PoorEntropy" : return 330;

@@ -712,13 +712,13 @@ public class BenchmarkScore {
 
                 Document doc = getXMLDocument( fileToParse );
                 Node root = doc.getDocumentElement();
-		String nodeName = root.getNodeName();
+                String nodeName = root.getNodeName();
 
                 if ( nodeName.equals( "issues" ) ) {
                     tr = new BurpReader().parse( root );
                 }
                 
-                else if ( nodeName.equals( "XmlReport" ) ) { 
+                else if ( nodeName.equals( "XmlReport" ) ) {
                     tr = new AppScanDynamicReader().parse( root );
                 }
 
@@ -808,6 +808,7 @@ public class BenchmarkScore {
         else if ( filename.endsWith( ".log" ) ) {
             tr = new ContrastReader().parse( fileToParse );
         }
+        
         else if ( filename.endsWith( ".hlg" ) ) {
             tr = new HdivReader().parse( fileToParse );
         }

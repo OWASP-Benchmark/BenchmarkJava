@@ -22,148 +22,131 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import org.owasp.benchmark.score.BenchmarkScore;
+import org.json.JSONObject;
 
 public class ContrastReader extends Reader {
 
-    public static void main(String[] args) throws Exception {
-        File f = new File("contrast.log");
-        ContrastReader cr = new ContrastReader();
-        cr.parse(f);
-    }
+	public static void main(String[] args) throws Exception {
+		File f = new File("results/Benchmark_1.2-Contrast.log");
+		ContrastReader cr = new ContrastReader();
+		cr.parse(f);
+	}
 
-    public TestResults parse(File f) throws Exception {
-        TestResults tr = new TestResults("Contrast", true, TestResults.ToolType.IAST);
+	
+	public TestResults parse(File f) throws Exception {
+		TestResults tr = new TestResults("Contrast", true, TestResults.ToolType.IAST);
 
-        BufferedReader reader = new BufferedReader(new FileReader(f));
-        String firstLine = null;
-        String lastLine = "";
-        String line = "";
-        ArrayList<String> chunk = new ArrayList<String>();
-        String testNumber = "00001";
-        while (line != null) {
-            try {
-                line = reader.readLine();
-                if (line != null) {
-                    if (line.contains("J2EEController] DEBUG - >>> [URL 1]") && !line.endsWith(".html")) {
-                            // ok, we're starting a new URL, so process this one and start the next chunk
-                            process(tr, testNumber, chunk);
-                            chunk.clear();
-                            testNumber = "00000";
-                            String fname = "/" + BenchmarkScore.BENCHMARKTESTNAME;
-                            int idx = line.indexOf( fname );
-                            if ( idx != -1 ) {
-                                testNumber = line.substring(idx + fname.length(), idx + fname.length() + 5 );
-                            }
-                            if ( firstLine == null ) {
-                                firstLine = line;
-                            }
-                            lastLine = line;
-                    } else if (line.startsWith("<finding hash")) {
-                        chunk.add(line);
-                    } else if (line.contains("Agent Version:")) {
-                        String version = line.substring(line.indexOf("Version:") + 8);
-                        tr.setToolVersion(version.trim());
-                    }
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-        //Last
-        if(!chunk.isEmpty()){
-        	// ok, we're starting a new URL, so process this one and start the next chunk
-            process(tr, testNumber, chunk);
-            chunk.clear();
-            testNumber = "00000";
-            String fname = "/" + BenchmarkScore.BENCHMARKTESTNAME;
-            int idx = lastLine.indexOf( fname );
-            if ( idx != -1 ) {
-                testNumber = lastLine.substring(idx + fname.length(), idx + fname.length() + 5 );
-            }
-        }
-        reader.close();
-        tr.setTime(calculateTime(firstLine, lastLine));
-        return tr;
-    }
- 
-    private String calculateTime(String firstLine, String lastLine) {
+		BufferedReader reader = new BufferedReader(new FileReader(f));
+		String firstLine = null;
+		String lastLine = "";
+		String line = "";
+		while (line != null) {
+			try {
+				line = reader.readLine();
+				if (line != null) {
+					if (line.startsWith("{\"hash\":")) {
+						parseContrastFinding(tr, line);
+					} else if (line.contains("Agent Version:")) {
+						String version = line.substring(line.indexOf("Version:") + 8);
+						tr.setToolVersion(version.trim());
+					} else if (line.contains("DEBUG - >>> [URL") && line.contains("BenchmarkTest00001")) {
+						firstLine = line;
+					} else if (line.contains("DEBUG - >>> [URL")) {
+						lastLine = line;
+					}
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+		reader.close();
+		tr.setTime(calculateTime(firstLine, lastLine));
+		return tr;
+	}
+
+
+    private void parseContrastFinding(TestResults tr, String json) throws Exception {
+        TestCaseResult tcr = new TestCaseResult();
+        
         try {
-            String start = firstLine.split(" ")[1];
-            String stop = lastLine.split(" ")[1];
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss,SSS");
-            Date startTime = sdf.parse(start);
-            Date stopTime = sdf.parse(stop);
-            long startMillis = startTime.getTime();
-            long stopMillis = stopTime.getTime();
-            return ((stopMillis - startMillis) / 1000) + " seconds";
+	        JSONObject obj = new JSONObject(json);
+	        String ruleId = obj.getString( "ruleId" );
+	        tcr.setCWE(cweLookup(ruleId));
+	        tcr.setCategory(ruleId);
+	
+	        JSONObject request = obj.getJSONObject("request");	        
+	        String uri = request.getString("uri" );
+        
+	        if ( uri.contains( "BenchmarkTest" ) ) {
+		        String testNumber = uri.substring( uri.lastIndexOf('/') + "BenchmarkTest".length() + 1 );
+	            tcr.setNumber(Integer.parseInt(testNumber));
+		        if (tcr.getCWE() != 0) {
+		            // System.out.println( tcr.getNumber() + "\t" + tcr.getCWE() + "\t" + tcr.getCategory() );
+		            tr.put(tcr);
+		        }
+	        }
         } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private void process(TestResults tr, String testNumber, List<String> chunk) throws Exception {
-        for (String line : chunk) {
-            TestCaseResult tcr = new TestCaseResult();
-
-            String ruleid = line.substring(line.indexOf("ruleId=\"") + 8, line.length() - 2);
-            tcr.setCWE(cweLookup(ruleid));
-            tcr.setCategory(ruleid);
-
-            try {
-                tcr.setNumber(Integer.parseInt(testNumber));
-            } catch (NumberFormatException e) {
-                System.out.println("> Parse error: " + line);
-            }
-
-            if (tcr.getCWE() != 0) {
-                // System.out.println( tcr.getNumber() + "\t" + tcr.getCWE() + "\t" + tcr.getCategory() );
-                tr.put(tcr);
-            }
+            // System.err.println("> Parse error: " + json);
+            // e.printStackTrace();
         }
     }
 
-    private static int cweLookup(String rule) {
-        switch (rule) {
-        case "cookie-flags-missing":
-            return 614; // insecure cookie use
-        case "sql-injection":
-            return 89; // sql injection
-        case "cmd-injection":
-            return 78; // command injection
-        case "ldap-injection":
-            return 90; // ldap injection
-        case "header-injection":
-            return 113; // header injection
-        case "hql-injection":
-            return 564; // hql injection
-        case "unsafe-readline":
-            return 0000; // unsafe readline
-        case "reflection-injection":
-            return 0000; // reflection injection
-        case "reflected-xss":
-            return 79; // xss
-        case "xpath-injection":
-            return 643; // xpath injection
-        case "path-traversal":
-            return 22; // path traversal
-        case "crypto-bad-mac":
-            return 328; // weak hash
-        case "crypto-weak-randomness":
-            return 330; // weak random
-        case "crypto-bad-ciphers":
-            return 327; // weak encryption
-        case "trust-boundary-violation":
-            return 501; // trust boundary
-        case "xxe":
-            return 611; // xml entity
-        }
-        return 0;
-    }
+    
+	private static int cweLookup(String rule) {
+		switch (rule) {
+		case "cookie-flags-missing":
+			return 614; // insecure cookie use
+		case "sql-injection":
+			return 89; // sql injection
+		case "cmd-injection":
+			return 78; // command injection
+		case "ldap-injection":
+			return 90; // ldap injection
+		case "header-injection":
+			return 113; // header injection
+		case "hql-injection":
+			return 564; // hql injection
+		case "unsafe-readline":
+			return 0000; // unsafe readline
+		case "reflection-injection":
+			return 0000; // reflection injection
+		case "reflected-xss":
+			return 79; // xss
+		case "xpath-injection":
+			return 643; // xpath injection
+		case "path-traversal":
+			return 22; // path traversal
+		case "crypto-bad-mac":
+			return 328; // weak hash
+		case "crypto-weak-randomness":
+			return 330; // weak random
+		case "crypto-bad-ciphers":
+			return 327; // weak encryption
+		case "trust-boundary-violation":
+			return 501; // trust boundary
+		case "xxe":
+			return 611; // xml entity
+		}
+		return 0;
+	}
+
+	private String calculateTime(String firstLine, String lastLine) {
+		try {
+			String start = firstLine.split(" ")[1];
+			String stop = lastLine.split(" ")[1];
+			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss,SSS");
+			Date startTime = sdf.parse(start);
+			Date stopTime = sdf.parse(stop);
+			long startMillis = startTime.getTime();
+			long stopMillis = stopTime.getTime();
+			long seconds = (stopMillis - startMillis) / 1000;
+			return seconds + " seconds";
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 }

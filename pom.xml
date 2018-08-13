@@ -284,7 +284,6 @@
 										-Dcontrast.noteamserver.enable=true
 										-Dcontrast.teamserver.suppress=true
 										-Dcontrast.assess.threshold.entries=100000
-										-Dcontrast.featureJSON=${basedir}/tools/Contrast/assess.json
 									</cargo.jvmargs>
 									<cargo.servlet.port>8443</cargo.servlet.port>
 									<cargo.protocol>https</cargo.protocol>

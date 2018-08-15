@@ -325,120 +325,6 @@
 			</build>
 		</profile>
 
-		<profile>
-			<id>only-eclipse</id>
-			<activation>
-				<property>
-					<name>m2e.version</name>
-				</property>
-			</activation>
-			<build>
-				<pluginManagement>
-					<plugins>
-						<plugin>
-							<groupId>org.eclipse.m2e</groupId>
-							<artifactId>lifecycle-mapping</artifactId>
-							<version>1.0.0</version>
-							<configuration>
-								<lifecycleMappingMetadata>
-									<pluginExecutions>
-										<pluginExecution>
-											<pluginExecutionFilter>
-												<groupId>
-													org.codehaus.mojo.jspc
-												</groupId>
-												<artifactId>
-													jspc-maven-plugin
-												</artifactId>
-												<versionRange>
-													[2.0-alpha-3,)
-												</versionRange>
-												<goals>
-													<goal>compile</goal>
-												</goals>
-											</pluginExecutionFilter>
-											<action>
-												<ignore />
-											</action>
-										</pluginExecution>
-										<pluginExecution>
-											<pluginExecutionFilter>
-												<groupId>com.internetitem</groupId>
-												<artifactId>write-properties-file-maven-plugin</artifactId>
-												<goals>
-													<goal>write-properties-file</goal>
-												</goals>
-											</pluginExecutionFilter>
-											<action>
-												<execute>
-													<runOnIncremental>true</runOnIncremental>
-												</execute>
-											</action>
-										</pluginExecution>
-									</pluginExecutions>
-								</lifecycleMappingMetadata>
-							</configuration>
-						</plugin>
-					</plugins>
-				</pluginManagement>
-			</build>
-		</profile>
-
-		<profile>
-			<id>Unix</id>
-			<activation>
-				<os><family>unix</family></os>  <!-- The unix family includes mac. -->
-			</activation>
-
-		<!-- Including the bcprov-jdk16 version of bouncycastle to explicitly avoid a weird, sometimes random, cyclic dependency as documented here:
-		     https://stackoverflow.com/questions/17584495/unable-to-complete-the-scan-for-annotations-for-web-application-app-due-to-a
-
-		     This issue seems to only occur on Linux, but adding this dependency introduces this error on Windows. So, I've included this dependency 
-		     only when running Benchmark on Linux via this OS specific profile.
-
-		     Used the solution to explicitly add a version of this library, rather than exclude one of the versions causing the cyclic
-		     dependency I because I couldn't figure out what to exclude. Worked for me, so going with it. 
-
-		     Including bcprov-jdk15on of bouncy castle, which is the supported version, causes this informational message to be thrown:
- 
-		     [INFO] [talledLocalContainer] INFO: Initializing ProtocolHandler ["https-jsse-nio-127.0.0.1-8443"]
-     [java] Exception in thread "main" java.lang.ExceptionInInitializerError
-     [java]     at org.apache.directory.server.core.DefaultDirectoryService.createBootstrapEntries(DefaultDirectoryService.java:1118)
-     [java]     at org.apache.directory.server.core.DefaultDirectoryService.initialize(DefaultDirectoryService.java:1444)
-     [java]     at org.apache.directory.server.core.DefaultDirectoryService.startup(DefaultDirectoryService.java:907)
-     [java]     at org.owasp.benchmark.helpers.LDAPServer.initDirectoryService(LDAPServer.java:148)
-     [java]     at org.owasp.benchmark.helpers.LDAPServer.<init>(LDAPServer.java:42)
-     [java]     at org.owasp.benchmark.helpers.LDAPServer.main(LDAPServer.java:320)
-     [java] Caused by: java.lang.SecurityException: class "org.bouncycastle.jcajce.provider.symmetric.IDEA$Mappings"'s signer information does not match signer information of other classes in the same package
- 
-		I tried adding all these other bcp*-jdk15on jars and couldn't get the above warning to go away. Ideally, we'd figure out what component is bringing in the old
-		version of bouncycastle so we wouldn't need to import anything at all like before. I suspect it might be Spring, but moving beyond the 4.1.X.RELEASE of
-		Spring is an API breaking change, so for now, just adding this older bcprov-jdk16 lib, becuause it seems to work without errors.
-
-		<dependency>
-			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcprov-jdk15on</artifactId>
-			<artifactId>bcprov-ext-jdk15on</artifactId>
-			<artifactId>bcpg-jdk15on</artifactId>
-			<artifactId>bcpkix-jdk15on</artifactId>
-			<artifactId>bcmail-jdk15on</artifactId>
-			<version>${version.bouncy}</version>
-		</dependency>
-
-		Adding the following dependency eliminates the error "illegal cyclic inheritance dependencies. The class hierarchy being processed was
-		[org.bouncycastle.asn1.ASN1EncodableVector->org.bouncycastle.asn1.DEREncodableVector->org.bouncycastle.asn1.ASN1EncodableVector]"
-
-			<dependencies>
-				<dependency>
-					<groupId>org.bouncycastle</groupId>
-					<artifactId>bcprov-jdk16</artifactId>
-					<version>1.46</version>
-				</dependency>
-			</dependencies>
--->
-
-		</profile>
-
 	</profiles>
 
 	<repositories>
@@ -464,9 +350,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.seleniumhq.selenium</groupId>
-			<artifactId>selenium-server-standalone</artifactId>
-			<version>2.53.0</version>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.6</version>
 		</dependency>
 
 		<dependency>
@@ -826,6 +712,7 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 				<directory>${basedir}/src/main/resources</directory>
 			</resource>
 		</resources>
+
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.cargo</groupId>
@@ -858,14 +745,14 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.22.0</version>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.1.0</version>
 			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>3.1.0</version>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.22.0</version>
 			</plugin>
 
 			<plugin>
@@ -900,16 +787,6 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 					<threshold>Low</threshold>
 					<failOnError>true</failOnError>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>com.internetitem</groupId>
-				<artifactId>write-properties-file-maven-plugin</artifactId>
-				<version>1.0.1</version>
-			</plugin>
-			<plugin>
-				<groupId>org.jasig.mojo.jspc</groupId>
-				<artifactId>jspc-maven-plugin</artifactId>
-				<version>2.0.2</version>
 			</plugin>
 
 		</plugins>
@@ -951,11 +828,9 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.war.webxml>${basedir}/src/config/web.xml</maven.war.webxml>
 		<runenv>local</runenv>
-		<version.bouncy>1.60</version.bouncy>
-		<version.bouncy.type>jdk15on</version.bouncy.type>
 		<version.exec.maven>1.6.0</version.exec.maven>
 		<version.findbugs.maven>3.0.5</version.findbugs.maven>
-		<version.hibernate>5.3.3.Final</version.hibernate>
+		<version.hibernate>3.6.10.Final</version.hibernate>
 		<version.jackson>2.9.6</version.jackson>
 		<version.jersey>1.19.4</version.jersey>
 		<version.slf4j>1.7.25</version.slf4j>

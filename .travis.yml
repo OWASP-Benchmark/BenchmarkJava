@@ -1,2 +1,20 @@
 language: java
 
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "WVRDWFtL5MoRSIwSwkG3sVJwTYdOiEB5WsfkPalRNs3T9B0FQojmpDilsJsNyfKRT3tAdtnMr4pcayuUgeFLeZ0dv8HCd/LKHCiQrIxh+zRFSJs74Qt2hx8Uer7b8EuEgKQaaX3eV0uaCh4uKEL0derj32EDB5Ik1OS7lI/YaOgGoe7Kv0n5yniu7bPlNmhErz0E1BwQ1rNiZqi8XVG7Tv5f2YPctXncQ9g84j23KsrzM73cDSQ7LH+2ejz/+DLguNFQTyMt7w0N7F4HZJVOTjmMTqcqeVWsYMJqBP2adKBU5SThiPoa23YOChnzci4EB0OG33ZH0LbZONMUGzpY+wl4w4PjC7Qg42qyYqWzsTRnlX7ix1EJZwj8s4M7O4hFl1KyVSA2LyKigPNLo349v3z0HirV4BIL4TaTzgb4PgtgiTS/q7ey1z0VWZCV/vj8iExVS6VmXtgqYDZ27eQxwqrnuQ9TcTmSC5sz047vutm0lmfhpSyGef2Neah7Kec+QVk6Lr342vlrKq4HH4qQiCJAofI6bMCFABWz2DM70FjMlBfVPh+ABw2CqFuIVgdnNQ2jOKqbKpruj67KTd647Q96y/o8WX/kbMHNDRhOlRjTfz+13yWZXag7L7Z2UPFDbUHqq6s73iCYnM9Pn3BfRIuCIi8WzyCCAevOOUDJDEA="
+
+before_install:
+  - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+
+addons:
+  coverity_scan:
+    project:
+      name: "OWASP/Benchmark"
+      description: "OWASP Benchmark"
+    notification_email: dave.wichers@owasp.org
+    build_command_prepend: ""
+    build_command: "mvn clean compile"
+    branch_pattern: master

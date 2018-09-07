@@ -73,6 +73,7 @@ import org.owasp.benchmark.score.parsers.PMDReader;
 import org.owasp.benchmark.score.parsers.ParasoftReader;
 import org.owasp.benchmark.score.parsers.Rapid7Reader;
 import org.owasp.benchmark.score.parsers.Reader;
+import org.owasp.benchmark.score.parsers.ShiftLeftReader;
 import org.owasp.benchmark.score.parsers.SonarQubeReader;
 import org.owasp.benchmark.score.parsers.SourceMeterReader;
 import org.owasp.benchmark.score.parsers.TestCaseResult;
@@ -812,6 +813,11 @@ public class BenchmarkScore {
         else if ( filename.endsWith( ".hlg" ) ) {
             tr = new HdivReader().parse( fileToParse );
         }
+
+	else if ( filename.endsWith( ".sl" ) ) {
+	    tr = new ShiftLeftReader().parse( fileToParse );
+	}
+
         else System.out.println("Error: No matching parser found for file: " + filename);
         
         // If the version # of the tool is specified in the results file name, extract it, and set it.

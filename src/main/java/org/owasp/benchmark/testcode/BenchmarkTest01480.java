@@ -146,8 +146,8 @@ e.printStackTrace(response.getWriter());
 		map55670.put("key55670", b55670.toString()); // put in a collection
 		String c55670 = (String)map55670.get("key55670"); // get it back out
 		String d55670 = c55670.substring(0,c55670.length()-1); // extract most of it
-		String e55670 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d55670.getBytes() ) )); // B64 encode and decode it
+		String e55670 = new String( org.apache.commons.codec.binary.Base64.decodeBase64(
+		    org.apache.commons.codec.binary.Base64.encodeBase64( d55670.getBytes() ) )); // B64 encode and decode it
 		String f55670 = e55670.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
 		String bar = thing.doSomething(f55670); // reflection

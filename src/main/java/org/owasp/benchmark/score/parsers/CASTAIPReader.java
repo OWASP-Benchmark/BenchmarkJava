@@ -121,7 +121,6 @@ public class CASTAIPReader extends Reader {
           case "614"                       :  return 614;  // insecure cookie use
           case "78"                        :  return 78;   // command injection
           case "79"                        :  return 79;   // xss
-//        case "insecure-cookie"           :  return 614;  // insecure cookie use
           case "89"                        :  return 89;   // sql injection
           case "90"                        :  return 90;   // ldap injection
 //        case "header-injection"          :  return 113;  // header injection

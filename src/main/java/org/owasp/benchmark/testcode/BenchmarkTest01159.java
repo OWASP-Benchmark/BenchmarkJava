@@ -95,8 +95,8 @@ org.owasp.esapi.ESAPI.encoder().encodeForHTML(new String(b,0,size))
 		map54259.put("key54259", b54259.toString()); // put in a collection
 		String c54259 = (String)map54259.get("key54259"); // get it back out
 		String d54259 = c54259.substring(0,c54259.length()-1); // extract most of it
-		String e54259 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d54259.getBytes() ) )); // B64 encode and decode it
+		String e54259 = new String( org.apache.commons.codec.binary.Base64.decodeBase64(
+		    org.apache.commons.codec.binary.Base64.encodeBase64( d54259.getBytes() ) )); // B64 encode and decode it
 		String f54259 = e54259.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
 		String g54259 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'

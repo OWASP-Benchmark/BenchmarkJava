@@ -48,7 +48,42 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.io.FileUtils;
-import org.owasp.benchmark.score.parsers.*;
+import org.owasp.benchmark.score.parsers.AcunetixReader;
+import org.owasp.benchmark.score.parsers.AppScanDynamicReader;
+import org.owasp.benchmark.score.parsers.AppScanDynamicReader2;
+import org.owasp.benchmark.score.parsers.AppScanSourceReader;
+import org.owasp.benchmark.score.parsers.AppScanSourceReader2;
+import org.owasp.benchmark.score.parsers.ArachniReader;
+import org.owasp.benchmark.score.parsers.BurpReader;
+import org.owasp.benchmark.score.parsers.CASTAIPReader;
+import org.owasp.benchmark.score.parsers.CheckmarxReader;
+import org.owasp.benchmark.score.parsers.ContrastReader;
+import org.owasp.benchmark.score.parsers.Counter;
+import org.owasp.benchmark.score.parsers.CoverityReader;
+import org.owasp.benchmark.score.parsers.FaastReader;
+import org.owasp.benchmark.score.parsers.FindbugsReader;
+import org.owasp.benchmark.score.parsers.FortifyReader;
+import org.owasp.benchmark.score.parsers.FusionLiteInsightReader;
+import org.owasp.benchmark.score.parsers.HdivReader;
+import org.owasp.benchmark.score.parsers.JuliaReader;
+import org.owasp.benchmark.score.parsers.NetsparkerReader;
+import org.owasp.benchmark.score.parsers.NoisyCricketReader;
+import org.owasp.benchmark.score.parsers.OverallResult;
+import org.owasp.benchmark.score.parsers.OverallResults;
+import org.owasp.benchmark.score.parsers.PMDReader;
+import org.owasp.benchmark.score.parsers.ParasoftReader;
+import org.owasp.benchmark.score.parsers.Rapid7Reader;
+import org.owasp.benchmark.score.parsers.Reader;
+import org.owasp.benchmark.score.parsers.ShiftLeftReader;
+import org.owasp.benchmark.score.parsers.SonarQubeReader;
+import org.owasp.benchmark.score.parsers.SourceMeterReader;
+import org.owasp.benchmark.score.parsers.TestCaseResult;
+import org.owasp.benchmark.score.parsers.TestResults;
+import org.owasp.benchmark.score.parsers.ThunderScanReader;
+import org.owasp.benchmark.score.parsers.VeracodeReader;
+import org.owasp.benchmark.score.parsers.WebInspectReader;
+import org.owasp.benchmark.score.parsers.XanitizerReader;
+import org.owasp.benchmark.score.parsers.ZapReader;
 import org.owasp.benchmark.score.report.Report;
 import org.owasp.benchmark.score.report.ScatterHome;
 import org.owasp.benchmark.score.report.ScatterVulns;
@@ -618,28 +653,28 @@ public class BenchmarkScore {
 
         else if ( filename.endsWith( ".xml" ) ) {
 
-            // Handle XML results file where the 2nd line indicates the tool type
+            // Handle XML results files where the 1st or 2nd line indicates the tool type
 
             String line1 = getLine( fileToParse, 0 );
             String line2 = getLine( fileToParse, 1 );
-
-            if (line2.startsWith("  <ProjectName>")) {
+	
+            if ( line2.startsWith( "  <ProjectName>" )) {
                 tr = new ThunderScanReader().parse(fileToParse);
-	    }
-
-            if ( line2.startsWith( "<pmd" )) {
+	        }
+            
+            else if ( line2.startsWith( "<pmd" )) {
                 tr = new PMDReader().parse( fileToParse );
             }
-
-            else if ( line2.toLowerCase().startsWith( "<cast" ) ) {
+            
+            else if ( line2.toLowerCase().startsWith( "<castaip" ) ) {
                 tr = new CASTAIPReader().parse( fileToParse );
             }
-
+            
             else if ( line2.startsWith( "<FusionLiteInsight" )) {
                 tr = new FusionLiteInsightReader().parse( fileToParse );
             }
-
-            else if (line2.startsWith( "<XanitizerFindingsList" )) {
+            
+            else if ( line2.startsWith( "<XanitizerFindingsList" )) {
                 tr = new XanitizerReader().parse( fileToParse );
             }
 
@@ -675,7 +710,7 @@ public class BenchmarkScore {
             else if ( line2.startsWith( "<report" )) {
                 tr = new ArachniReader().parse( fileToParse );
             }
-            else if ( line2.startsWith( "<analysisReportResult")) {
+            else if ( line2.startsWith( "<analysisResult") || line2.startsWith( "<analysisReportResult")) {
                 tr = new JuliaReader().parse( fileToParse );
             }
 
@@ -683,32 +718,49 @@ public class BenchmarkScore {
 
                 Document doc = getXMLDocument( fileToParse );
                 Node root = doc.getDocumentElement();
-                if ( root.getNodeName().equals( "issues" ) ) {
+                String nodeName = root.getNodeName();
+
+                if ( nodeName.equals( "issues" ) ) {
                     tr = new BurpReader().parse( root );
                 }
-
-                else if ( root.getNodeName().equals( "XmlReport" ) ) {
+                
+                else if ( nodeName.equals( "XmlReport" ) ) {
                     tr = new AppScanDynamicReader().parse( root );
                 }
 
-                else if ( root.getNodeName().equals( "noisycricket" ) ) {
+                else if ( nodeName.equals( "xml-report" ) ) {
+                    // For Appscan, this node has name="AppScan Report" and technology="SAST" or "DAST"
+                    String name = Reader.getAttributeValue( "name", root );
+                    if ("AppScan Report".equals(name)) {
+                        String tech = Reader.getAttributeValue( "technology", root );
+                        if ("SAST".equals(tech)) {
+                            tr = new AppScanSourceReader2().parse( fileToParse );
+                        } else if ("DAST".equals(tech)) {
+                            tr = new AppScanDynamicReader2().parse( fileToParse );
+                        } else System.out.println("Found AppScan Report with unfamiliar technology type: " + tech);
+                    } else System.out.println("Found xml-report that was expected to have a name 'AppScan Report "
+                                + " but had name: " + name);
+                }
+
+                else if ( nodeName.equals( "noisycricket" ) ) {
                     tr = new NoisyCricketReader().parse( root );
                 }
 
-                else if ( root.getNodeName().equals( "Scan" ) ) {
+                else if ( nodeName.equals( "Scan" ) ) {
                     tr = new WebInspectReader().parse( root );
                 }
-
-                else if ( root.getNodeName().equals( "ScanGroup" ) ) {
+                
+                else if ( nodeName.equals( "ScanGroup" ) ) {
                     tr = new AcunetixReader().parse( root );
                 }
 
-                else if ( root.getNodeName().equals( "VulnSummary" ) ) {
+                else if ( nodeName.equals( "VulnSummary" ) ) {
                     tr = new Rapid7Reader().parse( root );
                 }
-                else if ( root.getNodeName().equals( "netsparker" ) ) {
+                else if ( nodeName.equals( "netsparker" ) ) {
                     tr = new NetsparkerReader().parse( root );
                 }
+                else System.out.println("Error: No matching parser found for XML file: " + filename);
 
             } // end else
          } // end if endsWith ".xml"
@@ -762,9 +814,15 @@ public class BenchmarkScore {
         else if ( filename.endsWith( ".log" ) ) {
             tr = new ContrastReader().parse( fileToParse );
         }
-        else if (filename.endsWith(".hlg")) {
-            tr = new HdivReader().parse(fileToParse);
+        
+        else if ( filename.endsWith( ".hlg" ) ) {
+            tr = new HdivReader().parse( fileToParse );
         }
+
+	else if ( filename.endsWith( ".sl" ) ) {
+	    tr = new ShiftLeftReader().parse( fileToParse );
+	}
+
         else System.out.println("Error: No matching parser found for file: " + filename);
 
         // If the version # of the tool is specified in the results file name, extract it, and set it.

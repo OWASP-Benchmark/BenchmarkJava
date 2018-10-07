@@ -125,8 +125,8 @@ user + " has been remembered with cookie: " + rememberMe.getName()
 		map36538.put("key36538", b36538.toString()); // put in a collection
 		String c36538 = (String)map36538.get("key36538"); // get it back out
 		String d36538 = c36538.substring(0,c36538.length()-1); // extract most of it
-		String e36538 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d36538.getBytes() ) )); // B64 encode and decode it
+		String e36538 = new String( org.apache.commons.codec.binary.Base64.decodeBase64(
+		    org.apache.commons.codec.binary.Base64.encodeBase64( d36538.getBytes() ) )); // B64 encode and decode it
 		String f36538 = e36538.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
 		String bar = thing.doSomething(f36538); // reflection

@@ -98,21 +98,21 @@ public class BenchmarkScore {
 
 	private static final String GUIDEFILENAME = "OWASP_Benchmark_Guide.html";
 	private static final String HOMEFILENAME = "OWASP_Benchmark_Home.html";
-    public static final String pathToScorecardResources = "src/main/resources/scorecard/";
-    public static final String scoreCardDirName = "scorecard";
+	public static final String pathToScorecardResources = "src/main/resources/scorecard/";
+	public static final String scoreCardDirName = "scorecard";
 	public static String benchmarkVersion = null;
 
-    // This is used to indicate that results from multiple versions of the Benchmark are included in these results.
+	// This is used to indicate that results from multiple versions of the Benchmark are included in these results.
 	// Each set in their own directory with their associated expectedresults file.
-    public static boolean mixedMode = false;
-    // Indicates that the names of Commercial tools should be anonymized
-    public static boolean anonymousMode = false;
-    // Indicates that the results of Commercial tools should be suppressed. Only show their averages.
-    public static boolean showAveOnlyMode = false;
-    // The name of this file if generated
-    private static String commercialAveScorecardFilename = null;
-    // The name of the tool to 'focus' on, if any
-    private static String focus = "none";
+	public static boolean mixedMode = false;
+	// Indicates that the names of Commercial tools should be anonymized
+	public static boolean anonymousMode = false;
+	// Indicates that the results of Commercial tools should be suppressed. Only show their averages.
+	public static boolean showAveOnlyMode = false;
+	// The name of this file if generated
+	private static String commercialAveScorecardFilename = null;
+	// The name of the tool to 'focus' on, if any
+	private static String focus = "none";
 
 	/*
 	 * A list of the reports produced for each tool.
@@ -137,255 +137,262 @@ public class BenchmarkScore {
 			System.exit( -1 );
 		}
 
-        if ( args.length > 2 ) {
-            focus = args[2].replace(' ','_');
-        }
-
-		if (args.length > 3) {
-			if ("anonymous".equalsIgnoreCase(args[3])) {
-				anonymousMode = true;
-			} else if ("show_ave_only".equalsIgnoreCase(args[3])) {
-				showAveOnlyMode = true;
-			} else {
-				System.out.println( usageNotice );
-				System.exit( -1 );
-			}
-		}
-
-
-		// Prepare the scorecard results directory for the newly generated scorecards
-		// Step 1: Create the dir if it doesn't exist, or delete everything in it if it does
-        File scoreCardDir = new File(scoreCardDirName);
-        try {
-            if (!scoreCardDir.exists()) {
-                Files.createDirectories(Paths.get(scoreCardDirName));
-            } else {
-                System.out.println("Deleting previously generated scorecard files in: " + scoreCardDir.getAbsolutePath());
-                FileUtils.cleanDirectory(scoreCardDir);
-            }
-
-            // Step 2: Now copy the entire /content directory, that either didn't exist, or was just deleted with everything else
-            File dest1 = new File(scoreCardDirName + File.separator + "content");
-            FileUtils.copyDirectory(new File(pathToScorecardResources + "content"), dest1);
-
-        } catch (IOException e) {
-            System.out.println("Error dealing with scorecard directory: '" + scoreCardDir.getAbsolutePath() + "' for some reason!");
-            e.printStackTrace();
-        }
-
-	    // Step 3: Copy over the Homepage and Guide templates
-        try {
-            Files.copy(Paths.get(pathToScorecardResources + HOMEFILENAME),
-                    Paths.get( scoreCardDirName + "/" + HOMEFILENAME),
-                    StandardCopyOption.REPLACE_EXISTING );
-
-            Files.copy(Paths.get(pathToScorecardResources + GUIDEFILENAME),
-                    Paths.get( scoreCardDirName + "/" + GUIDEFILENAME),
-                    StandardCopyOption.REPLACE_EXISTING );
-        } catch( IOException e ) {
-            System.out.println( "Problem copying home and guide files" );
-            e.printStackTrace();
-        }
-
-        // Step 4: Read the expected results so we know what each tool 'should do'
-		try {
-
-			if ("mixed".equalsIgnoreCase(args[0])) {
-
-				mixedMode = true; // Tells anyone that cares that we aren't processing a single version of Benchmark results
-
-				File f = new File( args[1] );
-				if (!f.exists()) {
-					System.out.println( "Error! - results directory: '" + f.getAbsolutePath() + "' doesn't exist.");
-					System.exit(-1);
-				}
-				if ( !f.isDirectory() ) {
-					System.out.println( "Error! - results parameter is a file: '" + f.getAbsolutePath()
-						+ "' but must be a directory when processing results in 'mixed' mode.");
-					System.exit(-1);
-				}
-
-				// Go through each file in the root directory.
-				// -- 1st find each directory. And then within each of those directories:
-				//    -- 1st find the expected results file in that directory
-				//    -- and then each of the actual results files in that directory
-    			for ( File rootDirFile : f.listFiles() ) {
-
-    				if (rootDirFile.isDirectory()) {
-
-    					// Process this directory
-    					TestResults expectedResults = null;
-    					String expectedResultsFilename = null;
-    			        // Step 4a: Find and process the expected results file so we know what each tool in this directory 'should do'
-    	    			for ( File resultsDirFile : rootDirFile.listFiles() ) {
-
-    	    				if (resultsDirFile.getName().startsWith("expectedresults-")) {
-    	    					if (expectedResults != null) {
-        	    					System.out.println( "Found 2nd expected results file " + resultsDirFile.getAbsolutePath()
-        	    							+ " in same directory. Can only have 1 in each results directory");
-        	    					System.exit(-1);
-    	    					}
-
-    	    					// read in the expected results for this directory of results
-    	    					expectedResults = readExpectedResults( resultsDirFile );
-    	    					System.out.println("Getting expected results from: " + resultsDirFile);
-        	    				if (expectedResults == null) {
-        	    					System.out.println( "Couldn't read expected results file: "
-        	    							+ resultsDirFile.getAbsolutePath());
-        	    					System.exit(-1);
-            	    			} // end if
-
-    	    					expectedResultsFilename = resultsDirFile.getName();
-    	    					if (benchmarkVersion == null) {
-    	    						benchmarkVersion = expectedResults.getBenchmarkVersion();
-    	    					} else benchmarkVersion += "," + expectedResults.getBenchmarkVersion();
-        	    				System.out.println("\nFound expected results file: " + resultsDirFile.getAbsolutePath());
-        	    			} // end if
-    	    			} // end for loop going through each file looking for expected results file
-
-    	    			// Make sure we found an expected results file, before processing the results
-    	    			if (expectedResults == null) {
-	    					System.out.println( "Couldn't find expected results file in results directory: "
-	    						+ rootDirFile.getAbsolutePath());
-	    					System.out.println( "Expected results file has to be a .csv file that starts with: 'expectedresults-'");
-	    					System.exit(-1);
-	    				}
-
-    			        // Step 5a: Go through each result file and generate a scorecard for that tool.
-    					if (!anonymousMode) {
-    		    			for ( File actual : rootDirFile.listFiles() ) {
-    		    				// Don't confuse the expected results file as an actual results file if its in the same directory
-    		    				if (!actual.isDirectory() && !expectedResultsFilename.equals(actual.getName()))
-    		    					process( actual, expectedResults, toolResults);
-    		    			}
-    					} else {
-    						// To handle anonymous mode, we are going to randomly grab files out of this directory
-    						// and process them. By doing it this way, multiple runs should randomly order the commercial
-    						// tools each time.
-    						List<File> files = new ArrayList();
-    		    			for ( File file : rootDirFile.listFiles() ) {
-    		    				files.add(file);
-    		    			}
-
-    						SecureRandom generator = SecureRandom.getInstance("SHA1PRNG");
-    						while (files.size() > 0) {
-    							// Get a random, positive integer
-    							int fileToGet = Math.abs(generator.nextInt(files.size()));
-    							File actual = files.remove(fileToGet);
-    		    				// Don't confuse the expected results file as an actual results file if its in the same directory
-    		    				if (!actual.isDirectory() && !expectedResultsFilename.equals(actual.getName()))
-    		    					process( actual, expectedResults, toolResults);
-    						}
-    					}
-    				} // end if a directory
-    			}  // end for loop through all files in the directory
-
-    		// process the results the normal way with a single results directory
-			} else { // Not "mixed"
-
-		        // Step 4b: Read the expected results so we know what each tool 'should do'
-				File expected = new File( args[0] );
-				System.out.println("Getting expected results from: " + args[0]);
-				TestResults expectedResults = readExpectedResults( expected );
-				if (expectedResults == null) {
-					System.out.println( "Couldn't read expected results file: " + expected);
-					System.exit(-1);
-				} else {
-					System.out.println( "Read expected results from file: " + expected.getAbsolutePath());
-					int totalResults = expectedResults.totalResults();
-					if (totalResults != 0) {
-						System.out.println( totalResults + " results found.");
-			            benchmarkVersion = expectedResults.getBenchmarkVersion();
-					} else {
-						System.out.println( "Error! - zero expected results found in results file.");
-						System.exit(-1);
-					}
-				}
-
-		        // Step 5b: Go through each result file and generate a scorecard for that tool.
-				File f = new File( args[1] );
-				if (!f.exists()) {
-					System.out.println( "Error! - results file: '" + f.getAbsolutePath() + "' doesn't exist.");
-					System.exit(-1);
-				}
-				if ( f.isDirectory() ) {
-					if (!anonymousMode) {
-		    			for ( File actual : f.listFiles() ) {
-		    				// Don't confuse the expected results file as an actual results file if its in the same directory
-		    				if (!actual.isDirectory() && !expected.getName().equals(actual.getName()))
-		    					process( actual, expectedResults, toolResults);
-		    			}
-					} else {
-						// To handle anonymous mode, we are going to randomly grab files out of this directory
-						// and process them. By doing it this way, multiple runs should randomly order the commercial
-						// tools each time.
-						List<File> files = new ArrayList();
-		    			for ( File file : f.listFiles() ) {
-		    				files.add(file);
-		    			}
-
-						SecureRandom generator = SecureRandom.getInstance("SHA1PRNG");
-						while (files.size() > 0) {
-							int randomNum = generator.nextInt();
-							// FIXME: Get Absolute Value better
-							if (randomNum < 0) randomNum *= -1;
-							int fileToGet = randomNum % files.size();
-							File actual = files.remove(fileToGet);
-		    				// Don't confuse the expected results file as an actual results file if its in the same directory
-		    				if (!actual.isDirectory() && !expected.getName().equals(actual.getName()))
-		    					process( actual, expectedResults, toolResults);
-						}
-					}
-
-				} else {
-					// This will process a single results file, if that is what the 2nd parameter points to.
-					// This has never been used.
-				    process( f, expectedResults, toolResults );
-				}
-			} // end else
-
-			System.out.println( "Tool scorecards computed." );
-		} catch( Exception e ) {
-			System.out.println( "Error during processing: " + e.getMessage() );
-			e.printStackTrace();
-		}
-
-        // Step 6: Now generate scorecards for each type of vulnerability across all the tools
-
-		// First, we have to figure out the list of vulnerabilities
-        // A set is used here to eliminate duplicate categories across all the results
-        Set<String> catSet = new TreeSet<String>();
-        for ( Report toolReport : toolResults ) {
-            catSet.addAll( toolReport.getOverallResults().getCategories() );
-        }
-
-		// Then we generate each vulnerability scorecard
-        BenchmarkScore.generateVulnerabilityScorecards(toolResults, catSet );
-		System.out.println( "Vulnerability scorecards computed." );
-
-        // Step 7: Update all the menus for all the generated pages to reflect the tools and vulnerability categories
-		updateMenus(toolResults, catSet);
-
-        // Step 8: Generate the overall comparison chart for all the tools in this test
-        ScatterHome.generateComparisonChart(toolResults, focus);
-
-        // Step 9: Generate the results table across all the tools in this test
-		String table = generateOverallStatsTable(toolResults);
-
-		File f = Paths.get( scoreCardDirName + "/" + HOMEFILENAME).toFile();
-        try {
-            String html = new String( Files.readAllBytes( f.toPath() ) );
-    		html = html.replace("${table}", table);
-            Files.write( f.toPath(), html.getBytes() );
-        } catch ( IOException e ) {
-            System.out.println ( "Error updating results table in: " + f.getName() );
-            e.printStackTrace();
-        }
-
-		System.out.println( "Benchmark scorecards complete." );
-
-		System.exit(0);
+	if ( args.length > 2 ) {
+		focus = args[2].replace(' ','_');
 	}
+
+	if (args.length > 3) {
+		if ("anonymous".equalsIgnoreCase(args[3])) {
+			anonymousMode = true;
+		} else if ("show_ave_only".equalsIgnoreCase(args[3])) {
+			showAveOnlyMode = true;
+		} else {
+			System.out.println( usageNotice );
+			System.exit( -1 );
+		}
+	}
+
+	// Prepare the scorecard results directory for the newly generated scorecards
+	// Step 1: Create the dir if it doesn't exist, or delete everything in it if it does
+	File scoreCardDir = new File(scoreCardDirName);
+	try {
+		if (!scoreCardDir.exists()) {
+			Files.createDirectories(Paths.get(scoreCardDirName));
+		} else {
+			System.out.println("Deleting previously generated scorecard files in: " + scoreCardDir.getAbsolutePath());
+			FileUtils.cleanDirectory(scoreCardDir);
+		}
+
+		// Step 2: Now copy the entire /content directory, that either didn't exist, or was just deleted with everything else
+		File dest1 = new File(scoreCardDirName + File.separator + "content");
+		FileUtils.copyDirectory(new File(pathToScorecardResources + "content"), dest1);
+
+	} catch (IOException e) {
+		System.out.println("Error dealing with scorecard directory: '" + scoreCardDir.getAbsolutePath() + "' for some reason!");
+		e.printStackTrace();
+	}
+
+	// Step 3: Copy over the Homepage and Guide templates
+	try {
+		Files.copy(Paths.get(pathToScorecardResources + HOMEFILENAME),
+			Paths.get( scoreCardDirName + "/" + HOMEFILENAME),
+			StandardCopyOption.REPLACE_EXISTING );
+
+		Files.copy(Paths.get(pathToScorecardResources + GUIDEFILENAME),
+			Paths.get( scoreCardDirName + "/" + GUIDEFILENAME),
+			StandardCopyOption.REPLACE_EXISTING );
+	} catch( IOException e ) {
+		System.out.println( "Problem copying home and guide files" );
+		e.printStackTrace();
+	}
+
+	// Steps 4 & 5: Read the expected results so we know what each tool 'should do' and the each results file. a) is for 'mixed' mode, and b) is for normal mode
+	try {
+
+		if ("mixed".equalsIgnoreCase(args[0])) {
+
+			mixedMode = true; // Tells anyone that cares that we aren't processing a single version of Benchmark results
+
+			File f = new File( args[1] );
+			if (!f.exists()) {
+				System.out.println( "Error! - results directory: '" + f.getAbsolutePath() + "' doesn't exist.");
+				System.exit(-1);
+			}
+			if ( !f.isDirectory() ) {
+				System.out.println( "Error! - results parameter is a file: '" + f.getAbsolutePath()
+					+ "' but must be a directory when processing results in 'mixed' mode.");
+				System.exit(-1);
+			}
+
+			// Go through each file in the root directory.
+			// -- 1st find each directory. And then within each of those directories:
+			//    -- 1st find the expected results file in that directory
+			//    -- and then each of the actual results files in that directory
+
+			for ( File rootDirFile : f.listFiles() ) {
+
+				if (rootDirFile.isDirectory()) {
+
+					// Process this directory
+					TestResults expectedResults = null;
+					String expectedResultsFilename = null;
+
+				// Step 4a: Find and process the expected results file so we know what each tool in this directory 'should do'
+					for ( File resultsDirFile : rootDirFile.listFiles() ) {
+
+					if (resultsDirFile.getName().startsWith("expectedresults-")) {
+						if (expectedResults != null) {
+							System.out.println( "Found 2nd expected results file " + resultsDirFile.getAbsolutePath()
+								+ " in same directory. Can only have 1 in each results directory");
+							System.exit(-1);
+						}
+
+						// read in the expected results for this directory of results
+						expectedResults = readExpectedResults( resultsDirFile );
+						System.out.println("Getting expected results from: " + resultsDirFile);
+						if (expectedResults == null) {
+							System.out.println( "Couldn't read expected results file: "
+									+ resultsDirFile.getAbsolutePath());
+							System.exit(-1);
+						} // end if
+
+						expectedResultsFilename = resultsDirFile.getName();
+						if (benchmarkVersion == null) {
+							benchmarkVersion = expectedResults.getBenchmarkVersion();
+						} else benchmarkVersion += "," + expectedResults.getBenchmarkVersion();
+						System.out.println("\nFound expected results file: " + resultsDirFile.getAbsolutePath());
+					} // end if
+				} // end for loop going through each directory looking for expected results file
+
+				// Make sure we found an expected results file, before processing the results
+				if (expectedResults == null) {
+					System.out.println( "Couldn't find expected results file in results directory: "
+						+ rootDirFile.getAbsolutePath());
+					System.out.println( "Expected results file has to be a .csv file that starts with: 'expectedresults-'");
+					System.exit(-1);
+				}
+
+				// Step 5a: Go through each result file and generate a scorecard for that tool.
+				if (!anonymousMode) {
+					for ( File actual : rootDirFile.listFiles() ) {
+						// Don't confuse the expected results file as an actual results file if its in the same directory
+						if (!actual.isDirectory() && !expectedResultsFilename.equals(actual.getName())) {
+							process( actual, expectedResults, toolResults);
+						}
+					} // end for
+				} else {
+					// To handle anonymous mode, we are going to randomly grab files out of this directory
+					// and process them. By doing it this way, multiple runs should randomly order the commercial
+					// tools each time.
+					List<File> files = new ArrayList();
+					for ( File file : rootDirFile.listFiles() ) {
+						files.add(file);
+					}
+
+					SecureRandom generator = SecureRandom.getInstance("SHA1PRNG");
+					while (files.size() > 0) {
+						// Get a random, positive integer
+						int fileToGet = Math.abs(generator.nextInt(files.size()));
+						File actual = files.remove(fileToGet);
+						// Don't confuse the expected results file as an actual results file if its in the same directory
+						if (!actual.isDirectory() && !expectedResultsFilename.equals(actual.getName())) {
+							process( actual, expectedResults, toolResults);
+						}
+					} // end while
+				} // end else
+			} // end if a directory
+		} // end for loop through all files in the directory
+
+		// process the results the normal way with a single results directory
+		} else { // Not "mixed"
+
+			// Step 4b: Read the expected results so we know what each tool 'should do'
+			File expected = new File( args[0] );
+			System.out.println("Getting expected results from: " + args[0]);
+			TestResults expectedResults = readExpectedResults( expected );
+			if (expectedResults == null) {
+				System.out.println( "Couldn't read expected results file: " + expected);
+				System.exit(-1);
+			} else {
+				System.out.println( "Read expected results from file: " + expected.getAbsolutePath());
+				int totalResults = expectedResults.totalResults();
+				if (totalResults != 0) {
+					System.out.println( totalResults + " results found.");
+					benchmarkVersion = expectedResults.getBenchmarkVersion();
+				} else {
+					System.out.println( "Error! - zero expected results found in results file.");
+					System.exit(-1);
+				}
+			}
+
+			// Step 5b: Go through each result file and generate a scorecard for that tool.
+			File f = new File( args[1] );
+			if (!f.exists()) {
+				System.out.println( "Error! - results file: '" + f.getAbsolutePath() + "' doesn't exist.");
+				System.exit(-1);
+			}
+			if ( f.isDirectory() ) {
+				if (!anonymousMode) {
+					for ( File actual : f.listFiles() ) {
+						// Don't confuse the expected results file as an actual results file if its in the same directory
+						if (!actual.isDirectory() && !expected.getName().equals(actual.getName())) {
+							process( actual, expectedResults, toolResults);
+						}
+					} // end for
+				} else {
+					// To handle anonymous mode, we are going to randomly grab files out of this directory
+					// and process them. By doing it this way, multiple runs should randomly order the commercial
+					// tools each time.
+					List<File> files = new ArrayList();
+					for ( File file : f.listFiles() ) {
+						files.add(file);
+					}
+
+					SecureRandom generator = SecureRandom.getInstance("SHA1PRNG");
+					while (files.size() > 0) {
+						int randomNum = generator.nextInt();
+						// FIXME: Get Absolute Value better
+						if (randomNum < 0) randomNum *= -1;
+						int fileToGet = randomNum % files.size();
+						File actual = files.remove(fileToGet);
+						// Don't confuse the expected results file as an actual results file if its in the same directory
+						if (!actual.isDirectory() && !expected.getName().equals(actual.getName())) {
+							process( actual, expectedResults, toolResults);
+						}
+					} // end while
+				} // end else (!anonymousMode)
+
+			} else {
+				// This will process a single results file, if that is what the 2nd parameter points to.
+				// This has never been used.
+				process( f, expectedResults, toolResults );
+			} // end else ( f.isDirectory() )
+		} // end else "Not mixed"
+
+		System.out.println( "Tool scorecards computed." );
+
+	// catch try for Steps 4 & 5
+	} catch( Exception e ) {
+		System.out.println( "Error during processing: " + e.getMessage() );
+		e.printStackTrace();
+	}
+
+	// Step 6: Now generate scorecards for each type of vulnerability across all the tools
+
+	// First, we have to figure out the list of vulnerabilities
+	// A set is used here to eliminate duplicate categories across all the results
+	Set<String> catSet = new TreeSet<String>();
+	for ( Report toolReport : toolResults ) {
+		catSet.addAll( toolReport.getOverallResults().getCategories() );
+	}
+
+	// Then we generate each vulnerability scorecard
+	BenchmarkScore.generateVulnerabilityScorecards(toolResults, catSet );
+	System.out.println( "Vulnerability scorecards computed." );
+
+	// Step 7: Update all the menus for all the generated pages to reflect the tools and vulnerability categories
+	updateMenus(toolResults, catSet);
+
+	// Step 8: Generate the overall comparison chart for all the tools in this test
+	ScatterHome.generateComparisonChart(toolResults, focus);
+
+	// Step 9: Generate the results table across all the tools in this test
+	String table = generateOverallStatsTable(toolResults);
+
+	File f = Paths.get( scoreCardDirName + "/" + HOMEFILENAME).toFile();
+	try {
+		String html = new String( Files.readAllBytes( f.toPath() ) );
+		html = html.replace("${table}", table);
+		Files.write( f.toPath(), html.getBytes() );
+	} catch ( IOException e ) {
+		System.out.println ( "Error updating results table in: " + f.getName() );
+		e.printStackTrace();
+	}
+
+	System.out.println( "Benchmark scorecards complete." );
+
+	System.exit(0);
+}
 
 	/**
 	 * The method takes in a tool scan results file and determined how well that tool did against the benchmark.
@@ -397,8 +404,9 @@ public class BenchmarkScore {
 	 * scorecard, and the report that was created for that tool.
 	 */
 	private static void process(File f, TestResults expectedResults, Set<Report> toolreports) {
-        try {
-        	// Figure out the actual results for this tool from the raw results file for this tool
+
+          try {
+            // Figure out the actual results for this tool from the raw results file for this tool
             System.out.println( "\nAnalyzing results from " + f.getName() );
             TestResults actualResults = readActualResults( f );
             //System.out.println("Computed actual results for tool: " + actualResults.getTool());
@@ -430,19 +438,18 @@ public class BenchmarkScore {
                 // This is for debugging purposes. It indicates how may extra results were found in the
                 // actual results vice the expected results.
                 // printExtraCWE( expectedResults, actualResults );
-            }
-            else {
+            } else {
             	if ( expectedResults == null) {
                 	System.out.println("Error!!: expected results were null.");
             	}
             	else System.out.println("Error!!: actual results were null for file: " + f);
             }
-        }
-        catch( Exception e ) {
+          }
+          catch( Exception e ) {
             System.out.println( "Error processing " + f + ". Continuing." );
             e.printStackTrace();
-        }
-    }
+          }
+      }
 
 	// Don't delete - for debug purposes
     private static void printExtraCWE(TestResults expectedResults, TestResults actualResults) {
@@ -477,51 +484,52 @@ public class BenchmarkScore {
     }
 
     private static OverallResults calculateResults(Map<String, Counter> results) {
-		OverallResults or = new OverallResults();
-		double totalScore = 0;
-		double totalFPRate = 0;
-		double totalTPRate = 0;
-		int total = 0;
-		int totalTP = 0;
-		int totalFP = 0;
-		int totalFN = 0;
-		int totalTN = 0;
-		for ( String category : results.keySet() ) {
-			Counter c = results.get( category );
-			int rowTotal = c.tp + c.fn + c.tn + c.fp;
-			double tpr = (double) c.tp / (double) ( c.tp + c.fn );
-			double fpr = (double) c.fp / (double) ( c.fp + c.tn );
-//			double fdr = c.fp / ( c.tp + c.fp );
 
-            // category score is distance from (fpr,tpr) to the guessing line
-            double side = tpr - fpr;
-            double hyp = side * Math.sqrt(2); // Pythagoras
-            double raw = hyp/2;
-            double score = raw * Math.sqrt(2); // adjust scores to 0-1
+       OverallResults or = new OverallResults();
+       double totalScore = 0;
+       double totalFPRate = 0;
+       double totalTPRate = 0;
+       int total = 0;
+       int totalTP = 0;
+       int totalFP = 0;
+       int totalFN = 0;
+       int totalTN = 0;
+       for ( String category : results.keySet() ) {
+          Counter c = results.get( category );
+          int rowTotal = c.tp + c.fn + c.tn + c.fp;
+          double tpr = (double) c.tp / (double) ( c.tp + c.fn );
+          double fpr = (double) c.fp / (double) ( c.fp + c.tn );
+//        double fdr = c.fp / ( c.tp + c.fp );
 
-            if ( !Double.isNaN(score)) {
-                totalScore += score;
-            }
-            totalFPRate += fpr;
-            totalTPRate += tpr;
-            total += rowTotal;
-            totalTP += c.tp;
-            totalFP += c.fp;
-            totalFN += c.fn;
-            totalTN += c.tn;
+          // category score is distance from (fpr,tpr) to the guessing line
+          double side = tpr - fpr;
+          double hyp = side * Math.sqrt(2); // Pythagoras
+          double raw = hyp/2;
+          double score = raw * Math.sqrt(2); // adjust scores to 0-1
 
-            or.add( category, tpr, fpr, rowTotal, score );
-		}
+          if ( !Double.isNaN(score)) {
+             totalScore += score;
+          }
+          totalFPRate += fpr;
+          totalTPRate += tpr;
+          total += rowTotal;
+          totalTP += c.tp;
+          totalFP += c.fp;
+          totalFN += c.fn;
+          totalTN += c.tn;
 
-		int resultsSize = results.size();
-		or.setScore( totalScore / resultsSize );
-		or.setFalsePositiveRate( totalFPRate / resultsSize );
-		or.setTruePositiveRate( totalTPRate / resultsSize );
-		or.setTotal(total);
-		or.setFindingCounts(totalTP, totalFP, totalFN, totalTN);
+          or.add( category, tpr, fpr, rowTotal, score );
+      } // end for
 
-		return or;
-	}
+      int resultsSize = results.size();
+      or.setScore( totalScore / resultsSize );
+      or.setFalsePositiveRate( totalFPRate / resultsSize );
+      or.setTruePositiveRate( totalTPRate / resultsSize );
+      or.setTotal(total);
+      or.setFindingCounts(totalTP, totalFP, totalFN, totalTN);
+
+      return or;
+   }
 
     /**
      * This method translates vulnerability categories, e.g., xss, to their long names for human consumption.
@@ -657,23 +665,23 @@ public class BenchmarkScore {
 
             String line1 = getLine( fileToParse, 0 );
             String line2 = getLine( fileToParse, 1 );
-	
+
             if ( line2.startsWith( "  <ProjectName>" )) {
                 tr = new ThunderScanReader().parse(fileToParse);
-	        }
-            
+            }
+
             else if ( line2.startsWith( "<pmd" )) {
                 tr = new PMDReader().parse( fileToParse );
             }
-            
+
             else if ( line2.toLowerCase().startsWith( "<castaip" ) ) {
                 tr = new CASTAIPReader().parse( fileToParse );
             }
-            
+
             else if ( line2.startsWith( "<FusionLiteInsight" )) {
                 tr = new FusionLiteInsightReader().parse( fileToParse );
             }
-            
+
             else if ( line2.startsWith( "<XanitizerFindingsList" )) {
                 tr = new XanitizerReader().parse( fileToParse );
             }
@@ -776,14 +784,14 @@ public class BenchmarkScore {
 		    tr = FortifyReader.parse( outputFile );
 		    outputFile.delete();
 
-			// Check to see if the results are regular Fortify or Fortify OnDemand results
-			// To check, you have to look at the filtertemplate.xml file inside the .fpr archive
-			// and see if that file contains: "Fortify-FOD-Template"
+		    // Check to see if the results are regular Fortify or Fortify OnDemand results
+		    // To check, you have to look at the filtertemplate.xml file inside the .fpr archive
+		    // and see if that file contains: "Fortify-FOD-Template"
 		    outputFile = File.createTempFile( filename + "-filtertemplate", ".xml");
 		    source = fileSystem.getPath("filtertemplate.xml");
 
-			// In older versions of Fortify, like 4.1, the filtertemplate.xml file doesn't exist
-			// So only check it if it exists
+		    // In older versions of Fortify, like 4.1, the filtertemplate.xml file doesn't exist
+		    // So only check it if it exists
 			try {
 			    Files.copy(source, outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
@@ -846,8 +854,8 @@ public class BenchmarkScore {
 	 * @return The first non-blank line in the file starting with the 2nd line.
 	 */
 	private static String getLine(File actual, int line) {
-		BufferedReader br = null;
-		try {
+	    BufferedReader br = null;
+	    try {
     	    br = new BufferedReader( new FileReader( actual ) );
     	    for ( int i=0; i<line; i++ ) {
     	        br.readLine(); // Skip line 1
@@ -870,8 +878,8 @@ public class BenchmarkScore {
 	    }
     }
 
-	// Go through each expected result, and figure out if this tool actually passed or not.
-	// This updates the expected results to reflect what passed/failed.
+    // Go through each expected result, and figure out if this tool actually passed or not.
+    // This updates the expected results to reflect what passed/failed.
     private static void analyze( TestResults expected, TestResults actual ) {
 
     	// Set the version of the Benchmark these actual results are being compared against

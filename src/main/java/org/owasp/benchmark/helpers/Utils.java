@@ -261,34 +261,6 @@ public class Utils {
 		}
 	}
 
-	public static javax.naming.directory.InitialDirContext getInitialDirContext() throws NamingException {
-		/* Deprecated use LDAPHelper.getInitialDirContext() */
-		InitialDirContext idc = Mockito.mock(InitialDirContext.class);
-
-		@SuppressWarnings("unchecked")
-		NamingEnumeration<SearchResult> ne = (NamingEnumeration<SearchResult>) Mockito.mock(NamingEnumeration.class);
-		Mockito.when(idc.search(Mockito.anyString(), Mockito.anyString(), Mockito.any(SearchControls.class)))
-				.thenReturn(ne);
-		Mockito.when(idc.search(Mockito.anyString(), Mockito.anyString(), Mockito.any(Object[].class),
-				Mockito.any(SearchControls.class))).thenReturn(ne);
-
-		return idc;
-	}
-
-	public static javax.naming.directory.DirContext getDirContext() throws NamingException {
-		/* Deprecated use LDAPHelper.getDirContext() */
-		DirContext dc = Mockito.mock(DirContext.class);
-
-		@SuppressWarnings("unchecked")
-		NamingEnumeration<SearchResult> ne = (NamingEnumeration<SearchResult>) Mockito.mock(NamingEnumeration.class);
-		Mockito.when(dc.search(Mockito.anyString(), Mockito.anyString(), Mockito.any(SearchControls.class)))
-				.thenReturn(ne);
-		Mockito.when(dc.search(Mockito.anyString(), Mockito.anyString(), Mockito.any(Object[].class),
-				Mockito.any(SearchControls.class))).thenReturn(ne);
-
-		return dc;
-	}
-
 	public static File getFileFromClasspath(String fileName, ClassLoader classLoader) {
 		URL url = classLoader.getResource(fileName);
 		try {

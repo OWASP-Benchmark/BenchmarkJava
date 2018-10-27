@@ -327,13 +327,6 @@
 
 	</profiles>
 
-	<repositories>
-		<repository>
-			<id>jenkins-releases</id>
-			<url>http://repo.jenkins-ci.org/releases/</url>
-		</repository>
-	</repositories>
-
 	<dependencies>
 		<dependency>
 			<groupId>javax</groupId>

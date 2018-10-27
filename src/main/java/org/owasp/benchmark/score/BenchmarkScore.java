@@ -640,7 +640,7 @@ public class BenchmarkScore {
             tr = new AppScanSourceReader().parse( fileToParse );
         }
         
-        else if ( filename.endsWith( "faast" ) ) {
+        else if ( filename.endsWith( ".faast" ) ) {
             tr = new FaastReader().parse( fileToParse );
         }
 

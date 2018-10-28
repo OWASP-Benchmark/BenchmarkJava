@@ -15,6 +15,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
@@ -127,6 +129,19 @@ public class ScatterPlot {
         stream.close();
     }
 
+    public static void addGenerationDate(XYPlot xyplot) {
+        //add scorecard generation date
+        final String pattern = "dd MMM yyyy h:mm a";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        String date = simpleDateFormat.format(new Date());
+        XYTextAnnotation gendate = new XYTextAnnotation("Scorecard Generated: " + date, 0.5, -7.5);
+        gendate.setTextAnchor(TextAnchor.CENTER_LEFT);
+        gendate.setBackgroundPaint(Color.white);
+        gendate.setPaint(Color.red);
+        gendate.setFont(theme.getRegularFont());
+        xyplot.addAnnotation( gendate );
+    }
+
     public static void makePoint(XYPlot xyplot, Point2D location, double radius, Color color ) {
         double x = location.getX() - radius/2;
         double y = location.getY() - radius/2;
@@ -155,7 +170,7 @@ public class ScatterPlot {
         XYLineAnnotation guessing = new XYLineAnnotation(-5, -5, 100, 100, dashed, Color.red);
         xyplot.addAnnotation(guessing);
 
-        XYPointerAnnotation worse = makePointer(75, 0, "Worse than guessing", TextAnchor.TOP_CENTER, 90);
+        XYPointerAnnotation worse = makePointer(80, 0, "Worse than guessing", TextAnchor.TOP_CENTER, 90);
         xyplot.addAnnotation(worse);
 
         XYPointerAnnotation better = makePointer(25, 100, "Better than guessing", TextAnchor.BOTTOM_CENTER, 270);

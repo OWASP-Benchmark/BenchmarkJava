@@ -124,6 +124,7 @@ public class ScatterHome extends ScatterPlot {
 
         XYPlot xyplot = chart.getXYPlot();
         initializePlot( xyplot );
+        addGenerationDate( xyplot );
         
         makeDataLabels( toolResults, xyplot );
         makeLegend( toolResults, 103, 100.5, dataset, xyplot );

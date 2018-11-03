@@ -119,10 +119,21 @@ public class HdivReader extends Reader {
 
 	enum Type {
 
-		XPATH_INJECTION(643), SQL_INJECTION(89), CMD_INJECTION(78), PATH_TRAVERSAL(22), TRUST_BOUNDARY_VIOLATION(501), WEAK_RANDOMNESS(
-				"crypto-weak-randomness",
-				330), INSECURE_HASHING("crypto-bad-mac", 328), INSECURE_CIPHER("crypto-bad-ciphers", 327), REFLECTION_INJECTION(0), XSS(
-						"reflected-xss", 79), HEADER_INJECTION(113), INSECURE_COOKIE("cookie-flags-missing", 614), LDAP_INJECTION(90);
+		CMD_INJECTION(78),
+		INSECURE_HASHING("crypto-bad-mac", 328),
+		INSECURE_CIPHER("crypto-bad-ciphers", 327),
+		HEADER_INJECTION(113),
+		INSECURE_COOKIE("cookie-flags-missing", 614),
+		LDAP_INJECTION(90),
+		NO_HTTP_ONLY_COOKIE(1004),
+		PATH_TRAVERSAL(22),
+		REFLECTION_INJECTION(0),
+		SQL_INJECTION(89),
+		STACKTRACE_LEAK(209),
+		TRUST_BOUNDARY_VIOLATION(501),
+		WEAK_RANDOMNESS("crypto-weak-randomness", 330),
+		XPATH_INJECTION(643),
+		XSS("reflected-xss", 79);
 
 		private final int number;
 

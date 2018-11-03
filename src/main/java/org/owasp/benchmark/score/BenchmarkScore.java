@@ -691,7 +691,11 @@ public class BenchmarkScore {
 
                 // change the name of the tool if the filename contains findsecbugs
                 if (fileToParse.getName().contains("findsecbugs")) {
-                    tr.setTool("FBwFindSecBugs");
+                    if (tr.getTool().startsWith("Find")) {
+                        tr.setTool("FBwFindSecBugs");                		
+                    } else {
+                        tr.setTool("SBwFindSecBugs");
+               	    }
                 }
             }
 

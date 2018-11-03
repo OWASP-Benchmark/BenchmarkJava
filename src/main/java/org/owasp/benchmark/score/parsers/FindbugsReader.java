@@ -43,7 +43,7 @@ public class FindbugsReader extends Reader {
 		InputSource is = new InputSource( new FileInputStream(f) );
 		Document doc = docBuilder.parse(is);
 		
-		TestResults tr = new TestResults( "FindBugs" ,false,TestResults.ToolType.SAST);
+		TestResults tr = new TestResults( "FindBugs", false,TestResults.ToolType.SAST);
 		
 		// If the filename includes an elapsed time in seconds (e.g., TOOLNAME-seconds.xml), set the compute time on the scorecard.
 		tr.setTime(f);
@@ -52,6 +52,11 @@ public class FindbugsReader extends Reader {
         Node root = doc.getDocumentElement();
         String version = getAttributeValue( "version", root );
         tr.setToolVersion( version );
+        
+        // If the findbugs version is greater than v3.0.x, it is actually SpotBugs
+        if (!(version.startsWith("2") | version.startsWith("3.0"))) {        	
+            tr.setTool("SpotBugs");
+        }
 
 		NodeList nl = root.getChildNodes();
 		for ( int i = 0; i < nl.getLength(); i++ ) {
@@ -176,6 +181,7 @@ public class FindbugsReader extends Reader {
 
 			//Technology detection
 			case "SECSC" : 		return 00;	 // found Spring endpoint - not a vuln
+			case "SECJRS"  :    return 00;   // JAX-RS Endpoint
 
 			default : System.out.println( "Unknown vuln category for FindBugs: " + cat );
 		}

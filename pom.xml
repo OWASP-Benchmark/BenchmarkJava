@@ -803,7 +803,7 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
-				<version>3.10.0</version>
+				<version>3.11.0</version>
 				<configuration>
 					<linkXref>true</linkXref>
 					<targetJdk>1.7</targetJdk>

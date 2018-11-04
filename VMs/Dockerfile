@@ -22,5 +22,3 @@ RUN echo bench:bench | chpasswd
 RUN chown -R bench /owasp/
 ENV PATH /owasp/benchmark/:$PATH
 
-ENTRYPOINT ["/owasp/benchmark/runRemoteAccessibleBenchmark.sh"]
-

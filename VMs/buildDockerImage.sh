@@ -1,3 +1,3 @@
 docker image rm benchmark:latest
-docker build -t benchmark VMs/
+docker build -t benchmark .
 

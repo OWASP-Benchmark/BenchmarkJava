@@ -760,16 +760,9 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>
-				<version>2.6</version>
-				<configuration>
-					<fork>true</fork>
-					<meminitial>1024m</meminitial>
-					<maxmem>4000m</maxmem>
-					<compilerArgs>
-						<arg>-XX:MaxPermSize=4000m</arg>
-					</compilerArgs>
-				</configuration>
+				<version>3.5.0.1254</version>
 			</plugin>
+
 			<!-- FindBugs Static Analysis -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>

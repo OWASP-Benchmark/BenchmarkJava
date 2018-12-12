@@ -694,8 +694,13 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 				</exclusion>
 			</exclusions>
 		</dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-csv</artifactId>
+            <version>1.4</version>
+        </dependency>
 
-	</dependencies>
+    </dependencies>
 
 	<build>
 		<finalName>benchmark</finalName>

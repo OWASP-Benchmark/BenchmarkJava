@@ -74,6 +74,7 @@ import org.owasp.benchmark.score.parsers.PMDReader;
 import org.owasp.benchmark.score.parsers.ParasoftReader;
 import org.owasp.benchmark.score.parsers.Rapid7Reader;
 import org.owasp.benchmark.score.parsers.Reader;
+import org.owasp.benchmark.score.parsers.SeekerReader;
 import org.owasp.benchmark.score.parsers.ShiftLeftReader;
 import org.owasp.benchmark.score.parsers.SonarQubeReader;
 import org.owasp.benchmark.score.parsers.SourceMeterReader;
@@ -636,7 +637,11 @@ public class BenchmarkScore {
 		String filename = fileToParse.getName();
 		TestResults tr = null;
 
-        if ( filename.endsWith( ".ozasmt" ) ) {
+		if ( filename.endsWith( ".csv" ) ) {
+			tr = new SeekerReader().parse(fileToParse);
+		}
+
+		else if ( filename.endsWith( ".ozasmt" ) ) {
             tr = new AppScanSourceReader().parse( fileToParse );
         }
         

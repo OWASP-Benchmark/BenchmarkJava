@@ -205,6 +205,8 @@ public class BenchmarkScore {
 				System.exit(-1);
 			}
 
+			String osName = (System.getProperty("os.name").contains("Windows")) ? "windows" : "posix";
+
 			// Go through each file in the root directory.
 			// -- 1st find each directory. And then within each of those directories:
 			//    -- 1st find the expected results file in that directory
@@ -221,7 +223,7 @@ public class BenchmarkScore {
 				// Step 4a: Find and process the expected results file so we know what each tool in this directory 'should do'
 					for ( File resultsDirFile : rootDirFile.listFiles() ) {
 
-					if (resultsDirFile.getName().startsWith("expectedresults-")) {
+					if (resultsDirFile.getName().startsWith("expectedresults-" + osName + "-")) {
 						if (expectedResults != null) {
 							System.out.println( "Found 2nd expected results file " + resultsDirFile.getAbsolutePath()
 								+ " in same directory. Can only have 1 in each results directory");

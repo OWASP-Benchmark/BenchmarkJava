@@ -8,6 +8,7 @@ RUN apt-get install -q -y \
      openjdk-8-jdk \
      git \
      maven \
+     wget \
      && apt-get clean
 
 RUN mkdir /owasp

@@ -1,4 +1,4 @@
-﻿<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.owasp</groupId>
@@ -7,6 +7,7 @@
 	<packaging>war</packaging>
 	<name>OWASP Benchmark Project</name>
 	<url>https://www.owasp.org/index.php/Benchmark</url>
+
 	<profiles>
 		<profile>
 			<id>crawler</id>
@@ -64,14 +65,13 @@
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>findbugs-maven-plugin</artifactId>
-						<version>${version.findbugs.maven}</version>
+						<groupId>com.github.spotbugs</groupId>
+						<artifactId>spotbugs-maven-plugin</artifactId>
 						<executions>
 							<execution>
 								<phase>compile</phase>
 								<goals>
-									<goal>findbugs</goal>
+									<goal>spotbugs</goal>
 								</goals>
 							</execution>
 						</executions>
@@ -85,7 +85,7 @@
 								<plugin>
 									<groupId>com.h3xstream.findsecbugs</groupId>
 									<artifactId>findsecbugs-plugin</artifactId>
-									<version>1.8.0</version>
+									<version>1.9.0</version>
 								</plugin>
 							</plugins>
 						</configuration>
@@ -336,34 +336,16 @@
 		</dependency>
 
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>3.1.0</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-			<version>4.5.6</version>
+			<version>4.5.8</version>
 		</dependency>
 
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${version.slf4j}</version>
-		</dependency>
-
+		<!-- including to avoid warning: SLF4J: Defaulting to no-operation (NOP) logger implementation -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>${version.slf4j}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.17</version>
 		</dependency>
 
 <!--
@@ -381,9 +363,10 @@ But it requires getting all the Log4j2 stuff configured right, and haven't done 
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			<version>1.11</version>
+			<version>1.12</version>
 		</dependency>
 
+		<!-- mvn dependency:analyze says this is an unused declared dependency, but its wrong. -->
 		<dependency>
 			<groupId>commons-dbcp</groupId>
 			<artifactId>commons-dbcp</artifactId>
@@ -391,38 +374,56 @@ But it requires getting all the Log4j2 stuff configured right, and haven't done 
 		</dependency>
 
 		<dependency>
-			<groupId>org.apache.geronimo.ext.tomcat</groupId>
-			<artifactId>jasper</artifactId>
-			<version>7.0.39.2</version>
-			<scope>provided</scope>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.6</version>
 		</dependency>
 
 		<dependency>
-			<groupId>org.eclipse.jdt.core.compiler</groupId>
-			<artifactId>ecj</artifactId>
-			<version>4.6.1</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.glassfish.web</groupId>
-			<artifactId>el-impl</artifactId>
-			<version>2.2</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-collections4</artifactId>
-			<version>4.2</version>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.6</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>3.7</version>
+			<version>3.8</version>
 		</dependency>
 
-	<!-- Kevin's fix for jar version conflicts. For future Benchmark 1.3
+		<!-- mvn dependency:analyze says these 4 artifacts are used but not included in the pom, but adding
+		     them breaks the LDAP server startup. Maybe because apacheds-all includes them already? 
+		<dependency>
+			<groupId>org.apache.directory.shared</groupId>
+			<artifactId>shared-ldap</artifactId>
+			<version>${version.apache-shared-ldap}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.directory.shared</groupId>
+			<artifactId>shared-ldap-schema</artifactId>
+			<version>${version.apache-shared-ldap}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.directory.shared</groupId>
+			<artifactId>shared-ldap-schema-loader</artifactId>
+			<version>${version.apache-shared-ldap}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.directory.shared</groupId>
+			<artifactId>shared-ldap-schema-manager</artifactId>
+			<version>${version.apache-shared-ldap}</version>
+		</dependency -->
+
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore</artifactId>
+			<version>4.4.11</version>
+		</dependency>
+
+		<!-- Kevin's fix for jar version conflicts. For future Benchmark 1.3
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
@@ -452,28 +453,27 @@ But it requires getting all the Log4j2 stuff configured right, and haven't done 
 		<dependency>
 			<groupId>cglib</groupId>
 			<artifactId>cglib-nodep</artifactId>
-			<version>3.2.7</version>
+			<version>3.2.8</version>
 		</dependency>
-	 - END Kevin's fix for jar version conflicts -
 
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
 			<version>${version.hibernate}</version>
 		</dependency>
--->
+	 - END Kevin's fix for jar version conflicts -->
+
 		<dependency>
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
 			<!-- <version>2.4.1</version> This is latest version, but requires Java 8 -->
-			<!-- 2.3.2 seems to be the latest version downloadable from Central, even though it says 2.3.6 is available. -->
-			<version>2.3.2</version>
+			<version>2.3.6</version>
 		</dependency>
 
 		<dependency>
-			<groupId>javax.transaction</groupId>
-			<artifactId>jta</artifactId>
-			<version>1.1</version>
+			<groupId>org.jfree</groupId>
+			<artifactId>jcommon</artifactId>
+			<version>1.0.24</version>
 		</dependency>
 
 		<dependency>
@@ -483,50 +483,14 @@ But it requires getting all the Log4j2 stuff configured right, and haven't done 
 		</dependency>
 
 		<dependency>
-			<groupId>net.sourceforge.nekohtml</groupId>
-			<artifactId>nekohtml</artifactId>
-			<version>1.9.22</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.ant</groupId>
-			<artifactId>ant-apache-regexp</artifactId>
-			<version>1.10.5</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.w3c.css</groupId>
-			<artifactId>sac</artifactId>
-			<version>1.3</version>
-		</dependency>
-
-		<dependency>
-			<groupId>xalan</groupId>
-			<artifactId>xalan</artifactId>
-			<version>2.7.2</version>
-		</dependency>
-
-		<dependency>
-			<groupId>xerces</groupId>
-			<artifactId>xercesImpl</artifactId>
-			<version>2.12.0</version>
-		</dependency>
-
-		<dependency>
 			<groupId>xml-apis</groupId>
 			<artifactId>xml-apis</artifactId>
 			<version>1.4.01</version>
 		</dependency>
 
 		<dependency>
-			<groupId>xom</groupId>
-			<artifactId>xom</artifactId>
-			<version>1.2.5</version>
-		</dependency>
-
-		<dependency>
 			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
+			<artifactId>spring-context</artifactId>
 			<version>${version.springframework}</version>
 		</dependency>
 
@@ -538,37 +502,20 @@ But it requires getting all the Log4j2 stuff configured right, and haven't done 
 
 		<dependency>
 			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${version.springframework}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
 			<version>${version.springframework}</version>
 		</dependency>
 
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>${version.springframework}</version>
-		</dependency>
-
+		<!-- mvn dependency:analyze says this is an unused declared dependency, but its wrong. -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
-			<version>${version.springframework}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-aop</artifactId>
-			<version>${version.springframework}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-beans</artifactId>
-			<version>${version.springframework}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-expression</artifactId>
 			<version>${version.springframework}</version>
 		</dependency>
 
@@ -579,75 +526,49 @@ But it requires getting all the Log4j2 stuff configured right, and haven't done 
 		</dependency>
 
 		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-annotations</artifactId>
-			<version>${version.jackson}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>${version.jackson}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
-			<version>${version.jackson}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>javax.ws.rs</groupId>
-			<artifactId>jsr311-api</artifactId>
-			<version>1.1.1</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-server</artifactId>
-			<version>${version.jersey}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-client</artifactId>
-			<version>${version.jersey}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.hibernate.validator</groupId>
-			<artifactId>hibernate-validator</artifactId>
-			<version>6.0.11.Final</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.owasp.encoder</groupId>
-			<artifactId>encoder</artifactId>
-			<version>1.2.1</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.owasp.esapi</groupId>
-			<artifactId>esapi</artifactId>
-			<version>2.1.0.1</version>
-		</dependency>
-
-		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
+			<!-- versions higher than this require Java 8 -->
 			<version>25.1-jre</version>
 		</dependency>
 
+		<!-- mvn dependency:analyze says this is an unused declared dependency, but its wrong. -->
 		<dependency>
-			<groupId>org.apache.struts</groupId>
-			<artifactId>struts2-core</artifactId>
-			<version>2.5.18</version>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-servlet</artifactId>
+			<version>${version.jersey}</version>
 		</dependency>
 
 		<dependency>
-			<groupId>commons-collections</groupId>
-			<artifactId>commons-collections</artifactId>
-			<version>3.2.2</version>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-csv</artifactId>
+			<version>1.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.directory.server</groupId>
+			<artifactId>apacheds-all</artifactId>
+<!-- Upgrading to 2.0.0-M24 is an API breaking change.
+
+But it might be needed for Java 10, because I get this error, that I don't get with Java 8:
+
+     [java] at org.apache.directory.server.core.DefaultDirectoryService.initialize(DefaultDirectoryService.java:1426)
+     [java] at org.apache.directory.server.core.DefaultDirectoryService.startup(DefaultDirectoryService.java:907)
+     [java] at org.owasp.benchmark.helpers.LDAPServer.initDirectoryService(LDAPServer.java:148)
+     [java] at org.owasp.benchmark.helpers.LDAPServer.<init>(LDAPServer.java:42)
+     [java] at org.owasp.benchmark.helpers.LDAPServer.main(LDAPServer.java:320)
+     [java] Caused by: java.lang.NumberFormatException: multiple points
+     [java] at java.base/jdk.internal.math.FloatingDecimal.readJavaFormatString(FloatingDecimal.java:1914)
+-->
+			<version>1.5.7</version>
+			<exclusions>
+				<!-- shared-ldap-schema module needs to be excluded to avoid multiple 
+					schema resources on the classpath -->
+				<exclusion>
+					<groupId>org.apache.directory.shared</groupId>
+					<artifactId>shared-ldap-schema</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -660,41 +581,16 @@ But it requires getting all the Log4j2 stuff configured right, and haven't done 
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
-			<version>20180130</version>
+			<version>20180813</version>
 		</dependency>
 
 		<dependency>
-			<groupId>org.apache.directory.server</groupId>
-			<artifactId>apacheds-all</artifactId>
-<!-- Upgrading to 2.0.0-M24 is an API breaking change.
-
-But it might be needed for Java 10, because I get this error, that I don't get with Java 8:
-
-     [java] 	at org.apache.directory.server.core.DefaultDirectoryService.initialize(DefaultDirectoryService.java:1426)
-     [java] 	at org.apache.directory.server.core.DefaultDirectoryService.startup(DefaultDirectoryService.java:907)
-     [java] 	at org.owasp.benchmark.helpers.LDAPServer.initDirectoryService(LDAPServer.java:148)
-     [java] 	at org.owasp.benchmark.helpers.LDAPServer.<init>(LDAPServer.java:42)
-     [java] 	at org.owasp.benchmark.helpers.LDAPServer.main(LDAPServer.java:320)
-     [java] Caused by: java.lang.NumberFormatException: multiple points
-     [java] 	at java.base/jdk.internal.math.FloatingDecimal.readJavaFormatString(FloatingDecimal.java:1914)
--->
-			<version>1.5.7</version>
-			<exclusions>
-				<!-- shared-ldap-schema module needs to be excluded to avoid multiple 
-					schema resources on the classpath -->
-				<exclusion>
-					<groupId>org.apache.directory.shared</groupId>
-					<artifactId>shared-ldap-schema</artifactId>
-				</exclusion>
-			</exclusions>
+			<groupId>org.owasp.esapi</groupId>
+			<artifactId>esapi</artifactId>
+			<version>2.1.0.1</version>
 		</dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-csv</artifactId>
-            <version>1.4</version>
-        </dependency>
 
-    </dependencies>
+	</dependencies>
 
 	<build>
 		<finalName>benchmark</finalName>
@@ -705,13 +601,27 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 			</resource>
 		</resources>
 
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.cargo</groupId>
-				<artifactId>cargo-maven2-plugin</artifactId>
-				<version>1.6.8</version>
-			</plugin>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-antrun-plugin</artifactId>
+					<version>1.8</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>3.1.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>3.1.1</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 
+		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
@@ -737,61 +647,61 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>3.1.0</version>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.8.2</version>
 			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.22.0</version>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<version>3.0.0-M2</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>extra-enforcer-rules</artifactId>
+						<version>1.2</version>
+					</dependency>
+				</dependencies>
+				<executions>
+					<execution>
+						<id>enforce-bytecode-version</id>
+						<goals><goal>enforce</goal></goals>
+						<configuration>
+							<rules>
+								<enforceBytecodeVersion>
+									<maxJdkVersion>1.7</maxJdkVersion>
+									<excludes>
+									    <!-- guava includes backports for Java 7 compatibility -->
+										<exclude>com.google.guava:guava</exclude>
+									</excludes>
+									<ignoredScopes>test</ignoredScopes>
+									<message>Dependencies shouldn't require Java 8+.</message>
+								</enforceBytecodeVersion>
+							</rules>
+							<fail>warn</fail>
+						</configuration>
+					</execution>
+					<execution>
+						<id>enforce-jdk-version</id>
+						<goals><goal>enforce</goal></goals>
+						<configuration>
+							<rules>
+								<requireJavaVersion>
+									<version>1.7</version>
+									<message>Benchmark is currently written to support Java 7 and 8.</message>
+								</requireJavaVersion>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<!-- Would like to upgrade to latest version but breaks the Servlet mapping and I don't know how to fifix it. Returns this error:
-	Description: The origin server did not find a current representation for the target resource or is not willing to disclose that one exists.
-				<version>3.2.2</version> -->
-				<version>2.6</version>
+				<artifactId>maven-install-plugin</artifactId>
+				<version>2.5.2</version>
 			</plugin>
 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>sonar-maven-plugin</artifactId>
-				<version>3.5.0.1254</version>
-			</plugin>
-
-			<!-- FindBugs Static Analysis -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>${version.findbugs.maven}</version>
-				<configuration>
-					<effort>Max</effort>
-					<threshold>Low</threshold>
-					<failOnError>true</failOnError>
-				</configuration>
-			</plugin>
-
-		</plugins>
-	</build>
-
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>${version.findbugs.maven}</version>
-				<configuration>
-					<argLine>-debug -maxHeap 2048 -include findbugsfilter.xml</argLine>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jxr-plugin</artifactId>
-				<version>2.5</version>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
@@ -800,6 +710,101 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 					<linkXref>true</linkXref>
 					<targetJdk>1.7</targetJdk>
 				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>3.0.0</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.1.0</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.7.1</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.22.1</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<!-- Would like to upgrade to latest version but breaks the Servlet mapping and I don't know how to fix it. Returns this error:
+	Description: The origin server did not find a current representation for the target resource or is not willing to disclose that one exists.
+				<version>3.2.2</version> -->
+				<version>2.6</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.cargo</groupId>
+				<artifactId>cargo-maven2-plugin</artifactId>
+				<version>1.7.3</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>3.6.0.1398</version>
+			</plugin>
+
+			<!-- SpotBugs Static Analysis - the successor to FindBugs -->
+			<plugin>
+				<groupId>com.github.spotbugs</groupId>
+				<artifactId>spotbugs-maven-plugin</artifactId>
+				<version>${version.spotbugs.maven}</version>
+				<configuration>
+					<effort>Max</effort>
+					<threshold>Low</threshold>
+					<failOnError>true</failOnError>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>com.internetitem</groupId>
+				<artifactId>write-properties-file-maven-plugin</artifactId>
+				<version>1.0.1</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.jasig.mojo.jspc</groupId>
+				<artifactId>jspc-maven-plugin</artifactId>
+				<version>2.0.2</version>
+			</plugin>
+
+		</plugins>
+
+	</build>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>2.3</version>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>versions-maven-plugin</artifactId>
+				<version>2.5</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>dependency-updates-report</report>
+							<report>plugin-updates-report</report>
+							<report>property-updates-report</report>
+						</reports>
+					</reportSet>
+				</reportSets>
 			</plugin>
 		</plugins>
 	</reporting>
@@ -813,17 +818,18 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.war.webxml>${basedir}/src/config/web.xml</maven.war.webxml>
 		<runenv>local</runenv>
+		<version.apache-shared-ldap>0.9.19</version.apache-shared-ldap>
 		<version.exec.maven>1.6.0</version.exec.maven>
-		<version.findbugs.maven>3.0.5</version.findbugs.maven>
 		<version.hibernate>3.6.10.Final</version.hibernate>
-		<version.jackson>2.9.6</version.jackson>
+		<version.jackson>2.9.8</version.jackson>
 		<version.jersey>1.19.4</version.jersey>
-		<version.slf4j>1.7.25</version.slf4j>
+		<version.slf4j>1.7.26</version.slf4j>
+		<version.spotbugs.maven>3.1.11</version.spotbugs.maven>
 		<!-- Spring Framework 4.2x is an API breaking change. Would like to upgrade to 4.3x actually -->
 		<version.springframework>4.1.9.RELEASE</version.springframework>
 		<!-- tomcat 8.5 is last version to support Java 7. Tomcat 9+ requires Java 8. -->
 		<tomcat.major.version>8</tomcat.major.version>
-		<version.tomcat>8.5.32</version.tomcat>
+		<version.tomcat>8.5.40</version.tomcat>
 		<tomcat.url>http://archive.apache.org/dist/tomcat/tomcat-${tomcat.major.version}/v${version.tomcat}/bin/apache-tomcat-${version.tomcat}.zip</tomcat.url>
 	</properties>
 </project>

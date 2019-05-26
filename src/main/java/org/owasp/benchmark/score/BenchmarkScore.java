@@ -85,6 +85,7 @@ import org.owasp.benchmark.score.parsers.VeracodeReader;
 import org.owasp.benchmark.score.parsers.WebInspectReader;
 import org.owasp.benchmark.score.parsers.XanitizerReader;
 import org.owasp.benchmark.score.parsers.ZapReader;
+import org.owasp.benchmark.score.parsers.QualysWASReader;
 import org.owasp.benchmark.score.report.Report;
 import org.owasp.benchmark.score.report.ScatterHome;
 import org.owasp.benchmark.score.report.ScatterVulns;
@@ -776,6 +777,9 @@ public class BenchmarkScore {
                 }
                 else if ( nodeName.equals( "netsparker" ) ) {
                     tr = new NetsparkerReader().parse( root );
+                }
+				else if ( nodeName.equals( "WAS_SCAN_REPORT" ) ) {
+                    tr = new QualysWASReader().parse( root );
                 }
                 else System.out.println("Error: No matching parser found for XML file: " + filename);
 

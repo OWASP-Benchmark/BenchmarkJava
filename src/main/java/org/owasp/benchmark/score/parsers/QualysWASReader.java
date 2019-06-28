@@ -12,8 +12,8 @@
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details
  *
- * @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
- * @created 2015
+ * @author Christian Lopez <a href="https://www.qualys.com/">Qualys</a>
+ * @created 2019
  */
 
 package org.owasp.benchmark.score.parsers;

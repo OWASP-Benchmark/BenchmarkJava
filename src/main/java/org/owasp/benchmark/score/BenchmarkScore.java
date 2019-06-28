@@ -70,15 +70,16 @@ import org.owasp.benchmark.score.parsers.NetsparkerReader;
 import org.owasp.benchmark.score.parsers.NoisyCricketReader;
 import org.owasp.benchmark.score.parsers.OverallResult;
 import org.owasp.benchmark.score.parsers.OverallResults;
-import org.owasp.benchmark.score.parsers.PMDReader;
 import org.owasp.benchmark.score.parsers.ParasoftReader;
+import org.owasp.benchmark.score.parsers.PMDReader;
+import org.owasp.benchmark.score.parsers.QualysWASReader;
 import org.owasp.benchmark.score.parsers.Rapid7Reader;
 import org.owasp.benchmark.score.parsers.Reader;
 import org.owasp.benchmark.score.parsers.SeekerReader;
 import org.owasp.benchmark.score.parsers.ShiftLeftReader;
+import org.owasp.benchmark.score.parsers.SnappyTickReader;
 import org.owasp.benchmark.score.parsers.SonarQubeReader;
 import org.owasp.benchmark.score.parsers.SourceMeterReader;
-import org.owasp.benchmark.score.parsers.SnappyTickReader;
 import org.owasp.benchmark.score.parsers.TestCaseResult;
 import org.owasp.benchmark.score.parsers.TestResults;
 import org.owasp.benchmark.score.parsers.ThunderScanReader;
@@ -784,6 +785,10 @@ public class BenchmarkScore {
 
                 else if ( nodeName.equals( "Scan" ) ) {
                     tr = new WebInspectReader().parse( root );
+                }
+
+                else if ( nodeName.equals( "WAS_SCAN_REPORT" ) ) {
+                    tr = new QualysWASReader().parse( root );
                 }
 
                 else System.out.println("Error: No matching parser found for XML file: " + filename);

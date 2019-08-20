@@ -85,6 +85,7 @@ import org.owasp.benchmark.score.parsers.VeracodeReader;
 import org.owasp.benchmark.score.parsers.WebInspectReader;
 import org.owasp.benchmark.score.parsers.XanitizerReader;
 import org.owasp.benchmark.score.parsers.ZapReader;
+import org.owasp.benchmark.score.parsers.HCLReader;
 import org.owasp.benchmark.score.report.Report;
 import org.owasp.benchmark.score.report.ScatterHome;
 import org.owasp.benchmark.score.report.ScatterVulns;
@@ -831,7 +832,11 @@ public class BenchmarkScore {
         else if ( filename.endsWith( ".log" ) ) {
             tr = new ContrastReader().parse( fileToParse );
         }
-        
+		
+        else if ( filename.endsWith( ".hcl" ) ) {
+			tr = new HCLReader().parse( fileToParse );
+		}
+
         else if ( filename.endsWith( ".hlg" ) ) {
             tr = new HdivReader().parse( fileToParse );
         }

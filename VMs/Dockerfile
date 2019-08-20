@@ -9,6 +9,7 @@ RUN apt-get install -q -y \
      git \
      maven \
      wget \
+     iputils-ping \
      && apt-get clean
 
 RUN mkdir /owasp

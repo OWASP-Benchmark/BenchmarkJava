@@ -70,12 +70,14 @@ import org.owasp.benchmark.score.parsers.NetsparkerReader;
 import org.owasp.benchmark.score.parsers.NoisyCricketReader;
 import org.owasp.benchmark.score.parsers.OverallResult;
 import org.owasp.benchmark.score.parsers.OverallResults;
-import org.owasp.benchmark.score.parsers.PMDReader;
 import org.owasp.benchmark.score.parsers.ParasoftReader;
+import org.owasp.benchmark.score.parsers.PMDReader;
+import org.owasp.benchmark.score.parsers.QualysWASReader;
 import org.owasp.benchmark.score.parsers.Rapid7Reader;
 import org.owasp.benchmark.score.parsers.Reader;
 import org.owasp.benchmark.score.parsers.SeekerReader;
 import org.owasp.benchmark.score.parsers.ShiftLeftReader;
+import org.owasp.benchmark.score.parsers.SnappyTickReader;
 import org.owasp.benchmark.score.parsers.SonarQubeReader;
 import org.owasp.benchmark.score.parsers.SourceMeterReader;
 import org.owasp.benchmark.score.parsers.TestCaseResult;
@@ -638,11 +640,11 @@ public class BenchmarkScore {
 		String filename = fileToParse.getName();
 		TestResults tr = null;
 
-		if ( filename.endsWith( ".csv" ) ) {
-			tr = new SeekerReader().parse(fileToParse);
-		}
+        if ( filename.endsWith( ".csv" ) ) {
+            tr = new SeekerReader().parse(fileToParse);
+        }
 
-		else if ( filename.endsWith( ".ozasmt" ) ) {
+        else if ( filename.endsWith( ".ozasmt" ) ) {
             tr = new AppScanSourceReader().parse( fileToParse );
         }
         
@@ -698,7 +700,7 @@ public class BenchmarkScore {
                 // change the name of the tool if the filename contains findsecbugs
                 if (fileToParse.getName().contains("findsecbugs")) {
                     if (tr.getTool().startsWith("Find")) {
-                        tr.setTool("FBwFindSecBugs");                		
+                        tr.setTool("FBwFindSecBugs");
                     } else {
                         tr.setTool("SBwFindSecBugs");
                	    }
@@ -728,6 +730,7 @@ public class BenchmarkScore {
             else if ( line2.startsWith( "<report" )) {
                 tr = new ArachniReader().parse( fileToParse );
             }
+
             else if ( line2.startsWith( "<analysisResult") || line2.startsWith( "<analysisReportResult")) {
                 tr = new JuliaReader().parse( fileToParse );
             }
@@ -737,11 +740,12 @@ public class BenchmarkScore {
                 Document doc = getXMLDocument( fileToParse );
                 Node root = doc.getDocumentElement();
                 String nodeName = root.getNodeName();
+                //System.out.println("Root node name of XML results file is: " + nodeName);
 
-                if ( nodeName.equals( "issues" ) ) {
-                    tr = new BurpReader().parse( root );
+                if ( nodeName.equals( "ScanGroup" ) ) {
+                    tr = new AcunetixReader().parse( root );
                 }
-                
+
                 else if ( nodeName.equals( "XmlReport" ) ) {
                     tr = new AppScanDynamicReader().parse( root );
                 }
@@ -760,24 +764,34 @@ public class BenchmarkScore {
                                 + " but had name: " + name);
                 }
 
-                else if ( nodeName.equals( "noisycricket" ) ) {
-                    tr = new NoisyCricketReader().parse( root );
+                else if ( nodeName.equals( "issues" ) ) {
+                    tr = new BurpReader().parse( root );
                 }
 
-                else if ( nodeName.equals( "Scan" ) ) {
-                    tr = new WebInspectReader().parse( root );
+                else if ( nodeName.equals( "netsparker" ) ) {
+                    tr = new NetsparkerReader().parse( root );
                 }
-                
-                else if ( nodeName.equals( "ScanGroup" ) ) {
-                    tr = new AcunetixReader().parse( root );
+
+                else if ( nodeName.equals( "noisycricket" ) ) {
+                    tr = new NoisyCricketReader().parse( root );
                 }
 
                 else if ( nodeName.equals( "VulnSummary" ) ) {
                     tr = new Rapid7Reader().parse( root );
                 }
-                else if ( nodeName.equals( "netsparker" ) ) {
-                    tr = new NetsparkerReader().parse( root );
+
+                else if ( nodeName.equals( "Report" ) ) {
+                    tr = new SnappyTickReader().parse( root );
                 }
+
+                else if ( nodeName.equals( "Scan" ) ) {
+                    tr = new WebInspectReader().parse( root );
+                }
+
+                else if ( nodeName.equals( "WAS_SCAN_REPORT" ) ) {
+                    tr = new QualysWASReader().parse( root );
+                }
+
                 else System.out.println("Error: No matching parser found for XML file: " + filename);
 
             } // end else

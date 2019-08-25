@@ -385,8 +385,8 @@
 								<properties>
 									<cargo.jvmargs>
 										-Xmx8G
-										-javaagent:${basedir}/tools/hcl/secagent.jar=agent_path=${basedir}/tools/hcl/secagent.jar
-										-Dsecagent.log=${basedir}/tools/hcl/working/HCL-IAST.hcl
+										-javaagent:${basedir}/tools/HCL/secagent.jar=agent_path=${basedir}/tools/HCL/secagent.jar
+										-Dsecagent.log=${basedir}/tools/HCL/working/HCL-IAST.hcl
 									</cargo.jvmargs>
 									<cargo.servlet.port>8443</cargo.servlet.port>
 									<cargo.protocol>https</cargo.protocol>

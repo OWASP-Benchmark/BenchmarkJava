@@ -300,6 +300,109 @@
 				</plugins>
 			</build>
 		</profile>
+		
+		<profile>
+			<id>deploywhcl</id>
+			<properties>
+				<skipTests>true</skipTests>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>ldap-server</id>
+								<phase>package</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<ant target="run" antfile="${basedir}/src/config/build.xml">
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+										</ant>
+									</target>
+								</configuration>
+							</execution>
+							<execution>
+								<id>database-server</id>
+								<phase>package</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<ant target="databaseServer" antfile="${basedir}/src/config/build.xml">
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+										</ant>
+									</target>
+								</configuration>
+							</execution>
+							<execution>
+								<id>database-init</id>
+								<phase>package</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<ant target="databaseInit" antfile="${basedir}/src/config/build.xml">
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+										</ant>
+									</target>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.cargo</groupId>
+						<artifactId>cargo-maven2-plugin</artifactId>
+						<configuration>
+							<container>
+								<timeout>400000</timeout>
+								<containerId>tomcat${tomcat.major.version}x</containerId>
+								<zipUrlInstaller>
+									<url>${tomcat.url}</url>
+								</zipUrlInstaller>
+							</container>
+							<properties>
+								<cargo.jvmargs>-XX:MaxPermSize=6G -Xms1G –Xmx8G</cargo.jvmargs>
+							</properties>
+							<configuration>
+								<configfiles>
+									<configfile>
+										<file>${basedir}/src/config/local/server.xml</file>
+										<todir>conf</todir>
+										<overwrite>true</overwrite>
+									</configfile>
+									<configfile>
+										<file>${basedir}/src/config/local/context.xml</file>
+										<todir>conf</todir>
+										<overwrite>true</overwrite>
+									</configfile>
+								</configfiles>
+								<properties>
+									<cargo.jvmargs>
+										-Xmx8G
+										-javaagent:${basedir}/tools/HCL/secagent.jar=agent_path=${basedir}/tools/HCL/secagent.jar
+										-Dsecagent.log=${basedir}/tools/HCL/working/HCL-IAST.hcl
+									</cargo.jvmargs>
+									<cargo.servlet.port>8443</cargo.servlet.port>
+									<cargo.protocol>https</cargo.protocol>
+									<cargo.tomcat.connector.clientAuth>false</cargo.tomcat.connector.clientAuth>
+									<cargo.tomcat.connector.sslProtocol>TLS</cargo.tomcat.connector.sslProtocol>
+									<cargo.tomcat.connector.keystoreFile>../../../../.keystore</cargo.tomcat.connector.keystoreFile>
+									<cargo.tomcat.connector.keystorePass>changeit</cargo.tomcat.connector.keystorePass>
+									<cargo.tomcat.connector.keyAlias>tomcat</cargo.tomcat.connector.keyAlias>
+									<cargo.tomcat.httpSecure>true</cargo.tomcat.httpSecure>
+								</properties>
+							</configuration>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 
 		<profile>
 			<id>time</id>

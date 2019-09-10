@@ -64,6 +64,7 @@ import org.owasp.benchmark.score.parsers.FaastReader;
 import org.owasp.benchmark.score.parsers.FindbugsReader;
 import org.owasp.benchmark.score.parsers.FortifyReader;
 import org.owasp.benchmark.score.parsers.FusionLiteInsightReader;
+import org.owasp.benchmark.score.parsers.HCLReader;
 import org.owasp.benchmark.score.parsers.HdivReader;
 import org.owasp.benchmark.score.parsers.JuliaReader;
 import org.owasp.benchmark.score.parsers.NetsparkerReader;
@@ -87,7 +88,6 @@ import org.owasp.benchmark.score.parsers.VeracodeReader;
 import org.owasp.benchmark.score.parsers.WebInspectReader;
 import org.owasp.benchmark.score.parsers.XanitizerReader;
 import org.owasp.benchmark.score.parsers.ZapReader;
-import org.owasp.benchmark.score.parsers.HCLReader;
 import org.owasp.benchmark.score.report.Report;
 import org.owasp.benchmark.score.report.ScatterHome;
 import org.owasp.benchmark.score.report.ScatterVulns;
@@ -703,7 +703,7 @@ public class BenchmarkScore {
                         tr.setTool("FBwFindSecBugs");
                     } else {
                         tr.setTool("SBwFindSecBugs");
-               	    }
+                    }
                 }
             }
 
@@ -846,18 +846,18 @@ public class BenchmarkScore {
         else if ( filename.endsWith( ".log" ) ) {
             tr = new ContrastReader().parse( fileToParse );
         }
-		
+
         else if ( filename.endsWith( ".hcl" ) ) {
-			tr = new HCLReader().parse( fileToParse );
-		}
+            tr = new HCLReader().parse( fileToParse );
+        }
 
         else if ( filename.endsWith( ".hlg" ) ) {
             tr = new HdivReader().parse( fileToParse );
         }
 
-	else if ( filename.endsWith( ".sl" ) ) {
-	    tr = new ShiftLeftReader().parse( fileToParse );
-	}
+        else if ( filename.endsWith( ".sl" ) ) {
+            tr = new ShiftLeftReader().parse( fileToParse );
+        }
 
         else System.out.println("Error: No matching parser found for file: " + filename);
 

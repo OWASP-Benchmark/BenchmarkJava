@@ -927,7 +927,7 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 		<version.jackson>2.9.8</version.jackson>
 		<version.jersey>1.19.4</version.jersey>
 		<version.slf4j>1.7.26</version.slf4j>
-		<version.spotbugs.maven>3.1.12</version.spotbugs.maven>
+		<version.spotbugs.maven>3.1.12.2</version.spotbugs.maven>
 		<!-- Spring Framework 4.2x is an API breaking change. Would like to upgrade to 4.3x actually -->
 		<version.springframework>4.1.9.RELEASE</version.springframework>
 		<!-- tomcat 8.5 is last version to support Java 7. Tomcat 9+ requires Java 8. -->

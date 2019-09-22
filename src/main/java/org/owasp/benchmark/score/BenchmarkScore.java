@@ -64,6 +64,7 @@ import org.owasp.benchmark.score.parsers.FaastReader;
 import org.owasp.benchmark.score.parsers.FindbugsReader;
 import org.owasp.benchmark.score.parsers.FortifyReader;
 import org.owasp.benchmark.score.parsers.FusionLiteInsightReader;
+import org.owasp.benchmark.score.parsers.LGTMReader;
 import org.owasp.benchmark.score.parsers.HCLReader;
 import org.owasp.benchmark.score.parsers.HdivReader;
 import org.owasp.benchmark.score.parsers.JuliaReader;
@@ -658,6 +659,10 @@ public class BenchmarkScore {
             if ( line2.contains("Coverity") || line2.contains("formatVersion") ) {
                 tr = new CoverityReader().parse( fileToParse );
             }
+        }
+
+        else if ( filename.endsWith( ".sarif" ) ) {
+            tr = new LGTMReader().parse( fileToParse );
         }
 
         else if ( filename.endsWith( ".txt" ) ) {

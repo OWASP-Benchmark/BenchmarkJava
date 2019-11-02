@@ -64,6 +64,7 @@ import org.owasp.benchmark.score.parsers.FaastReader;
 import org.owasp.benchmark.score.parsers.FindbugsReader;
 import org.owasp.benchmark.score.parsers.FortifyReader;
 import org.owasp.benchmark.score.parsers.FusionLiteInsightReader;
+import org.owasp.benchmark.score.parsers.KiuwanReader;
 import org.owasp.benchmark.score.parsers.LGTMReader;
 import org.owasp.benchmark.score.parsers.HCLReader;
 import org.owasp.benchmark.score.parsers.HdivReader;
@@ -663,6 +664,10 @@ public class BenchmarkScore {
 
         else if ( filename.endsWith( ".sarif" ) ) {
             tr = new LGTMReader().parse( fileToParse );
+        }
+
+        else if ( filename.endsWith( ".threadfix" ) ) {
+            tr = new KiuwanReader().parse( fileToParse );
         }
 
         else if ( filename.endsWith( ".txt" ) ) {

@@ -41,15 +41,24 @@ public class KiuwanReader extends Reader {
 //		String resultsFormatVersion = obj.getString( "version" ); // Note: no threadfix version info included in format.
 
 		JSONArray findings = obj.getJSONArray("findings");
+		
+		String source = obj.getString("source");
 
-		TestResults tr = new TestResults( "Kiuwan", true, TestResults.ToolType.SAST);
+		TestResults tr = new TestResults(source, true, TestResults.ToolType.SAST);
 		// Scan time is not included in the threadfix schema. But scan time is provided on their web site next to results
 		tr.setTime(f);  // This grabs the scan time out of the filename, if provided 
 						// e.g., Benchmark_1.2_Kiuwan-660.threadfix, means the scan took 660 seconds.
 
 		// Set the version of Kiuwan used to do the scan (Can't because that info isn't provided)
 		// It is provided on their web site. Looks like: Engine version   master.p561.q11382.a1870.i501
-//		tr.setToolVersion(driver.getString("version"));
+		// We will use the created date. format: "created":"2019-11-05T21:24:49Z"
+		String created = obj.getString("created");
+		if (null != created) {
+			created = created.replace("-", "");
+			created = created.replace(":", "");
+			created = created.trim();
+			tr.setToolVersion(created);
+		}
 
 		//System.out.println("Found: " + findings.length() + " findings.");
 		for (int i = 0; i < findings.length(); i++)
@@ -68,8 +77,10 @@ public class KiuwanReader extends Reader {
 	private TestCaseResult parseKiuwanFinding(JSONObject finding) {
 		try {
 			TestCaseResult tcr = new TestCaseResult();
-			JSONObject staticDetails = finding.getJSONObject("staticDetails");			
-			String filename = staticDetails.getJSONArray("dataFlow").getJSONObject(0).getString("file");
+			JSONObject staticDetails = finding.getJSONObject("staticDetails");		
+			JSONArray dataFlow = staticDetails.getJSONArray("dataFlow");	
+			int propagationPathLength = dataFlow.length()-1;
+			String filename = dataFlow.getJSONObject(propagationPathLength).getString("file");
 			filename = filename.substring( filename.lastIndexOf( '/' ) );
 			if ( filename.contains( BenchmarkScore.BENCHMARKTESTNAME ) ) {
 				String testNumber = filename.substring( BenchmarkScore.BENCHMARKTESTNAME.length() + 1, filename.length() - 5 );

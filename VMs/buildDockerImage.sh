@@ -8,6 +8,6 @@ then
 fi
 
 # Since Docker doesn't auto delete anything, just like for the Ubunto update, delete any existing benchmark:latest image before building a new one
-#docker image rm benchmark:latest
-#docker build -t benchmark .
+docker image rm benchmark:latest
+docker build -t benchmark .
 

@@ -72,15 +72,15 @@ public class HCLReader extends Reader {
         TestCaseResult tcr = new TestCaseResult();
         
         try {
-	        String splitJson = json.split("writeVulnerabilityToFile - ")[1];
+			String splitJson = json.substring(json.indexOf("{"));
 			JSONObject obj = new JSONObject(splitJson);
-			JSONObject result = obj.getJSONObject("result");
+			JSONObject result = obj.getJSONArray("issue-group").getJSONObject(0);
 			
-	        String ruleId = result.getString( "ruleId" );
+	        String ruleId = result.getJSONObject("issue-type").getString( "ref" );
 	        tcr.setCWE(cweLookup(ruleId));
 	        tcr.setCategory(ruleId);
 	
-	        JSONObject request = result.getJSONObject("request");
+	        JSONObject request = result.getJSONArray("variant-group").getJSONObject(0).getJSONObject("request");
             String uri = request.getString("uri" );
         
 	        if ( uri.contains( "BenchmarkTest" ) ) {

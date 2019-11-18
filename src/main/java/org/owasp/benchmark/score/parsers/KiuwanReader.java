@@ -41,15 +41,27 @@ public class KiuwanReader extends Reader {
 //		String resultsFormatVersion = obj.getString( "version" ); // Note: no threadfix version info included in format.
 
 		JSONArray findings = obj.getJSONArray("findings");
+		JSONObject metadata = obj.getJSONObject("metadata");
+		
+		String source = obj.getString("source");
 
-		TestResults tr = new TestResults( "Kiuwan", true, TestResults.ToolType.SAST);
-		// Scan time is not included in the threadfix schema. But scan time is provided on their web site next to results
-		tr.setTime(f);  // This grabs the scan time out of the filename, if provided 
-						// e.g., Benchmark_1.2_Kiuwan-660.threadfix, means the scan took 660 seconds.
+		TestResults tr = new TestResults(source, true, TestResults.ToolType.SAST);
+		
+		// Scan time is included in the threadfix schema: "metadata/Kiuwan-AnalysisDuration"
+		if (null != metadata) {
+			String analysisDuration = metadata.getString("Kiuwan-AnalysisDuration");
+			if (null != analysisDuration) {
+				tr.setTime(analysisDuration);
+			}
+		}
 
-		// Set the version of Kiuwan used to do the scan (Can't because that info isn't provided)
-		// It is provided on their web site. Looks like: Engine version   master.p561.q11382.a1870.i501
-//		tr.setToolVersion(driver.getString("version"));
+		// Set the version of Kiuwan used to do the scan: "metadata/Kiuwan-EngineVersion"
+		if (null != metadata) {
+			String engineVersion = metadata.getString("Kiuwan-EngineVersion");
+			if (null != engineVersion) {
+				tr.setToolVersion(engineVersion);
+			}
+		}
 
 		//System.out.println("Found: " + findings.length() + " findings.");
 		for (int i = 0; i < findings.length(); i++)
@@ -68,8 +80,10 @@ public class KiuwanReader extends Reader {
 	private TestCaseResult parseKiuwanFinding(JSONObject finding) {
 		try {
 			TestCaseResult tcr = new TestCaseResult();
-			JSONObject staticDetails = finding.getJSONObject("staticDetails");			
-			String filename = staticDetails.getJSONArray("dataFlow").getJSONObject(0).getString("file");
+			JSONObject staticDetails = finding.getJSONObject("staticDetails");		
+			JSONArray dataFlow = staticDetails.getJSONArray("dataFlow");	
+			int propagationPathLength = dataFlow.length()-1;
+			String filename = dataFlow.getJSONObject(propagationPathLength).getString("file");
 			filename = filename.substring( filename.lastIndexOf( '/' ) );
 			if ( filename.contains( BenchmarkScore.BENCHMARKTESTNAME ) ) {
 				String testNumber = filename.substring( BenchmarkScore.BENCHMARKTESTNAME.length() + 1, filename.length() - 5 );
@@ -110,7 +124,7 @@ public class KiuwanReader extends Reader {
 	private int fixCWE( String cweNumber ) {
 		int cwe = Integer.parseInt( cweNumber );
 		if ( cwe == 564 ) cwe = 89; // SQLi
-		if ( cwe == 77 ) cwe = 78; // Command Injection
+		if ( cwe == 77 ) cwe = 78;  // Command Injection
 		return cwe;
 	}
 	

@@ -17,12 +17,13 @@ public class CheckmarxESReader extends Reader {
         JSONObject obj = new JSONObject(content);
 
         //engine version
-        String version = obj.getString( "Version" );
+        String version = obj.getString( "EngineVersion" );
+        String[] parts = version.split("\\.");
+        version = parts[0]+ "." + parts[1] + "." + parts[2];
         tr.setToolVersion(version);
 
         //duration time
-        // Fixme: This is the create time and not the duration (must be changed in the fututre)
-        tr.setTime(obj.getString("CreateTime"));
+        tr.setTime(obj.getString("ScanDuration"));
 
         String key = "Queries";
         JSONArray queries = obj.getJSONArray(key);
@@ -32,9 +33,7 @@ public class CheckmarxESReader extends Reader {
             JSONObject query = queries.getJSONObject(i);
 
             //cwe
-            //TODO: get CWE from json (no info in the file)
-            //int cwe = query.getInt(query.cwe);
-            int cwe = -1;
+            int cwe = query.getJSONObject("Metadata").getInt("CweId");
             try{
                 cwe = translate( Integer.parseInt("undefined"));
             }

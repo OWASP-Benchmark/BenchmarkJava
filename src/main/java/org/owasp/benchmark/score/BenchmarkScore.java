@@ -657,12 +657,10 @@ public class BenchmarkScore {
 
 		else if ( filename.endsWith( ".json" ) ) {
 			String line2 = getLine( fileToParse, 1 );
-			String line3 = getLine( fileToParse, 2 );
 			if ( line2.contains("Coverity") || line2.contains("formatVersion") ) {
 				tr = new CoverityReader().parse( fileToParse );
 			}
-			//Fixme: when checkmarx provide a json with more unique identification
-			else if(line2.contains("Version") && line3.contains("ScanId")) {
+			else if(line2.contains("Vendor") && line2.contains("Checkmarx")) {
 				tr = new CheckmarxESReader().parse(fileToParse);
 			}
 		}

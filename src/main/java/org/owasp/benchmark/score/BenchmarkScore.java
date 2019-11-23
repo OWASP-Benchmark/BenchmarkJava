@@ -56,6 +56,7 @@ import org.owasp.benchmark.score.parsers.AppScanSourceReader2;
 import org.owasp.benchmark.score.parsers.ArachniReader;
 import org.owasp.benchmark.score.parsers.BurpReader;
 import org.owasp.benchmark.score.parsers.CASTAIPReader;
+import org.owasp.benchmark.score.parsers.CheckmarxESReader;
 import org.owasp.benchmark.score.parsers.CheckmarxReader;
 import org.owasp.benchmark.score.parsers.ContrastReader;
 import org.owasp.benchmark.score.parsers.Counter;
@@ -654,13 +655,15 @@ public class BenchmarkScore {
             tr = new FaastReader().parse( fileToParse );
         }
 
-        else if ( filename.endsWith( ".json" ) ) {
-            String line1 = getLine( fileToParse, 0 );
-            String line2 = getLine( fileToParse, 1 );
-            if ( line2.contains("Coverity") || line2.contains("formatVersion") ) {
-                tr = new CoverityReader().parse( fileToParse );
-            }
-        }
+		else if ( filename.endsWith( ".json" ) ) {
+			String line2 = getLine( fileToParse, 1 );
+			if ( line2.contains("Coverity") || line2.contains("formatVersion") ) {
+				tr = new CoverityReader().parse( fileToParse );
+			}
+			else if(line2.contains("Vendor") && line2.contains("Checkmarx")) {
+				tr = new CheckmarxESReader().parse(fileToParse);
+			}
+		}
 
         else if ( filename.endsWith( ".sarif" ) ) {
             tr = new LGTMReader().parse( fileToParse );

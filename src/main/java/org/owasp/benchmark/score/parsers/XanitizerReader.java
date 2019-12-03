@@ -47,6 +47,7 @@ public class XanitizerReader extends Reader {
 			private final StringBuilder m_CollectedCharacters = new StringBuilder();
 
 			private String m_ProblemTypeId;
+			private int m_CWE = -1;
 			private String m_Class;
 			private String m_Classification;
 
@@ -59,8 +60,12 @@ public class XanitizerReader extends Reader {
 				switch (qName) {
 				case "XanitizerFindingsList":
 
-					String version = attributes.getValue("xanitizerVersion");
-					version = version.replace('/', '-');
+					String version = attributes.getValue("xanitizerVersionShort");
+					// for backward compatibility - use full version
+					if (version == null) {
+						version = attributes.getValue("xanitizerVersion");
+						version = version.replace('/', '-');
+					}
 					tr.setToolVersion(version);
 
 					break;
@@ -83,6 +88,15 @@ public class XanitizerReader extends Reader {
 
 				case "classification":
 					m_Classification = m_CollectedCharacters.toString();
+					break;
+
+				case "cweNumber":
+					// remove leading "CWE-" and thousands delimiter
+					try {
+						m_CWE = Integer.parseInt(m_CollectedCharacters.toString().substring(4).replace(".", "").replace(",", ""));
+					} catch (NumberFormatException e) {
+						m_CWE = -1;
+					}
 					break;
 
 				case "finding":
@@ -108,12 +122,18 @@ public class XanitizerReader extends Reader {
 									testCaseNumber = -1;
 								}
 
+								// for backward compatibility
+								// for reports without CWE numbers - map problem type to CWE number
+								if (m_CWE < 0) {
+									m_CWE = figureCWE(m_ProblemTypeId);
+								}
+
 								if (testCaseNumber >= 0) {
 									final TestCaseResult tcr = new TestCaseResult();
 
 									tcr.setNumber(testCaseNumber);
 									tcr.setCategory(m_ProblemTypeId);
-									tcr.setCWE(figureCWE(m_ProblemTypeId));
+									tcr.setCWE(m_CWE);
 
 									tr.put(tcr);
 								}
@@ -122,6 +142,7 @@ public class XanitizerReader extends Reader {
 					}
 
 					m_ProblemTypeId = null;
+					m_CWE = -1;
 					m_Class = null;
 					m_Classification = null;
 					break;

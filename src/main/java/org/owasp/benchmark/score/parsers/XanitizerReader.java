@@ -47,6 +47,7 @@ public class XanitizerReader extends Reader {
 			private final StringBuilder m_CollectedCharacters = new StringBuilder();
 
 			private String m_ProblemTypeId;
+			private int m_CWE = -1;
 			private String m_Class;
 			private String m_Classification;
 
@@ -59,8 +60,7 @@ public class XanitizerReader extends Reader {
 				switch (qName) {
 				case "XanitizerFindingsList":
 
-					String version = attributes.getValue("xanitizerVersion");
-					version = version.replace('/', '-');
+					String version = attributes.getValue("xanitizerVersionShort");
 					tr.setToolVersion(version);
 
 					break;
@@ -85,11 +85,20 @@ public class XanitizerReader extends Reader {
 					m_Classification = m_CollectedCharacters.toString();
 					break;
 
+				case "cweNumber":
+					// remove leading "CWE-" and thousands delimiter
+					try {
+						m_CWE = Integer.parseInt(m_CollectedCharacters.toString().substring(4).replace(".", "").replace(",", ""));
+					} catch (NumberFormatException e) {
+						m_CWE = -1;
+					}
+					break;
+
 				case "finding":
 					// Finishing a finding.
 
 					// Defensiveness: This condition should always be true.
-					if (m_ProblemTypeId != null && m_Class != null && m_Classification != null) {
+					if (m_ProblemTypeId != null && m_Class != null && m_Classification != null && m_CWE > -1) {
 
 						// Skip informational findings.
 						if (!m_Classification.equals("Information")) {
@@ -113,7 +122,7 @@ public class XanitizerReader extends Reader {
 
 									tcr.setNumber(testCaseNumber);
 									tcr.setCategory(m_ProblemTypeId);
-									tcr.setCWE(figureCWE(m_ProblemTypeId));
+									tcr.setCWE(m_CWE);
 
 									tr.put(tcr);
 								}
@@ -122,6 +131,7 @@ public class XanitizerReader extends Reader {
 					}
 
 					m_ProblemTypeId = null;
+					m_CWE = -1;
 					m_Class = null;
 					m_Classification = null;
 					break;
@@ -144,48 +154,6 @@ public class XanitizerReader extends Reader {
 		saxParser.parse(f, handler);
 
 		return tr;
-	}
-
-	private static int figureCWE(final String problemTypeId) {
-		switch (problemTypeId) {
-		case "ci:CommandInjection":
-			return 78;
-
-		case "SpecialMethodCall:WeakEncryption":
-			return 327;
-
-		case "SpecialMethodCall:WeakHash":
-			return 328;
-
-		case "ci:LDAPInjection":
-			return 90;
-
-		case "pt:PathTraversal":
-			return 22;
-
-		case "cook:UnsecuredCookie":
-			return 614;
-
-		case "ci:SQLInjection":
-			return 89;
-
-		case "tbv:TrustBoundaryViolationSession":
-			return 501;
-
-		case "SpecialMethodCall:java.util.Random":
-			return 330;
-
-		case "ci:XPathInjection":
-			return 643;
-
-		case "xss:XSSFromRequest":
-		case "xss:XSSFromDb":
-			return 79;
-
-		default:
-			// Dummy.
-			return 0;
-		}
 	}
 
 }

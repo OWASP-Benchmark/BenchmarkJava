@@ -61,6 +61,11 @@ public class XanitizerReader extends Reader {
 				case "XanitizerFindingsList":
 
 					String version = attributes.getValue("xanitizerVersionShort");
+					// for backward compatibility - use full version
+					if (version == null) {
+						version = attributes.getValue("xanitizerVersion");
+						version = version.replace('/', '-');
+					}
 					tr.setToolVersion(version);
 
 					break;
@@ -98,7 +103,7 @@ public class XanitizerReader extends Reader {
 					// Finishing a finding.
 
 					// Defensiveness: This condition should always be true.
-					if (m_ProblemTypeId != null && m_Class != null && m_Classification != null && m_CWE > -1) {
+					if (m_ProblemTypeId != null && m_Class != null && m_Classification != null) {
 
 						// Skip informational findings.
 						if (!m_Classification.equals("Information")) {
@@ -115,6 +120,12 @@ public class XanitizerReader extends Reader {
 								} catch (final NumberFormatException ex) {
 									// Inner classes can lead to this.
 									testCaseNumber = -1;
+								}
+
+								// for backward compatibility
+								// for reports without CWE numbers - map problem type to CWE number
+								if (m_CWE < 0) {
+									m_CWE = figureCWE(m_ProblemTypeId);
 								}
 
 								if (testCaseNumber >= 0) {
@@ -154,6 +165,48 @@ public class XanitizerReader extends Reader {
 		saxParser.parse(f, handler);
 
 		return tr;
+	}
+
+	private static int figureCWE(final String problemTypeId) {
+		switch (problemTypeId) {
+		case "ci:CommandInjection":
+			return 78;
+
+		case "SpecialMethodCall:WeakEncryption":
+			return 327;
+
+		case "SpecialMethodCall:WeakHash":
+			return 328;
+
+		case "ci:LDAPInjection":
+			return 90;
+
+		case "pt:PathTraversal":
+			return 22;
+
+		case "cook:UnsecuredCookie":
+			return 614;
+
+		case "ci:SQLInjection":
+			return 89;
+
+		case "tbv:TrustBoundaryViolationSession":
+			return 501;
+
+		case "SpecialMethodCall:java.util.Random":
+			return 330;
+
+		case "ci:XPathInjection":
+			return 643;
+
+		case "xss:XSSFromRequest":
+		case "xss:XSSFromDb":
+			return 79;
+
+		default:
+			// Dummy.
+			return 0;
+		}
 	}
 
 }

@@ -65,11 +65,11 @@ import org.owasp.benchmark.score.parsers.FaastReader;
 import org.owasp.benchmark.score.parsers.FindbugsReader;
 import org.owasp.benchmark.score.parsers.FortifyReader;
 import org.owasp.benchmark.score.parsers.FusionLiteInsightReader;
-import org.owasp.benchmark.score.parsers.KiuwanReader;
-import org.owasp.benchmark.score.parsers.LGTMReader;
 import org.owasp.benchmark.score.parsers.HCLReader;
 import org.owasp.benchmark.score.parsers.HdivReader;
 import org.owasp.benchmark.score.parsers.JuliaReader;
+import org.owasp.benchmark.score.parsers.KiuwanReader;
+import org.owasp.benchmark.score.parsers.LGTMReader;
 import org.owasp.benchmark.score.parsers.NetsparkerReader;
 import org.owasp.benchmark.score.parsers.NoisyCricketReader;
 import org.owasp.benchmark.score.parsers.OverallResult;
@@ -655,15 +655,14 @@ public class BenchmarkScore {
             tr = new FaastReader().parse( fileToParse );
         }
 
-		else if ( filename.endsWith( ".json" ) ) {
-			String line2 = getLine( fileToParse, 1 );
-			if ( line2.contains("Coverity") || line2.contains("formatVersion") ) {
-				tr = new CoverityReader().parse( fileToParse );
-			}
-			else if(line2.contains("Vendor") && line2.contains("Checkmarx")) {
-				tr = new CheckmarxESReader().parse(fileToParse);
-			}
-		}
+        else if ( filename.endsWith( ".json" ) ) {
+            String line2 = getLine( fileToParse, 1 );
+            if ( line2.contains("Coverity") || line2.contains("formatVersion") ) {
+                tr = new CoverityReader().parse( fileToParse );
+            } else if ( line2.contains("Vendor") && line2.contains("Checkmarx") ) {
+                tr = new CheckmarxESReader().parse( fileToParse );
+            }
+        }
 
         else if ( filename.endsWith( ".sarif" ) ) {
             tr = new LGTMReader().parse( fileToParse );
@@ -753,7 +752,6 @@ public class BenchmarkScore {
                 Document doc = getXMLDocument( fileToParse );
                 Node root = doc.getDocumentElement();
                 String nodeName = root.getNodeName();
-                //System.out.println("Root node name of XML results file is: " + nodeName);
 
                 if ( nodeName.equals( "ScanGroup" ) ) {
                     tr = new AcunetixReader().parse( root );

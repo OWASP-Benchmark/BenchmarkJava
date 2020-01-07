@@ -35,7 +35,7 @@ public class CheckmarxESReader extends Reader {
             //cwe
             int cwe = query.getJSONObject("Metadata").getInt("CweId");
             try{
-                cwe = translate( Integer.parseInt("undefined"));
+                cwe = translate(cwe);
             }
             catch(NumberFormatException ex) {
                 System.out.println( "flaw: " + query );

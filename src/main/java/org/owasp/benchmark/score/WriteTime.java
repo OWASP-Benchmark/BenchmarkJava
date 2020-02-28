@@ -11,6 +11,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import java.util.Properties;
+import java.util.LinkedHashMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -101,6 +102,7 @@ class WriteFiles {
 	private static final String FINDBUGS_FILE = "target/findbugsXml.xml";
 	private static final String PMD_FILE = "target/pmd.xml";
 	private static final String SONAR_FILE = "target/sonarqube.xml";
+    private static final String SONAR_URL = "http://172.16.141.198:9000";
 	private static final String SPOTBUGS_FILE = "target/spotbugsXml.xml";
 
 	public String getVersionNumber(String toolName) {
@@ -135,7 +137,7 @@ class WriteFiles {
 					root = doc.getDocumentElement();
 					return Reader.getAttributeValue("version", root);
 				case "sonar":
-					return "TBD";
+					return getSonarVersion(SONAR_URL + "/api/server/version");
 			}
 		} catch (Exception e) {
 			System.out.println("An error occurred during results file parsing: " + e.getMessage());
@@ -262,11 +264,12 @@ class WriteFiles {
 		int page = 1;
 		int total = 1;
 		JSONArray issues = new JSONArray();
+		//JSONObject jsonOnePage = null;
 		JSONObject json = null;
 
 		try {
-			while (issues.length() < total) {
-				json = new JSONObject(getSonarResults("http://localhost:9000", page));
+			while (issues.length() < total && page <= 20) {
+				json = new JSONObject(getSonarResults(SONAR_URL + "/api/issues/search?resolved=false&ps=500&p=" + page));
 				total = (int) json.get("total");
 
 				JSONArray issueSubset = json.getJSONArray("issues");
@@ -277,8 +280,11 @@ class WriteFiles {
 			}
 
 			json.put("issues", issues);
+			//System.out.println("json: " + json);
 
 			String xml = XML.toString(json);
+			//System.out.println("xml: " + xml);
+
 			java.io.FileWriter fw = new java.io.FileWriter(SONAR_FILE);
 			fw.write(xml);
 			fw.close();
@@ -286,11 +292,18 @@ class WriteFiles {
 			System.out.println("There was an error while writing SonarQube results.");
 		}
 	}
-
-	public static String getSonarResults(String sonarURL, int page) {
+    
+    public static String getSonarVersion(String sonarURL) {
+        return getHttpResponse(sonarURL, "There was an error trying to retrieve SonarQube version.");
+    }
+    
+    public static String getSonarResults(String sonarURL){
+        return getHttpResponse(sonarURL, "There was an error trying to retrieve SonarQube results.");
+    }
+    
+	public static String getHttpResponse(String url, String errorMessege) {
 		StringBuffer response = new StringBuffer();
 		try {
-			String url = sonarURL + "/api/issues/search?resolved=false&ps=500&p=" + page;
 			URL obj = new URL(url);
 			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 			con.setRequestMethod("GET");
@@ -305,7 +318,7 @@ class WriteFiles {
 			}
 			in.close();
 		} catch (Exception e) {
-			System.out.println("There was an error trying to retrieve SonarQube results.");
+			System.out.println(errorMessege);
 		}
 		return response.toString();
 	}

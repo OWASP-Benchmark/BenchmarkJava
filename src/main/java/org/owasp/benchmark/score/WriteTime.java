@@ -101,7 +101,7 @@ class WriteFiles {
 	private static final String FINDBUGS_FILE = "target/findbugsXml.xml";
 	private static final String PMD_FILE = "target/pmd.xml";
 	private static final String SONAR_FILE = "target/sonarqube.xml";
-    private static final String SONAR_URL = "http://172.16.141.198:9000";
+    private static final String SONAR_URL = "http://localhost:9000";
 	private static final String SPOTBUGS_FILE = "target/spotbugsXml.xml";
 
 	public String getVersionNumber(String toolName) {

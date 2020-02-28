@@ -11,7 +11,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import java.util.Properties;
-import java.util.LinkedHashMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -102,7 +101,7 @@ class WriteFiles {
 	private static final String FINDBUGS_FILE = "target/findbugsXml.xml";
 	private static final String PMD_FILE = "target/pmd.xml";
 	private static final String SONAR_FILE = "target/sonarqube.xml";
-    private static final String SONAR_URL = "http://localhost:9000";
+    private static final String SONAR_URL = "http://172.16.141.198:9000";
 	private static final String SPOTBUGS_FILE = "target/spotbugsXml.xml";
 
 	public String getVersionNumber(String toolName) {
@@ -264,7 +263,6 @@ class WriteFiles {
 		int page = 1;
 		int total = 1;
 		JSONArray issues = new JSONArray();
-		//JSONObject jsonOnePage = null;
 		JSONObject json = null;
 
 		try {
@@ -280,11 +278,8 @@ class WriteFiles {
 			}
 
 			json.put("issues", issues);
-			//System.out.println("json: " + json);
 
 			String xml = XML.toString(json);
-			//System.out.println("xml: " + xml);
-
 			java.io.FileWriter fw = new java.io.FileWriter(SONAR_FILE);
 			fw.write(xml);
 			fw.close();

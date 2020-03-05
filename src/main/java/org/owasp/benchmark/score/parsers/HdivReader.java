@@ -3,6 +3,7 @@ package org.owasp.benchmark.score.parsers;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,19 +66,27 @@ public class HdivReader extends Reader {
 
 	private String calculateTime(final String firstLine, final String lastLine) {
 		try {
-			String start = firstLine.split(" ")[0];
-			String stop = lastLine.split(" ")[0];
-			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss,SSS");
-			Date startTime = sdf.parse(start);
-			Date stopTime = sdf.parse(stop);
-			long startMillis = startTime.getTime();
-			long stopMillis = stopTime.getTime();
-			return (stopMillis - startMillis) / 1000 + " seconds";
+			try {
+				return calculateTime(firstLine, lastLine, 0);
+			} catch (ParseException e) {
+				return calculateTime(firstLine, lastLine, 1);
+			}
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	private String calculateTime(final String firstLine, final String lastLine, final int timeColumn) throws ParseException {
+		String start = firstLine.split(" ")[timeColumn];
+		String stop = lastLine.split(" ")[timeColumn];
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss,SSS");
+		Date startTime = sdf.parse(start);
+		Date stopTime = sdf.parse(stop);
+		long startMillis = startTime.getTime();
+		long stopMillis = stopTime.getTime();
+		return (stopMillis - startMillis) / 1000 + " seconds";
 	}
 
 	private void process(final TestResults tr, String testNumber, final List<String> chunk) throws Exception {

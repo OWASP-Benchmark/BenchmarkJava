@@ -58,6 +58,7 @@ import org.owasp.benchmark.score.parsers.BurpReader;
 import org.owasp.benchmark.score.parsers.CASTAIPReader;
 import org.owasp.benchmark.score.parsers.CheckmarxESReader;
 import org.owasp.benchmark.score.parsers.CheckmarxReader;
+import org.owasp.benchmark.score.parsers.CheckmarxIASTReader;
 import org.owasp.benchmark.score.parsers.ContrastReader;
 import org.owasp.benchmark.score.parsers.Counter;
 import org.owasp.benchmark.score.parsers.CoverityReader;
@@ -644,7 +645,13 @@ public class BenchmarkScore {
 		TestResults tr = null;
 
         if ( filename.endsWith( ".csv" ) ) {
-            tr = new SeekerReader().parse(fileToParse);
+		    //updates for Checkmarx IAST CSV report
+			if( filename.startsWith( "CxIAST") ) {
+	                tr = new CheckmarxIASTReader().parse(fileToParse);
+	 	    }
+		    else {
+                tr = new SeekerReader().parse(fileToParse);
+	    	}
         }
 
         else if ( filename.endsWith( ".ozasmt" ) ) {
@@ -753,7 +760,7 @@ public class BenchmarkScore {
                 Node root = doc.getDocumentElement();
                 String nodeName = root.getNodeName();
 
-                if ( nodeName.equals( "ScanGroup" ) || nodeName.equals( "acunetix-360" )) {
+                if ( nodeName.equals( "ScanGroup" ) ) {
                     tr = new AcunetixReader().parse( root );
                 }
 
@@ -812,7 +819,7 @@ public class BenchmarkScore {
 
 		// .fpr files are really .zip files. So we have to extract the .fvdl file out of it to process it
 		    Path path = Paths.get(fileToParse.getPath());
-		    FileSystem fileSystem = FileSystems.newFileSystem(path, (java.lang.ClassLoader) null);
+		    FileSystem fileSystem = FileSystems.newFileSystem(path, null);
 		    File outputFile = File.createTempFile( filename, ".fvdl");
 		    Path source = fileSystem.getPath("audit.fvdl");
 		    Files.copy(source, outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);

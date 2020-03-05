@@ -760,7 +760,7 @@ public class BenchmarkScore {
                 Node root = doc.getDocumentElement();
                 String nodeName = root.getNodeName();
 
-                if ( nodeName.equals( "ScanGroup" ) ) {
+                if ( nodeName.equals( "ScanGroup" ) || nodeName.equals( "acunetix-360" )) {
                     tr = new AcunetixReader().parse( root );
                 }
 
@@ -819,7 +819,7 @@ public class BenchmarkScore {
 
 		// .fpr files are really .zip files. So we have to extract the .fvdl file out of it to process it
 		    Path path = Paths.get(fileToParse.getPath());
-		    FileSystem fileSystem = FileSystems.newFileSystem(path, null);
+		    FileSystem fileSystem = FileSystems.newFileSystem(path, (java.lang.ClassLoader) null);
 		    File outputFile = File.createTempFile( filename, ".fvdl");
 		    Path source = fileSystem.getPath("audit.fvdl");
 		    Files.copy(source, outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);

@@ -58,6 +58,7 @@ import org.owasp.benchmark.score.parsers.BurpReader;
 import org.owasp.benchmark.score.parsers.CASTAIPReader;
 import org.owasp.benchmark.score.parsers.CheckmarxESReader;
 import org.owasp.benchmark.score.parsers.CheckmarxReader;
+import org.owasp.benchmark.score.parsers.CheckmarxIASTReader;
 import org.owasp.benchmark.score.parsers.ContrastReader;
 import org.owasp.benchmark.score.parsers.Counter;
 import org.owasp.benchmark.score.parsers.CoverityReader;
@@ -644,13 +645,18 @@ public class BenchmarkScore {
 		TestResults tr = null;
 
         if ( filename.endsWith( ".csv" ) ) {
-            tr = new SeekerReader().parse(fileToParse);
+					String line1 = getLine( fileToParse, 0 );
+					if ( line2.contains("CheckerKey") && line2.contains("LastDetectionURL") ) {
+						tr = new SeekerReader().parse(fileToParse);
+					} else if ( line2.contains("CWE") && line2.contains("URL") ) {
+            tr = new CheckmarxIASTReader().parse(fileToParse);
+					}
         }
 
         else if ( filename.endsWith( ".ozasmt" ) ) {
             tr = new AppScanSourceReader().parse( fileToParse );
         }
-        
+
         else if ( filename.endsWith( ".faast" ) ) {
             tr = new FaastReader().parse( fileToParse );
         }

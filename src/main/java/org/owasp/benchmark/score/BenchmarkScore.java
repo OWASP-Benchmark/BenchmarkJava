@@ -646,9 +646,9 @@ public class BenchmarkScore {
 
         if ( filename.endsWith( ".csv" ) ) {
 					String line1 = getLine( fileToParse, 0 );
-					if ( line1.contains("CheckerKey") && line2.contains("LastDetectionURL") ) {
+					if ( line1.contains("CheckerKey") && line1.contains("LastDetectionURL") ) {
 						tr = new SeekerReader().parse(fileToParse);
-					} else if ( line1.contains("CWE") && line2.contains("URL") ) {
+					} else if ( line1.contains("CWE") && line1.contains("URL") ) {
             tr = new CheckmarxIASTReader().parse(fileToParse);
 					}
         }

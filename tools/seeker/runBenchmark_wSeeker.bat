@@ -8,9 +8,9 @@ IF EXIST .\seeker-agent.jar (
 
 ) ELSE (
     ECHO Seeker is a commercial product, so you need a licensed version of Seeker in order to run it on the Benchmark.
-    ECHO   *  download the CxIAST Agent for Java (cxiast-java-agent.zip) from the Server;
+    ECHO   *  download the CxIAST Agent for Java ^(cxiast-java-agent.zip^) from the Server;
     ECHO   *  put it into the /tools/CxIAST folder;
     ECHO   *  unzip it;
-    ECHO   *  update pom.xml (deploywseeker section, seeker.server.url); and then
+    ECHO   *  update pom.xml ^(deploywseeker section, seeker.server.url^); and then
     ECHO   *  rerun this script.
 )

@@ -58,6 +58,7 @@ import org.owasp.benchmark.score.parsers.BurpReader;
 import org.owasp.benchmark.score.parsers.CASTAIPReader;
 import org.owasp.benchmark.score.parsers.CheckmarxESReader;
 import org.owasp.benchmark.score.parsers.CheckmarxReader;
+import org.owasp.benchmark.score.parsers.CheckmarxIASTReader;
 import org.owasp.benchmark.score.parsers.ContrastReader;
 import org.owasp.benchmark.score.parsers.Counter;
 import org.owasp.benchmark.score.parsers.CoverityReader;
@@ -644,7 +645,13 @@ public class BenchmarkScore {
 		TestResults tr = null;
 
         if ( filename.endsWith( ".csv" ) ) {
-            tr = new SeekerReader().parse(fileToParse);
+		    //updates for Checkmarx IAST CSV report
+			if( filename.startsWith( "CxIAST") ) {
+	                tr = new CheckmarxIASTReader().parse(fileToParse);
+	 	    }
+		    else {
+                tr = new SeekerReader().parse(fileToParse);
+	    	}
         }
 
         else if ( filename.endsWith( ".ozasmt" ) ) {

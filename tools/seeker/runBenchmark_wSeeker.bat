@@ -1,5 +1,6 @@
 @ECHO OFF
 IF EXIST .\seeker-agent.jar (
+  
     CD ..\..
 
     CALL mvn clean package cargo:run -Pdeploywseeker

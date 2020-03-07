@@ -2,9 +2,6 @@
 
 if [ -f ./seeker-agent.jar ]; then
 
-  if [ -d ./working ]; then
-
-    rm -r ./working/cache
     echo ""
     echo "Previous Seeker results in tools/seeker removed"
     echo ""

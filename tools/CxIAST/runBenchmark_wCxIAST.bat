@@ -1,5 +1,18 @@
 @ECHO OFF
 IF EXIST .\cx-launcher.jar (
+  IF EXIST .\iast_cache (
+      rmdir /q /s .\iast_cache
+
+      IF EXIST .\logs (
+        rmdir /q /s .\logs
+      )
+
+      ECHO ""
+
+      ECHO Previous Checkmarx IAST results have been removed
+
+      ECHO ""
+  )
     CD ..\..
 
     CALL mvn clean package cargo:run -Pdeploywcxiast

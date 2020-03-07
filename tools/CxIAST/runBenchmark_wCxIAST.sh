@@ -2,9 +2,16 @@
 
 if [ -f ./cx-launcher.jar ]; then
 
-  if [ -d ./working ]; then
+  if [ -d ./iast_cache ]; then
 
-    rm -r ./working/cache
+    rm -r ./iast_cache
+
+    if [ -d ./logs ]; then
+
+      rm -r ./logs
+
+    fi
+
     echo ""
     echo "Previous Checkmarx IAST results in tools/CxIAST removed"
     echo ""

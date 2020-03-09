@@ -644,22 +644,18 @@ public class BenchmarkScore {
 		String filename = fileToParse.getName();
 		TestResults tr = null;
 
-        if ( filename.endsWith( ".csv" ) ) {
-					String line1 = getLine( fileToParse, 0 );
-					if ( line1.contains("CheckerKey") && line1.contains("LastDetectionURL") ) {
-						tr = new SeekerReader().parse(fileToParse);
-					} else if ( line1.contains("CWE") && line1.contains("URL") ) {
-            tr = new CheckmarxIASTReader().parse(fileToParse);
-					}
-        }
+		if ( filename.endsWith( ".csv" ) ) {
+			String line1 = getLine( fileToParse, 0 );
+			if ( line1.contains("CheckerKey") && line1.contains("LastDetectionURL") ) {
+				tr = new SeekerReader().parse(fileToParse);
+			} else if ( line1.contains("CWE") && line1.contains("URL") ) {		
+				tr = new CheckmarxIASTReader().parse(fileToParse);
+			}
+        	}
 
-        else if ( filename.endsWith( ".ozasmt" ) ) {
-            tr = new AppScanSourceReader().parse( fileToParse );
-        }
-
-        else if ( filename.endsWith( ".faast" ) ) {
-            tr = new FaastReader().parse( fileToParse );
-        }
+		else if ( filename.endsWith( ".ozasmt" ) ) {
+			tr = new AppScanSourceReader().parse( fileToParse );
+		}
 
 		else if ( filename.endsWith( ".faast" ) ) {
 			tr = new FaastReader().parse( fileToParse );

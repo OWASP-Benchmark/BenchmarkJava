@@ -1,4 +1,4 @@
-DISCLAIMER: OWASP does not endorse any commercial tools, including this one. Benchmark support for this tool is simply for user convienience and should not be considered an endorsement of this tool.
+DISCLAIMER: OWASP does not endorse any commercial tools, including this one. Benchmark support for this tool is simply for user convenience and should not be considered an endorsement of this tool.
 
 Contrast is a commercial tool. If you are interested in running Contrast on the Benchmark, you'll have to get a license for it from the vendor just like you would for any commercial tool. Once you have it, you need to place the contrast.jar file in this directory in order to run the Benchmark with Contrast using one of the runBenchmark_wContrast scripts, and then crawl the Benchmark to generate scan results with one of the runCrawler scripts.
 

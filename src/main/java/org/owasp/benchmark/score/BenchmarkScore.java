@@ -645,12 +645,13 @@ public class BenchmarkScore {
 		TestResults tr = null;
 
 		if ( filename.endsWith( ".csv" ) ) {
-			if( filename.startsWith( "CxIAST") ) {
-				tr = new CheckmarxIASTReader().parse(fileToParse);
-			} else {
+			String line1 = getLine( fileToParse, 0 );
+			if ( line1.contains("CheckerKey") && line1.contains("LastDetectionURL") ) {
 				tr = new SeekerReader().parse(fileToParse);
-			}
-		}
+			} else if ( line1.contains("CWE") && line1.contains("URL") ) {		
+				tr = new CheckmarxIASTReader().parse(fileToParse);
+			} else System.out.println("Error: No matching parser found for CSV file: " + filename);
+        	}
 
 		else if ( filename.endsWith( ".ozasmt" ) ) {
 			tr = new AppScanSourceReader().parse( fileToParse );
@@ -666,7 +667,7 @@ public class BenchmarkScore {
 				tr = new CoverityReader().parse( fileToParse );
 			} else if ( line2.contains("Vendor") && line2.contains("Checkmarx") ) {
 				tr = new CheckmarxESReader().parse( fileToParse );
-			}
+			} else System.out.println("Error: No matching parser found for JSON file: " + filename);
 		}
 
 		else if ( filename.endsWith( ".sarif" ) ) {

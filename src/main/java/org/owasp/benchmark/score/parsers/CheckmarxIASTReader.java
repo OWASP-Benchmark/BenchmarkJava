@@ -46,28 +46,28 @@ public class CheckmarxIASTReader extends Reader
       case "CORS":
         return 346; // CORS
       case "CSRF":
-        return 352; // CSRF 
+        return 352; // CSRF
       case "Debug_Mode_Enabled":
         return 215; // Debug_Mode_Enabled
       case "Deserialize_Vulnerability":
-        return 502; // Deserialize_Vulnerability 
+        return 502; // Deserialize_Vulnerability
       case "Failed_Login_Without_Audit":
         return 778; // Failed_Login_Without_Audit
       case "File_Upload_To_Unprotected_Directory":
-        return 434; // File_Upload_To_Unprotected_Directory 
+        return 434; // File_Upload_To_Unprotected_Directory
       case "Improper_HTTP_Get_Usage":
-        return 650; // Improper_HTTP_Get_Usage 
+        return 650; // Improper_HTTP_Get_Usage
       case "Insecure_Cookie":
       case "Session_Id_Disclosure": //CxIAST does not define but it is same as Insecure_Cookie YE
         return 614; // Insecure_Cookie
       case "Insecure_Outgoing_Communication":
         return 311; // Insecure_Outgoing_Communication
       case "Insufficient_Session_Expiration":
-        return 613; // Insufficient_Session_Expiration 
+        return 613; // Insufficient_Session_Expiration
       case "LDAP_Injection":
-        return 90; // LDAP_Injection 
+        return 90; // LDAP_Injection
       case "Least_Privilege_Violation":
-        return 250; // Least_Privilege_Violation 
+        return 250; // Least_Privilege_Violation
       case "Log_Forging":
         return 117;
       case "Missing_X_Content_Type_Options_Header":
@@ -149,7 +149,7 @@ public class CheckmarxIASTReader extends Reader
         //"BenchmarkTest00000" - "BenchmarkTest99999"
             tcr.setNumber(Integer.parseInt(testCase.substring(testCase.length()-5, testCase.length())));
             if (tcr.getCWE() != 0)
-            {      
+            {
                  tr.put(tcr);
             }
 //      System.out.println(testCase+" "+tcr.getCWE()+" "+tcr.getCategory()); // For debugging YE

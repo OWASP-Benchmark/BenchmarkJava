@@ -3,7 +3,7 @@
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project For details, please see
-* <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
 *
 * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details
 *
-* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Dave Wichers
 * @created 2015
 */
 
@@ -26,23 +26,66 @@ import org.w3c.dom.Node;
 public class AcunetixReader extends Reader {
 	
 	public TestResults parse( Node root ) throws Exception {
+
+      if (root.getNodeName().equalsIgnoreCase("acunetix-360")) {
+
+	/* This is for the 2020 format that looks like:
+		 <acunetix-360 generated="28/02/2020 08:59 AM">
+			<target>
+				<scan-id>f55650d3326f40f30d92ab6e04af1794</scan-id>
+				<url>https://localhost:8443/benchmark/</url>
+				<initiated>27/02/2020 04:49 PM</initiated>
+				<duration>01:57:21.2094646</duration>
+			</target>
+			<vulnerabilities>
+				<vulnerability>
+					<LookupId>cf5644f1-31ee-4092-0e15-ab6e04af7f51</LookupId>
+					...
+	*/
+        TestResults tr = new TestResults( "Acunetix 360", true, TestResults.ToolType.DAST);
+        
+        Node target = getNamedChild( "target", root );
+        String duration = getNamedChild("duration", target ).getTextContent();
+        // duration format is: 01:57:21.2094646
+        tr.setTime( duration.substring(0, duration.lastIndexOf('.')));
+
+        Node issues = getNamedChild( "vulnerabilities", root );
+        List<Node> issueList = getNamedChildren( "vulnerability", issues );
+
+        for ( Node issue : issueList ) {
+            try {
+                TestCaseResult tcr = parseAcunetixVulnerability(issue);
+                if (tcr != null ) {
+                    tr.put(tcr);
+                }
+            } catch( Exception e ) {
+                e.printStackTrace();
+            }
+        }
+        return tr;
+          
+      } else if (root.getNodeName().equalsIgnoreCase("ScanGroup")) {
+        
+    // The following is for the legacy format that looks like so:
+
+/*  <ScanGroup ExportedOn="11/9/2015, 21:42">
+      <Scan>
+        <ReportItems>
+          <ReportItem>
+           <Name><![CDATA[Scan Thread 1 ( https://172.16.11.1:8443/benchmark/ )]]></Name>
+           <ShortName><![CDATA[Scan Thread 1]]></ShortName>
+           <StartURL><![CDATA[https://172.16.11.1:8443/benchmark/]]></StartURL>
+           <StartTime><![CDATA[11/9/2015, 14:50:33]]></StartTime>
+           <FinishTime><![CDATA[11/9/2015, 15:31:02]]></FinishTime>
+           <ScanTime><![CDATA[40 minutes, 29 seconds]]></ScanTime>
+        
+          </ReportItem>
+        </ReportItems>
+      </Scan>
+    </ScanGroup>
+*/
         TestResults tr = new TestResults( "Acunetix WVS", true, TestResults.ToolType.DAST);
         Node scan = getNamedChild( "Scan", root );
-
-//        <ScanGroup ExportedOn="11/9/2015, 21:42">
-//        <Scan>
-//         <Name><![CDATA[Scan Thread 1 ( https://172.16.11.1:8443/benchmark/ )]]></Name>
-//         <ShortName><![CDATA[Scan Thread 1]]></ShortName>
-//         <StartURL><![CDATA[https://172.16.11.1:8443/benchmark/]]></StartURL>
-//         <StartTime><![CDATA[11/9/2015, 14:50:33]]></StartTime>
-//         <FinishTime><![CDATA[11/9/2015, 15:31:02]]></FinishTime>
-//         <ScanTime><![CDATA[40 minutes, 29 seconds]]></ScanTime>
-
-        
-//        </ReportItem>
-//      </ReportItems>
-//    </Scan>
-//  </ScanGroup>
         
         String duration = getNamedChild("ScanTime", scan ).getTextContent();
         tr.setTime( duration );
@@ -52,18 +95,73 @@ public class AcunetixReader extends Reader {
         
         for ( Node issue : issueList ) {
             try {
-                TestCaseResult tcr = parseAcunetixItem(issue);
+                TestCaseResult tcr = parseAcunetixReportItem(issue);
                 if (tcr != null ) {
                     tr.put(tcr);
-                    // System.out.println( tcr.getNumber() + ", " + tcr.getCWE() + ", " + tcr.getEvidence() );
                 }
             } catch( Exception e ) {
                 e.printStackTrace();
             }
         }
         return tr;
-	}
+      } // end if (root.getNodeName().equalsIgnoreCase("ScanGroup")) - Legacy format
+        else System.out.println("XML file didn't match expected Acunetix format. Expected <acunetix-360"
+               + " or <ScanGroup ExportedOn ... to be first XML tag in file.");
+        return null;
+	} // end parse()
 	
+/* The Acunetix 360 <vulnerability> format:
+     <vulnerability>
+        <LookupId>cf5644f1-31ee-4092-0e15-ab6e04af7f51</LookupId>
+        <url>https://localhost:8443/benchmark/</url>
+        <type>InvalidSslCertificate</type>
+          ...
+        <classification>
+          <owasp>A6</owasp>
+          <wasc>4</wasc>
+          <cwe>295</cwe> 
+            ...
+ 
+*/
+
+	private TestCaseResult parseAcunetixVulnerability( Node vuln ) throws Exception {
+      TestCaseResult tcr = new TestCaseResult();
+
+      String uri = getNamedChild( "url", vuln ).getTextContent();
+      String testfile = uri.substring( uri.lastIndexOf('/') +1 );
+      if ( testfile.contains("?") ) {
+          testfile = testfile.substring(0, testfile.indexOf( "?" ) );
+      }
+      if ( testfile.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
+          String testno = testfile.substring(BenchmarkScore.BENCHMARKTESTNAME.length());
+          if ( testno.endsWith( ".html" ) ) {
+              testno = testno.substring(0, testno.length() -5 );
+          }
+          try {
+              tcr.setNumber( Integer.parseInt( testno ) );
+          } catch( NumberFormatException e ) {
+              System.out.println( "> Parse error " + testfile + ":: " + testno );
+              return null;
+          }
+      }
+
+      String cat = getNamedChild("type", vuln).getTextContent();
+      tcr.setCategory( cat );
+
+      Node classification = getNamedChild( "classification", vuln );
+      Node vulnId = getNamedChild("cwe", classification);
+      if ( vulnId != null ) {
+          String cweNum = vulnId.getTextContent();
+          int cwe = cweLookup( cweNum );
+          tcr.setCWE( cwe  );
+      } else return null;
+      
+      tcr.setConfidence( Integer.parseInt( getNamedChild("certainty", vuln).getTextContent() ) );
+      
+      return tcr;
+  }
+
+//  This is the legacy <ReportItem> format:
 //    <ReportItem id="0" color="orange">
 //    <Name><![CDATA[HTML form without CSRF protection]]></Name>
 //    <Details><![CDATA[Form name: <font color="navy">&lt;empty&gt;</font><br/>Form action: <font color="navy">https://172.16.11.1:8443/benchmark/BenchmarkTest01925</font><br/>Form method: <font color="navy">POST</font><br/><br/>Form inputs:<br/><ul><li>vectorArea [TextArea]</li><li>answer [Text]</li><li>vector [Text]</li></ul>]]></Details>
@@ -72,7 +170,7 @@ public class AcunetixReader extends Reader {
 //    <Severity><![CDATA[medium]]></Severity>
 //    <CWE id="352"><![CDATA[CWE-352]]></CWE>
 
-	private TestCaseResult parseAcunetixItem( Node flaw ) throws Exception {
+	private TestCaseResult parseAcunetixReportItem( Node flaw ) throws Exception {
         TestCaseResult tcr = new TestCaseResult();
 
         String cat = getNamedChild("Name", flaw).getTextContent();
@@ -121,6 +219,7 @@ public class AcunetixReader extends Reader {
 	    }
 	    int cwe = Integer.parseInt( cweNum );
 	    switch( cwe ) {
+	      // switch left in case we ever need to map a reported cwe to the one expected by Benchmark
 //        case "insecure-cookie"           :  return 614;  // insecure cookie use
 //        case "sql-injection"             :  return 89;   // sql injection
 //        case "cmd-injection"             :  return 78;   // command injection

@@ -121,6 +121,11 @@ public class BurpReader extends Reader {
         case "7340288": return 525;  // Information Exposure Through Browser Caching-Cacheable HTTPS Response
         case "8389120": return 9999; // HTML doesn't specify character set - Don't care. Map to nothing.
         case "8389632": return 9999; // Incorrect Content Type - Don't care. Map to nothing right now.
+        case "8389888": return 16; // Content type is not specified
+        case "5245360": return 16; // Browser cross-site scripting filter disabled
+        case "4197632": return 20; // Suspicious input transformation (reflected)
+        case "4197376": return 20; // Input returned in response (reflected)
+        case "3146240": return 918; // External service interaction (DNS)
         
             // case "Build Misconfiguration" : return 00;
             // case "Cookie Security" : return 614;

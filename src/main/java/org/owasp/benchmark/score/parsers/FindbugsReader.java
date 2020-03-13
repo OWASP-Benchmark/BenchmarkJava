@@ -74,15 +74,19 @@ public class FindbugsReader extends Reader {
 	
 	private TestCaseResult parseFindBugsBug(Node n) {
 		TestCaseResult tcr = new TestCaseResult();
-
 		NamedNodeMap attrs = n.getAttributes();
 		if ( attrs.getNamedItem( "category" ).getNodeValue().equals( "SECURITY") ) {
 			Node cl = getNamedNode( "Class", n.getChildNodes() );
 			String classname = cl.getAttributes().getNamedItem("classname").getNodeValue();
 			classname = classname.substring( classname.lastIndexOf('.') + 1);
 			if ( classname.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
-				String testNumber = classname.substring( BenchmarkScore.BENCHMARKTESTNAME.length() );
-				tcr.setNumber( Integer.parseInt( testNumber ) );
+				try {
+					String testNumber = classname.substring( BenchmarkScore.BENCHMARKTESTNAME.length() );
+					tcr.setNumber( Integer.parseInt( testNumber ) );
+				} catch (Exception e) {
+				// System.out.println("Error parsing node: " + n.toString() + " for classname: " + classname);
+					return null; // If we can't parse the test #, its not in a real test case file. e.g., BenchmarkTesting.java
+				}
 			}
 			
 			Node cwenode = attrs.getNamedItem("cweid");

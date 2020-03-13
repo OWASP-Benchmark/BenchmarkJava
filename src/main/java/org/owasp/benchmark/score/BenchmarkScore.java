@@ -3,7 +3,7 @@
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project For details, please see
-* <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
 *
 * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details
 *
-* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Dave Wichers
 * @created 2015
 */
 
@@ -56,7 +56,9 @@ import org.owasp.benchmark.score.parsers.AppScanSourceReader2;
 import org.owasp.benchmark.score.parsers.ArachniReader;
 import org.owasp.benchmark.score.parsers.BurpReader;
 import org.owasp.benchmark.score.parsers.CASTAIPReader;
+import org.owasp.benchmark.score.parsers.CheckmarxESReader;
 import org.owasp.benchmark.score.parsers.CheckmarxReader;
+import org.owasp.benchmark.score.parsers.CheckmarxIASTReader;
 import org.owasp.benchmark.score.parsers.ContrastReader;
 import org.owasp.benchmark.score.parsers.Counter;
 import org.owasp.benchmark.score.parsers.CoverityReader;
@@ -64,17 +66,23 @@ import org.owasp.benchmark.score.parsers.FaastReader;
 import org.owasp.benchmark.score.parsers.FindbugsReader;
 import org.owasp.benchmark.score.parsers.FortifyReader;
 import org.owasp.benchmark.score.parsers.FusionLiteInsightReader;
+import org.owasp.benchmark.score.parsers.HCLReader;
 import org.owasp.benchmark.score.parsers.HdivReader;
 import org.owasp.benchmark.score.parsers.JuliaReader;
+import org.owasp.benchmark.score.parsers.KiuwanReader;
+import org.owasp.benchmark.score.parsers.LGTMReader;
 import org.owasp.benchmark.score.parsers.NetsparkerReader;
 import org.owasp.benchmark.score.parsers.NoisyCricketReader;
 import org.owasp.benchmark.score.parsers.OverallResult;
 import org.owasp.benchmark.score.parsers.OverallResults;
-import org.owasp.benchmark.score.parsers.PMDReader;
 import org.owasp.benchmark.score.parsers.ParasoftReader;
+import org.owasp.benchmark.score.parsers.PMDReader;
+import org.owasp.benchmark.score.parsers.QualysWASReader;
 import org.owasp.benchmark.score.parsers.Rapid7Reader;
 import org.owasp.benchmark.score.parsers.Reader;
+import org.owasp.benchmark.score.parsers.SeekerReader;
 import org.owasp.benchmark.score.parsers.ShiftLeftReader;
+import org.owasp.benchmark.score.parsers.SnappyTickReader;
 import org.owasp.benchmark.score.parsers.SonarQubeReader;
 import org.owasp.benchmark.score.parsers.SourceMeterReader;
 import org.owasp.benchmark.score.parsers.TestCaseResult;
@@ -636,186 +644,215 @@ public class BenchmarkScore {
 		String filename = fileToParse.getName();
 		TestResults tr = null;
 
-        if ( filename.endsWith( ".ozasmt" ) ) {
-            tr = new AppScanSourceReader().parse( fileToParse );
-        }
-        
-        else if ( filename.endsWith( ".faast" ) ) {
-            tr = new FaastReader().parse( fileToParse );
-        }
+		if ( filename.endsWith( ".csv" ) ) {
+			String line1 = getLine( fileToParse, 0 );
+			if ( line1.contains("CheckerKey") && line1.contains("LastDetectionURL") ) {
+				tr = new SeekerReader().parse(fileToParse);
+			} else if ( line1.contains("CWE") && line1.contains("URL") ) {		
+				tr = new CheckmarxIASTReader().parse(fileToParse);
+			} else System.out.println("Error: No matching parser found for CSV file: " + filename);
+        	}
 
-        else if ( filename.endsWith( ".json" ) ) {
-            String line1 = getLine( fileToParse, 0 );
-            String line2 = getLine( fileToParse, 1 );
-            if ( line2.contains("Coverity") || line2.contains("formatVersion") ) {
-                tr = new CoverityReader().parse( fileToParse );
-            }
-        }
+		else if ( filename.endsWith( ".ozasmt" ) ) {
+			tr = new AppScanSourceReader().parse( fileToParse );
+		}
 
-        else if ( filename.endsWith( ".txt" ) ) {
-            String line1 = getLine( fileToParse, 0 );
-            if ( line1.startsWith( "Possible " ) ) {
-                tr = new SourceMeterReader().parse( fileToParse );
-            }
-        }
+		else if ( filename.endsWith( ".faast" ) ) {
+			tr = new FaastReader().parse( fileToParse );
+		}
 
-        else if ( filename.endsWith( ".xml" ) ) {
+		else if ( filename.endsWith( ".json" ) ) {
+			String line2 = getLine( fileToParse, 1 );
+			if ( line2.contains("Coverity") || line2.contains("formatVersion") ) {
+				tr = new CoverityReader().parse( fileToParse );
+			} else if ( line2.contains("Vendor") && line2.contains("Checkmarx") ) {
+				tr = new CheckmarxESReader().parse( fileToParse );
+			} else System.out.println("Error: No matching parser found for JSON file: " + filename);
+		}
 
-            // Handle XML results files where the 1st or 2nd line indicates the tool type
+		else if ( filename.endsWith( ".sarif" ) ) {
+			tr = new LGTMReader().parse( fileToParse );
+		}
 
-            String line1 = getLine( fileToParse, 0 );
-            String line2 = getLine( fileToParse, 1 );
+		else if ( filename.endsWith( ".threadfix" ) ) {
+			tr = new KiuwanReader().parse( fileToParse );
+		}
 
-            if ( line2.startsWith( "  <ProjectName>" )) {
-                tr = new ThunderScanReader().parse(fileToParse);
-            }
+		else if ( filename.endsWith( ".txt" ) ) {
+			String line1 = getLine( fileToParse, 0 );
+			if ( line1.startsWith( "Possible " ) ) {
+				tr = new SourceMeterReader().parse( fileToParse );
+			}
+		}
 
-            else if ( line2.startsWith( "<pmd" )) {
-                tr = new PMDReader().parse( fileToParse );
-            }
+		else if ( filename.endsWith( ".xml" ) ) {
 
-            else if ( line2.toLowerCase().startsWith( "<castaip" ) ) {
-                tr = new CASTAIPReader().parse( fileToParse );
-            }
+			// Handle XML results files where the 1st or 2nd line indicates the tool type
 
-            else if ( line2.startsWith( "<FusionLiteInsight" )) {
-                tr = new FusionLiteInsightReader().parse( fileToParse );
-            }
+			String line1 = getLine( fileToParse, 0 );
+			String line2 = getLine( fileToParse, 1 );
 
-            else if ( line2.startsWith( "<XanitizerFindingsList" )) {
-                tr = new XanitizerReader().parse( fileToParse );
-            }
+			if ( line2.startsWith( "  <ProjectName>" )) {
+				tr = new ThunderScanReader().parse(fileToParse);
+			}
 
-            else if ( line2.startsWith( "<BugCollection" )) {
-                tr = new FindbugsReader().parse( fileToParse );
+			else if ( line2.startsWith( "<pmd" )) {
+				tr = new PMDReader().parse( fileToParse );
+			}
 
-                // change the name of the tool if the filename contains findsecbugs
-                if (fileToParse.getName().contains("findsecbugs")) {
-                    if (tr.getTool().startsWith("Find")) {
-                        tr.setTool("FBwFindSecBugs");                		
-                    } else {
-                        tr.setTool("SBwFindSecBugs");
-               	    }
-                }
-            }
+			else if ( line2.toLowerCase().startsWith( "<castaip" ) ) {
+				tr = new CASTAIPReader().parse( fileToParse );
+			}
 
-            else if ( line2.startsWith( "<ResultsSession" )) {
-                tr = new ParasoftReader().parse( fileToParse );
-            }
+			else if ( line2.startsWith( "<FusionLiteInsight" )) {
+				tr = new FusionLiteInsightReader().parse( fileToParse );
+			}
 
-            else if ( line2.startsWith( "<detailedreport" )) {
-                tr = new VeracodeReader().parse( fileToParse );
-            }
+			else if ( line2.startsWith( "<XanitizerFindingsList" )) {
+				tr = new XanitizerReader().parse( fileToParse );
+			}
 
-            else if ( line1.startsWith( "<total" )) {
-                tr = new SonarQubeReader().parse( fileToParse );
-            }
+			else if ( line2.startsWith( "<BugCollection" )) {
+				tr = new FindbugsReader().parse( fileToParse );
 
-            else if ( line1.contains( "<OWASPZAPReport" ) || line2.contains( "<OWASPZAPReport" )) {
-                tr = new ZapReader().parse( fileToParse );
-            }
+				// change the name of the tool if the filename contains findsecbugs
+				if (fileToParse.getName().contains("findsecbugs")) {
+					if (tr.getTool().startsWith("Find")) {
+						tr.setTool("FBwFindSecBugs");
+					} else {
+						tr.setTool("SBwFindSecBugs");
+					}
+				}
+			}
 
-            else if ( line2.startsWith( "<CxXMLResults" )) {
-                tr = new CheckmarxReader().parse( fileToParse );
-            }
+			else if ( line2.startsWith( "<ResultsSession" )) {
+				tr = new ParasoftReader().parse( fileToParse );
+			}
 
-            else if ( line2.startsWith( "<report" )) {
-                tr = new ArachniReader().parse( fileToParse );
-            }
-            else if ( line2.startsWith( "<analysisResult") || line2.startsWith( "<analysisReportResult")) {
-                tr = new JuliaReader().parse( fileToParse );
-            }
+			else if ( line2.startsWith( "<detailedreport" )) {
+				tr = new VeracodeReader().parse( fileToParse );
+			}
 
-            else { // Handle XML where we have to look for a specific node to identify the tool type
+			else if ( line1.startsWith( "<total" )) {
+				tr = new SonarQubeReader().parse( fileToParse );
+			}
 
-                Document doc = getXMLDocument( fileToParse );
-                Node root = doc.getDocumentElement();
-                String nodeName = root.getNodeName();
+			else if ( line1.contains( "<OWASPZAPReport" ) || line2.contains( "<OWASPZAPReport" )) {
+				tr = new ZapReader().parse( fileToParse );
+			}
 
-                if ( nodeName.equals( "issues" ) ) {
-                    tr = new BurpReader().parse( root );
-                }
-                
-                else if ( nodeName.equals( "XmlReport" ) ) {
-                    tr = new AppScanDynamicReader().parse( root );
-                }
+			else if ( line2.startsWith( "<CxXMLResults" )) {
+				tr = new CheckmarxReader().parse( fileToParse );
+			}
 
-                else if ( nodeName.equals( "xml-report" ) ) {
-                    // For Appscan, this node has name="AppScan Report" and technology="SAST" or "DAST"
-                    String name = Reader.getAttributeValue( "name", root );
-                    if ("AppScan Report".equals(name)) {
-                        String tech = Reader.getAttributeValue( "technology", root );
-                        if ("SAST".equals(tech)) {
-                            tr = new AppScanSourceReader2().parse( fileToParse );
-                        } else if ("DAST".equals(tech)) {
-                            tr = new AppScanDynamicReader2().parse( fileToParse );
-                        } else System.out.println("Found AppScan Report with unfamiliar technology type: " + tech);
-                    } else System.out.println("Found xml-report that was expected to have a name 'AppScan Report "
-                                + " but had name: " + name);
-                }
+			else if ( line2.startsWith( "<report" )) {
+				tr = new ArachniReader().parse( fileToParse );
+			}
 
-                else if ( nodeName.equals( "noisycricket" ) ) {
-                    tr = new NoisyCricketReader().parse( root );
-                }
+			else if ( line2.startsWith( "<analysisResult") || line2.startsWith( "<analysisReportResult")) {
+				tr = new JuliaReader().parse( fileToParse );
+			}
 
-                else if ( nodeName.equals( "Scan" ) ) {
-                    tr = new WebInspectReader().parse( root );
-                }
-                
-                else if ( nodeName.equals( "ScanGroup" ) ) {
-                    tr = new AcunetixReader().parse( root );
-                }
+			else { // Handle XML where we have to look for a specific node to identify the tool type
 
-                else if ( nodeName.equals( "VulnSummary" ) ) {
-                    tr = new Rapid7Reader().parse( root );
-                }
-                else if ( nodeName.equals( "netsparker" ) ) {
-                    tr = new NetsparkerReader().parse( root );
-                }
-                else System.out.println("Error: No matching parser found for XML file: " + filename);
+				Document doc = getXMLDocument( fileToParse );
+				Node root = doc.getDocumentElement();
+				String nodeName = root.getNodeName();
 
-            } // end else
-         } // end if endsWith ".xml"
+				if ( nodeName.equals( "ScanGroup" ) || nodeName.equals( "acunetix-360" )) {
+					tr = new AcunetixReader().parse( root );
+				}
+
+				else if ( nodeName.equals( "XmlReport" ) ) {
+					tr = new AppScanDynamicReader().parse( root );
+				}
+
+				else if ( nodeName.equals( "xml-report" ) ) {
+					// For Appscan, this node has name="AppScan Report" and technology="SAST" or "DAST"
+					String name = Reader.getAttributeValue( "name", root );
+					if ("AppScan Report".equals(name)) {
+						String tech = Reader.getAttributeValue( "technology", root );
+						if ("SAST".equals(tech)) {
+							tr = new AppScanSourceReader2().parse( fileToParse );
+						} else if ("DAST".equals(tech)) {
+							tr = new AppScanDynamicReader2().parse( fileToParse );
+						} else System.out.println("Found AppScan Report with unfamiliar technology type: " + tech);
+					} else System.out.println("Found xml-report that was expected to have a name 'AppScan Report "
+								+ " but had name: " + name);
+				}
+
+				else if ( nodeName.equals( "issues" ) ) {
+					tr = new BurpReader().parse( root );
+				}
+
+				else if ( nodeName.equals( "netsparker" ) ) {
+					tr = new NetsparkerReader().parse( root );
+				}
+
+				else if ( nodeName.equals( "noisycricket" ) ) {
+					tr = new NoisyCricketReader().parse( root );
+				}
+
+				else if ( nodeName.equals( "VulnSummary" ) ) {
+					tr = new Rapid7Reader().parse( root );
+				}
+
+				else if ( nodeName.equals( "Report" ) ) {
+					tr = new SnappyTickReader().parse( root );
+				}
+
+				else if ( nodeName.equals( "Scan" ) ) {
+					tr = new WebInspectReader().parse( root );
+				}
+
+				else if ( nodeName.equals( "WAS_SCAN_REPORT" ) ) {
+					tr = new QualysWASReader().parse( root );
+				}
+
+				else System.out.println("Error: No matching parser found for XML file: " + filename);
+
+			} // end else
+		 } // end if endsWith ".xml"
 
 		else if ( filename.endsWith( ".fpr" ) ) {
 
 		// .fpr files are really .zip files. So we have to extract the .fvdl file out of it to process it
-		    Path path = Paths.get(fileToParse.getPath());
-		    FileSystem fileSystem = FileSystems.newFileSystem(path, null);
-		    File outputFile = File.createTempFile( filename, ".fvdl");
-		    Path source = fileSystem.getPath("audit.fvdl");
-		    Files.copy(source, outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-		    tr = FortifyReader.parse( outputFile );
-		    outputFile.delete();
+			Path path = Paths.get(fileToParse.getPath());
+			FileSystem fileSystem = FileSystems.newFileSystem(path, (java.lang.ClassLoader) null);
+			File outputFile = File.createTempFile( filename, ".fvdl");
+			Path source = fileSystem.getPath("audit.fvdl");
+			Files.copy(source, outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			tr = FortifyReader.parse( outputFile );
+			outputFile.delete();
 
-		    // Check to see if the results are regular Fortify or Fortify OnDemand results
-		    // To check, you have to look at the filtertemplate.xml file inside the .fpr archive
-		    // and see if that file contains: "Fortify-FOD-Template"
-		    outputFile = File.createTempFile( filename + "-filtertemplate", ".xml");
-		    source = fileSystem.getPath("filtertemplate.xml");
+			// Check to see if the results are regular Fortify or Fortify OnDemand results
+			// To check, you have to look at the filtertemplate.xml file inside the .fpr archive
+			// and see if that file contains: "Fortify-FOD-Template"
+			outputFile = File.createTempFile( filename + "-filtertemplate", ".xml");
+			source = fileSystem.getPath("filtertemplate.xml");
 
-		    // In older versions of Fortify, like 4.1, the filtertemplate.xml file doesn't exist
-		    // So only check it if it exists
+			// In older versions of Fortify, like 4.1, the filtertemplate.xml file doesn't exist
+			// So only check it if it exists
 			try {
-			    Files.copy(source, outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+				Files.copy(source, outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-			    BufferedReader br = new BufferedReader(new FileReader(outputFile));
-			    try {
-			        StringBuilder sb = new StringBuilder();
-			        String line = br.readLine();
+				BufferedReader br = new BufferedReader(new FileReader(outputFile));
+				try {
+					StringBuilder sb = new StringBuilder();
+					String line = br.readLine();
 
-			        // Only read the first 3 lines and the answer is near the top of the file.
-			        int i = 1;
-			        while (line != null && i++ <= 3) {
-			            sb.append(line);
-			            line = br.readLine();
-			        }
-			        if ( sb.indexOf("Fortify-FOD-") > -1 ) {
-			        	tr.setTool( tr.getTool() + "-OnDemand" );
-			        }
-			    } finally {
-			        br.close();
-			    }
+					// Only read the first 3 lines and the answer is near the top of the file.
+					int i = 1;
+					while (line != null && i++ <= 3) {
+						sb.append(line);
+						line = br.readLine();
+					}
+					if ( sb.indexOf("Fortify-FOD-") > -1 ) {
+						tr.setTool( tr.getTool() + "-OnDemand" );
+					}
+				} finally {
+					br.close();
+				}
 			} catch (NoSuchFileException e) {
 				// Do nothing if the filtertemplate.xml file doesn't exist in the .fpr archive
 			} finally {
@@ -823,31 +860,35 @@ public class BenchmarkScore {
 			}
 		}
 
-        else if ( filename.endsWith( ".log" ) ) {
-            tr = new ContrastReader().parse( fileToParse );
-        }
-        
-        else if ( filename.endsWith( ".hlg" ) ) {
-            tr = new HdivReader().parse( fileToParse );
-        }
+		else if ( filename.endsWith( ".log" ) ) {
+			tr = new ContrastReader().parse( fileToParse );
+		}
 
-	else if ( filename.endsWith( ".sl" ) ) {
-	    tr = new ShiftLeftReader().parse( fileToParse );
-	}
+		else if ( filename.endsWith( ".hcl" ) ) {
+			tr = new HCLReader().parse( fileToParse );
+		}
 
-        else System.out.println("Error: No matching parser found for file: " + filename);
+		else if ( filename.endsWith( ".hlg" ) ) {
+			tr = new HdivReader().parse( fileToParse );
+		}
 
-        // If the version # of the tool is specified in the results file name, extract it, and set it.
-        // For example: Benchmark-1.1-Coverity-results-v1.3.2661-6720.json  (the version # is 1.3.2661 in this example).
-        // This code should also handle: Benchmark-1.1-Coverity-results-v1.3.2661.xml (where the compute time '-6720' isn't specified)
-        int indexOfVersionMarker = filename.lastIndexOf("-v");
-        if ( indexOfVersionMarker != -1) {
-        	String restOfFileName = filename.substring(indexOfVersionMarker+2);
-        	int endIndex = restOfFileName.lastIndexOf('-');
-        	if (endIndex == -1) endIndex = restOfFileName.lastIndexOf('.');
-        	String version = restOfFileName.substring(0, endIndex);
-        	tr.setToolVersion(version);
-        }
+		else if ( filename.endsWith( ".sl" ) ) {
+			tr = new ShiftLeftReader().parse( fileToParse );
+		}
+
+		else System.out.println("Error: No matching parser found for file: " + filename);
+
+		// If the version # of the tool is specified in the results file name, extract it, and set it.
+		// For example: Benchmark-1.1-Coverity-results-v1.3.2661-6720.json  (the version # is 1.3.2661 in this example).
+		// This code should also handle: Benchmark-1.1-Coverity-results-v1.3.2661.xml (where the compute time '-6720' isn't specified)
+		int indexOfVersionMarker = filename.lastIndexOf("-v");
+		if ( indexOfVersionMarker != -1) {
+			String restOfFileName = filename.substring(indexOfVersionMarker+2);
+			int endIndex = restOfFileName.lastIndexOf('-');
+			if (endIndex == -1) endIndex = restOfFileName.lastIndexOf('.');
+			String version = restOfFileName.substring(0, endIndex);
+			tr.setToolVersion(version);
+		}
 
 		return tr;
 	}

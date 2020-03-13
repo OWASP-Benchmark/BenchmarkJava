@@ -2,12 +2,14 @@
 FROM ubuntu:latest
 MAINTAINER "Dave Wichers dave.wichers@owasp.org"
 
-RUN apt-get update && apt-get clean
+RUN apt-get update
 RUN apt-get install -q -y \
      openjdk-8-jre-headless \
      openjdk-8-jdk \
      git \
      maven \
+     wget \
+     iputils-ping \
      && apt-get clean
 
 RUN mkdir /owasp

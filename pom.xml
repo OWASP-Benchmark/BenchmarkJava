@@ -32,7 +32,7 @@
 				</plugins>
 			</build>
 		</profile>
-		
+
 		<profile>
 			<id>benchmarkscore</id>
 			<build>
@@ -85,7 +85,7 @@
 								<plugin>
 									<groupId>com.h3xstream.findsecbugs</groupId>
 									<artifactId>findsecbugs-plugin</artifactId>
-									<version>1.9.0</version>
+									<version>1.10.1</version>
 								</plugin>
 							</plugins>
 						</configuration>
@@ -300,7 +300,214 @@
 				</plugins>
 			</build>
 		</profile>
-		
+
+		<profile>
+			<id>deploywseeker</id>
+			<properties>
+			   <skipTests>true</skipTests>
+			   <seeker.javaagent>-javaagent:${basedir}/tools/seeker/seeker-agent.jar</seeker.javaagent>
+			   <seeker.server.url>-Dseeker.server.url=https://server.example.com:8888</seeker.server.url>
+			   <seeker.project.key>-Dseeker.project.key=Benchmark</seeker.project.key>
+			</properties>
+			<build>
+			   <plugins>
+			   <plugin>
+			       <artifactId>maven-antrun-plugin</artifactId>
+			       <version>1.7</version>
+			       <executions>
+			       <execution>
+			           <id>ldap-server</id>
+			           <phase>package</phase>
+			           <goals>
+			           <goal>run</goal>
+			           </goals>
+			           <configuration>
+			           <target>
+			               <ant target="run" antfile="${basedir}/src/config/build.xml">
+			               <reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+			               </ant>
+			           </target>
+			           </configuration>
+			       </execution>
+			       <execution>
+			           <id>database-server</id>
+			           <phase>package</phase>
+			           <goals>
+			           <goal>run</goal>
+			           </goals>
+			           <configuration>
+			           <target>
+			               <ant target="databaseServer" antfile="${basedir}/src/config/build.xml">
+			               <reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+			               </ant>
+			           </target>
+			           </configuration>
+			       </execution>
+			       <execution>
+			           <id>database-init</id>
+			           <phase>package</phase>
+			           <goals>
+			           <goal>run</goal>
+			           </goals>
+			           <configuration>
+			           <target>
+			               <ant target="databaseInit" antfile="${basedir}/src/config/build.xml">
+			               <reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+			               </ant>
+			           </target>
+			           </configuration>
+			       </execution>
+			       </executions>
+			   </plugin>
+			   <plugin>
+			       <groupId>org.codehaus.cargo</groupId>
+			       <artifactId>cargo-maven2-plugin</artifactId>
+			       <version>1.6.0</version>
+			       <configuration>
+			       <container>
+			           <timeout>300000</timeout>
+			           <containerId>tomcat8x</containerId>
+			           <zipUrlInstaller>
+			           <url>http://archive.apache.org/dist/tomcat/tomcat-8/v8.0.38/bin/apache-tomcat-8.0.38.zip</url>
+			           </zipUrlInstaller>
+			       </container>
+			       <configuration>
+			           <configfiles>
+			           <configfile>
+			               <file>${basedir}/src/config/local/server.xml</file>
+			               <todir>conf</todir>
+			               <overwrite>true</overwrite>
+			           </configfile>
+			           <configfile>
+			               <file>${basedir}/src/config/local/context.xml</file>
+			               <todir>conf</todir>
+			               <overwrite>true</overwrite>
+			           </configfile>
+			           </configfiles>
+			           <properties>
+			           <cargo.jvmargs>
+			               ${seeker.javaagent} ${seeker.server.url} ${seeker.project.key} -Xss2m
+			           </cargo.jvmargs>
+			           <cargo.servlet.port>8443</cargo.servlet.port>
+			           <cargo.protocol>https</cargo.protocol>
+			           <cargo.tomcat.connector.clientAuth>false</cargo.tomcat.connector.clientAuth>
+			           <cargo.tomcat.connector.sslProtocol>TLS</cargo.tomcat.connector.sslProtocol>
+			           <cargo.tomcat.connector.keystoreFile>../../../../.keystore</cargo.tomcat.connector.keystoreFile>
+			           <cargo.tomcat.connector.keystorePass>changeit</cargo.tomcat.connector.keystorePass>
+			           <cargo.tomcat.connector.keyAlias>tomcat</cargo.tomcat.connector.keyAlias>
+			           <cargo.tomcat.httpSecure>true</cargo.tomcat.httpSecure>
+			           </properties>
+			       </configuration>
+			       </configuration>
+			   </plugin>
+			   </plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>deploywcxiast</id>
+			<properties>
+				<skipTests>true</skipTests>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>ldap-server</id>
+								<phase>package</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<ant target="run" antfile="${basedir}/src/config/build.xml">
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
+										</ant>
+									</target>
+								</configuration>
+							</execution>
+							<execution>
+								<id>database-server</id>
+								<phase>package</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<ant target="databaseServer" antfile="${basedir}/src/config/build.xml">
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
+										</ant>
+									</target>
+								</configuration>
+							</execution>
+							<execution>
+								<id>database-init</id>
+								<phase>package</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<ant target="databaseInit" antfile="${basedir}/src/config/build.xml">
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
+										</ant>
+									</target>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.cargo</groupId>
+						<artifactId>cargo-maven2-plugin</artifactId>
+						<configuration>
+							<container>
+								<timeout>300000</timeout>
+								<containerId>tomcat${tomcat.major.version}x</containerId>
+								<zipUrlInstaller>
+									<url>${tomcat.url}</url>
+								</zipUrlInstaller>
+							</container>
+							<properties>
+								<cargo.jvmargs>-XX:MaxPermSize=6G -Xms1G –Xmx8G</cargo.jvmargs>
+							</properties>
+							<configuration>
+								<configfiles>
+									<configfile>
+										<file>${basedir}/src/config/local/server.xml</file>
+										<todir>conf</todir>
+										<overwrite>true</overwrite>
+									</configfile>
+									<configfile>
+										<file>${basedir}/src/config/local/context.xml</file>
+										<todir>conf</todir>
+										<overwrite>true</overwrite>
+									</configfile>
+								</configfiles>
+								<properties>
+									<cargo.jvmargs>
+										-Xmx4G
+										-javaagent:${basedir}/tools/CxIAST/cx-launcher.jar
+										-Diast.home=${basedir}/tools/CxIAST/
+										-Xverify:none
+									</cargo.jvmargs>
+									<cargo.servlet.port>8443</cargo.servlet.port>
+									<cargo.protocol>https</cargo.protocol>
+									<cargo.tomcat.connector.clientAuth>false</cargo.tomcat.connector.clientAuth>
+									<cargo.tomcat.connector.sslProtocol>TLS</cargo.tomcat.connector.sslProtocol>
+									<cargo.tomcat.connector.keystoreFile>../../../../.keystore</cargo.tomcat.connector.keystoreFile>
+									<cargo.tomcat.connector.keystorePass>changeit</cargo.tomcat.connector.keystorePass>
+									<cargo.tomcat.connector.keyAlias>tomcat</cargo.tomcat.connector.keyAlias>
+									<cargo.tomcat.httpSecure>true</cargo.tomcat.httpSecure>
+								</properties>
+							</configuration>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
 		<profile>
 			<id>deploywhcl</id>
 			<properties>
@@ -495,7 +702,7 @@ But it requires getting all the Log4j2 stuff configured right, and haven't done 
 		</dependency>
 
 		<!-- mvn dependency:analyze says these 4 artifacts are used but not included in the pom, but adding
-		     them breaks the LDAP server startup. Maybe because apacheds-all includes them already? 
+		     them breaks the LDAP server startup. Maybe because apacheds-all includes them already?
 		<dependency>
 			<groupId>org.apache.directory.shared</groupId>
 			<artifactId>shared-ldap</artifactId>
@@ -665,7 +872,7 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 -->
 			<version>1.5.7</version>
 			<exclusions>
-				<!-- shared-ldap-schema module needs to be excluded to avoid multiple 
+				<!-- shared-ldap-schema module needs to be excluded to avoid multiple
 					schema resources on the classpath -->
 				<exclusion>
 					<groupId>org.apache.directory.shared</groupId>

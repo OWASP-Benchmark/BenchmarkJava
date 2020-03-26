@@ -5,8 +5,25 @@
 	<artifactId>benchmark</artifactId>
 	<version>1.2</version>
 	<packaging>war</packaging>
+
 	<name>OWASP Benchmark Project</name>
-	<url>https://www.owasp.org/index.php/Benchmark</url>
+	<description>OWASP Benchmark is a Java test suite designed to evaluate the accuracy, coverage, and speed of automated software vulnerability detection tools.</description>
+	<url>https://owasp.org/www-project-benchmark/</url>
+
+	<developers>
+		<developer>
+			<id>davewichers</id>
+			<name>Dave Wichers</name>
+			<email>dave.wichers@owasp.org</email>
+		</developer>
+	</developers>
+
+	<licenses>
+		<license>
+			<name>GNU General Public License, version 2 (GPL2)</name>
+			<url>https://choosealicense.com/licenses/gpl-2.0/</url>
+		</license>
+	</licenses>
 
 	<profiles>
 		<profile>
@@ -645,30 +662,12 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<!-- mvn dependency:analyze says this is an unused declared dependency, but its wrong. I think the webapp needs it somehow. -->
 		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>4.5.8</version>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-servlet</artifactId>
+			<version>${version.jersey}</version>
 		</dependency>
-
-		<!-- including to avoid warning: SLF4J: Defaulting to no-operation (NOP) logger implementation -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>${version.slf4j}</version>
-		</dependency>
-
-<!--
-		TODO: Need to add this to eliminate this error:
-[WARNING] [talledLocalContainer] ERROR StatusLogger Log4j2 could not find a logging implementation. Please add log4j-core to the classpath. Using SimpleLogger to log to the console...
-
-But it requires getting all the Log4j2 stuff configured right, and haven't done that yet.
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-core</artifactId>
-			<version>2.11.0</version>
-		</dependency>
--->
 
 		<dependency>
 			<groupId>commons-codec</groupId>
@@ -676,7 +675,10 @@ But it requires getting all the Log4j2 stuff configured right, and haven't done 
 			<version>1.12</version>
 		</dependency>
 
-		<!-- mvn dependency:analyze says this is an unused declared dependency, but its wrong. -->
+		<!-- mvn dependency:analyze says this is an unused declared dependency, but its wrong. Get this runtime error if it's not included:
+			Caused by: org.springframework.beans.factory.CannotLoadBeanClassException: Cannot find class [org.apache.commons.dbcp.BasicDataSource]
+			for bean with name 'dataSource' defined in class path resource [context.xml]; nested exception is java.lang.ClassNotFoundException:
+			org.apache.commons.dbcp.BasicDataSource -->
 		<dependency>
 			<groupId>commons-dbcp</groupId>
 			<artifactId>commons-dbcp</artifactId>
@@ -697,23 +699,94 @@ But it requires getting all the Log4j2 stuff configured right, and haven't done 
 
 		<dependency>
 			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.8</version>
+			<artifactId>commons-csv</artifactId>
+			<version>1.5</version>
 		</dependency>
 
-		<!-- mvn dependency:analyze says these 4 artifacts are used but not included in the pom, but adding
-		     them breaks the LDAP server startup. Maybe because apacheds-all includes them already?
-		<dependency>
-			<groupId>org.apache.directory.shared</groupId>
-			<artifactId>shared-ldap</artifactId>
-			<version>${version.apache-shared-ldap}</version>
-		</dependency>
+                <dependency>
+                        <groupId>org.apache.directory.server</groupId>
+                        <artifactId>apacheds-core</artifactId>
+<!-- Upgrading to 2.0.0-M24 is an API breaking change.
 
-		<dependency>
-			<groupId>org.apache.directory.shared</groupId>
-			<artifactId>shared-ldap-schema</artifactId>
-			<version>${version.apache-shared-ldap}</version>
-		</dependency>
+But it might be needed for Java 10, because I get this error, that I don't get with Java 8:
+
+     [java] at org.apache.directory.server.core.DefaultDirectoryService.initialize(DefaultDirectoryService.java:1426)
+     [java] at org.apache.directory.server.core.DefaultDirectoryService.startup(DefaultDirectoryService.java:907)
+     [java] at org.owasp.benchmark.helpers.LDAPServer.initDirectoryService(LDAPServer.java:148)
+     [java] at org.owasp.benchmark.helpers.LDAPServer.<init>(LDAPServer.java:42)
+     [java] at org.owasp.benchmark.helpers.LDAPServer.main(LDAPServer.java:320)
+     [java] Caused by: java.lang.NumberFormatException: multiple points
+     [java] at java.base/jdk.internal.math.FloatingDecimal.readJavaFormatString(FloatingDecimal.java:1914)
+-->
+                        <version>${version.apacheds}</version>
+                        <exclusions>
+                                <!-- excluded because its old, and there is a bug in it causing an exception when using it. -->
+                                <exclusion>
+                                        <groupId>bouncycastle</groupId>
+                                        <artifactId>bcprov-jdk15</artifactId>
+                                </exclusion>
+                        </exclusions>
+                </dependency>
+
+                <dependency>
+                        <groupId>org.apache.directory.server</groupId>
+                        <artifactId>apacheds-core-api</artifactId>
+                        <version>${version.apacheds}</version>
+                </dependency>
+
+                <dependency>
+                        <groupId>org.apache.directory.server</groupId>
+                        <artifactId>apacheds-core-constants</artifactId>
+                        <version>${version.apacheds}</version>
+                </dependency>
+
+                <dependency>
+                        <groupId>org.apache.directory.server</groupId>
+                        <artifactId>apacheds-jdbm-partition</artifactId>
+                        <version>${version.apacheds}</version>
+                </dependency>
+
+                <dependency>
+                        <groupId>org.apache.directory.server</groupId>
+                        <artifactId>apacheds-jdbm-store</artifactId>
+                        <version>${version.apacheds}</version>
+                </dependency>
+
+                <dependency>
+                        <groupId>org.apache.directory.server</groupId>
+                        <artifactId>apacheds-ldif-partition</artifactId>
+                        <version>${version.apacheds}</version>
+                </dependency>
+
+                <dependency>
+                        <groupId>org.apache.directory.server</groupId>
+                        <artifactId>apacheds-protocol-ldap</artifactId>
+                        <version>${version.apacheds}</version>
+                </dependency>
+
+                <dependency>
+                        <groupId>org.apache.directory.server</groupId>
+                        <artifactId>apacheds-protocol-shared</artifactId>
+                        <version>${version.apacheds}</version>
+                </dependency>
+
+                <dependency>
+                        <groupId>org.apache.directory.server</groupId>
+                        <artifactId>apacheds-xdbm-base</artifactId>
+                        <version>${version.apacheds}</version>
+                </dependency>
+
+                <dependency>
+                        <groupId>org.apache.directory.shared</groupId>
+                        <artifactId>shared-ldap</artifactId>
+                        <version>${version.apache-shared-ldap}</version>
+                </dependency>
+
+                <dependency>
+                        <groupId>org.apache.directory.shared</groupId>
+                        <artifactId>shared-ldap-schema</artifactId>
+                        <version>${version.apache-shared-ldap}</version>
+                </dependency>
 
 		<dependency>
 			<groupId>org.apache.directory.shared</groupId>
@@ -725,13 +798,31 @@ But it requires getting all the Log4j2 stuff configured right, and haven't done 
 			<groupId>org.apache.directory.shared</groupId>
 			<artifactId>shared-ldap-schema-manager</artifactId>
 			<version>${version.apache-shared-ldap}</version>
-		</dependency -->
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.8</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpcore</artifactId>
 			<version>4.4.11</version>
 		</dependency>
+
+<!--
+		TODO: Need to add this to eliminate this error:
+[WARNING] [talledLocalContainer] ERROR StatusLogger Log4j2 could not find a logging implementation. Please add log4j-core to the classpath. Using SimpleLogger to log to the console...
+
+But it requires getting all the Log4j2 stuff configured right, and haven't done that yet.
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.11.0</version>
+		</dependency>
+-->
 
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
@@ -740,6 +831,12 @@ But it requires getting all the Log4j2 stuff configured right, and haven't done 
 		</dependency>
 
 		<!-- Kevin's fix for jar version conflicts. For future Benchmark 1.3
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>${version.hibernate}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
@@ -771,14 +868,9 @@ But it requires getting all the Log4j2 stuff configured right, and haven't done 
 			<artifactId>cglib-nodep</artifactId>
 			<version>3.2.8</version>
 		</dependency>
-
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<version>${version.hibernate}</version>
-		</dependency>
 	 - END Kevin's fix for jar version conflicts -->
 
+		<!-- mvn dependency:analyze says this is an unused declared dependency, but its wrong. Get a runtime error if it's not included -->
 		<dependency>
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
@@ -793,15 +885,35 @@ But it requires getting all the Log4j2 stuff configured right, and haven't done 
 		</dependency>
 
 		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>1.10.19</version>
+			<groupId>org.jfree</groupId>
+			<artifactId>jfreechart</artifactId>
+			<!-- <version>1.5.0</version> This is latest version, but is an API breaking change. -->
+			<version>1.0.19</version>
 		</dependency>
 
 		<dependency>
-			<groupId>xml-apis</groupId>
-			<artifactId>xml-apis</artifactId>
-			<version>1.4.01</version>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20180813</version>
+		</dependency>
+
+                <dependency>
+                        <groupId>org.mockito</groupId>
+                        <artifactId>mockito-core</artifactId>
+                        <version>1.10.19</version>
+                </dependency>
+
+		<dependency>
+			<groupId>org.owasp.esapi</groupId>
+			<artifactId>esapi</artifactId>
+			<version>2.2.0.0</version>
+		</dependency>
+
+		<!-- including to avoid warning: SLF4J: Defaulting to no-operation (NOP) logger implementation -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${version.slf4j}</version>
 		</dependency>
 
 		<dependency>
@@ -828,7 +940,7 @@ But it requires getting all the Log4j2 stuff configured right, and haven't done 
 			<version>${version.springframework}</version>
 		</dependency>
 
-		<!-- mvn dependency:analyze says this is an unused declared dependency, but its wrong. -->
+		<!-- mvn dependency:analyze says this is an unused declared dependency, but its wrong. It's needed by Spring somehow. -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
@@ -836,86 +948,9 @@ But it requires getting all the Log4j2 stuff configured right, and haven't done 
 		</dependency>
 
 		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>2.8.5</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<!-- versions higher than this require Java 8 -->
-			<version>25.1-jre</version>
-		</dependency>
-
-		<!-- mvn dependency:analyze says this is an unused declared dependency, but its wrong. -->
-		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-servlet</artifactId>
-			<version>${version.jersey}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-csv</artifactId>
-			<version>1.5</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.directory.server</groupId>
-			<artifactId>apacheds-server-integ</artifactId>
-<!-- Upgrading to 2.0.0-M24 is an API breaking change.
-
-But it might be needed for Java 10, because I get this error, that I don't get with Java 8:
-
-     [java] at org.apache.directory.server.core.DefaultDirectoryService.initialize(DefaultDirectoryService.java:1426)
-     [java] at org.apache.directory.server.core.DefaultDirectoryService.startup(DefaultDirectoryService.java:907)
-     [java] at org.owasp.benchmark.helpers.LDAPServer.initDirectoryService(LDAPServer.java:148)
-     [java] at org.owasp.benchmark.helpers.LDAPServer.<init>(LDAPServer.java:42)
-     [java] at org.owasp.benchmark.helpers.LDAPServer.main(LDAPServer.java:320)
-     [java] Caused by: java.lang.NumberFormatException: multiple points
-     [java] at java.base/jdk.internal.math.FloatingDecimal.readJavaFormatString(FloatingDecimal.java:1914)
--->
-			<version>1.5.7</version>
-			<exclusions>
-				<!-- shared-ldap-schema module needs to be excluded to avoid multiple
-					schema resources on the classpath. Without this exclusion LDAP actually breaks
-					The v1.5.7 version of this library apparently uses 0.9.18 of this dependency.  -->
-				<exclusion>
-					<groupId>org.apache.directory.shared</groupId>
-					<artifactId>shared-ldap-schema</artifactId>
-				</exclusion>
-				<!-- excluded because its old, and there is a bug in it causing an exception when using it. -->
-				<exclusion>
-					<groupId>bouncycastle</groupId>
-					<artifactId>bcprov-jdk15</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.directory.shared</groupId>
-			<artifactId>shared-all</artifactId>
-			<version>0.9.19</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jfree</groupId>
-			<artifactId>jfreechart</artifactId>
-			<!-- <version>1.5.0</version> This is latest version, but is an API breaking change. -->
-			<version>1.0.19</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.json</groupId>
-			<artifactId>json</artifactId>
-			<version>20180813</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.owasp.esapi</groupId>
-			<artifactId>esapi</artifactId>
-			<version>2.2.0.0</version>
+			<groupId>xml-apis</groupId>
+			<artifactId>xml-apis</artifactId>
+			<version>1.4.01</version>
 		</dependency>
 
 	</dependencies>
@@ -1134,6 +1169,18 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 					</reportSet>
 				</reportSets>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>3.0.0</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>dependency-convergence</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
 		</plugins>
 	</reporting>
 
@@ -1146,12 +1193,13 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.war.webxml>${basedir}/src/config/web.xml</maven.war.webxml>
 		<runenv>local</runenv>
+		<version.apacheds>1.5.7</version.apacheds>
 		<version.apache-shared-ldap>0.9.19</version.apache-shared-ldap>
 		<version.exec.maven>1.6.0</version.exec.maven>
 		<version.hibernate>3.6.10.Final</version.hibernate>
 		<version.jackson>2.9.8</version.jackson>
 		<version.jersey>1.19.4</version.jersey>
-		<version.slf4j>1.7.26</version.slf4j>
+		<version.slf4j>1.7.30</version.slf4j>
 		<version.spotbugs.maven>3.1.12.2</version.spotbugs.maven>
 		<!-- Spring Framework 4.2x is an API breaking change. Would like to upgrade to 4.3x actually -->
 		<version.springframework>4.1.9.RELEASE</version.springframework>

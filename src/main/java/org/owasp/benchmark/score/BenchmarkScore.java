@@ -782,7 +782,7 @@ public class BenchmarkScore {
 				}
 
 				else if ( nodeName.equals( "issues" ) ) {
-					tr = new BurpReader().parse( root );
+					tr = new BurpReader().parse( fileToParse, root );
 				}
 
 				else if ( nodeName.equals( "netsparker" ) ) {
@@ -806,7 +806,7 @@ public class BenchmarkScore {
 				}
 
 				else if ( nodeName.equals( "WAS_SCAN_REPORT" ) ) {
-					tr = new QualysWASReader().parse( root );
+					tr = new QualysWASReader().parse( fileToParse, root );
 				}
 
 				else System.out.println("Error: No matching parser found for XML file: " + filename);

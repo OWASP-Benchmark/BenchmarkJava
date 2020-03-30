@@ -25,7 +25,9 @@ import org.owasp.benchmark.score.BenchmarkScore;
 import org.w3c.dom.Node;
 
 public class QualysWASReader extends Reader {
-    
+
+    // filename passed in so we can extract the scan time if it is included in the filename
+    // root of XML doc passed in so we can parse the results
     public TestResults parse(File f, Node root) throws Exception {
 
         TestResults tr = new TestResults("Qualys WAS", true, TestResults.ToolType.DAST);

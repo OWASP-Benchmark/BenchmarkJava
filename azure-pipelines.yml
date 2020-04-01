@@ -1,0 +1,37 @@
+# Maven
+# Build your Java project and run tests with Apache Maven.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/java
+
+trigger:
+- master
+
+pool:
+  name: 'Macquarie Cloud Services'
+  demands: 'benchmark-build'
+
+steps:
+- task: Maven@3
+  name: Build
+  inputs:
+    mavenPomFile: 'pom.xml'
+    mavenOptions: '-Xmx3072m'
+    javaHomeOption: 'JDKVersion'
+    jdkVersionOption: '1.8'
+    jdkArchitectureOption: 'x64'
+    publishJUnitResults: true
+    testResultsFiles: '**/surefire-reports/TEST-*.xml'
+    goals: 'package'
+- task: ArchiveFiles@2
+  name: Zip
+  inputs:
+    rootFolderOrFile: '$(System.DefaultWorkingDirectory)/src'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    replaceExistingArchive: true
+- task: PublishBuildArtifacts@1
+  name: Publish
+  inputs:
+    pathToPublish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    artifactName: benchmark

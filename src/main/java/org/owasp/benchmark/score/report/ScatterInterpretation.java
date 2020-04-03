@@ -21,8 +21,6 @@ package org.owasp.benchmark.score.report;
 import java.io.File;
 import java.io.IOException;
 
-import javax.swing.JFrame;
-
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -38,8 +36,6 @@ public class ScatterInterpretation extends ScatterPlot {
     }
 
     private JFreeChart display(String title, int height ) {
-        JFrame f = new JFrame(title);
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         XYSeriesCollection dataset = new XYSeriesCollection();
         chart = ChartFactory.createScatterPlot(title, "False Positive Rate", "True Positive Rate", dataset, PlotOrientation.VERTICAL, true, true, false);
@@ -52,19 +48,13 @@ public class ScatterInterpretation extends ScatterPlot {
         makePointer( xyplot, 10, 10, " Tool reports nothing is vulnerable", TextAnchor.TOP_LEFT, 45 );
         // makePointer( xyplot, 70, 30, " Worse than random", TextAnchor.TOP_LEFT, 45 );
         makePointer( xyplot, 90, 90, "Tool reports everything is vulnerable ", TextAnchor.TOP_LEFT, 45);
-        // makePointer( xyplot, 50, 50, "Tool reports vulnerabilities randomly ", TextAnchor.BOTTOM_RIGHT, 225);
         makePointer( xyplot, 50, 50, "Tool reports vulnerabilities randomly ", TextAnchor.TOP_LEFT, 45);
-       
+
         makeOval( xyplot, 0, 3, 20, 10, 45 );
         makeOval( xyplot, 42, 3, 20, 10, 45 );
         makeOval( xyplot, 84, 3, 20, 10, 45 );
         makeOval( xyplot, 43, 64, 20, 10, 45 );
-        
-        ChartPanel cp = new ChartPanel(chart, height, height, 400, 400, 1200, 1200, false, false, false, false, false, false);
-        f.add(cp);
-        f.pack();
-        f.setLocationRelativeTo(null);
-        // f.setVisible(true);
+
         return chart;
     }
 

@@ -30,8 +30,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.swing.JFrame;
-
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -68,9 +66,7 @@ public class ScatterHome extends ScatterPlot {
     }
 
     private JFreeChart display(String title, int height, Set<Report> toolResults ) {
-        JFrame f = new JFrame(title);
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      
+
         //averages
         ArrayList<Double> averageCommercialFalseRates = new ArrayList<Double>();
         ArrayList<Double> averageCommercialTrueRates = new ArrayList<Double>();
@@ -138,11 +134,6 @@ public class ScatterHome extends ScatterPlot {
             xyplot.addAnnotation(score);
         }     
 
-        ChartPanel cp = new ChartPanel(chart, height, height, 400, 400, 1200, 1200, false, false, false, false, false, false);
-        f.add(cp);
-        f.pack();
-        f.setLocationRelativeTo(null);
-//      f.setVisible(true);
         return chart;
     }
 

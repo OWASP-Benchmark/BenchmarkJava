@@ -27,8 +27,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import javax.swing.JFrame;
-
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -38,6 +36,7 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.ui.TextAnchor;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+
 import org.owasp.benchmark.score.parsers.OverallResult;
 import org.owasp.benchmark.score.parsers.OverallResults;
 
@@ -50,9 +49,6 @@ public class ScatterTools extends ScatterPlot {
 	}
 
 	private JFreeChart display(String title, int height, OverallResults or) {
-
-		JFrame f = new JFrame(title);
-		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		XYSeriesCollection dataset = new XYSeriesCollection();
 		XYSeries series = new XYSeries("Scores");
@@ -71,18 +67,18 @@ public class ScatterTools extends ScatterPlot {
 		if ( or.getResults().size() > 1) {
 		    series.add(afpr * 100, atpr * 100);
 		}
-		
+
 		dataset.addSeries(series);
 
 		chart = ChartFactory.createScatterPlot(title, "False Positive Rate", "True Positive Rate", dataset, PlotOrientation.VERTICAL, true, true, false);
         theme.apply(chart);
 
 		XYPlot xyplot = chart.getXYPlot();
-		
+
 		initializePlot( xyplot );
-		
+
 		makeDataLabels(or, xyplot);
-        makeLegend( or, 103, 93, dataset, xyplot );
+		makeLegend( or, 103, 93, dataset, xyplot );
 
 		XYTextAnnotation time = new XYTextAnnotation("Tool run time: " + or.getTime(), 12, -5.6);
 		time.setTextAnchor(TextAnchor.TOP_LEFT);
@@ -90,11 +86,6 @@ public class ScatterTools extends ScatterPlot {
 		time.setPaint(Color.red);
 		xyplot.addAnnotation(time);
 
-		ChartPanel cp = new ChartPanel(chart, height, height, 400, 400, 1200, 1200, false, false, false, false, false, false);
-		f.add(cp);
-		f.pack();
-		f.setLocationRelativeTo(null);
-		// f.setVisible(true);
 		return chart;
 	}
 

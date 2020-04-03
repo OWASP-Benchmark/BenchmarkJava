@@ -903,8 +903,7 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 		<dependency>
 			<groupId>org.jfree</groupId>
 			<artifactId>jfreechart</artifactId>
-			<!-- <version>1.5.0</version> This is latest version, but is an API breaking change. -->
-			<version>1.0.19</version>
+			<version>1.5.0</version>
 		</dependency>
 
 		<dependency>

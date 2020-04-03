@@ -1,3 +1,21 @@
+/**
+ * OWASP Benchmark Project
+ *
+ * This file is part of the Open Web Application Security Project (OWASP)
+ * Benchmark Project For details, please see
+ * <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
+ *
+ * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU General Public License as published by the Free Software Foundation, version 2.
+ *
+ * The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details
+ *
+ * @author Dave Wichers
+ * @created 2015
+ */
+
 package org.owasp.benchmark.score.report;
 
 import java.awt.BasicStroke;
@@ -18,7 +36,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.StandardChartTheme;
 import org.jfree.chart.annotations.XYLineAnnotation;
@@ -29,8 +47,8 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.category.StandardBarPainter;
-import org.jfree.ui.RectangleInsets;
-import org.jfree.ui.TextAnchor;
+import org.jfree.chart.ui.RectangleInsets;
+import org.jfree.chart.ui.TextAnchor;
 
 public class ScatterPlot {
 
@@ -125,7 +143,7 @@ public class ScatterPlot {
     
     public void writeChartToFile(File f, int height) throws IOException {
         FileOutputStream stream = new FileOutputStream(f);
-        ChartUtilities.writeChartAsPNG(stream, chart, (int)Math.round(height*1.4), height);
+        ChartUtils.writeChartAsPNG(stream, chart, (int)Math.round(height*1.4), height);
         stream.close();
     }
 

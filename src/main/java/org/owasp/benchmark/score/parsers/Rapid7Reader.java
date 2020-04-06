@@ -3,7 +3,7 @@
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project For details, please see
-* <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
 *
 * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details
 *
-* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Dave Wichers
 * @created 2015
 */
 
@@ -59,7 +59,7 @@ public class Rapid7Reader extends Reader {
                 TestCaseResult tcr = parseRapid7Item(issue);
                 if (tcr != null ) {
                     tr.put(tcr);
-                    System.out.println( tcr.getNumber() + ", " + tcr.getCWE() + ", " + tcr.getEvidence() );
+                    //System.out.println( tcr.getCWE() + ", " + tcr.getEvidence() + ", " + tcr.getNumber() );
                 }
             } catch( Exception e ) {
                 e.printStackTrace();
@@ -155,7 +155,7 @@ public class Rapid7Reader extends Reader {
         Node vulnId = getNamedChild("CweId", flaw);
         if ( vulnId != null ) {
             String cweNum = vulnId.getTextContent();
-            int cwe = cweLookup( cweNum );
+            int cwe = cweLookup( cweNum, evidence );
             tcr.setCWE( cwe  );
         }
         
@@ -185,13 +185,62 @@ public class Rapid7Reader extends Reader {
     }
 
 	
-	private static int cweLookup( String cweNum ) {
-	    if ( cweNum == null || cweNum.isEmpty() ) {
-	        return 0000;
+	private static int cweLookup( String cweNum, String evidence ) {
+	    int cwe = 0000;
+	    if ( cweNum != null && !cweNum.isEmpty() ) {
+	      cwe = Integer.parseInt( cweNum );
 	    }
-	    int cwe = Integer.parseInt( cweNum );
+
 	    switch( cwe ) {
-	    case 80 : return 614;   // insecure cookie use
+	      case 0  : switch( evidence ) {
+				// These are the ones we've seen. Print out any new ones to make sure its mapped properly.
+				case "Reflection": return 79; // Causes their XSS score to go from 0% to: TP:34.55% FP:11.48%
+
+				case "Customer Authentication Credential (Username)":
+				case "Email address":
+				case "Javascript \"strict mode\" is not defined.":
+				case "Left arrow":
+				case "Mobile Browser":
+				case "Stored Discover number":
+				case "Stored MasterCard number":
+				case "Stored Visa number":
+				case "Strict-Transport-Security header not found in the response from HTTPS site":
+				case "The Content Security Policy hasn't been declared either through the meta-tag or the header.":
+				case "Undefined charset attribute":
+				case "X-Content-Type-Options header not found":
+				case "X-Frame-Options HTTP header checking":
+				case "X-XSS-Protection header not found": return 0;
+				default: {
+					// If this prints out anything new, add to this mapping so we know it's mapped properly.
+					System.out.println("Found new unmapped finding with evidence: " + evidence);
+					return 0;   // In case they add any new mappings
+				}
+			}
+	      case 79  : switch( evidence ) {
+				case "HttpOnly attribute not set": return 1004; // Mapping to more specific CWE
+				default: return 79;   // Leave the rest as is
+			}
+	      case 80  : switch( evidence ) {
+				// These map Basic XSS to XSS - Causing their XSS TP rate to go up almost 12%
+				case "Filter evasion - script alert injection, no round brackets": return 79;
+				case "Filter evasion - script prompt injection, no round brackets": return 79;
+				case "SameSite attribute is not set to \"strict\" or \"lax\"": return 352;
+				case "Unfiltered <script> tag after single quotation mark": return 79;
+				case "Unfiltered <script> tag after double quotation mark": return 79;
+				case "Unfiltered <script> tag": return 79;
+				case "body with onload (original)": return 79;
+				case "img tag with onerror": return 79;
+				case "script include": return 79;
+				case "script tag": return 79;
+				default: {
+					// If this prints out anything new, add to this mapping so we know it's mapped properly.
+					System.out.println("Found new CWE 80 (mapping to 79) with evidence: " + evidence);
+					return 79;   // In case they add any new mappings
+				}
+			}
+	      case 201 : return 89;   // SQL instruction files - This causes their TP rate to go up 4% but FP rate up 6.5%
+	      case 209 : return 89;   // Find SQL query constructions - This causes their TP rate to go up 2.5% but FP rate up 7.75%
+
 //        case "insecure-cookie"           :  return 614;  // insecure cookie use
 //        case "sql-injection"             :  return 89;   // sql injection
 //        case "cmd-injection"             :  return 78;   // command injection
@@ -208,6 +257,7 @@ public class Rapid7Reader extends Reader {
 //        case "crypto-bad-ciphers"        :  return 327;  // weak encryption
 //        case "trust-boundary-violation"  :  return 501;  // trust boundary
 //        case "xxe"                       :  return 611;  // xml entity
+
         }
 		return cwe;
 	}

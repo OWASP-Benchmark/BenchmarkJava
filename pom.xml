@@ -966,6 +966,14 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 	<build>
 		<finalName>benchmark</finalName>
 
+		<extensions>
+			<extension>
+				<groupId>co.leantechniques</groupId>
+				<artifactId>maven-buildtime-extension</artifactId>
+				<version>2.0.2</version>
+			</extension>
+		</extensions>
+
 		<resources>
 			<resource>
 				<directory>${basedir}/src/main/resources</directory>

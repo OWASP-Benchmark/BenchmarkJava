@@ -153,7 +153,8 @@ public class AcunetixReader extends Reader {
       if ( vulnId != null ) {
           String cweNum = vulnId.getTextContent();
           int cwe = cweLookup( cweNum );
-          tcr.setCWE( cwe  );
+          tcr.setCWE( cwe );
+//System.out.println("Found CWE: " + cwe + " in test case: " + tcr.getNumber());
       } else return null;
       
       tcr.setConfidence( Integer.parseInt( getNamedChild("certainty", vuln).getTextContent() ) );
@@ -215,29 +216,33 @@ public class AcunetixReader extends Reader {
 	
 	private static int cweLookup( String cweNum ) {
 	    if ( cweNum == null || cweNum.isEmpty() ) {
+		System.out.println("ERROR: No CWE number supplied");
 	        return 0000;
 	    }
-	    int cwe = Integer.parseInt( cweNum );
-	    switch( cwe ) {
+	    switch( cweNum ) {
+		case "22" :  return 22;   // path traversal
+		case "78" :  return 78;   // command injection
+		case "79" :  return 79;   // xss
+		case "89" :  return 89;   // sql injection
+		case "614":  return 614;  // insecure cookie use
+
 	      // switch left in case we ever need to map a reported cwe to the one expected by Benchmark
-//        case "insecure-cookie"           :  return 614;  // insecure cookie use
-//        case "sql-injection"             :  return 89;   // sql injection
-//        case "cmd-injection"             :  return 78;   // command injection
 //        case "ldap-injection"            :  return 90;   // ldap injection
 //        case "header-injection"          :  return 113;  // header injection
 //        case "hql-injection"             :  return 0000; // hql injection
 //        case "unsafe-readline"           :  return 0000; // unsafe readline
 //        case "reflection-injection"      :  return 0000; // reflection injection
-//        case "reflected-xss"             :  return 79;   // xss
 //        case "xpath-injection"           :  return 643;  // xpath injection
-//        case "path-traversal"            :  return 22;   // path traversal
 //        case "crypto-bad-mac"            :  return 328;  // weak hash
 //        case "crypto-weak-randomness"    :  return 330;  // weak random
 //        case "crypto-bad-ciphers"        :  return 327;  // weak encryption
 //        case "trust-boundary-violation"  :  return 501;  // trust boundary
 //        case "xxe"                       :  return 611;  // xml entity
-        }
-		return cwe;
+	    }
+
+	    // Add any 'new' CWEs ever found to switch above so we know they are mapped properly.
+	    System.out.println("INFO: Found following CWE which we haven't seen before: " + cweNum);
+	    return Integer.parseInt( cweNum );
 	}
 
 }

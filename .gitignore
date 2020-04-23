@@ -1,0 +1,7 @@
+.classpath
+.project
+.settings/
+shiftleft.json
+target/
+testfiles/
+

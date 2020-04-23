@@ -42,7 +42,7 @@ public class DatabaseHelper {
 	public static final boolean hideSQLErrors = false; // If we want SQL Exceptions to be suppressed from being displayed to the user of the web app.
 
 	static {
-		
+		//sample comment
 		initDataBase();		
 		System.out.println("Spring context init() ");
 		@SuppressWarnings("resource")

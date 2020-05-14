@@ -3,7 +3,7 @@
  *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Benchmark Project For details, please see
- * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+ * <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
  *
  * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
  * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details
  *
- * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+ * @author Nick Sanidas
  * @created 2015
  */
 
@@ -45,13 +45,9 @@ import java.util.Set;
 
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.InitialDirContext;
-import javax.naming.directory.SearchControls;
-import javax.naming.directory.SearchResult;
 import javax.net.ssl.SSLContext;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -72,11 +68,12 @@ import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
-import org.mockito.Mockito;
+
 import org.owasp.benchmark.service.pojo.StringMessage;
 import org.owasp.benchmark.tools.AbstractTestCaseRequest;
 import org.owasp.benchmark.tools.ServletTestCaseRequest;
 import org.owasp.benchmark.tools.XMLCrawler;
+
 import org.owasp.esapi.ESAPI;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -85,21 +82,19 @@ import org.xml.sax.InputSource;
 
 public class Utils {
 
-	public static final String testfileDir = System.getProperty("user.dir") + File.separator + "testfiles"
-			+ File.separator;
+	public static final String USERDIR = System.getProperty("user.dir");
 
-	public static final String failedTCFile = System.getProperty("user.dir") + File.separator + "data" + File.separator
-			+ "benchmark-failed-http.xml";
+	public static final String testfileDir = USERDIR + File.separator + "testfiles" + File.separator;
 
-	public static final String BENCHMARK_DATA = System.getProperty("user.dir") + File.separator + "data"
-			+ File.separator;
+	public static final String failedTCFile = USERDIR + File.separator + "data" + File.separator + "benchmark-failed-http.xml";
+
+	public static final String BENCHMARK_DATA = USERDIR + File.separator + "data" + File.separator;
 
 	public static final Set<String> commonHeaders = new HashSet<>(Arrays.asList("host", "user-agent", "accept",
 			"accept-language", "accept-encoding", "content-type", "x-requested-with", "referer", "content-length",
 			"connection", "pragma", "cache-control", "origin", "cookie"));
 
-	public static final String DATAFOLDER_PATH = System.getProperty("user.dir") + File.separator + "data"
-			+ File.separator;
+	public static final String DATAFOLDER_PATH = USERDIR + File.separator + "data" + File.separator;
 
 	private static javax.crypto.Cipher cipher = null;
 
@@ -150,6 +145,26 @@ public class Utils {
 			}
 		}
 
+	}
+
+	public static String getCookie( HttpServletRequest request, String paramName ) {
+		Cookie[] values = request.getCookies();
+		String param = "none";
+		if (paramName != null) {
+			for (int i = 0; i < values.length; i++)
+			{
+				if (values[i].getName().equals(paramName)) {
+					param = values[i].getValue();
+					break; // break out of for loop when param found
+				}
+			}
+		}
+		return param;
+	}
+ 
+	public static String getParam( HttpServletRequest request, String paramName ) {
+		String param = request.getParameter(paramName);
+		return param;
 	}
 
 	public static String getOSCommandString(String append) {
@@ -261,76 +276,54 @@ public class Utils {
 		}
 	}
 
-	public static javax.naming.directory.InitialDirContext getInitialDirContext() throws NamingException {
-		/* Deprecated use LDAPHelper.getInitialDirContext() */
-		InitialDirContext idc = Mockito.mock(InitialDirContext.class);
-
-		@SuppressWarnings("unchecked")
-		NamingEnumeration<SearchResult> ne = (NamingEnumeration<SearchResult>) Mockito.mock(NamingEnumeration.class);
-		Mockito.when(idc.search(Mockito.anyString(), Mockito.anyString(), Mockito.any(SearchControls.class)))
-				.thenReturn(ne);
-		Mockito.when(idc.search(Mockito.anyString(), Mockito.anyString(), Mockito.any(Object[].class),
-				Mockito.any(SearchControls.class))).thenReturn(ne);
-
-		return idc;
-	}
-
-	public static javax.naming.directory.DirContext getDirContext() throws NamingException {
-		/* Deprecated use LDAPHelper.getDirContext() */
-		DirContext dc = Mockito.mock(DirContext.class);
-
-		@SuppressWarnings("unchecked")
-		NamingEnumeration<SearchResult> ne = (NamingEnumeration<SearchResult>) Mockito.mock(NamingEnumeration.class);
-		Mockito.when(dc.search(Mockito.anyString(), Mockito.anyString(), Mockito.any(SearchControls.class)))
-				.thenReturn(ne);
-		Mockito.when(dc.search(Mockito.anyString(), Mockito.anyString(), Mockito.any(Object[].class),
-				Mockito.any(SearchControls.class))).thenReturn(ne);
-
-		return dc;
-	}
-
 	public static File getFileFromClasspath(String fileName, ClassLoader classLoader) {
 		URL url = classLoader.getResource(fileName);
-		try {
+		if (url != null) try {
 			return new File(url.toURI().getPath());
 		} catch (URISyntaxException e) {
-			System.out.println("The file form the classpath cannot be loaded.");
+			System.out.println("The file '" + fileName + "' from the classpath cannot be loaded.");
+			e.printStackTrace();
 		}
+		else System.out.println("The file '" + fileName + "' from the classpath cannot be loaded.");
 		return null;
-
 	}
 
 	public static List<String> getLinesFromFile(File file) {
 		if (!file.exists()) {
-			System.out.println("Can't find file to get lines from File.");
+			try {
+				System.out.println("Can't find file to get lines from: " + file.getCanonicalFile());
+			} catch (IOException e) {
+				System.out.println("Can't find file to get lines from.");
+				e.printStackTrace();
+			}
 			return null;
 		}
 
-		FileReader fr = null;
-		BufferedReader br = null;
-
 		List<String> sourceLines = new ArrayList<String>();
 
-		try {
-			fr = new FileReader(file);
-			br = new BufferedReader(fr);
+		try (
+			FileReader fr = new FileReader(file);
+			BufferedReader br = new BufferedReader(fr);
+		) {
 			String line;
 			while ((line = br.readLine()) != null) {
 				sourceLines.add(line);
 			}
 		} catch (Exception e) {
-			//
-		} finally {
 			try {
-				if (br != null)
-					br.close();
-				if (fr != null)
-					fr.close();
-			} catch (Exception ex) {
+				System.out.println("Problem reading contents of file: " + file.getCanonicalFile());
+			} catch (IOException e2) {
+				System.out.println("Problem reading file to get lines from.");
+				e2.printStackTrace();
 			}
+			e.printStackTrace();
 		}
 
 		return sourceLines;
+	}
+
+	public static List<String> getLinesFromFile(String filename) {
+		return getLinesFromFile(new File(filename));
 	}
 
 	public static String encodeForHTML(Object param) {
@@ -558,7 +551,7 @@ public class Utils {
 	public static Cipher getCipher() {
 		if (cipher == null) {
 			try {
-				cipher = javax.crypto.Cipher.getInstance("RSA/ECB/PKCS1Padding", "SunJCE");
+				cipher = javax.crypto.Cipher.getInstance("RSA/ECB/OAEPWithSHA-512AndMGF1Padding", "SunJCE");
 				// Prepare the cipher to encrypt
 				java.security.KeyPairGenerator keyGen = java.security.KeyPairGenerator.getInstance("RSA");
 				keyGen.initialize(4096);

@@ -76,8 +76,8 @@ public class BenchmarkTest02730 extends HttpServlet {
 		map81593.put("key81593", b81593.toString()); // put in a collection
 		String c81593 = (String)map81593.get("key81593"); // get it back out
 		String d81593 = c81593.substring(0,c81593.length()-1); // extract most of it
-		String e81593 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d81593.getBytes() ) )); // B64 encode and decode it
+		String e81593 = new String( org.apache.commons.codec.binary.Base64.decodeBase64(
+		    org.apache.commons.codec.binary.Base64.encodeBase64( d81593.getBytes() ) )); // B64 encode and decode it
 		String f81593 = e81593.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
 		String g81593 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'

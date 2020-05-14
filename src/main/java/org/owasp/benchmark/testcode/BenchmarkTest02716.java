@@ -107,8 +107,8 @@ user + " has been remembered with cookie: " + rememberMe.getName()
 		map26751.put("key26751", b26751.toString()); // put in a collection
 		String c26751 = (String)map26751.get("key26751"); // get it back out
 		String d26751 = c26751.substring(0,c26751.length()-1); // extract most of it
-		String e26751 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d26751.getBytes() ) )); // B64 encode and decode it
+		String e26751 = new String( org.apache.commons.codec.binary.Base64.decodeBase64(
+		    org.apache.commons.codec.binary.Base64.encodeBase64( d26751.getBytes() ) )); // B64 encode and decode it
 		String f26751 = e26751.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
 		String g26751 = "barbarians_at_the_gate";  // This is static so this whole flow is 'safe'

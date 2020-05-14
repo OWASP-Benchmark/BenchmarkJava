@@ -80,8 +80,8 @@ public class BenchmarkTest00824 extends HttpServlet {
         } else {
         	a1 = "sh";
         	a2 = "-c";
-        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("ls");
-        	args = new String[]{a1, a2, cmd, bar};
+        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("ls ");
+        	args = new String[]{a1, a2, cmd + bar};
         }
         
         String[] argsEnv = { "foo=bar" };

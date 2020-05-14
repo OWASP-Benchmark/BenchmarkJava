@@ -3,7 +3,7 @@
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project For details, please see
-* <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
 *
 * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details
 *
-* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Dave Wichers
 * @created 2015
 */
 
@@ -50,26 +50,39 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.commons.io.FileUtils;
 import org.owasp.benchmark.score.parsers.AcunetixReader;
 import org.owasp.benchmark.score.parsers.AppScanDynamicReader;
+import org.owasp.benchmark.score.parsers.AppScanDynamicReader2;
 import org.owasp.benchmark.score.parsers.AppScanSourceReader;
+import org.owasp.benchmark.score.parsers.AppScanSourceReader2;
 import org.owasp.benchmark.score.parsers.ArachniReader;
 import org.owasp.benchmark.score.parsers.BurpReader;
 import org.owasp.benchmark.score.parsers.CASTAIPReader;
+import org.owasp.benchmark.score.parsers.CheckmarxESReader;
 import org.owasp.benchmark.score.parsers.CheckmarxReader;
+import org.owasp.benchmark.score.parsers.CheckmarxIASTReader;
 import org.owasp.benchmark.score.parsers.ContrastReader;
 import org.owasp.benchmark.score.parsers.Counter;
 import org.owasp.benchmark.score.parsers.CoverityReader;
+import org.owasp.benchmark.score.parsers.FaastReader;
 import org.owasp.benchmark.score.parsers.FindbugsReader;
 import org.owasp.benchmark.score.parsers.FortifyReader;
 import org.owasp.benchmark.score.parsers.FusionLiteInsightReader;
+import org.owasp.benchmark.score.parsers.HCLReader;
 import org.owasp.benchmark.score.parsers.HdivReader;
 import org.owasp.benchmark.score.parsers.JuliaReader;
+import org.owasp.benchmark.score.parsers.KiuwanReader;
+import org.owasp.benchmark.score.parsers.LGTMReader;
 import org.owasp.benchmark.score.parsers.NetsparkerReader;
 import org.owasp.benchmark.score.parsers.NoisyCricketReader;
 import org.owasp.benchmark.score.parsers.OverallResult;
 import org.owasp.benchmark.score.parsers.OverallResults;
-import org.owasp.benchmark.score.parsers.PMDReader;
 import org.owasp.benchmark.score.parsers.ParasoftReader;
+import org.owasp.benchmark.score.parsers.PMDReader;
+import org.owasp.benchmark.score.parsers.QualysWASReader;
 import org.owasp.benchmark.score.parsers.Rapid7Reader;
+import org.owasp.benchmark.score.parsers.Reader;
+import org.owasp.benchmark.score.parsers.SeekerReader;
+import org.owasp.benchmark.score.parsers.ShiftLeftReader;
+import org.owasp.benchmark.score.parsers.SnappyTickReader;
 import org.owasp.benchmark.score.parsers.SonarQubeReader;
 import org.owasp.benchmark.score.parsers.SourceMeterReader;
 import org.owasp.benchmark.score.parsers.TestCaseResult;
@@ -90,30 +103,30 @@ public class BenchmarkScore {
 
 	// The prefix for the generated test file names. Used by lots of other classes too.
 	public static final String BENCHMARKTESTNAME = "BenchmarkTest";
-	
+
 	private static final String GUIDEFILENAME = "OWASP_Benchmark_Guide.html";
-	private static final String HOMEFILENAME = "OWASP_Benchmark_Home.html";    
-    public static final String pathToScorecardResources = "src/main/resources/scorecard/";
-    public static final String scoreCardDirName = "scorecard";
+	private static final String HOMEFILENAME = "OWASP_Benchmark_Home.html";
+	public static final String pathToScorecardResources = "src/main/resources/scorecard/";
+	public static final String scoreCardDirName = "scorecard";
 	public static String benchmarkVersion = null;
-    
-    // This is used to indicate that results from multiple versions of the Benchmark are included in these results.
+
+	// This is used to indicate that results from multiple versions of the Benchmark are included in these results.
 	// Each set in their own directory with their associated expectedresults file.
-    public static boolean mixedMode = false;
-    // Indicates that the names of Commercial tools should be anonymized
-    public static boolean anonymousMode = false;
-    // Indicates that the results of Commercial tools should be suppressed. Only show their averages.
-    public static boolean showAveOnlyMode = false;
-    // The name of this file if generated
-    private static String commercialAveScorecardFilename = null;
-    // The name of the tool to 'focus' on, if any
-    private static String focus = "none";
-    
+	public static boolean mixedMode = false;
+	// Indicates that the names of Commercial tools should be anonymized
+	public static boolean anonymousMode = false;
+	// Indicates that the results of Commercial tools should be suppressed. Only show their averages.
+	public static boolean showAveOnlyMode = false;
+	// The name of this file if generated
+	private static String commercialAveScorecardFilename = null;
+	// The name of the tool to 'focus' on, if any
+	private static String focus = "none";
+
 	/*
 	 * A list of the reports produced for each tool.
 	 */
 	private static Set<Report> toolResults = new TreeSet<Report>();
-	
+
 	private static final String usageNotice = "Usage: BenchmarkScore expected actual (optional) toolname anonymous/show_ave_only\n"
 		+ "  expected - path of expected results file from Benchmark distribution.\n"
 		+ "    Use value: 'mixed' if there are multiple results subdirectories for different versions of the Benchmark.\n"
@@ -125,262 +138,269 @@ public class BenchmarkScore {
 		+ "    anonymous - tells the scorecard generator to hide the names of commercial tools.\n"
 		+ "    show_ave_only - tells the scorecard generator to hide the commercial tool results"
 		+ "      entirely, and only show the commercial average.\n";
-	
+
 	public static void main(String[] args) {
 		if ( args == null || args.length < 2 ) {
 			System.out.println( usageNotice );
 			System.exit( -1 );
 		}
 
-        if ( args.length > 2 ) {
-            focus = args[2].replace(' ','_');
-        }
-        
-		if (args.length > 3) {
-			if ("anonymous".equalsIgnoreCase(args[3])) {
-				anonymousMode = true;
-			} else if ("show_ave_only".equalsIgnoreCase(args[3])) {
-				showAveOnlyMode = true;
-			} else {
-				System.out.println( usageNotice );
-				System.exit( -1 );				
-			}
-		}
-		
-		
-		// Prepare the scorecard results directory for the newly generated scorecards
-		// Step 1: Create the dir if it doesn't exist, or delete everything in it if it does
-        File scoreCardDir = new File(scoreCardDirName);
-        try {
-            if (!scoreCardDir.exists()) {
-                Files.createDirectories(Paths.get(scoreCardDirName));
-            } else {
-                System.out.println("Deleting previously generated scorecard files in: " + scoreCardDir.getAbsolutePath());
-                FileUtils.cleanDirectory(scoreCardDir);
-            }
-            
-            // Step 2: Now copy the entire /content directory, that either didn't exist, or was just deleted with everything else
-            File dest1 = new File(scoreCardDirName + File.separator + "content");
-            FileUtils.copyDirectory(new File(pathToScorecardResources + "content"), dest1);
-            
-        } catch (IOException e) {
-            System.out.println("Error dealing with scorecard directory: '" + scoreCardDir.getAbsolutePath() + "' for some reason!");
-            e.printStackTrace();
-        }
-
-	    // Step 3: Copy over the Homepage and Guide templates
-        try {
-            Files.copy(Paths.get(pathToScorecardResources + HOMEFILENAME),
-                    Paths.get( scoreCardDirName + "/" + HOMEFILENAME),
-                    StandardCopyOption.REPLACE_EXISTING );
-            
-            Files.copy(Paths.get(pathToScorecardResources + GUIDEFILENAME),
-                    Paths.get( scoreCardDirName + "/" + GUIDEFILENAME),
-                    StandardCopyOption.REPLACE_EXISTING );
-        } catch( IOException e ) {
-            System.out.println( "Problem copying home and guide files" );
-            e.printStackTrace();
-        }
-        
-        // Step 4: Read the expected results so we know what each tool 'should do'
-		try {
-			
-			if ("mixed".equalsIgnoreCase(args[0])) {
-				
-				mixedMode = true; // Tells anyone that cares that we aren't processing a single version of Benchmark results
-				
-				File f = new File( args[1] );
-				if (!f.exists()) {
-					System.out.println( "Error! - results directory: '" + f.getAbsolutePath() + "' doesn't exist.");
-					System.exit(-1);
-				}
-				if ( !f.isDirectory() ) {
-					System.out.println( "Error! - results parameter is a file: '" + f.getAbsolutePath() 
-						+ "' but must be a directory when processing results in 'mixed' mode.");
-					System.exit(-1);
-				}
-				
-				// Go through each file in the root directory.
-				// -- 1st find each directory. And then within each of those directories:
-				//    -- 1st find the expected results file in that directory
-				//    -- and then each of the actual results files in that directory
-    			for ( File rootDirFile : f.listFiles() ) {
-    				
-    				if (rootDirFile.isDirectory()) {
-    					
-    					// Process this directory
-    					TestResults expectedResults = null;
-    					String expectedResultsFilename = null;
-    			        // Step 4a: Find and process the expected results file so we know what each tool in this directory 'should do'
-    	    			for ( File resultsDirFile : rootDirFile.listFiles() ) {
-    	    				
-    	    				if (resultsDirFile.getName().startsWith("expectedresults-")) {
-    	    					if (expectedResults != null) {
-        	    					System.out.println( "Found 2nd expected results file " + resultsDirFile.getAbsolutePath() 
-        	    							+ " in same directory. Can only have 1 in each results directory");
-        	    					System.exit(-1);
-    	    					}
-    	    					
-    	    					// read in the expected results for this directory of results
-    	    					expectedResults = readExpectedResults( resultsDirFile );
-    	    					System.out.println("Getting expected results from: " + resultsDirFile);
-        	    				if (expectedResults == null) {
-        	    					System.out.println( "Couldn't read expected results file: " 
-        	    							+ resultsDirFile.getAbsolutePath());
-        	    					System.exit(-1);		
-            	    			} // end if
-        	    				
-    	    					expectedResultsFilename = resultsDirFile.getName();
-    	    					if (benchmarkVersion == null) {
-    	    						benchmarkVersion = expectedResults.getBenchmarkVersion();
-    	    					} else benchmarkVersion += "," + expectedResults.getBenchmarkVersion();
-        	    				System.out.println("\nFound expected results file: " + resultsDirFile.getAbsolutePath());
-        	    			} // end if
-    	    			} // end for loop going through each file looking for expected results file
-    	    			
-    	    			// Make sure we found an expected results file, before processing the results
-    	    			if (expectedResults == null) {
-	    					System.out.println( "Couldn't find expected results file in results directory: " 
-	    						+ rootDirFile.getAbsolutePath());
-	    					System.out.println( "Expected results file has to be a .csv file that starts with: 'expectedresults-'");
-	    					System.exit(-1);
-	    				}
-    	    			
-    			        // Step 5a: Go through each result file and generate a scorecard for that tool.
-    					if (!anonymousMode) {
-    		    			for ( File actual : rootDirFile.listFiles() ) {
-    		    				// Don't confuse the expected results file as an actual results file if its in the same directory
-    		    				if (!actual.isDirectory() && !expectedResultsFilename.equals(actual.getName()))
-    		    					process( actual, expectedResults, toolResults);
-    		    			}
-    					} else {
-    						// To handle anonymous mode, we are going to randomly grab files out of this directory
-    						// and process them. By doing it this way, multiple runs should randomly order the commercial
-    						// tools each time.
-    						List<File> files = new ArrayList();
-    		    			for ( File file : rootDirFile.listFiles() ) {
-    		    				files.add(file);
-    		    			}
-    						
-    						SecureRandom generator = SecureRandom.getInstance("SHA1PRNG");
-    						while (files.size() > 0) {
-    							// Get a random, positive integer
-    							int fileToGet = Math.abs(generator.nextInt(files.size()));
-    							File actual = files.remove(fileToGet);
-    		    				// Don't confuse the expected results file as an actual results file if its in the same directory
-    		    				if (!actual.isDirectory() && !expectedResultsFilename.equals(actual.getName()))
-    		    					process( actual, expectedResults, toolResults);
-    						}
-    					}
-    				} // end if a directory
-    			}  // end for loop through all files in the directory
-
-    		// process the results the normal way with a single results directory
-			} else { // Not "mixed"
-			
-		        // Step 4b: Read the expected results so we know what each tool 'should do'
-				File expected = new File( args[0] );
-				System.out.println("Getting expected results from: " + args[0]);
-				TestResults expectedResults = readExpectedResults( expected );
-				if (expectedResults == null) {
-					System.out.println( "Couldn't read expected results file: " + expected);
-					System.exit(-1);
-				} else {
-					System.out.println( "Read expected results from file: " + expected.getAbsolutePath());
-					int totalResults = expectedResults.totalResults();
-					if (totalResults != 0) {
-						System.out.println( totalResults + " results found.");
-			            benchmarkVersion = expectedResults.getBenchmarkVersion();
-					} else {
-						System.out.println( "Error! - zero expected results found in results file.");
-						System.exit(-1);
-					}
-				}
-			
-		        // Step 5b: Go through each result file and generate a scorecard for that tool.
-				File f = new File( args[1] );
-				if (!f.exists()) {
-					System.out.println( "Error! - results file: '" + f.getAbsolutePath() + "' doesn't exist.");
-					System.exit(-1);
-				}
-				if ( f.isDirectory() ) {
-					if (!anonymousMode) {
-		    			for ( File actual : f.listFiles() ) {
-		    				// Don't confuse the expected results file as an actual results file if its in the same directory
-		    				if (!actual.isDirectory() && !expected.getName().equals(actual.getName()))
-		    					process( actual, expectedResults, toolResults);
-		    			}
-					} else {
-						// To handle anonymous mode, we are going to randomly grab files out of this directory
-						// and process them. By doing it this way, multiple runs should randomly order the commercial
-						// tools each time.
-						List<File> files = new ArrayList();
-		    			for ( File file : f.listFiles() ) {
-		    				files.add(file);
-		    			}
-						
-						SecureRandom generator = SecureRandom.getInstance("SHA1PRNG");
-						while (files.size() > 0) {
-							int randomNum = generator.nextInt();
-							// FIXME: Get Absolute Value better
-							if (randomNum < 0) randomNum *= -1;
-							int fileToGet = randomNum % files.size();
-							File actual = files.remove(fileToGet);
-		    				// Don't confuse the expected results file as an actual results file if its in the same directory
-		    				if (!actual.isDirectory() && !expected.getName().equals(actual.getName()))
-		    					process( actual, expectedResults, toolResults);
-						}
-					}
-	    			
-				} else {
-					// This will process a single results file, if that is what the 2nd parameter points to.
-					// This has never been used.
-				    process( f, expectedResults, toolResults );
-				}
-			} // end else
-			
-			System.out.println( "Tool scorecards computed." );
-		} catch( Exception e ) {
-			System.out.println( "Error during processing: " + e.getMessage() );
-			e.printStackTrace();
-		}
-
-        // Step 6: Now generate scorecards for each type of vulnerability across all the tools
-
-		// First, we have to figure out the list of vulnerabilities
-        // A set is used here to eliminate duplicate categories across all the results
-        Set<String> catSet = new TreeSet<String>();
-        for ( Report toolReport : toolResults ) {
-            catSet.addAll( toolReport.getOverallResults().getCategories() );
-        }
-		
-		// Then we generate each vulnerability scorecard
-        BenchmarkScore.generateVulnerabilityScorecards(toolResults, catSet );
-		System.out.println( "Vulnerability scorecards computed." );
-        		
-        // Step 7: Update all the menus for all the generated pages to reflect the tools and vulnerability categories
-		updateMenus(toolResults, catSet);
-		
-        // Step 8: Generate the overall comparison chart for all the tools in this test
-        ScatterHome.generateComparisonChart(toolResults, focus);
-        
-        // Step 9: Generate the results table across all the tools in this test
-		String table = generateOverallStatsTable(toolResults);
-		
-		File f = Paths.get( scoreCardDirName + "/" + HOMEFILENAME).toFile();
-        try {
-            String html = new String( Files.readAllBytes( f.toPath() ) );
-    		html = html.replace("${table}", table);
-            Files.write( f.toPath(), html.getBytes() );
-        } catch ( IOException e ) {
-            System.out.println ( "Error updating results table in: " + f.getName() );
-            e.printStackTrace();
-        }
-
-		System.out.println( "Benchmark scorecards complete." );
-       
-		System.exit(0);
+	if ( args.length > 2 ) {
+		focus = args[2].replace(' ','_');
 	}
+
+	if (args.length > 3) {
+		if ("anonymous".equalsIgnoreCase(args[3])) {
+			anonymousMode = true;
+		} else if ("show_ave_only".equalsIgnoreCase(args[3])) {
+			showAveOnlyMode = true;
+		} else {
+			System.out.println( usageNotice );
+			System.exit( -1 );
+		}
+	}
+
+	// Prepare the scorecard results directory for the newly generated scorecards
+	// Step 1: Create the dir if it doesn't exist, or delete everything in it if it does
+	File scoreCardDir = new File(scoreCardDirName);
+	try {
+		if (!scoreCardDir.exists()) {
+			Files.createDirectories(Paths.get(scoreCardDirName));
+		} else {
+			System.out.println("Deleting previously generated scorecard files in: " + scoreCardDir.getAbsolutePath());
+			FileUtils.cleanDirectory(scoreCardDir);
+		}
+
+		// Step 2: Now copy the entire /content directory, that either didn't exist, or was just deleted with everything else
+		File dest1 = new File(scoreCardDirName + File.separator + "content");
+		FileUtils.copyDirectory(new File(pathToScorecardResources + "content"), dest1);
+
+	} catch (IOException e) {
+		System.out.println("Error dealing with scorecard directory: '" + scoreCardDir.getAbsolutePath() + "' for some reason!");
+		e.printStackTrace();
+	}
+
+	// Step 3: Copy over the Homepage and Guide templates
+	try {
+		Files.copy(Paths.get(pathToScorecardResources + HOMEFILENAME),
+			Paths.get( scoreCardDirName + "/" + HOMEFILENAME),
+			StandardCopyOption.REPLACE_EXISTING );
+
+		Files.copy(Paths.get(pathToScorecardResources + GUIDEFILENAME),
+			Paths.get( scoreCardDirName + "/" + GUIDEFILENAME),
+			StandardCopyOption.REPLACE_EXISTING );
+	} catch( IOException e ) {
+		System.out.println( "Problem copying home and guide files" );
+		e.printStackTrace();
+	}
+
+	// Steps 4 & 5: Read the expected results so we know what each tool 'should do' and the each results file. a) is for 'mixed' mode, and b) is for normal mode
+	try {
+
+		if ("mixed".equalsIgnoreCase(args[0])) {
+
+			mixedMode = true; // Tells anyone that cares that we aren't processing a single version of Benchmark results
+
+			File f = new File( args[1] );
+			if (!f.exists()) {
+				System.out.println( "Error! - results directory: '" + f.getAbsolutePath() + "' doesn't exist.");
+				System.exit(-1);
+			}
+			if ( !f.isDirectory() ) {
+				System.out.println( "Error! - results parameter is a file: '" + f.getAbsolutePath()
+					+ "' but must be a directory when processing results in 'mixed' mode.");
+				System.exit(-1);
+			}
+
+			// Go through each file in the root directory.
+			// -- 1st find each directory. And then within each of those directories:
+			//    -- 1st find the expected results file in that directory
+			//    -- and then each of the actual results files in that directory
+
+			for ( File rootDirFile : f.listFiles() ) {
+
+				if (rootDirFile.isDirectory()) {
+
+					// Process this directory
+					TestResults expectedResults = null;
+					String expectedResultsFilename = null;
+
+				// Step 4a: Find and process the expected results file so we know what each tool in this directory 'should do'
+					for ( File resultsDirFile : rootDirFile.listFiles() ) {
+
+					if (resultsDirFile.getName().startsWith("expectedresults-")) {
+						if (expectedResults != null) {
+							System.out.println( "Found 2nd expected results file " + resultsDirFile.getAbsolutePath()
+								+ " in same directory. Can only have 1 in each results directory");
+							System.exit(-1);
+						}
+
+						// read in the expected results for this directory of results
+						expectedResults = readExpectedResults( resultsDirFile );
+						System.out.println("Getting expected results from: " + resultsDirFile);
+						if (expectedResults == null) {
+							System.out.println( "Couldn't read expected results file: "
+									+ resultsDirFile.getAbsolutePath());
+							System.exit(-1);
+						} // end if
+
+						expectedResultsFilename = resultsDirFile.getName();
+						if (benchmarkVersion == null) {
+							benchmarkVersion = expectedResults.getBenchmarkVersion();
+						} else benchmarkVersion += "," + expectedResults.getBenchmarkVersion();
+						System.out.println("\nFound expected results file: " + resultsDirFile.getAbsolutePath());
+					} // end if
+				} // end for loop going through each directory looking for expected results file
+
+				// Make sure we found an expected results file, before processing the results
+				if (expectedResults == null) {
+					System.out.println( "Couldn't find expected results file in results directory: "
+						+ rootDirFile.getAbsolutePath());
+					System.out.println( "Expected results file has to be a .csv file that starts with: 'expectedresults-'");
+					System.exit(-1);
+				}
+
+				// Step 5a: Go through each result file and generate a scorecard for that tool.
+				if (!anonymousMode) {
+					for ( File actual : rootDirFile.listFiles() ) {
+						// Don't confuse the expected results file as an actual results file if its in the same directory
+						if (!actual.isDirectory() && !expectedResultsFilename.equals(actual.getName())) {
+							process( actual, expectedResults, toolResults);
+						}
+					} // end for
+				} else {
+					// To handle anonymous mode, we are going to randomly grab files out of this directory
+					// and process them. By doing it this way, multiple runs should randomly order the commercial
+					// tools each time.
+					List<File> files = new ArrayList();
+					for ( File file : rootDirFile.listFiles() ) {
+						files.add(file);
+					}
+
+					SecureRandom generator = SecureRandom.getInstance("SHA1PRNG");
+					while (files.size() > 0) {
+						// Get a random, positive integer
+						int fileToGet = Math.abs(generator.nextInt(files.size()));
+						File actual = files.remove(fileToGet);
+						// Don't confuse the expected results file as an actual results file if its in the same directory
+						if (!actual.isDirectory() && !expectedResultsFilename.equals(actual.getName())) {
+							process( actual, expectedResults, toolResults);
+						}
+					} // end while
+				} // end else
+			} // end if a directory
+		} // end for loop through all files in the directory
+
+		// process the results the normal way with a single results directory
+		} else { // Not "mixed"
+
+			// Step 4b: Read the expected results so we know what each tool 'should do'
+			File expected = new File( args[0] );
+			System.out.println("Getting expected results from: " + args[0]);
+			TestResults expectedResults = readExpectedResults( expected );
+			if (expectedResults == null) {
+				System.out.println( "Couldn't read expected results file: " + expected);
+				System.exit(-1);
+			} else {
+				System.out.println( "Read expected results from file: " + expected.getAbsolutePath());
+				int totalResults = expectedResults.totalResults();
+				if (totalResults != 0) {
+					System.out.println( totalResults + " results found.");
+					benchmarkVersion = expectedResults.getBenchmarkVersion();
+				} else {
+					System.out.println( "Error! - zero expected results found in results file.");
+					System.exit(-1);
+				}
+			}
+
+			// Step 5b: Go through each result file and generate a scorecard for that tool.
+			File f = new File( args[1] );
+			if (!f.exists()) {
+				System.out.println( "Error! - results file: '" + f.getAbsolutePath() + "' doesn't exist.");
+				System.exit(-1);
+			}
+			if ( f.isDirectory() ) {
+				if (!anonymousMode) {
+					for ( File actual : f.listFiles() ) {
+						// Don't confuse the expected results file as an actual results file if its in the same directory
+						if (!actual.isDirectory() && !expected.getName().equals(actual.getName())) {
+							process( actual, expectedResults, toolResults);
+						}
+					} // end for
+				} else {
+					// To handle anonymous mode, we are going to randomly grab files out of this directory
+					// and process them. By doing it this way, multiple runs should randomly order the commercial
+					// tools each time.
+					List<File> files = new ArrayList();
+					for ( File file : f.listFiles() ) {
+						files.add(file);
+					}
+
+					SecureRandom generator = SecureRandom.getInstance("SHA1PRNG");
+					while (files.size() > 0) {
+						int randomNum = generator.nextInt();
+						// FIXME: Get Absolute Value better
+						if (randomNum < 0) randomNum *= -1;
+						int fileToGet = randomNum % files.size();
+						File actual = files.remove(fileToGet);
+						// Don't confuse the expected results file as an actual results file if its in the same directory
+						if (!actual.isDirectory() && !expected.getName().equals(actual.getName())) {
+							process( actual, expectedResults, toolResults);
+						}
+					} // end while
+				} // end else (!anonymousMode)
+
+			} else {
+				// This will process a single results file, if that is what the 2nd parameter points to.
+				// This has never been used.
+				process( f, expectedResults, toolResults );
+			} // end else ( f.isDirectory() )
+		} // end else "Not mixed"
+
+		System.out.println( "Tool scorecards computed." );
+
+	// catch try for Steps 4 & 5
+	} catch( Exception e ) {
+		System.out.println( "Error during processing: " + e.getMessage() );
+		e.printStackTrace();
+	}
+
+	// Step 6: Now generate scorecards for each type of vulnerability across all the tools
+
+	// First, we have to figure out the list of vulnerabilities
+	// A set is used here to eliminate duplicate categories across all the results
+	Set<String> catSet = new TreeSet<String>();
+	for ( Report toolReport : toolResults ) {
+		catSet.addAll( toolReport.getOverallResults().getCategories() );
+	}
+
+	// Then we generate each vulnerability scorecard
+	BenchmarkScore.generateVulnerabilityScorecards(toolResults, catSet );
+	System.out.println( "Vulnerability scorecards computed." );
+
+	// Step 7: Update all the menus for all the generated pages to reflect the tools and vulnerability categories
+	updateMenus(toolResults, catSet);
+
+	// Step 8: Generate the overall comparison chart for all the tools in this test
+	ScatterHome.generateComparisonChart(toolResults, focus);
+
+	// Step 9: Generate the results table across all the tools in this test
+	String table = generateOverallStatsTable(toolResults);
+
+	File f = Paths.get( scoreCardDirName + "/" + HOMEFILENAME).toFile();
+	try {
+		String html = new String( Files.readAllBytes( f.toPath() ) );
+		html = html.replace("${table}", table);
+		Files.write( f.toPath(), html.getBytes() );
+	} catch ( IOException e ) {
+		System.out.println ( "Error updating results table in: " + f.getName() );
+		e.printStackTrace();
+	}
+
+	System.out.println( "Benchmark scorecards complete." );
+
+	System.exit(0);
+}
 
 	/**
 	 * The method takes in a tool scan results file and determined how well that tool did against the benchmark.
@@ -392,52 +412,52 @@ public class BenchmarkScore {
 	 * scorecard, and the report that was created for that tool.
 	 */
 	private static void process(File f, TestResults expectedResults, Set<Report> toolreports) {
-        try {
-        	// Figure out the actual results for this tool from the raw results file for this tool            
+
+          try {
+            // Figure out the actual results for this tool from the raw results file for this tool
             System.out.println( "\nAnalyzing results from " + f.getName() );
             TestResults actualResults = readActualResults( f );
             //System.out.println("Computed actual results for tool: " + actualResults.getTool());
-        
+
             if ( expectedResults != null && actualResults != null ) {
                 // note: side effect is that "pass/fail" value is set for each expected result so it
             	// can be used to produce scorecard for this tool
                 analyze( expectedResults, actualResults );
-            
+
                 // Produce a .csv results file of the actual results, except if its a commercial tool,
                 // and we are in showAveOnly mode.
                 String actualResultsFileName = "notProduced";
                 if (!(showAveOnlyMode && actualResults.isCommercial)) {
                 	actualResultsFileName = produceResultsFile (expectedResults);
                 }
-                
+
                 Map<String,Counter> scores = calculateScores( expectedResults );
-            
+
                 OverallResults results = calculateResults( scores );
                 results.setTime( actualResults.getTime() );
-                              
+
                 // This has the side effect of also generating the report on disk.
-                Report scoreCard = new Report( actualResults, scores, results, expectedResults.totalResults(), 
+                Report scoreCard = new Report( actualResults, scores, results, expectedResults.totalResults(),
                 		actualResultsFileName, actualResults.isCommercial(),actualResults.getToolType());
-                
+
                 // Add this report to the list of reports
                 toolreports.add(scoreCard);
-                
+
                 // This is for debugging purposes. It indicates how may extra results were found in the
                 // actual results vice the expected results.
                 // printExtraCWE( expectedResults, actualResults );
-            }
-            else {
+            } else {
             	if ( expectedResults == null) {
                 	System.out.println("Error!!: expected results were null.");
             	}
             	else System.out.println("Error!!: actual results were null for file: " + f);
             }
-        }
-        catch( Exception e ) {
+          }
+          catch( Exception e ) {
             System.out.println( "Error processing " + f + ". Continuing." );
             e.printStackTrace();
-        }
-    }
+          }
+      }
 
 	// Don't delete - for debug purposes
     private static void printExtraCWE(TestResults expectedResults, TestResults actualResults) {
@@ -448,7 +468,7 @@ public class BenchmarkScore {
                 expectedCWE.add( t.getCWE() );
             }
         }
-        
+
         Set<Integer> actualCWE = new HashSet<Integer>();
         for ( int i : actualResults.keySet() ) {
             List<TestCaseResult> list = actualResults.get( i );
@@ -458,7 +478,7 @@ public class BenchmarkScore {
                 }
             }
         }
-        
+
         Set<Integer> extras = difference( actualCWE, expectedCWE );
         for ( int cwe : extras ) {
             System.out.println( "Extra: "+cwe );
@@ -470,53 +490,54 @@ public class BenchmarkScore {
         tmp.removeAll(setB);
         return tmp;
     }
-    
-    private static OverallResults calculateResults(Map<String, Counter> results) {
-		OverallResults or = new OverallResults();
-		double totalScore = 0;
-		double totalFPRate = 0;
-		double totalTPRate = 0;
-		int total = 0;
-		int totalTP = 0;
-		int totalFP = 0;
-		int totalFN = 0;
-		int totalTN = 0;
-		for ( String category : results.keySet() ) {
-			Counter c = results.get( category );			
-			int rowTotal = c.tp + c.fn + c.tn + c.fp;
-			double tpr = (double) c.tp / (double) ( c.tp + c.fn );
-			double fpr = (double) c.fp / (double) ( c.fp + c.tn );
-//			double fdr = c.fp / ( c.tp + c.fp );
 
-            // category score is distance from (fpr,tpr) to the guessing line
-            double side = tpr - fpr;
-            double hyp = side * Math.sqrt(2); // Pythagoras
-            double raw = hyp/2;
-            double score = raw * Math.sqrt(2); // adjust scores to 0-1
-            
-            if ( !Double.isNaN(score)) {
-                totalScore += score;
-            }
-            totalFPRate += fpr;
-            totalTPRate += tpr;
-            total += rowTotal;
-            totalTP += c.tp;
-            totalFP += c.fp;
-            totalFN += c.fn;
-            totalTN += c.tn;
-            
-            or.add( category, tpr, fpr, rowTotal, score );
-		}
-		
-		int resultsSize = results.size();
-		or.setScore( totalScore / resultsSize );
-		or.setFalsePositiveRate( totalFPRate / resultsSize );
-		or.setTruePositiveRate( totalTPRate / resultsSize );
-		or.setTotal(total);
-		or.setFindingCounts(totalTP, totalFP, totalFN, totalTN);
-		
-		return or;
-	}
+    private static OverallResults calculateResults(Map<String, Counter> results) {
+
+       OverallResults or = new OverallResults();
+       double totalScore = 0;
+       double totalFPRate = 0;
+       double totalTPRate = 0;
+       int total = 0;
+       int totalTP = 0;
+       int totalFP = 0;
+       int totalFN = 0;
+       int totalTN = 0;
+       for ( String category : results.keySet() ) {
+          Counter c = results.get( category );
+          int rowTotal = c.tp + c.fn + c.tn + c.fp;
+          double tpr = (double) c.tp / (double) ( c.tp + c.fn );
+          double fpr = (double) c.fp / (double) ( c.fp + c.tn );
+//        double fdr = c.fp / ( c.tp + c.fp );
+
+          // category score is distance from (fpr,tpr) to the guessing line
+          double side = tpr - fpr;
+          double hyp = side * Math.sqrt(2); // Pythagoras
+          double raw = hyp/2;
+          double score = raw * Math.sqrt(2); // adjust scores to 0-1
+
+          if ( !Double.isNaN(score)) {
+             totalScore += score;
+          }
+          totalFPRate += fpr;
+          totalTPRate += tpr;
+          total += rowTotal;
+          totalTP += c.tp;
+          totalFP += c.fp;
+          totalFN += c.fn;
+          totalTN += c.tn;
+
+          or.add( category, tpr, fpr, rowTotal, score );
+      } // end for
+
+      int resultsSize = results.size();
+      or.setScore( totalScore / resultsSize );
+      or.setFalsePositiveRate( totalFPRate / resultsSize );
+      or.setTruePositiveRate( totalTPRate / resultsSize );
+      or.setTotal(total);
+      or.setFindingCounts(totalTP, totalFP, totalFN, totalTN);
+
+      return or;
+   }
 
     /**
      * This method translates vulnerability categories, e.g., xss, to their long names for human consumption.
@@ -564,7 +585,7 @@ public class BenchmarkScore {
 			default : return 0;
 		}
 	}
-	
+
     /**
      * This method translates vulnerability names, e.g., Cross-Site Scripting, to their CWE number.
      * @param The category to translate.
@@ -584,12 +605,12 @@ public class BenchmarkScore {
 		case "Hibernate Injection" : return 564; // This is the real CWE for Hibernate Injection, but most tools probably report 89
 		case "Trust Boundary Violation" : return 501;
 		case "XPath Injection" : return 643;
-		default : 
+		default :
 			System.out.println("Error: Category: " + category + " not supported.");
 			return -1;
 		}
 	}
-	
+
 	/**
 	 * Return map of category to array of results
 	 * @param expectedResults
@@ -597,7 +618,7 @@ public class BenchmarkScore {
 	 */
 	private static Map<String,Counter> calculateScores(TestResults expectedResults) {
 		Map<String,Counter> map = new TreeMap<String,Counter>();
-		
+
 		for ( Integer tn : expectedResults.keySet() ) {
 			TestCaseResult tcr = expectedResults.get(tn).get(0); // only one
 			String cat = translateCategoryToName( tcr.getCategory() );
@@ -610,7 +631,7 @@ public class BenchmarkScore {
 			// real vulnerabilities
 			if ( tcr.isReal() && tcr.isPassed() ) c.tp++; // tp
 			else if ( tcr.isReal() && !tcr.isPassed() ) c.fn++; // fn
-			
+
 			// fake vulnerabilities
 			else if (!tcr.isReal() && tcr.isPassed() ) c.tn++;  // tn
 			else if (!tcr.isReal() && !tcr.isPassed() ) c.fp++; // fp
@@ -622,189 +643,253 @@ public class BenchmarkScore {
 	private static TestResults readActualResults(File fileToParse) throws Exception {
 		String filename = fileToParse.getName();
 		TestResults tr = null;
-        
-        if ( filename.endsWith( ".ozasmt" ) ) {
-            tr = new AppScanSourceReader().parse( fileToParse );
-        }      
-        
-        else if ( filename.endsWith( ".json" ) ) {
-            String line1 = getLine( fileToParse, 0 );
-            String line2 = getLine( fileToParse, 1 );
-            if ( line2.contains("Coverity") || line2.contains("formatVersion") ) {
-                tr = new CoverityReader().parse( fileToParse );
-            }
-        }
-        
-        else if ( filename.endsWith( ".txt" ) ) {
-            String line1 = getLine( fileToParse, 0 );
-            if ( line1.startsWith( "Possible " ) ) {
-                tr = new SourceMeterReader().parse( fileToParse );
-            }
-        }
 
-        else if ( filename.endsWith( ".xml" ) ) {
+		if ( filename.endsWith( ".csv" ) ) {
+			String line1 = getLine( fileToParse, 0 );
+			if ( line1.contains("CheckerKey") && line1.contains("LastDetectionURL") ) {
+				tr = new SeekerReader().parse(fileToParse);
+			} else if ( line1.contains("CWE") && line1.contains("URL") ) {		
+				tr = new CheckmarxIASTReader().parse(fileToParse);
+			} else System.out.println("Error: No matching parser found for CSV file: " + filename);
+        	}
 
-            // Handle XML results file where the 2nd line indicates the tool type
+		else if ( filename.endsWith( ".ozasmt" ) ) {
+			tr = new AppScanSourceReader().parse( fileToParse );
+		}
 
-            String line1 = getLine( fileToParse, 0 );
-            String line2 = getLine( fileToParse, 1 );
-		
-            if (line2.startsWith("  <ProjectName>")) {
-                tr = new ThunderScanReader().parse(fileToParse);
-	    }
+		else if ( filename.endsWith( ".faast" ) ) {
+			tr = new FaastReader().parse( fileToParse );
+		}
 
-            if ( line2.startsWith( "<pmd" )) {
-                tr = new PMDReader().parse( fileToParse );
-            }
-            
-            else if ( line2.toLowerCase().startsWith( "<cast" ) ) {
-                tr = new CASTAIPReader().parse( fileToParse );
-            }
-                   
-            else if ( line2.startsWith( "<FusionLiteInsight" )) {
-                tr = new FusionLiteInsightReader().parse( fileToParse );
-            }
- 
-            else if (line2.startsWith( "<XanitizerFindingsList" )) {
-                tr = new XanitizerReader().parse( fileToParse );
-            }
+		else if ( filename.endsWith( ".json" ) ) {
+			String line2 = getLine( fileToParse, 1 );
+			if ( line2.contains("Coverity") || line2.contains("formatVersion") ) {
+				tr = new CoverityReader().parse( fileToParse );
+			} else if ( line2.contains("Vendor") && line2.contains("Checkmarx") ) {
+				tr = new CheckmarxESReader().parse( fileToParse );
+			} else System.out.println("Error: No matching parser found for JSON file: " + filename);
+		}
 
-            else if ( line2.startsWith( "<BugCollection" )) {
-                tr = new FindbugsReader().parse( fileToParse );
-                
-                // change the name of the tool if the filename contains findsecbugs
-                if (fileToParse.getName().contains("findsecbugs")) {
-                    tr.setTool("FBwFindSecBugs");
-                }
-            }
+		else if ( filename.endsWith( ".sarif" ) ) {
+			tr = new LGTMReader().parse( fileToParse );
+		}
 
-            else if ( line2.startsWith( "<ResultsSession" )) {
-                tr = new ParasoftReader().parse( fileToParse );
-            }
+		else if ( filename.endsWith( ".threadfix" ) ) {
+			tr = new KiuwanReader().parse( fileToParse );
+		}
 
-            else if ( line2.startsWith( "<detailedreport" )) {
-                tr = new VeracodeReader().parse( fileToParse );
-            }
+		else if ( filename.endsWith( ".txt" ) ) {
+			String line1 = getLine( fileToParse, 0 );
+			if ( line1.startsWith( "Possible " ) ) {
+				tr = new SourceMeterReader().parse( fileToParse );
+			}
+		}
 
-            else if ( line1.startsWith( "<total" )) {
-                tr = new SonarQubeReader().parse( fileToParse );
-            }
-            
-            else if ( line1.contains( "<OWASPZAPReport" ) || line2.contains( "<OWASPZAPReport" )) {
-                tr = new ZapReader().parse( fileToParse );
-            }
-            
-            else if ( line2.startsWith( "<CxXMLResults" )) {
-                tr = new CheckmarxReader().parse( fileToParse );
-            }
-            
-            else if ( line2.startsWith( "<report" )) {
-                tr = new ArachniReader().parse( fileToParse );
-            }
-            else if ( line2.startsWith( "<analysisResult") || line2.startsWith( "<analysisReportResult")) {
-                tr = new JuliaReader().parse( fileToParse );
-            }
- 
-            else { // Handle XML where we have to look for a specific node to identify the tool type
+		else if ( filename.endsWith( ".xml" ) ) {
 
-                Document doc = getXMLDocument( fileToParse );
-                Node root = doc.getDocumentElement();
-                if ( root.getNodeName().equals( "issues" ) ) {
-                    tr = new BurpReader().parse( root );
-                }
-                
-                else if ( root.getNodeName().equals( "XmlReport" ) ) {
-                    tr = new AppScanDynamicReader().parse( root );
-                }
+			// Handle XML results files where the 1st or 2nd line indicates the tool type
 
-                else if ( root.getNodeName().equals( "noisycricket" ) ) {
-                    tr = new NoisyCricketReader().parse( root );
-                }
+			String line1 = getLine( fileToParse, 0 );
+			String line2 = getLine( fileToParse, 1 );
 
-                else if ( root.getNodeName().equals( "Scan" ) ) {
-                    tr = new WebInspectReader().parse( root );
-                }
-                
-                else if ( root.getNodeName().equals( "ScanGroup" ) ) {
-                    tr = new AcunetixReader().parse( root );
-                }
+			if ( line2.startsWith( "  <ProjectName>" )) {
+				tr = new ThunderScanReader().parse(fileToParse);
+			}
 
-                else if ( root.getNodeName().equals( "VulnSummary" ) ) {
-                    tr = new Rapid7Reader().parse( root );
-                }
-                else if ( root.getNodeName().equals( "netsparker" ) ) {
-                    tr = new NetsparkerReader().parse( root );
-                }
+			else if ( line2.startsWith( "<pmd" )) {
+				tr = new PMDReader().parse( fileToParse );
+			}
 
-            } // end else
-         } // end if endsWith ".xml"
-		
+			else if ( line2.toLowerCase().startsWith( "<castaip" ) ) {
+				tr = new CASTAIPReader().parse( fileToParse );
+			}
+
+			else if ( line2.startsWith( "<FusionLiteInsight" )) {
+				tr = new FusionLiteInsightReader().parse( fileToParse );
+			}
+
+			else if ( line2.startsWith( "<XanitizerFindingsList" )) {
+				tr = new XanitizerReader().parse( fileToParse );
+			}
+
+			else if ( line2.startsWith( "<BugCollection" )) {
+				tr = new FindbugsReader().parse( fileToParse );
+
+				// change the name of the tool if the filename contains findsecbugs
+				if (fileToParse.getName().contains("findsecbugs")) {
+					if (tr.getTool().startsWith("Find")) {
+						tr.setTool("FBwFindSecBugs");
+					} else {
+						tr.setTool("SBwFindSecBugs");
+					}
+				}
+			}
+
+			else if ( line2.startsWith( "<ResultsSession" )) {
+				tr = new ParasoftReader().parse( fileToParse );
+			}
+
+			else if ( line2.startsWith( "<detailedreport" )) {
+				tr = new VeracodeReader().parse( fileToParse );
+			}
+
+			else if ( line1.startsWith( "<total" )) {
+				tr = new SonarQubeReader().parse( fileToParse );
+			}
+
+			else if ( line1.contains( "<OWASPZAPReport" ) || line2.contains( "<OWASPZAPReport" )) {
+				tr = new ZapReader().parse( fileToParse );
+			}
+
+			else if ( line2.startsWith( "<CxXMLResults" )) {
+				tr = new CheckmarxReader().parse( fileToParse );
+			}
+
+			else if ( line2.startsWith( "<report" )) {
+				tr = new ArachniReader().parse( fileToParse );
+			}
+
+			else if ( line2.startsWith( "<analysisResult") || line2.startsWith( "<analysisReportResult")) {
+				tr = new JuliaReader().parse( fileToParse );
+			}
+
+			else { // Handle XML where we have to look for a specific node to identify the tool type
+
+				Document doc = getXMLDocument( fileToParse );
+				Node root = doc.getDocumentElement();
+				String nodeName = root.getNodeName();
+
+				if ( nodeName.equals( "ScanGroup" ) || nodeName.equals( "acunetix-360" )) {
+					tr = new AcunetixReader().parse( root );
+				}
+
+				else if ( nodeName.equals( "XmlReport" ) ) {
+					tr = new AppScanDynamicReader().parse( root );
+				}
+
+				else if ( nodeName.equals( "xml-report" ) ) {
+					// For Appscan, this node has name="AppScan Report" and technology="SAST" or "DAST"
+					String name = Reader.getAttributeValue( "name", root );
+					if ("AppScan Report".equals(name)) {
+						String tech = Reader.getAttributeValue( "technology", root );
+						if ("SAST".equals(tech)) {
+							tr = new AppScanSourceReader2().parse( fileToParse );
+						} else if ("DAST".equals(tech)) {
+							tr = new AppScanDynamicReader2().parse( fileToParse );
+						} else System.out.println("Found AppScan Report with unfamiliar technology type: " + tech);
+					} else System.out.println("Found xml-report that was expected to have a name 'AppScan Report "
+								+ " but had name: " + name);
+				}
+
+				else if ( nodeName.equals( "issues" ) ) {
+					tr = new BurpReader().parse( fileToParse, root );
+				}
+
+				else if ( nodeName.equals( "netsparker" ) ) {
+					tr = new NetsparkerReader().parse( root );
+				}
+
+				else if ( nodeName.equals( "noisycricket" ) ) {
+					tr = new NoisyCricketReader().parse( root );
+				}
+
+				else if ( nodeName.equals( "VulnSummary" ) ) {
+					tr = new Rapid7Reader().parse( root );
+				}
+
+				else if ( nodeName.equals( "Report" ) ) {
+					tr = new SnappyTickReader().parse( root );
+				}
+
+				else if ( nodeName.equals( "Scan" ) ) {
+					tr = new WebInspectReader().parse( root );
+				}
+
+				else if ( nodeName.equals( "WAS_SCAN_REPORT" ) ) {
+					tr = new QualysWASReader().parse( fileToParse, root );
+				}
+
+				else System.out.println("Error: No matching parser found for XML file: " + filename);
+
+			} // end else
+		 } // end if endsWith ".xml"
+
 		else if ( filename.endsWith( ".fpr" ) ) {
-			
+
 		// .fpr files are really .zip files. So we have to extract the .fvdl file out of it to process it
-		    Path path = Paths.get(fileToParse.getPath());
-		    FileSystem fileSystem = FileSystems.newFileSystem(path, null);
-		    File outputFile = File.createTempFile( filename, ".fvdl");
-		    Path source = fileSystem.getPath("audit.fvdl");
-		    Files.copy(source, outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-		    tr = FortifyReader.parse( outputFile );
-		    outputFile.delete();
-			
+			Path path = Paths.get(fileToParse.getPath());
+			FileSystem fileSystem = FileSystems.newFileSystem(path, (java.lang.ClassLoader) null);
+			File outputFile = File.createTempFile( filename, ".fvdl");
+			Path source = fileSystem.getPath("audit.fvdl");
+			Files.copy(source, outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			tr = FortifyReader.parse( outputFile );
+			outputFile.delete();
+
 			// Check to see if the results are regular Fortify or Fortify OnDemand results
 			// To check, you have to look at the filtertemplate.xml file inside the .fpr archive
 			// and see if that file contains: "Fortify-FOD-Template"
-		    outputFile = File.createTempFile( filename + "-filtertemplate", ".xml");
-		    source = fileSystem.getPath("filtertemplate.xml");
+			outputFile = File.createTempFile( filename + "-filtertemplate", ".xml");
+			source = fileSystem.getPath("filtertemplate.xml");
 
 			// In older versions of Fortify, like 4.1, the filtertemplate.xml file doesn't exist
 			// So only check it if it exists
 			try {
-			    Files.copy(source, outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-	
-			    BufferedReader br = new BufferedReader(new FileReader(outputFile));
-			    try {
-			        StringBuilder sb = new StringBuilder();
-			        String line = br.readLine();
-			        
-			        // Only read the first 3 lines and the answer is near the top of the file.
-			        int i = 1;
-			        while (line != null && i++ <= 3) {
-			            sb.append(line);
-			            line = br.readLine();
-			        }
-			        if ( sb.indexOf("Fortify-FOD-") > -1 ) {
-			        	tr.setTool( tr.getTool() + "-OnDemand" );
-			        }
-			    } finally {
-			        br.close();
-			    }
+				Files.copy(source, outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+				BufferedReader br = new BufferedReader(new FileReader(outputFile));
+				try {
+					StringBuilder sb = new StringBuilder();
+					String line = br.readLine();
+
+					// Only read the first 3 lines and the answer is near the top of the file.
+					int i = 1;
+					while (line != null && i++ <= 3) {
+						sb.append(line);
+						line = br.readLine();
+					}
+					if ( sb.indexOf("Fortify-FOD-") > -1 ) {
+						tr.setTool( tr.getTool() + "-OnDemand" );
+					}
+				} finally {
+					br.close();
+				}
 			} catch (NoSuchFileException e) {
 				// Do nothing if the filtertemplate.xml file doesn't exist in the .fpr archive
 			} finally {
 				outputFile.delete();
 			}
 		}
-        
-        else if ( filename.endsWith( ".log" ) ) {
-            tr = new ContrastReader().parse( fileToParse );
-        }
-        else if (filename.endsWith(".hlg")) {
-            tr = new HdivReader().parse(fileToParse);
-        }
-        else System.out.println("Error: No matching parser found for file: " + filename);
-        
-        // If the version # of the tool is specified in the results file name, extract it, and set it.
-        // For example: Benchmark-1.1-Coverity-results-v1.3.2661-6720.json  (the version # is 1.3.2661 in this example). 
-        // This code should also handle: Benchmark-1.1-Coverity-results-v1.3.2661.xml (where the compute time '-6720' isn't specified)
-        int indexOfVersionMarker = filename.lastIndexOf("-v");
-        if ( indexOfVersionMarker != -1) {
-        	String restOfFileName = filename.substring(indexOfVersionMarker+2);
-        	int endIndex = restOfFileName.lastIndexOf('-');
-        	if (endIndex == -1) endIndex = restOfFileName.lastIndexOf('.');
-        	String version = restOfFileName.substring(0, endIndex);
-        	tr.setToolVersion(version);
-        }
-        
+
+		else if ( filename.endsWith( ".log" ) ) {
+			tr = new ContrastReader().parse( fileToParse );
+		}
+
+		else if ( filename.endsWith( ".hcl" ) ) {
+			tr = new HCLReader().parse( fileToParse );
+		}
+
+		else if ( filename.endsWith( ".hlg" ) ) {
+			tr = new HdivReader().parse( fileToParse );
+		}
+
+		else if ( filename.endsWith( ".sl" ) ) {
+			tr = new ShiftLeftReader().parse( fileToParse );
+		}
+
+		else System.out.println("Error: No matching parser found for file: " + filename);
+
+		// If the version # of the tool is specified in the results file name, extract it, and set it.
+		// For example: Benchmark-1.1-Coverity-results-v1.3.2661-6720.json  (the version # is 1.3.2661 in this example).
+		// This code should also handle: Benchmark-1.1-Coverity-results-v1.3.2661.xml (where the compute time '-6720' isn't specified)
+		int indexOfVersionMarker = filename.lastIndexOf("-v");
+		if ( indexOfVersionMarker != -1) {
+			String restOfFileName = filename.substring(indexOfVersionMarker+2);
+			int endIndex = restOfFileName.lastIndexOf('-');
+			if (endIndex == -1) endIndex = restOfFileName.lastIndexOf('.');
+			String version = restOfFileName.substring(0, endIndex);
+			tr.setToolVersion(version);
+		}
+
 		return tr;
 	}
 
@@ -814,8 +899,8 @@ public class BenchmarkScore {
 	 * @return The first non-blank line in the file starting with the 2nd line.
 	 */
 	private static String getLine(File actual, int line) {
-		BufferedReader br = null;
-		try {
+	    BufferedReader br = null;
+	    try {
     	    br = new BufferedReader( new FileReader( actual ) );
     	    for ( int i=0; i<line; i++ ) {
     	        br.readLine(); // Skip line 1
@@ -829,52 +914,52 @@ public class BenchmarkScore {
 	        return "";
 	    } finally {
 	    	try {
-		    	if (br != null) br.close();	    		
+		    	if (br != null) br.close();
 	    	} catch (IOException e) {
-	    		System.out.println("Can't close filereader for file: " + actual.getAbsolutePath() + 
+	    		System.out.println("Can't close filereader for file: " + actual.getAbsolutePath() +
 	    			" for some reason.");
 	    		e.toString();
 	    	}
 	    }
     }
 
-	// Go through each expected result, and figure out if this tool actually passed or not.
-	// This updates the expected results to reflect what passed/failed.
+    // Go through each expected result, and figure out if this tool actually passed or not.
+    // This updates the expected results to reflect what passed/failed.
     private static void analyze( TestResults expected, TestResults actual ) {
-    	
+
     	// Set the version of the Benchmark these actual results are being compared against
     	actual.setBenchmarkVersion(expected.getBenchmarkVersion());
-    		
+
     	// If in anonymous mode, anonymize the tool name if its a commercial tool before its used to compute anything.
 	    // unless its the tool of 'focus'
 		if (BenchmarkScore.anonymousMode && actual.isCommercial && !actual.getTool().replace(' ','_').equalsIgnoreCase(focus)) {
 			actual.setAnonymous();
 		}
-		
+
 		boolean pass = false;
 		for ( int tc : expected.keySet() ) {
 			TestCaseResult exp = expected.get( tc ).get(0); // always only one!
 			List<TestCaseResult> act = actual.get( tc );  // could be lots of results for this test
-				
+
 			pass = compare( exp, act, actual.getTool() );
 
 			// helpful in debugging
 			//System.out.println( tc + ", " + exp.getCategory() + ", " + exp.isReal() + ", " + exp.getCWE() + ", " + pass + "\n");
-			
+
 			// fill the result into the "expected" results in case we need it later
 			exp.setPassed( pass );
 		}
-		
+
 		// Record the name and version of the tool whose pass/fail values were recorded in 'expected' results
 		expected.setTool(actual.getTool());
 		expected.setToolVersion(actual.getToolVersion());
 	}
-	
+
 	/**
 	 * Check all actual results. If a real vulnerability matches, then exit. Otherwise keep going.
 	 * @param exp The expected results
 	 * @param actList The list of actual results for this test case.
-	 * @return true if the expected result is found in the actual result (i.e., If True Positive, 
+	 * @return true if the expected result is found in the actual result (i.e., If True Positive,
 	 * that results was found, If False Positive, that result was not found.)
 	 */
 	private static boolean compare( TestCaseResult exp, List<TestCaseResult> actList, String tool ) {
@@ -882,30 +967,30 @@ public class BenchmarkScore {
 		if ( actList == null || actList.isEmpty() ) {
 			return !exp.isReal();
 		}
-		
+
 		// otherwise check actual results
 		for ( TestCaseResult act : actList ) {
 			// Helpful in debugging
 		    //System.out.println( "  Evidence: " + act.getCWE() + " " + act.getEvidence() + "[" + act.getConfidence() + "]");
-			
+
 			int actualCWE = act.getCWE();
 			int expectedCWE = exp.getCWE();
-			
+
 		    boolean match = actualCWE == expectedCWE;
-		    
-		    // Special case: many tools report CWE 89 (sqli) for Hibernate Injection (hqli) rather than 
+
+		    // Special case: many tools report CWE 89 (sqli) for Hibernate Injection (hqli) rather than
 		    // actual CWE of 564 So we accept either
 		    if (!match && (expectedCWE == 564)) {
 		    	match = (actualCWE == 89);
 		    }
-			
+
 			// special hack since IBM/Veracode don't distinguish different kinds of weak algorithm
 			if ( tool.startsWith("AppScan") || tool.startsWith("Vera")) {
 			    if ( expectedCWE == 328 && actualCWE == 327 ) {
 			        match = true;
 			    }
 			}
-					
+
 			// return true if we find an exact match for a True Positive test
 			if ( match ) {
 				return exp.isReal();
@@ -921,7 +1006,7 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 	private static TestResults readExpectedResults(File f1) throws Exception {
 		TestResults tr = new TestResults( "Expected", true, null);
 		BufferedReader fr = null;
-		
+
 		try {
 			fr = new BufferedReader( new FileReader( f1 ) );
 			// Read the 1st line, and parse out the Benchmark version #.
@@ -931,7 +1016,7 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 				if (startOfBenchmarkVersionLocation != -1) {
 					startOfBenchmarkVersionLocation+=BENCHMARK_VERSION_PREFIX.length();
 				} else {
-					String versionNumError = "Couldn't find " + BENCHMARK_VERSION_PREFIX 
+					String versionNumError = "Couldn't find " + BENCHMARK_VERSION_PREFIX
 							+ " on first line of expected results file";
 					System.out.println(versionNumError);
 					throw new IOException(versionNumError);
@@ -942,13 +1027,13 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 				if (commaLocation != -1) {
 					tr.setBenchmarkVersion(line.substring(0, commaLocation));
 				} else {
-					String missingCommaError = "Couldn't find comma after version # listed after " 
+					String missingCommaError = "Couldn't find comma after version # listed after "
 							+ BENCHMARK_VERSION_PREFIX;
 					System.out.println(missingCommaError);
 					throw new IOException(missingCommaError);
 				}
 			}
-			
+
 			boolean reading = true;
 			while ( reading ) {
 				line = fr.readLine();
@@ -966,10 +1051,10 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 						tcr.setCategory( parts[1]);
 						tcr.setReal( Boolean.parseBoolean( parts[2] ) );
 						tcr.setCWE( Integer.parseInt( parts[3]) );
-	
+
 						String tcname = parts[0].substring( BENCHMARKTESTNAME.length() );
 						tcr.setNumber( Integer.parseInt(tcname));
-						
+
 						// Handle situation where expected results has full details
 						// Sometimes, it also has: source, data flow, data flow filename, sink
 
@@ -979,7 +1064,7 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 							//tcr.setDataFlowFile(parts[6]);
 							tcr.setSink(parts[6]);
 						}
-						
+
 						tr.put( tcr );
 					}
 				}
@@ -989,7 +1074,7 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 		}
 		return tr;
 	}
-	
+
 	/**
 	 * This produces the .csv of all the results for this tool. It's basically the expected results file
 	 * with a couple of extra columns in it to say what the actual result for this tool was per test case
@@ -998,33 +1083,33 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 	 * @return The name of the results file produced
 	 */
 	private static String produceResultsFile( TestResults actual ) {
-		
+
 		File resultsFile = null;
 		PrintStream ps = null;
-		
+
 		try {
 			String benchmarkVersion = actual.getBenchmarkVersion();
-			String resultsFileName = scoreCardDirName + File.separator + "Benchmark_v" 
-					+ benchmarkVersion + "_Scorecard_for_" + actual.getToolNameAndVersion().replace( ' ', '_' ) 
+			String resultsFileName = scoreCardDirName + File.separator + "Benchmark_v"
+					+ benchmarkVersion + "_Scorecard_for_" + actual.getToolNameAndVersion().replace( ' ', '_' )
 					+ ".csv";
 			resultsFile = new File(resultsFileName);
 			FileOutputStream fos = new FileOutputStream(resultsFile, false);
 			ps = new PrintStream(fos);
-	
+
 			Set<Integer> testCaseKeys = actual.keySet();
 
 			boolean fulldetails = (actual.get(testCaseKeys.iterator().next()).get(0).getSource() != null);
-				
+
 			// Write actual results header
 			ps.print("# test name, category, CWE, ");
 			if (fulldetails) ps.print("source, data flow, sink, ");
 			ps.print("real vulnerability, identified by tool, pass/fail, Benchmark version: " + benchmarkVersion);
-			
+
 			// Append the date YYYY-MM-DD to the header in each .csv file
 			Calendar c = Calendar.getInstance();
 			String s = String.format("%1$tY-%1$tm-%1$te", c);
 			ps.println(", Actual results generated: " + s);
-	
+
 			for (Integer expectedResultsKey : testCaseKeys) {
 				// Write meta data to file here.
 				TestCaseResult actualResult = actual.get(expectedResultsKey.intValue()).get(0);
@@ -1034,7 +1119,7 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 				if (fulldetails) {
 					ps.print("," + actualResult.getSource());
 					ps.print("," + actualResult.getDataFlow());
-					ps.print("," + actualResult.getSink());					
+					ps.print("," + actualResult.getSink());
 				}
 				boolean isreal = actualResult.isReal();
 				ps.print(", " + isreal);
@@ -1043,33 +1128,33 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 				ps.print(", " + toolresult);
 				ps.println(", " + (passed ? "pass" : "fail"));
 			}
-			
+
 			System.out.println("Actual results file generated: " + resultsFile.getAbsolutePath());
-			
+
 			return resultsFile.getName();
-			
+
 		} catch (FileNotFoundException e) {
 			System.out.println("ERROR: Can't create actual results file: " + resultsFile.getAbsolutePath());
 		} finally {
 			if (ps != null) ps.close();
 		}
-		
+
 		return null; // Should have returned results file name earlier if successful
 	}
-	
+
 	/*
-	 * Generate all the vulnerability scorecards. And then 1 commercial tool scorecard if there are commercial tool 
+	 * Generate all the vulnerability scorecards. And then 1 commercial tool scorecard if there are commercial tool
 	 * results for at least 2 commercial tools.
 	 */
 	private static void generateVulnerabilityScorecards( Set<Report> toolResults, Set<String> catSet ) {
 		StringBuilder htmlForCommercialAverages = null;
-		
+
 		int commercialToolTotal = 0;
 		int numberOfVulnCategories = 0;
 		int commercialLowTotal = 0;
 		int commercialAveTotal = 0;
 		int commercialHighTotal = 0;
-		
+
         for (String cat : catSet ) {
             try {
             	ScatterVulns scatter = ScatterVulns.generateComparisonChart(cat, toolResults, focus );
@@ -1081,15 +1166,15 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 
                 html = html.replace("${image}", filename + ".png" );
                 html = html.replace( "${title}", fullTitle );
-                html = html.replace( "${vulnerability}", cat + " (CWE #" 
+                html = html.replace( "${vulnerability}", cat + " (CWE #"
                 		+ BenchmarkScore.translateNameToCWE(cat) + ")" );
                 html = html.replace( "${version}", benchmarkVersion );
-                
+
         		String table = generateVulnStatsTable(toolResults, cat);
         		html = html.replace("${table}", table);
-                
+
                 Files.write( htmlfile, html.getBytes() );
-                
+
                 // Now build up the commercial stats scorecard if there are at least 2 commercial tools
                 if (scatter.getCommercialToolCount() > 1) {
                 	if (htmlForCommercialAverages == null) {
@@ -1105,7 +1190,7 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
                 		htmlForCommercialAverages.append("<th>High Tool Type</th>");
                 		htmlForCommercialAverages.append("</tr>\n");
                 	} // if 1st time through
-                	
+
                 	numberOfVulnCategories++;
 
                 	String style = "";
@@ -1129,40 +1214,40 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
                 	htmlForCommercialAverages.append("<td>" + scatter.getCommercialHighToolType() + "</td>");
                 	htmlForCommercialAverages.append("</tr>\n");
                 }  // if more than 1 commercial tool
-                
+
             } catch( IOException e ) {
                 System.out.println( "Error generating vulnerability summaries: " + e.getMessage() );
                 e.printStackTrace();
             }
         } // end for loop
-        
+
         // if we computed a commercial average, then add the last row to the table AND create the file and write the HTML to it.
         if (htmlForCommercialAverages != null) {
-        	
+
         	htmlForCommercialAverages.append("<tr>");
         	htmlForCommercialAverages.append("<td>Average across all categories for " + commercialToolTotal + " tools</td>");
         	htmlForCommercialAverages.append("<td></td>");
-        	htmlForCommercialAverages.append("<td>" 
+        	htmlForCommercialAverages.append("<td>"
         			+ new DecimalFormat("0.0").format((float) commercialLowTotal/(float) numberOfVulnCategories) + "</td>");
-        	htmlForCommercialAverages.append("<td>" 
+        	htmlForCommercialAverages.append("<td>"
         			+ new DecimalFormat("0.0").format((float) commercialAveTotal/(float) numberOfVulnCategories) + "</td>");
-        	htmlForCommercialAverages.append("<td>" 
+        	htmlForCommercialAverages.append("<td>"
         			+ new DecimalFormat("0.0").format((float) commercialHighTotal/(float) numberOfVulnCategories) + "</td>");
         	htmlForCommercialAverages.append("<td></td>");
         	htmlForCommercialAverages.append("</tr>\n");
-        	
+
             try {
 
             	commercialAveScorecardFilename = "Benchmark_v" + benchmarkVersion + "_Scorecard_for_Commercial_Tools";
 	            Path htmlfile = Paths.get( scoreCardDirName + "/" + commercialAveScorecardFilename + ".html" );
 	            Files.copy(Paths.get(pathToScorecardResources + "commercialAveTemplate.html" ), htmlfile, StandardCopyOption.REPLACE_EXISTING );
 	            String html = new String(Files.readAllBytes( htmlfile ) );
-	
+
 	            html = html.replace( "${version}", benchmarkVersion );
-	            
+
 	        	String table = htmlForCommercialAverages.toString();
 	    		html = html.replace("${table}", table);
-	            
+
 	            Files.write( htmlfile, html.getBytes() );
 	            System.out.println("Commercial average scorecard computed.");
             } catch( IOException e ) {
@@ -1171,7 +1256,7 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
             }
         } // end if
 	}
-	
+
     /**
      * This generates the vulnerability stats table that goes at the bottom of each vulnerability category
      * page.
@@ -1196,14 +1281,14 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 		sb.append("</tr>\n");
 
 		for (Report toolResult : toolResults) {
-			
+
 			if (!(showAveOnlyMode && toolResult.isCommercial())) {
 				OverallResults or = toolResult.getOverallResults();
 				Map<String, Counter> scores = toolResult.getScores();
 				Counter c = scores.get(category);
 				OverallResult r = or.getResults(category);
 				String style = "";
-				
+
 				if (Math.abs(r.truePositiveRate - r.falsePositiveRate) < .1)
 					style = "class=\"danger\"";
 				else if (r.truePositiveRate > .7 && r.falsePositiveRate < .3)
@@ -1227,9 +1312,9 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 		sb.append("</table>");
 		return sb.toString();
 	}
-	
+
     /**
-     * This generates the overall stats table across all the tools that goes at the bottom of the home 
+     * This generates the overall stats table across all the tools that goes at the bottom of the home
      * page.
      * @param toolResults - The set of results across all the tools.
      * @return The HTML of the overall stats table.
@@ -1246,11 +1331,11 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 		sb.append("</tr>\n");
 
 		for (Report toolResult : toolResults) {
-			
+
 			if (!(showAveOnlyMode && toolResult.isCommercial())) {
 				OverallResults or = toolResult.getOverallResults();
 				String style = "";
-				
+
 				if (Math.abs(or.getTruePositiveRate() - or.getFalsePositiveRate()) < .1)
 					style = "class=\"danger\"";
 				else if (or.getTruePositiveRate() > .7 && or.getFalsePositiveRate() < .3)
@@ -1272,7 +1357,7 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 		return sb.toString();
 	}
 
-	
+
 	/**
 	 * This method updates the menus of all the scorecards previously generated so people can navigate
 	 * between all the tool results.
@@ -1291,7 +1376,7 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 	            sb.append(System.lineSeparator());
 			}
         }
-        
+
         // Before finishing, check to see if there is a commercial average scorecard file, and if so
         // Add it to the menu
         if (commercialAveScorecardFilename != null) {
@@ -1300,15 +1385,15 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
             sb.append(".html\">");
             sb.append("Commercial Average");
             sb.append("</a></li>");
-            sb.append(System.lineSeparator());        	
+            sb.append(System.lineSeparator());
         }
-        
+
         String toolmenu = sb.toString();
-        
+
         // create vulnerability menu
         sb = new StringBuffer();
         for (String cat : catSet ) {
-            String filename = "Benchmark_v" + benchmarkVersion+"_Scorecard_for_" + cat.replace(' ', '_');  
+            String filename = "Benchmark_v" + benchmarkVersion+"_Scorecard_for_" + cat.replace(' ', '_');
             sb.append("            <li><a href=\"");
             sb.append( filename );
             sb.append(".html\">");
@@ -1317,11 +1402,11 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
             sb.append(System.lineSeparator());
         }
         String vulnmenu = sb.toString();
-        
+
 		// rewrite HTML files with new menus
-		updateMenuTemplates( toolmenu, vulnmenu );        
+		updateMenuTemplates( toolmenu, vulnmenu );
 	}
-	
+
 	private static void updateMenuTemplates( String toolmenu, String vulnmenu ) {
 	    File root = new File( scoreCardDirName );
 	    for ( File f : root.listFiles() ) {
@@ -1339,7 +1424,7 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 	        }
 	    }
 	}
-	
+
 	private static Document getXMLDocument( File f ) throws Exception {
         DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 		// Prevent XXE = Note, disabling this entirely breaks the parsing of some XML files, like a Burp results
@@ -1352,5 +1437,5 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
         Document doc = docBuilder.parse(is);
         return doc;
 	}
-	
+
 }

@@ -3,7 +3,7 @@
  *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Benchmark Project For details, please see
- * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+ * <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
  *
  * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
  * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,20 +12,23 @@
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details
  *
- * @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+ * @author Dave Wichers
  * @created 2015
  */
 
 package org.owasp.benchmark.score.parsers;
 
+import java.io.File;
 import java.util.List;
 
 import org.owasp.benchmark.score.BenchmarkScore;
 import org.w3c.dom.Node;
 
 public class BurpReader extends Reader {
-    
-    public TestResults parse(Node root) throws Exception {
+
+    // filename passed in so we can extract the scan time if it is included in the filename
+    // root of XML doc passed in so we can parse the results
+    public TestResults parse(File f, Node root) throws Exception {
 
         TestResults tr = new TestResults("Burp Suite Pro", true, TestResults.ToolType.DAST);
 
@@ -34,6 +37,9 @@ public class BurpReader extends Reader {
 
         String version = getAttributeValue("burpVersion", root);
         tr.setToolVersion(version);
+
+	// If the fliename includes an elapsed time in seconds (e.g., TOOLNAME-seconds.xml) set the compute time on the scorecard.
+	tr.setTime(f);
 
         // String time = getAttributeValue("ScanTime", root);
         // tr.setTime( time );
@@ -121,6 +127,11 @@ public class BurpReader extends Reader {
         case "7340288": return 525;  // Information Exposure Through Browser Caching-Cacheable HTTPS Response
         case "8389120": return 9999; // HTML doesn't specify character set - Don't care. Map to nothing.
         case "8389632": return 9999; // Incorrect Content Type - Don't care. Map to nothing right now.
+        case "8389888": return 16; // Content type is not specified
+        case "5245360": return 16; // Browser cross-site scripting filter disabled
+        case "4197632": return 20; // Suspicious input transformation (reflected)
+        case "4197376": return 20; // Input returned in response (reflected)
+        case "3146240": return 918; // External service interaction (DNS)
         
             // case "Build Misconfiguration" : return 00;
             // case "Cookie Security" : return 614;

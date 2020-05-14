@@ -3,7 +3,7 @@
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
-* <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
 *
 * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details.
 *
-* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Nick Sanidas
 * @created 2015
 */
 
@@ -53,8 +53,8 @@ public class BenchmarkTest00352 extends HttpServlet {
 		map98424.put("key98424", b98424.toString()); // put in a collection
 		String c98424 = (String)map98424.get("key98424"); // get it back out
 		String d98424 = c98424.substring(0,c98424.length()-1); // extract most of it
-		String e98424 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d98424.getBytes() ) )); // B64 encode and decode it
+		String e98424 = new String( org.apache.commons.codec.binary.Base64.decodeBase64(
+		    org.apache.commons.codec.binary.Base64.encodeBase64( d98424.getBytes() ) )); // B64 encode and decode it
 		String f98424 = e98424.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
 		String bar = thing.doSomething(f98424); // reflection
@@ -64,12 +64,12 @@ public class BenchmarkTest00352 extends HttpServlet {
 		// http://examples.javacodegeeks.com/core-java/crypto/encrypt-decrypt-file-stream-with-des/
 		
 		try {
-			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("DESEDE/ECB/PKCS5Padding");
+			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("AES/CCM/NoPadding", java.security.Security.getProvider("BC"));
 			
-            // Prepare the cipher to encrypt
-            javax.crypto.SecretKey key = javax.crypto.KeyGenerator.getInstance("DESEDE").generateKey();
-            c.init(javax.crypto.Cipher.ENCRYPT_MODE, key);
-			
+			// Prepare the cipher to encrypt
+			javax.crypto.SecretKey key = javax.crypto.KeyGenerator.getInstance("AES").generateKey();
+			c.init(javax.crypto.Cipher.ENCRYPT_MODE, key);
+
 			// encrypt and store the results
 			byte[] input = { (byte)'?' };
 			Object inputParam = bar;
@@ -130,7 +130,7 @@ e.printStackTrace(response.getWriter());
 		}
 
 		response.getWriter().println(
-"Crypto Test javax.crypto.Cipher.getInstance(java.lang.String) executed"
+"Crypto Test javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) executed"
 );
 	}
 	

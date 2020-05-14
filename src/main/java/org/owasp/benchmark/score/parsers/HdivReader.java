@@ -3,6 +3,7 @@ package org.owasp.benchmark.score.parsers;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,19 +66,27 @@ public class HdivReader extends Reader {
 
 	private String calculateTime(final String firstLine, final String lastLine) {
 		try {
-			String start = firstLine.split(" ")[0];
-			String stop = lastLine.split(" ")[0];
-			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss,SSS");
-			Date startTime = sdf.parse(start);
-			Date stopTime = sdf.parse(stop);
-			long startMillis = startTime.getTime();
-			long stopMillis = stopTime.getTime();
-			return (stopMillis - startMillis) / 1000 + " seconds";
+			try {
+				return calculateTime(firstLine, lastLine, 0);
+			} catch (ParseException e) {
+				return calculateTime(firstLine, lastLine, 1);
+			}
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	private String calculateTime(final String firstLine, final String lastLine, final int timeColumn) throws ParseException {
+		String start = firstLine.split(" ")[timeColumn];
+		String stop = lastLine.split(" ")[timeColumn];
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss,SSS");
+		Date startTime = sdf.parse(start);
+		Date stopTime = sdf.parse(stop);
+		long startMillis = startTime.getTime();
+		long stopMillis = stopTime.getTime();
+		return (stopMillis - startMillis) / 1000 + " seconds";
 	}
 
 	private void process(final TestResults tr, String testNumber, final List<String> chunk) throws Exception {
@@ -119,10 +128,21 @@ public class HdivReader extends Reader {
 
 	enum Type {
 
-		XPATH_INJECTION(643), SQL_INJECTION(89), CMD_INJECTION(78), PATH_TRAVERSAL(22), TRUST_BOUNDARY_VIOLATION(501), WEAK_RANDOMNESS(
-				"crypto-weak-randomness",
-				330), INSECURE_HASHING("crypto-bad-mac", 328), INSECURE_CIPHER("crypto-bad-ciphers", 327), REFLECTION_INJECTION(0), XSS(
-						"reflected-xss", 79), HEADER_INJECTION(113), INSECURE_COOKIE("cookie-flags-missing", 614), LDAP_INJECTION(90);
+		CMD_INJECTION(78),
+		INSECURE_HASHING("crypto-bad-mac", 328),
+		INSECURE_CIPHER("crypto-bad-ciphers", 327),
+		HEADER_INJECTION(113),
+		INSECURE_COOKIE("cookie-flags-missing", 614),
+		LDAP_INJECTION(90),
+		NO_HTTP_ONLY_COOKIE(1004),
+		PATH_TRAVERSAL(22),
+		REFLECTION_INJECTION(0),
+		SQL_INJECTION(89),
+		STACKTRACE_LEAK(209),
+		TRUST_BOUNDARY_VIOLATION(501),
+		WEAK_RANDOMNESS("crypto-weak-randomness", 330),
+		XPATH_INJECTION(643),
+		XSS("reflected-xss", 79);
 
 		private final int number;
 

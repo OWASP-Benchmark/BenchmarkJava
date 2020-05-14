@@ -60,8 +60,8 @@ public class BenchmarkTest02430 extends HttpServlet {
         } else {
         	a1 = "sh";
         	a2 = "-c";
-        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("ls");
-        	args = new String[]{a1, a2, cmd, bar};
+        	cmd = org.owasp.benchmark.helpers.Utils.getOSCommandString("ls ");
+        	args = new String[]{a1, a2, cmd + bar};
         }
         
         String[] argsEnv = { "foo=bar" };
@@ -85,8 +85,8 @@ public class BenchmarkTest02430 extends HttpServlet {
 
 		String bar = "";
 		if (param != null) {
-			bar = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    	new sun.misc.BASE64Encoder().encode( param.getBytes() ) ));
+			bar = new String( org.apache.commons.codec.binary.Base64.decodeBase64(
+			org.apache.commons.codec.binary.Base64.encodeBase64( param.getBytes() ) ));
 		}
 	
 		return bar;	

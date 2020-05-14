@@ -1,47 +1,26 @@
 # This dockerfile builds a container that pulls down and runs the latest version of Benchmark
-FROM ubuntu:16.04
-MAINTAINER Simon Bennetts "psiinon@gmail.com"
+FROM ubuntu:latest
+MAINTAINER "Dave Wichers dave.wichers@owasp.org"
 
-RUN apt-get update && apt-get clean
+RUN apt-get update
 RUN apt-get install -q -y \
-     make \
-     automake \
-     autoconf \
-     gcc \
-     g++ \
      openjdk-8-jre-headless \
      openjdk-8-jdk \
-     ruby \
-     curl \
-     xmlstarlet \
      git \
-     x11vnc \
-     xvfb \
-     openbox \
-     xterm \
-     net-tools \
-     ruby-dev \
      maven \
+     wget \
+     iputils-ping \
      && apt-get clean
 
-RUN apt-get --assume-yes --fix-missing install python-pip x11vnc 
-
-RUN mkdir /benchmark
-WORKDIR /benchmark
-
-ENV bench /benchmark/bench.sh
-RUN echo "#!/bin/sh" > ${bench}
-RUN echo "git clone https://github.com/OWASP/benchmark" >> ${bench}
-RUN echo "cd benchmark" >> ${bench}
-RUN echo "chmod +x runRemoteAccessibleBenchmark.sh" >> ${bench}
-RUN echo "./runRemoteAccessibleBenchmark.sh" >> ${bench}
-RUN chmod a+x ${bench}
+RUN mkdir /owasp
+WORKDIR /owasp
+RUN git clone https://github.com/OWASP/benchmark
+WORKDIR /owasp/benchmark
+RUN mvn clean package cargo:install
 
 RUN useradd -d /home/bench -m -s /bin/bash bench 
 RUN echo bench:bench | chpasswd
 
-RUN chown -R bench /benchmark/
-ENV PATH /benchmark/benchmark/:$PATH
-
-CMD ["/benchmark/bench.sh"]
+RUN chown -R bench /owasp/
+ENV PATH /owasp/benchmark/:$PATH
 

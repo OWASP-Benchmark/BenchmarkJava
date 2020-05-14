@@ -76,8 +76,8 @@ response.setHeader("X-XSS-Protection", "0");
 		map1227.put("key1227", b1227.toString()); // put in a collection
 		String c1227 = (String)map1227.get("key1227"); // get it back out
 		String d1227 = c1227.substring(0,c1227.length()-1); // extract most of it
-		String e1227 = new String( new sun.misc.BASE64Decoder().decodeBuffer( 
-		    new sun.misc.BASE64Encoder().encode( d1227.getBytes() ) )); // B64 encode and decode it
+		String e1227 = new String( org.apache.commons.codec.binary.Base64.decodeBase64(
+		    org.apache.commons.codec.binary.Base64.encodeBase64( d1227.getBytes() ) )); // B64 encode and decode it
 		String f1227 = e1227.split(" ")[0]; // split it on a space
 		org.owasp.benchmark.helpers.ThingInterface thing = org.owasp.benchmark.helpers.ThingFactory.createThing();
 		String bar = thing.doSomething(f1227); // reflection

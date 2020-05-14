@@ -32,6 +32,9 @@ import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
+import org.owasp.esapi.Encoder;
+import org.owasp.esapi.reference.DefaultEncoder;
+
 /**
  * A simple example exposing how to embed Apache Directory Server version 1.5.7
  * into an application.
@@ -41,6 +44,7 @@ import javax.naming.directory.SearchResult;
  */
 public class LDAPManager {
 
+	private static final Encoder ESAPI_Encoder = DefaultEncoder.getInstance();
 	private DirContext ctx;
 
 	public LDAPManager() {
@@ -133,7 +137,7 @@ public class LDAPManager {
 			SearchControls sc = new SearchControls();
 			sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
-			String filter = "(&(objectclass=person)(uid=" + person.getName() + "))";
+			String filter = "(&(objectclass=person)(uid=" + ESAPI_Encoder.encodeForLDAP(person.getName()) + "))";
 
 			NamingEnumeration<SearchResult> results = ctx.search(base, filter, sc);
 

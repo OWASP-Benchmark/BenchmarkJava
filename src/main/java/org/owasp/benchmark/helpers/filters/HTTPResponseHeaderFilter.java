@@ -13,8 +13,8 @@ package org.owasp.benchmark.helpers.filters;
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details
 *
-* @author Juan GaMa
-* @created 2015
+* @author Dave Wichers
+* @created 2020
 */
 
 import java.io.IOException;
@@ -26,8 +26,9 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletResponse;
 
-public class DataBaseFilter implements Filter {
+public class HTTPResponseHeaderFilter implements Filter {
 	protected FilterConfig config;
 
 	@Override
@@ -36,24 +37,19 @@ public class DataBaseFilter implements Filter {
 	}
 
 	/**
-	 * Filter to roll back after every test.
+	 * Filter to add additional security headers to every response.
 	 **/
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
 			throws IOException, ServletException {
 
 		filterChain.doFilter(request, response);
-
-		try {
-			org.owasp.benchmark.helpers.DatabaseHelper.getSqlConnection().rollback();
-		} catch (SQLException e) {
-			if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
-				System.out.println("Problem while rolling back the database");
-				return;
-			} else
-				throw new ServletException(e);
+		
+		if (response instanceof HttpServletResponse) {
+			HttpServletResponse httpresponse = (HttpServletResponse) response;
+//			httpresponse.addHeader("Cache-Control", "private"); // The proper setting but don't bother
+			httpresponse.addHeader("Content-Security-Policy", "frame-ancestors 'self'; default-src 'self'; form-action 'self'");
 		}
-
 	}
 
 	@Override

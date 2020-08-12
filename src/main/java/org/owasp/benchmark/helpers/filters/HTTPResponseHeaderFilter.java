@@ -47,8 +47,11 @@ public class HTTPResponseHeaderFilter implements Filter {
 		
 		if (response instanceof HttpServletResponse) {
 			HttpServletResponse httpresponse = (HttpServletResponse) response;
-//			httpresponse.addHeader("Cache-Control", "private"); // The proper setting but don't bother
-			httpresponse.addHeader("Content-Security-Policy", "frame-ancestors 'self'; default-src 'self'; form-action 'self'");
+			// Note that setHeader overwrites any existing header already set with the same name.
+			httpresponse.setHeader("Content-Security-Policy", "frame-ancestors 'self'; form-action 'self'; " +
+				"default-src 'self'; style-src 'unsafe-inline' 'self'; style-src-elem 'self' fonts.googleapis.com; " +
+				"font-src 'self' fonts.gstatic.com");
+//			httpresponse.setHeader("Cache-Control", "private"); // The proper setting for this header, but don't bother
 		}
 	}
 

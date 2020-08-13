@@ -18,7 +18,7 @@ else
 
   echo "Synopsys Seeker IAST is a commercial product, so you need a licensed version of Seeker from Synopsys in order to run it on the Benchmark. If you have access to Seeker IAST and want to run the Benchmark against it you will have to:
     *  download the Seeker Agent for Java (seeker-agent.zip) from the Server;
-    *  put it into the /tools/SeekerIAST folder;
+    *  put it into the /tools/seeker folder;
     *  unzip it;
     *  update pom.xml (deploywseeker section, seeker.server.url); and then
     *  rerun this script."

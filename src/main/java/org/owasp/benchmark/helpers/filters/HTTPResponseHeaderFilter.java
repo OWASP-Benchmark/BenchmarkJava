@@ -43,16 +43,18 @@ public class HTTPResponseHeaderFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
 			throws IOException, ServletException {
 
-		filterChain.doFilter(request, response);
-		
 		if (response instanceof HttpServletResponse) {
-			HttpServletResponse httpresponse = (HttpServletResponse) response;
+			HttpServletResponse httpResponse = (HttpServletResponse) response;
 			// Note that setHeader overwrites any existing header already set with the same name.
-			httpresponse.setHeader("Content-Security-Policy", "frame-ancestors 'self'; form-action 'self'; " +
+			httpResponse.setHeader("Content-Security-Policy", "frame-ancestors 'self'; form-action 'self'; " +
 				"default-src 'self'; style-src 'unsafe-inline' 'self'; style-src-elem 'self' fonts.googleapis.com; " +
 				"font-src 'self' fonts.gstatic.com");
-//			httpresponse.setHeader("Cache-Control", "private"); // The proper setting for this header, but don't bother
+			// The proper setting for this header is 'private' but DAST tools still complain about it, so
+			// setting it this way even though the app will be slightly slower.
+			httpResponse.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
 		}
+
+		filterChain.doFilter(request, response);
 	}
 
 	@Override

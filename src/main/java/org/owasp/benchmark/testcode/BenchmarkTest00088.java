@@ -33,10 +33,12 @@ public class BenchmarkTest00088 extends HttpServlet {
 	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html;charset=UTF-8");
 		javax.servlet.http.Cookie userCookie = new javax.servlet.http.Cookie("BenchmarkTest00088", "whatever");
 		userCookie.setMaxAge(60*3); //Store cookie for 3 minutes
 		userCookie.setSecure(true);
 		userCookie.setPath(request.getRequestURI());
+		userCookie.setDomain(new java.net.URL(request.getRequestURL().toString()).getHost());
 		response.addCookie(userCookie);
 		javax.servlet.RequestDispatcher rd = request.getRequestDispatcher("/securecookie-00/BenchmarkTest00088.html");
 		rd.include(request, response);
@@ -78,9 +80,6 @@ public class BenchmarkTest00088 extends HttpServlet {
 		}
 		if ("".equals(str)) str="No cookie value supplied";
 		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie", str);
-		// Note: Can't jam in SameSite attribute into cookie like this because the ; char
-		// in the cookie value gets rejected by the new Cookie() method.
-//		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie", str + "; SameSite=strict");
 		
 		cookie.setSecure(true);
 		cookie.setHttpOnly(true);

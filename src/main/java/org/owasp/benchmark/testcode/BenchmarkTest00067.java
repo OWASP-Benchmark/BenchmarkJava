@@ -33,10 +33,12 @@ public class BenchmarkTest00067 extends HttpServlet {
 	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html;charset=UTF-8");
 		javax.servlet.http.Cookie userCookie = new javax.servlet.http.Cookie("BenchmarkTest00067", "anything");
 		userCookie.setMaxAge(60*3); //Store cookie for 3 minutes
 		userCookie.setSecure(true);
 		userCookie.setPath(request.getRequestURI());
+		userCookie.setDomain(new java.net.URL(request.getRequestURL().toString()).getHost());
 		response.addCookie(userCookie);
 		javax.servlet.RequestDispatcher rd = request.getRequestDispatcher("/weakrand-00/BenchmarkTest00067.html");
 		rd.include(request, response);
@@ -108,6 +110,7 @@ public class BenchmarkTest00067 extends HttpServlet {
 			javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
 			rememberMe.setSecure(true);
 			rememberMe.setHttpOnly(true);
+			rememberMe.setDomain(new java.net.URL(request.getRequestURL().toString()).getHost());
 			rememberMe.setPath(request.getRequestURI()); // i.e., set path to JUST this servlet
 									 // e.g., /benchmark/sql-01/BenchmarkTest01001
 			request.getSession().setAttribute(cookieName, rememberMeKey);

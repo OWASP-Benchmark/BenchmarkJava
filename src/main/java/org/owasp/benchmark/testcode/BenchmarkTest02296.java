@@ -3,7 +3,7 @@
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
-* <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
 *
 * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details.
 *
-* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Nick Sanidas
 * @created 2015
 */
 
@@ -70,17 +70,15 @@ public class BenchmarkTest02296 extends HttpServlet {
 //		byte[] iv = random.generateSeed(16);
 		
 		try {
-		    java.util.Properties benchmarkprops = new java.util.Properties();
-		    benchmarkprops.load(this.getClass().getClassLoader().getResourceAsStream("benchmark.properties"));
+			java.util.Properties benchmarkprops = new java.util.Properties();
+			benchmarkprops.load(this.getClass().getClassLoader().getResourceAsStream("benchmark.properties"));
 			String algorithm = benchmarkprops.getProperty("cryptoAlg2", "AES/ECB/PKCS5Padding");
 			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance(algorithm);
 
-            // Prepare the cipher to encrypt
-            javax.crypto.SecretKey key = javax.crypto.KeyGenerator.getInstance("DESede").generateKey();
-//            java.security.spec.AlgorithmParameterSpec paramSpec = new javax.crypto.spec.IvParameterSpec(iv);
-//            c.init(javax.crypto.Cipher.ENCRYPT_MODE, key, paramSpec);
-            c.init(javax.crypto.Cipher.ENCRYPT_MODE, key);
-			
+			// Prepare the cipher to encrypt
+			javax.crypto.SecretKey key = javax.crypto.KeyGenerator.getInstance("AES").generateKey();
+			c.init(javax.crypto.Cipher.ENCRYPT_MODE, key);
+
 			// encrypt and store the results
 			byte[] input = { (byte)'?' };
 			Object inputParam = bar;
@@ -110,39 +108,39 @@ public class BenchmarkTest02296 extends HttpServlet {
 			
 		} catch (java.security.NoSuchAlgorithmException e) {
 			response.getWriter().println(
-"Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case"
+"Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case"
 );
 e.printStackTrace(response.getWriter());
 			throw new ServletException(e);
 		} catch (javax.crypto.NoSuchPaddingException e) {
 			response.getWriter().println(
-"Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case"
+"Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case"
 );
 e.printStackTrace(response.getWriter());
 			throw new ServletException(e);
 		} catch (javax.crypto.IllegalBlockSizeException e) {
 			response.getWriter().println(
-"Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case"
+"Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case"
 );
 e.printStackTrace(response.getWriter());
 			throw new ServletException(e);
 		} catch (javax.crypto.BadPaddingException e) {
 			response.getWriter().println(
-"Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case"
+"Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case"
 );
 e.printStackTrace(response.getWriter());
 			throw new ServletException(e);
 		} catch (java.security.InvalidKeyException e) {
 			response.getWriter().println(
-"Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case"
+"Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case"
 );
 e.printStackTrace(response.getWriter());
 			throw new ServletException(e);
 //		} catch (java.security.InvalidAlgorithmParameterException e) {
 //			response.getWriter().println(
-//"Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case"
+//"Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case"
 //);
-//			e.printStackTrace(response.getWriter());
+//e.printStackTrace(response.getWriter());
 //			throw new ServletException(e);
 		}
 		

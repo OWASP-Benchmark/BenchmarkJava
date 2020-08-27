@@ -121,7 +121,8 @@ public class CheckmarxReader extends Reader {
              name.equals( "Potential_Stored_XSS" ) ||
              name.equals( "Potential_UTF7_XSS" ) ||
 			 name.equals( "Stored_Command_Injection" ) ||
-             name.equals( "CGI_Reflected_XSS_All_Clients" )) {
+             name.equals( "CGI_Reflected_XSS_All_Clients" ) ||
+	   name.equals( "Unprotected_Cookie" )) {
             return null;
         }
 

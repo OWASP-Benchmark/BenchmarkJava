@@ -3,7 +3,7 @@
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
-* <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
 *
 * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details.
 *
-* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Nick Sanidas
 * @created 2015
 */
 
@@ -82,18 +82,19 @@ public class BenchmarkTest00530 extends HttpServlet {
 		
 	org.owasp.benchmark.helpers.LDAPManager ads = new org.owasp.benchmark.helpers.LDAPManager();
 	try {
-		response.setContentType("text/html");
+		response.setContentType("text/html;charset=UTF-8");
 		String base = "ou=users,ou=system";
 		javax.naming.directory.SearchControls sc = new javax.naming.directory.SearchControls();
 		sc.setSearchScope(javax.naming.directory.SearchControls.SUBTREE_SCOPE);
 		String filter = "(&(objectclass=person)(uid=" + bar
 				+ "))";
-		
+
 		javax.naming.directory.DirContext ctx = ads.getDirContext();
 		javax.naming.directory.InitialDirContext idc = (javax.naming.directory.InitialDirContext) ctx;
-		javax.naming.NamingEnumeration<javax.naming.directory.SearchResult> results = 
+		boolean found = false;
+		javax.naming.NamingEnumeration<javax.naming.directory.SearchResult> results =
 				idc.search(base, filter, sc);
-		
+
 		while (results.hasMore()) {
 			javax.naming.directory.SearchResult sr = (javax.naming.directory.SearchResult) results.next();
 			javax.naming.directory.Attributes attrs = sr.getAttributes();
@@ -102,24 +103,28 @@ public class BenchmarkTest00530 extends HttpServlet {
 			javax.naming.directory.Attribute attr2 = attrs.get("street");
 			if (attr != null){
 				response.getWriter().println(
-"LDAP query results:<br>"
-						+ " Record found with name " + attr.get() + "<br>"
-								+ "Address: " + attr2.get()+ "<br>"
-);
+					"LDAP query results:<br>"
+					+ "Record found with name " + attr.get() + "<br>"
+					+ "Address: " + attr2.get()+ "<br>"
+				);
 				// System.out.println("record found " + attr.get());
-			} else response.getWriter().println(
-"LDAP query results: nothing found."
-);
+				found = true;
+			}
+		}
+		if (!found) {
+			response.getWriter().println(
+				"LDAP query results: nothing found for query: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(filter)
+			);
 		}
 	} catch (javax.naming.NamingException e) {
 		throw new ServletException(e);
-	}finally{
-    	try {
-    		ads.closeDirContext();
+	} finally {
+	    	try {
+    			ads.closeDirContext();
 		} catch (Exception e) {
 			throw new ServletException(e);
 		}
-    }
+	}
 	}
 	
 }

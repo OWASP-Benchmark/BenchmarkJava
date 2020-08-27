@@ -3,7 +3,7 @@
  *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Benchmark Project For details, please see
- * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+ * <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
  *
  * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
  * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -18,16 +18,23 @@
 
 package org.owasp.benchmark.score.parsers;
 
+import java.io.File;
 import java.util.List;
 
 import org.owasp.benchmark.score.BenchmarkScore;
 import org.w3c.dom.Node;
 
 public class QualysWASReader extends Reader {
-    
-    public TestResults parse(Node root) throws Exception {
+
+    // filename passed in so we can extract the scan time if it is included in the filename
+    // root of XML doc passed in so we can parse the results
+    public TestResults parse(File f, Node root) throws Exception {
 
         TestResults tr = new TestResults("Qualys WAS", true, TestResults.ToolType.DAST);
+
+	// If the fliename includes an elapsed time in seconds (e.g., TOOLNAME-seconds.xml) set the compute time on the scorecard.
+	tr.setTime(f);
+	// TODO: Parse out start/end time to calculate scan time from results file.
 
         // <APPENDIX>
         //     <SCAN_LIST>

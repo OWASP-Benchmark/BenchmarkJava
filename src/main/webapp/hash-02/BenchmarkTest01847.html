@@ -17,7 +17,7 @@
 function setCookie(cname, cvalue, exdays) {
 	Cookies.set(cname, cvalue,{
 		path: 'BenchmarkTest01847',
-		version: 1
+		version: 1, secure: true
 	});
 	$("#cValue").text(document.cookie);
 }

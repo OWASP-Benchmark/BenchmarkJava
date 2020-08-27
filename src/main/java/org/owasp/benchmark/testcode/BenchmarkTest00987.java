@@ -3,7 +3,7 @@
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
-* <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
 *
 * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details.
 *
-* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Dave Wichers
 * @created 2015
 */
 
@@ -33,10 +33,12 @@ public class BenchmarkTest00987 extends HttpServlet {
 	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html;charset=UTF-8");
 		javax.servlet.http.Cookie userCookie = new javax.servlet.http.Cookie("BenchmarkTest00987", "whatever");
 		userCookie.setMaxAge(60*3); //Store cookie for 3 minutes
 		userCookie.setSecure(true);
 		userCookie.setPath(request.getRequestURI());
+		userCookie.setDomain(new java.net.URL(request.getRequestURL().toString()).getHost());
 		response.addCookie(userCookie);
 		javax.servlet.RequestDispatcher rd = request.getRequestDispatcher("/weakrand-02/BenchmarkTest00987.html");
 		rd.include(request, response);
@@ -91,12 +93,12 @@ public class BenchmarkTest00987 extends HttpServlet {
 			} else {			
 				javax.servlet.http.Cookie rememberMe = new javax.servlet.http.Cookie(cookieName, rememberMeKey);
 				rememberMe.setSecure(true);
-	//			rememberMe.setPath("/benchmark/" + this.getClass().getSimpleName());
+				rememberMe.setHttpOnly(true);
 				rememberMe.setPath(request.getRequestURI()); // i.e., set path to JUST this servlet 
 															 // e.g., /benchmark/sql-01/BenchmarkTest01001
 				request.getSession().setAttribute(cookieName, rememberMeKey);
-response.addCookie(rememberMe);
-response.getWriter().println(
+				response.addCookie(rememberMe);
+				response.getWriter().println(
 user + " has been remembered with cookie: " + rememberMe.getName() 
 						+ " whose value is: " + rememberMe.getValue() + "<br/>"
 );

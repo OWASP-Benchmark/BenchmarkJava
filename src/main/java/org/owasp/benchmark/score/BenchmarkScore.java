@@ -782,7 +782,7 @@ public class BenchmarkScore {
 				}
 
 				else if ( nodeName.equals( "issues" ) ) {
-					tr = new BurpReader().parse( root );
+					tr = new BurpReader().parse( fileToParse, root );
 				}
 
 				else if ( nodeName.equals( "netsparker" ) ) {
@@ -806,7 +806,7 @@ public class BenchmarkScore {
 				}
 
 				else if ( nodeName.equals( "WAS_SCAN_REPORT" ) ) {
-					tr = new QualysWASReader().parse( root );
+					tr = new QualysWASReader().parse( fileToParse, root );
 				}
 
 				else System.out.println("Error: No matching parser found for XML file: " + filename);
@@ -1325,6 +1325,7 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 		sb.append("<tr>");
 		sb.append("<th>Tool</th>");
 		if (mixedMode) sb.append("<th>Benchmark Version</th>");
+		sb.append("<th>Type</th>");
 		sb.append("<th>TPR*</th>");
 		sb.append("<th>FPR*</th>");
 		sb.append("<th>Score*</th>");
@@ -1343,6 +1344,7 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 				sb.append("<tr " + style + ">");
 				sb.append("<td>" + toolResult.getToolNameAndVersion() + "</td>");
 				if (mixedMode) sb.append("<td>" + toolResult.getBenchmarkVersion() + "</td>");
+				sb.append("<td>" + toolResult.getToolType() + "</td>");
 				sb.append("<td>" + new DecimalFormat("#0.00%").format(or.getTruePositiveRate()) + "</td>");
 				sb.append("<td>" + new DecimalFormat("#0.00%").format(or.getFalsePositiveRate()) + "</td>");
 				sb.append("<td>" + new DecimalFormat("#0.00%").format(or.getScore()) + "</td>");

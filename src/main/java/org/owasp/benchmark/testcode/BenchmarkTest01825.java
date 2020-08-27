@@ -3,7 +3,7 @@
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
-* <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
 *
 * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details.
 *
-* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Nick Sanidas
 * @created 2015
 */
 
@@ -33,10 +33,12 @@ public class BenchmarkTest01825 extends HttpServlet {
 	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html;charset=UTF-8");
 		javax.servlet.http.Cookie userCookie = new javax.servlet.http.Cookie("BenchmarkTest01825", "someSecret");
 		userCookie.setMaxAge(60*3); //Store cookie for 3 minutes
 		userCookie.setSecure(true);
 		userCookie.setPath(request.getRequestURI());
+		userCookie.setDomain(new java.net.URL(request.getRequestURL().toString()).getHost());
 		response.addCookie(userCookie);
 		javax.servlet.RequestDispatcher rd = request.getRequestDispatcher("/crypto-02/BenchmarkTest01825.html");
 		rd.include(request, response);
@@ -62,6 +64,7 @@ public class BenchmarkTest01825 extends HttpServlet {
 		
 		// Code based on example from:
 		// http://examples.javacodegeeks.com/core-java/crypto/encrypt-decrypt-file-stream-with-des/
+		// AES/GCM example from: https://javainterviewpoint.com/java-aes-256-gcm-encryption-and-decryption/
 	    // 16-byte initialization vector
 //	    byte[] iv = {
 //	    	(byte)0xB2, (byte)0x12, (byte)0xD5, (byte)0xB2,
@@ -73,13 +76,13 @@ public class BenchmarkTest01825 extends HttpServlet {
 		byte[] iv = random.generateSeed(16);
 	    
 		try {
-			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("AES/CBC/PKCS5PADDING", java.security.Security.getProvider("SunJCE"));
-            
-            // Prepare the cipher to encrypt
-            javax.crypto.SecretKey key = javax.crypto.KeyGenerator.getInstance("AES").generateKey();
-            java.security.spec.AlgorithmParameterSpec paramSpec = new javax.crypto.spec.IvParameterSpec(iv);
-            c.init(javax.crypto.Cipher.ENCRYPT_MODE, key, paramSpec);
-			
+			javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("AES/GCM/NOPADDING");
+
+			// Prepare the cipher to encrypt
+			javax.crypto.SecretKey key = javax.crypto.KeyGenerator.getInstance("AES").generateKey();
+			javax.crypto.spec.GCMParameterSpec paramSpec = new javax.crypto.spec.GCMParameterSpec(16 * 8, iv);
+			c.init(javax.crypto.Cipher.ENCRYPT_MODE, key, paramSpec);
+
 			// encrypt and store the results
 			byte[] input = { (byte)'?' };
 			Object inputParam = bar;
@@ -109,43 +112,43 @@ public class BenchmarkTest01825 extends HttpServlet {
 			
 		} catch (java.security.NoSuchAlgorithmException e) {
 			response.getWriter().println(
-"Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case"
+"Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case"
 );
 e.printStackTrace(response.getWriter());
 			throw new ServletException(e);
 		} catch (javax.crypto.NoSuchPaddingException e) {
 			response.getWriter().println(
-"Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case"
+"Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case"
 );
 e.printStackTrace(response.getWriter());
 			throw new ServletException(e);
 		} catch (javax.crypto.IllegalBlockSizeException e) {
 			response.getWriter().println(
-"Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case"
+"Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case"
 );
 e.printStackTrace(response.getWriter());
 			throw new ServletException(e);
 		} catch (javax.crypto.BadPaddingException e) {
 			response.getWriter().println(
-"Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case"
+"Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case"
 );
 e.printStackTrace(response.getWriter());
 			throw new ServletException(e);
 		} catch (java.security.InvalidKeyException e) {
 			response.getWriter().println(
-"Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case"
+"Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case"
 );
 e.printStackTrace(response.getWriter());
 			throw new ServletException(e);
 		} catch (java.security.InvalidAlgorithmParameterException e) {
 			response.getWriter().println(
-"Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) Test Case"
+"Problem executing crypto - javax.crypto.Cipher.getInstance(java.lang.String) Test Case"
 );
 e.printStackTrace(response.getWriter());
 			throw new ServletException(e);
 		}
 		response.getWriter().println(
-"Crypto Test javax.crypto.Cipher.getInstance(java.lang.String,java.security.Provider) executed"
+"Crypto Test javax.crypto.Cipher.getInstance(java.lang.String) executed"
 );
 
 	}  // end doPost

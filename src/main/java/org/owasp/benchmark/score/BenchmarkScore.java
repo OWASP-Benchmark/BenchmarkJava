@@ -89,6 +89,7 @@ import org.owasp.benchmark.score.parsers.TestCaseResult;
 import org.owasp.benchmark.score.parsers.TestResults;
 import org.owasp.benchmark.score.parsers.ThunderScanReader;
 import org.owasp.benchmark.score.parsers.VeracodeReader;
+import org.owasp.benchmark.score.parsers.VisualCodeGrepperReader;
 import org.owasp.benchmark.score.parsers.WebInspectReader;
 import org.owasp.benchmark.score.parsers.XanitizerReader;
 import org.owasp.benchmark.score.parsers.ZapReader;
@@ -751,6 +752,10 @@ public class BenchmarkScore {
 
 			else if ( line2.startsWith( "<analysisResult") || line2.startsWith( "<analysisReportResult")) {
 				tr = new JuliaReader().parse( fileToParse );
+			}
+
+			else if (line2.startsWith("<CodeIssueCollection")) {
+				tr = new VisualCodeGrepperReader().parse(fileToParse);
 			}
 
 			else { // Handle XML where we have to look for a specific node to identify the tool type

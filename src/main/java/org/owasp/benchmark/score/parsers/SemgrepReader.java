@@ -33,6 +33,7 @@ public class SemgrepReader extends Reader {
 
     private int translate(int cwe) {
         /*
+        CWEs reported by semgrep and not mapped in this function:
          * 113 // Header injection;
          * 200 // Information Leak / Disclosure;
          * 276 // Incorrect Default Permissions;

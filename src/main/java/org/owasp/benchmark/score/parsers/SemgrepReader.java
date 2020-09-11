@@ -24,7 +24,6 @@ public class SemgrepReader extends Reader {
         for (int i = 0; i < results.length(); i++) {
             TestCaseResult tcr = parseSemgrepFindings(results.getJSONObject(i));
             if (tcr != null) {
-                System.out.print("|Result #"+i+": " +tcr.getCWE());
                 tr.put(tcr);
             }
         }

@@ -81,6 +81,7 @@ import org.owasp.benchmark.score.parsers.QualysWASReader;
 import org.owasp.benchmark.score.parsers.Rapid7Reader;
 import org.owasp.benchmark.score.parsers.Reader;
 import org.owasp.benchmark.score.parsers.SeekerReader;
+import org.owasp.benchmark.score.parsers.SemgrepReader;
 import org.owasp.benchmark.score.parsers.ShiftLeftReader;
 import org.owasp.benchmark.score.parsers.SnappyTickReader;
 import org.owasp.benchmark.score.parsers.SonarQubeReader;
@@ -668,6 +669,8 @@ public class BenchmarkScore {
 				tr = new CoverityReader().parse( fileToParse );
 			} else if ( line2.contains("Vendor") && line2.contains("Checkmarx") ) {
 				tr = new CheckmarxESReader().parse( fileToParse );
+			} else if (line2.contains("results")) {
+				tr = new SemgrepReader().parse( fileToParse );
 			} else System.out.println("Error: No matching parser found for JSON file: " + filename);
 		}
 

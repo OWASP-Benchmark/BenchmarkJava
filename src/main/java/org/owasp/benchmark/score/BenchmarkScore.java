@@ -48,6 +48,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.io.FileUtils;
+import org.json.JSONObject;
+
 import org.owasp.benchmark.score.parsers.AcunetixReader;
 import org.owasp.benchmark.score.parsers.AppScanDynamicReader;
 import org.owasp.benchmark.score.parsers.AppScanDynamicReader2;
@@ -81,6 +83,7 @@ import org.owasp.benchmark.score.parsers.QualysWASReader;
 import org.owasp.benchmark.score.parsers.Rapid7Reader;
 import org.owasp.benchmark.score.parsers.Reader;
 import org.owasp.benchmark.score.parsers.SeekerReader;
+import org.owasp.benchmark.score.parsers.SemgrepReader;
 import org.owasp.benchmark.score.parsers.ShiftLeftReader;
 import org.owasp.benchmark.score.parsers.SnappyTickReader;
 import org.owasp.benchmark.score.parsers.SonarQubeReader;
@@ -668,7 +671,15 @@ public class BenchmarkScore {
 				tr = new CoverityReader().parse( fileToParse );
 			} else if ( line2.contains("Vendor") && line2.contains("Checkmarx") ) {
 				tr = new CheckmarxESReader().parse( fileToParse );
-			} else System.out.println("Error: No matching parser found for JSON file: " + filename);
+			} else {
+				// Have to parse the JSON object to figure out which tool it is
+				String content = new String(Files.readAllBytes(Paths.get(fileToParse.getPath())));
+				JSONObject jsonobj = new JSONObject(content);
+
+				if (jsonobj.getJSONArray("results") != null) {
+					tr = new SemgrepReader().parse( jsonobj );
+				} else System.out.println("Error: No matching parser found for JSON file: " + filename);
+			}
 		}
 
 		else if ( filename.endsWith( ".sarif" ) ) {

@@ -33,10 +33,12 @@ public class BenchmarkTest01832 extends HttpServlet {
 	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html;charset=UTF-8");
 		javax.servlet.http.Cookie userCookie = new javax.servlet.http.Cookie("BenchmarkTest01832", "Ms+Bar");
 		userCookie.setMaxAge(60*3); //Store cookie for 3 minutes
 		userCookie.setSecure(true);
 		userCookie.setPath(request.getRequestURI());
+		userCookie.setDomain(new java.net.URL(request.getRequestURL().toString()).getHost());
 		response.addCookie(userCookie);
 		javax.servlet.RequestDispatcher rd = request.getRequestDispatcher("/ldapi-00/BenchmarkTest01832.html");
 		rd.include(request, response);
@@ -62,7 +64,7 @@ public class BenchmarkTest01832 extends HttpServlet {
 		
 	org.owasp.benchmark.helpers.LDAPManager ads = new org.owasp.benchmark.helpers.LDAPManager();
 	try {
-		response.setContentType("text/html");
+		response.setContentType("text/html;charset=UTF-8");
 		javax.naming.directory.DirContext ctx = ads.getDirContext();
 		String base = "ou=users,ou=system";
 		javax.naming.directory.SearchControls sc = new javax.naming.directory.SearchControls();

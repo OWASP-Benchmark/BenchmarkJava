@@ -48,6 +48,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.io.FileUtils;
+import org.json.JSONObject;
+
 import org.owasp.benchmark.score.parsers.AcunetixReader;
 import org.owasp.benchmark.score.parsers.AppScanDynamicReader;
 import org.owasp.benchmark.score.parsers.AppScanDynamicReader2;
@@ -81,6 +83,7 @@ import org.owasp.benchmark.score.parsers.QualysWASReader;
 import org.owasp.benchmark.score.parsers.Rapid7Reader;
 import org.owasp.benchmark.score.parsers.Reader;
 import org.owasp.benchmark.score.parsers.SeekerReader;
+import org.owasp.benchmark.score.parsers.SemgrepReader;
 import org.owasp.benchmark.score.parsers.ShiftLeftReader;
 import org.owasp.benchmark.score.parsers.SnappyTickReader;
 import org.owasp.benchmark.score.parsers.SonarQubeReader;
@@ -89,12 +92,15 @@ import org.owasp.benchmark.score.parsers.TestCaseResult;
 import org.owasp.benchmark.score.parsers.TestResults;
 import org.owasp.benchmark.score.parsers.ThunderScanReader;
 import org.owasp.benchmark.score.parsers.VeracodeReader;
+import org.owasp.benchmark.score.parsers.VisualCodeGrepperReader;
+import org.owasp.benchmark.score.parsers.WapitiReader;
 import org.owasp.benchmark.score.parsers.WebInspectReader;
 import org.owasp.benchmark.score.parsers.XanitizerReader;
 import org.owasp.benchmark.score.parsers.ZapReader;
 import org.owasp.benchmark.score.report.Report;
 import org.owasp.benchmark.score.report.ScatterHome;
 import org.owasp.benchmark.score.report.ScatterVulns;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -103,6 +109,9 @@ public class BenchmarkScore {
 
 	// The prefix for the generated test file names. Used by lots of other classes too.
 	public static final String BENCHMARKTESTNAME = "BenchmarkTest";
+
+	// The # of numbers in a test case name. Must match what is actually generated.
+	public static final int TESTNAMEIDLENGTH = 5;
 
 	private static final String GUIDEFILENAME = "OWASP_Benchmark_Guide.html";
 	private static final String HOMEFILENAME = "OWASP_Benchmark_Home.html";
@@ -662,12 +671,27 @@ public class BenchmarkScore {
 		}
 
 		else if ( filename.endsWith( ".json" ) ) {
+
 			String line2 = getLine( fileToParse, 1 );
 			if ( line2.contains("Coverity") || line2.contains("formatVersion") ) {
 				tr = new CoverityReader().parse( fileToParse );
-			} else if ( line2.contains("Vendor") && line2.contains("Checkmarx") ) {
+			}
+
+			else if ( line2.contains("Vendor") && line2.contains("Checkmarx") ) {
 				tr = new CheckmarxESReader().parse( fileToParse );
-			} else System.out.println("Error: No matching parser found for JSON file: " + filename);
+			}
+
+			else { // Handle JSON where we have to look for a specific node to identify the tool type
+
+				String content = new String(Files.readAllBytes(Paths.get(fileToParse.getPath())));
+				JSONObject jsonobj = new JSONObject(content);
+
+				if (jsonobj.getJSONArray("results") != null) {
+					tr = new SemgrepReader().parse( jsonobj );
+				}
+
+				else System.out.println("Error: No matching parser found for JSON file: " + filename);
+			}
 		}
 
 		else if ( filename.endsWith( ".sarif" ) ) {
@@ -745,12 +769,20 @@ public class BenchmarkScore {
 				tr = new CheckmarxReader().parse( fileToParse );
 			}
 
-			else if ( line2.startsWith( "<report" )) {
+			else if ( line2.contains( "Arachni" )) {
 				tr = new ArachniReader().parse( fileToParse );
 			}
 
 			else if ( line2.startsWith( "<analysisResult") || line2.startsWith( "<analysisReportResult")) {
 				tr = new JuliaReader().parse( fileToParse );
+			}
+
+			else if (line2.startsWith("<CodeIssueCollection")) {
+				tr = new VisualCodeGrepperReader().parse(fileToParse);
+			}
+
+			else if ( getLine( fileToParse, 4 ).contains( "Wapiti" )) {
+				tr = new WapitiReader().parse( fileToParse );
 			}
 
 			else { // Handle XML where we have to look for a specific node to identify the tool type
@@ -1325,6 +1357,7 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 		sb.append("<tr>");
 		sb.append("<th>Tool</th>");
 		if (mixedMode) sb.append("<th>Benchmark Version</th>");
+		sb.append("<th>Type</th>");
 		sb.append("<th>TPR*</th>");
 		sb.append("<th>FPR*</th>");
 		sb.append("<th>Score*</th>");
@@ -1343,6 +1376,7 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 				sb.append("<tr " + style + ">");
 				sb.append("<td>" + toolResult.getToolNameAndVersion() + "</td>");
 				if (mixedMode) sb.append("<td>" + toolResult.getBenchmarkVersion() + "</td>");
+				sb.append("<td>" + toolResult.getToolType() + "</td>");
 				sb.append("<td>" + new DecimalFormat("#0.00%").format(or.getTruePositiveRate()) + "</td>");
 				sb.append("<td>" + new DecimalFormat("#0.00%").format(or.getFalsePositiveRate()) + "</td>");
 				sb.append("<td>" + new DecimalFormat("#0.00%").format(or.getScore()) + "</td>");

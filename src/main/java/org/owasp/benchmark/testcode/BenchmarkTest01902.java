@@ -52,7 +52,7 @@ public class BenchmarkTest01902 extends HttpServlet {
 		
 	org.owasp.benchmark.helpers.LDAPManager ads = new org.owasp.benchmark.helpers.LDAPManager();
 	try {
-		response.setContentType("text/html");
+		response.setContentType("text/html;charset=UTF-8");
 		javax.naming.directory.DirContext ctx = ads.getDirContext();
 		String base = "ou=users,ou=system";
 		javax.naming.directory.SearchControls sc = new javax.naming.directory.SearchControls();

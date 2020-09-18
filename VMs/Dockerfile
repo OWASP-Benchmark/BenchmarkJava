@@ -4,21 +4,18 @@ MAINTAINER "Dave Wichers dave.wichers@owasp.org"
 
 RUN apt-get update
 RUN apt-get install -q -y \
-     openjdk-8-jre-headless \
-     openjdk-8-jdk \
-     git \
-     maven \
-     wget \
-     iputils-ping \
-     && apt-get clean
+    openjdk-8-jre-headless \
+    openjdk-8-jdk \
+    maven \
+    wget \
+    iputils-ping \
+    && apt-get clean
 
-RUN mkdir /owasp
-WORKDIR /owasp
-RUN git clone https://github.com/OWASP/benchmark
+ADD . /owasp/benchmark
 WORKDIR /owasp/benchmark
 RUN mvn clean package cargo:install
 
-RUN useradd -d /home/bench -m -s /bin/bash bench 
+RUN useradd -d /home/bench -m -s /bin/bash bench
 RUN echo bench:bench | chpasswd
 
 RUN chown -R bench /owasp/

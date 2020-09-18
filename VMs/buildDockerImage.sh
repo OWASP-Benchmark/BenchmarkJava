@@ -1,13 +1,10 @@
-# Pull in latest version of ubuntu
-docker pull ubuntu:latest
-# Remove any ubuntu:<none> image if it was left behind by a new version of ubunto:latest being pulled
-i=$(docker images | grep "ubuntu" | grep "<none" | awk '{print $3}')
-if [ "$i" ]
-then
-  docker rmi $i
+#!/bin/bash
+
+dirname=$(basename "$PWD")
+
+if [[ "$dirname" == "VMs" ]]; then
+  # running script from VMs subdir, go to project root
+  #   for docker context
+  cd ..
 fi
-
-# Since Docker doesn't auto delete anything, just like for the Ubunto update, delete any existing benchmark:latest image before building a new one
-docker image rm benchmark:latest
-docker build -t benchmark .
-
+docker build -t benchmark:latest -f VMs/Dockerfile .

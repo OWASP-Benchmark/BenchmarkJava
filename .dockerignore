@@ -1,0 +1,10 @@
+# Ignore everything
+**
+
+# Allow files and directories
+!/data
+/* !/scripts */
+!/src
+!/tools
+!/pom.xml
+!/*.sh

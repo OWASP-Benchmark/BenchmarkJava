@@ -341,7 +341,7 @@
 			           <configuration>
 			             <target>
 			               <ant target="run" antfile="${basedir}/src/config/build.xml">
-			                 <reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+			                 <reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
 			               </ant>
 			             </target>
 			           </configuration>
@@ -355,7 +355,7 @@
 			           <configuration>
 			             <target>
 			               <ant target="databaseServer" antfile="${basedir}/src/config/build.xml">
-			                 <reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+			                 <reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
 			               </ant>
 			             </target>
 			           </configuration>
@@ -369,7 +369,7 @@
 			           <configuration>
 			             <target>
 			               <ant target="databaseInit" antfile="${basedir}/src/config/build.xml">
-			                 <reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+			                 <reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
 			               </ant>
 			             </target>
 			           </configuration>
@@ -544,7 +544,7 @@
 								<configuration>
 									<target>
 										<ant target="run" antfile="${basedir}/src/config/build.xml">
-											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
 										</ant>
 									</target>
 								</configuration>
@@ -558,7 +558,7 @@
 								<configuration>
 									<target>
 										<ant target="databaseServer" antfile="${basedir}/src/config/build.xml">
-											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
 										</ant>
 									</target>
 								</configuration>
@@ -572,7 +572,7 @@
 								<configuration>
 									<target>
 										<ant target="databaseInit" antfile="${basedir}/src/config/build.xml">
-											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
 										</ant>
 									</target>
 								</configuration>
@@ -1218,7 +1218,7 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 		<version.jersey>1.19.4</version.jersey>
 		<version.slf4j>1.7.30</version.slf4j>
 		<version.spotbugs.maven>4.0.4</version.spotbugs.maven>
-		<version.springframework>4.3.27.RELEASE</version.springframework>
+		<version.springframework>4.3.29.RELEASE</version.springframework>
 		<!-- tomcat 8.5 is last version to support Java 7. Tomcat 9+ requires Java 8. -->
 		<tomcat.major.version>8</tomcat.major.version>
 		<version.tomcat>8.5.56</version.tomcat>

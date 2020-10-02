@@ -47,7 +47,7 @@ public class HTTPResponseHeaderFilter implements Filter {
 			HttpServletResponse httpResponse = (HttpServletResponse) response;
 			// Note that setHeader overwrites any existing header already set with the same name.
 			httpResponse.setHeader("Content-Security-Policy", "frame-ancestors 'self'; form-action 'self'; " +
-				"default-src 'self'; style-src 'unsafe-inline' 'self'; style-src-elem 'self' fonts.googleapis.com; " +
+				"default-src 'unsafe-inline' 'self'; style-src 'unsafe-inline' 'self'; style-src-elem 'self' fonts.googleapis.com; " +
 				"font-src 'self' fonts.gstatic.com");
 			// The proper setting for this header is 'private' but DAST tools still complain about it, so
 			// setting it this way even though the app will be slightly slower.

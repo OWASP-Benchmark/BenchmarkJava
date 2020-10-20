@@ -100,6 +100,7 @@ import org.owasp.benchmark.score.parsers.ZapReader;
 import org.owasp.benchmark.score.report.Report;
 import org.owasp.benchmark.score.report.ScatterHome;
 import org.owasp.benchmark.score.report.ScatterVulns;
+import org.owasp.benchmark.score.parsers.SecPointReader;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -890,6 +891,10 @@ public class BenchmarkScore {
 			} finally {
 				outputFile.delete();
 			}
+		}
+
+		else if ( filename.endsWith( ".sec" ) ) {
+			tr = new SecPointReader().parse( fileToParse );
 		}
 
 		else if ( filename.endsWith( ".log" ) ) {

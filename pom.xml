@@ -301,6 +301,8 @@
 										-Dcontrast.noteamserver.enable=true
 										-Dcontrast.teamserver.suppress=true
 										-Dcontrast.assess.threshold.entries=100000
+										-Dcontrast.poll.features=false
+										-Dcontrast.standalone.app.name=OWASPBenchmark
 									</cargo.jvmargs>
 									<cargo.servlet.port>8443</cargo.servlet.port>
 									<cargo.protocol>https</cargo.protocol>

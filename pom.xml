@@ -298,11 +298,12 @@
 										-Dcontrast.dir=${basedir}/tools/Contrast/working
 										-Dcontrast.log.daily=true
 										-Dcontrast.level=debug
-										-Dcontrast.noteamserver.enable=true
-										-Dcontrast.teamserver.suppress=true
 										-Dcontrast.assess.threshold.entries=100000
-										-Dcontrast.poll.features=false
 										-Dcontrast.standalone.app.name=OWASPBenchmark
+										-Dcontrast.user.name=$CONTRAST_CE_AGENT_USERNAME
+										-Dcontrast.service.key=$CONTRAST_CE_AGENT_SERVICE_KEY
+										-Dcontrast.api.key=$CONTRAST_CE_API_KEY
+										-Dcontrast.teamserver.url=$CONTRAST_CE_URL
 									</cargo.jvmargs>
 									<cargo.servlet.port>8443</cargo.servlet.port>
 									<cargo.protocol>https</cargo.protocol>

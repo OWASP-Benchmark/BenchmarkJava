@@ -276,7 +276,7 @@
 								</zipUrlInstaller>
 							</container>
 							<properties>
-								<cargo.jvmargs>-XX:MaxPermSize=6G -Xms1G –Xmx8G</cargo.jvmargs>
+								<cargo.jvmargs>-XX:MaxPermSize=6G -Xms1G –Xmx8G -XX:+UseParallelGC</cargo.jvmargs>
 							</properties>
 							<configuration>
 								<configfiles>

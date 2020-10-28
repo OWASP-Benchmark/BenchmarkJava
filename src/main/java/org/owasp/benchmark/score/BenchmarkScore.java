@@ -665,7 +665,7 @@ public class BenchmarkScore {
 		// For example: Benchmark-1.1-Coverity-results-v1.3.2661-6720.json  (the version # is 1.3.2661 in this example).
 		// This code should also handle: Benchmark-1.1-Coverity-results-v1.3.2661.xml (where the compute time '-6720' isn't specified)
 		int indexOfVersionMarker = filename.lastIndexOf("-v");
-		if ( indexOfVersionMarker != -1) {
+		if ( indexOfVersionMarker != -1 && tr != null) {
 			String restOfFileName = filename.substring(indexOfVersionMarker+2);
 			int endIndex = restOfFileName.lastIndexOf('-');
 			if (endIndex == -1) endIndex = restOfFileName.lastIndexOf('.');

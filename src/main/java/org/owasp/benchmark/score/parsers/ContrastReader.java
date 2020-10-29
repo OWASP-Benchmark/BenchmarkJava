@@ -62,7 +62,6 @@ public class ContrastReader extends Reader {
 			}
 		}
 		reader.close();
-		tr.setTime(calculateTime(firstLine, lastLine));
 		return tr;
 	}
 

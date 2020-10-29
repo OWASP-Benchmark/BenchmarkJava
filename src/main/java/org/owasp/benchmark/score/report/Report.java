@@ -139,7 +139,7 @@ public class Report implements Comparable<Report> {
 		String html = template;
 		html = html.replace("${title}", title);
 		html = html.replace("${tests}", Integer.toString(totalResults));
-		html = html.replace("${time}", or.getTime());
+		//html = html.replace("${time}", or.getTime());
 		html = html.replace("${score}", "" + new DecimalFormat("#0.00%").format(or.getScore()));
 		html = html.replace("${tool}", actualResults.getTool());
 		html = html.replace("${version}", actualResults.getBenchmarkVersion());

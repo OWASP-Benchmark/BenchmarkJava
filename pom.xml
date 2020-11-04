@@ -299,8 +299,8 @@
 										-Dcontrast.log.daily=true
 										-Dcontrast.level=debug
 										-Dcontrast.assess.threshold.entries=100000
-										-Dcontrast.standalone.app.name=OWASPBenchmark
-										-Dcontrast.saveresults=always
+										-Dcontrast.agent.java.standalone_app_name=OWASPBenchmark
+										-Dcontrast.assess.save_results=always
 									</cargo.jvmargs>
 									<cargo.servlet.port>8443</cargo.servlet.port>
 									<cargo.protocol>https</cargo.protocol>

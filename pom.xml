@@ -672,7 +672,7 @@
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			<version>1.14</version>
+			<version>1.15</version>
 		</dependency>
 
 		<!-- mvn dependency:analyze says this is an unused declared dependency, but its wrong. Get this runtime error if it's not included:
@@ -825,7 +825,7 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-			<version>4.5.12</version>
+			<version>4.5.13</version>
 		</dependency>
 
 		<dependency>
@@ -837,6 +837,7 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk15on</artifactId>
+			<!-- version>1.66</version - Upgrading to this version causes a NullPointerException in maven-enforcer-plugin -->
 			<version>1.65.01</version>
 		</dependency>
 
@@ -891,7 +892,7 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 		<dependency>
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
-			<!-- <version>2.5.0</version> This is latest version, but requires Java 8. 2.3.6 is last version to support Java 7. -->
+			<!-- <version>2.5.1</version> This is latest version, but requires Java 8. 2.3.6 is last version to support Java 7. -->
 			<version>2.3.6</version>
 		</dependency>
 
@@ -904,13 +905,14 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 		<dependency>
 			<groupId>org.jfree</groupId>
 			<artifactId>jfreechart</artifactId>
+			<!-- <version>1.5.1</version> This is latest version, but requires Java 8. 1.5.0 is last version to support Java 7. -->
 			<version>1.5.0</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
-			<version>20190722</version>
+			<version>20200518</version>
 		</dependency>
 
                 <dependency>
@@ -1217,8 +1219,8 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 		<version.jackson>2.9.8</version.jackson>
 		<version.jersey>1.19.4</version.jersey>
 		<version.slf4j>1.7.30</version.slf4j>
-		<version.spotbugs.maven>4.0.4</version.spotbugs.maven>
-		<version.springframework>4.3.27.RELEASE</version.springframework>
+		<version.spotbugs.maven>4.1.4</version.spotbugs.maven>
+		<version.springframework>4.3.29.RELEASE</version.springframework>
 		<!-- tomcat 8.5 is last version to support Java 7. Tomcat 9+ requires Java 8. -->
 		<tomcat.major.version>8</tomcat.major.version>
 		<version.tomcat>8.5.56</version.tomcat>

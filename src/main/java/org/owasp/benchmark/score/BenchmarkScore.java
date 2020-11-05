@@ -26,10 +26,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -46,63 +43,28 @@ import java.util.TreeSet;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.io.FileUtils;
-import org.json.JSONObject;
-
-import org.owasp.benchmark.score.parsers.AcunetixReader;
-import org.owasp.benchmark.score.parsers.AppScanDynamicReader;
-import org.owasp.benchmark.score.parsers.AppScanDynamicReader2;
-import org.owasp.benchmark.score.parsers.AppScanSourceReader;
-import org.owasp.benchmark.score.parsers.AppScanSourceReader2;
-import org.owasp.benchmark.score.parsers.ArachniReader;
-import org.owasp.benchmark.score.parsers.BurpReader;
-import org.owasp.benchmark.score.parsers.CASTAIPReader;
-import org.owasp.benchmark.score.parsers.CheckmarxESReader;
-import org.owasp.benchmark.score.parsers.CheckmarxReader;
-import org.owasp.benchmark.score.parsers.CheckmarxIASTReader;
 import org.owasp.benchmark.score.parsers.ContrastReader;
 import org.owasp.benchmark.score.parsers.Counter;
-import org.owasp.benchmark.score.parsers.CoverityReader;
-import org.owasp.benchmark.score.parsers.FaastReader;
-import org.owasp.benchmark.score.parsers.FindbugsReader;
-import org.owasp.benchmark.score.parsers.FortifyReader;
-import org.owasp.benchmark.score.parsers.FusionLiteInsightReader;
-import org.owasp.benchmark.score.parsers.HCLReader;
-import org.owasp.benchmark.score.parsers.HdivReader;
-import org.owasp.benchmark.score.parsers.JuliaReader;
-import org.owasp.benchmark.score.parsers.KiuwanReader;
-import org.owasp.benchmark.score.parsers.LGTMReader;
-import org.owasp.benchmark.score.parsers.NetsparkerReader;
-import org.owasp.benchmark.score.parsers.NoisyCricketReader;
 import org.owasp.benchmark.score.parsers.OverallResult;
 import org.owasp.benchmark.score.parsers.OverallResults;
-import org.owasp.benchmark.score.parsers.ParasoftReader;
-import org.owasp.benchmark.score.parsers.PMDReader;
-import org.owasp.benchmark.score.parsers.QualysWASReader;
-import org.owasp.benchmark.score.parsers.Rapid7Reader;
-import org.owasp.benchmark.score.parsers.Reader;
-import org.owasp.benchmark.score.parsers.SeekerReader;
-import org.owasp.benchmark.score.parsers.SemgrepReader;
-import org.owasp.benchmark.score.parsers.ShiftLeftReader;
-import org.owasp.benchmark.score.parsers.SnappyTickReader;
-import org.owasp.benchmark.score.parsers.SonarQubeReader;
-import org.owasp.benchmark.score.parsers.SourceMeterReader;
 import org.owasp.benchmark.score.parsers.TestCaseResult;
 import org.owasp.benchmark.score.parsers.TestResults;
-import org.owasp.benchmark.score.parsers.ThunderScanReader;
-import org.owasp.benchmark.score.parsers.VeracodeReader;
-import org.owasp.benchmark.score.parsers.VisualCodeGrepperReader;
-import org.owasp.benchmark.score.parsers.WapitiReader;
-import org.owasp.benchmark.score.parsers.WebInspectReader;
-import org.owasp.benchmark.score.parsers.XanitizerReader;
-import org.owasp.benchmark.score.parsers.ZapReader;
 import org.owasp.benchmark.score.report.Report;
 import org.owasp.benchmark.score.report.ScatterHome;
 import org.owasp.benchmark.score.report.ScatterVulns;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
+import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 public class BenchmarkScore {
@@ -234,71 +196,71 @@ public class BenchmarkScore {
 					TestResults expectedResults = null;
 					String expectedResultsFilename = null;
 
-				// Step 4a: Find and process the expected results file so we know what each tool in this directory 'should do'
+					// Step 4a: Find and process the expected results file so we know what each tool in this directory 'should do'
 					for ( File resultsDirFile : rootDirFile.listFiles() ) {
 
-					if (resultsDirFile.getName().startsWith("expectedresults-")) {
-						if (expectedResults != null) {
-							System.out.println( "Found 2nd expected results file " + resultsDirFile.getAbsolutePath()
-								+ " in same directory. Can only have 1 in each results directory");
-							System.exit(-1);
-						}
+						if (resultsDirFile.getName().startsWith("expectedresults-")) {
+							if (expectedResults != null) {
+								System.out.println( "Found 2nd expected results file " + resultsDirFile.getAbsolutePath()
+									+ " in same directory. Can only have 1 in each results directory");
+								System.exit(-1);
+							}
 
-						// read in the expected results for this directory of results
-						expectedResults = readExpectedResults( resultsDirFile );
-						System.out.println("Getting expected results from: " + resultsDirFile);
-						if (expectedResults == null) {
-							System.out.println( "Couldn't read expected results file: "
-									+ resultsDirFile.getAbsolutePath());
-							System.exit(-1);
+							// read in the expected results for this directory of results
+							expectedResults = readExpectedResults( resultsDirFile );
+							System.out.println("Getting expected results from: " + resultsDirFile);
+							if (expectedResults == null) {
+								System.out.println( "Couldn't read expected results file: "
+										+ resultsDirFile.getAbsolutePath());
+								System.exit(-1);
+							} // end if
+
+							expectedResultsFilename = resultsDirFile.getName();
+							if (benchmarkVersion == null) {
+								benchmarkVersion = expectedResults.getBenchmarkVersion();
+							} else benchmarkVersion += "," + expectedResults.getBenchmarkVersion();
+							System.out.println("\nFound expected results file: " + resultsDirFile.getAbsolutePath());
 						} // end if
+					} // end for loop going through each directory looking for expected results file
 
-						expectedResultsFilename = resultsDirFile.getName();
-						if (benchmarkVersion == null) {
-							benchmarkVersion = expectedResults.getBenchmarkVersion();
-						} else benchmarkVersion += "," + expectedResults.getBenchmarkVersion();
-						System.out.println("\nFound expected results file: " + resultsDirFile.getAbsolutePath());
-					} // end if
-				} // end for loop going through each directory looking for expected results file
-
-				// Make sure we found an expected results file, before processing the results
-				if (expectedResults == null) {
-					System.out.println( "Couldn't find expected results file in results directory: "
-						+ rootDirFile.getAbsolutePath());
-					System.out.println( "Expected results file has to be a .csv file that starts with: 'expectedresults-'");
-					System.exit(-1);
-				}
-
-				// Step 5a: Go through each result file and generate a scorecard for that tool.
-				if (!anonymousMode) {
-					for ( File actual : rootDirFile.listFiles() ) {
-						// Don't confuse the expected results file as an actual results file if its in the same directory
-						if (!actual.isDirectory() && !expectedResultsFilename.equals(actual.getName())) {
-							process( actual, expectedResults, toolResults);
-						}
-					} // end for
-				} else {
-					// To handle anonymous mode, we are going to randomly grab files out of this directory
-					// and process them. By doing it this way, multiple runs should randomly order the commercial
-					// tools each time.
-					List<File> files = new ArrayList();
-					for ( File file : rootDirFile.listFiles() ) {
-						files.add(file);
+					// Make sure we found an expected results file, before processing the results
+					if (expectedResults == null) {
+						System.out.println( "Couldn't find expected results file in results directory: "
+							+ rootDirFile.getAbsolutePath());
+						System.out.println( "Expected results file has to be a .csv file that starts with: 'expectedresults-'");
+						System.exit(-1);
 					}
 
-					SecureRandom generator = SecureRandom.getInstance("SHA1PRNG");
-					while (files.size() > 0) {
-						// Get a random, positive integer
-						int fileToGet = Math.abs(generator.nextInt(files.size()));
-						File actual = files.remove(fileToGet);
-						// Don't confuse the expected results file as an actual results file if its in the same directory
-						if (!actual.isDirectory() && !expectedResultsFilename.equals(actual.getName())) {
-							process( actual, expectedResults, toolResults);
+					// Step 5a: Go through each result file and generate a scorecard for that tool.
+					if (!anonymousMode) {
+						for ( File actual : rootDirFile.listFiles() ) {
+							// Don't confuse the expected results file as an actual results file if its in the same directory
+							if (!actual.isDirectory() && !expectedResultsFilename.equals(actual.getName())) {
+								process( actual, expectedResults, toolResults);
+							}
+						} // end for
+					} else {
+						// To handle anonymous mode, we are going to randomly grab files out of this directory
+						// and process them. By doing it this way, multiple runs should randomly order the commercial
+						// tools each time.
+						List<File> files = new ArrayList();
+						for ( File file : rootDirFile.listFiles() ) {
+							files.add(file);
 						}
-					} // end while
-				} // end else
-			} // end if a directory
-		} // end for loop through all files in the directory
+
+						SecureRandom generator = SecureRandom.getInstance("SHA1PRNG");
+						while (files.size() > 0) {
+							// Get a random, positive integer
+							int fileToGet = Math.abs(generator.nextInt(files.size()));
+							File actual = files.remove(fileToGet);
+							// Don't confuse the expected results file as an actual results file if its in the same directory
+							if (!actual.isDirectory() && !expectedResultsFilename.equals(actual.getName())) {
+								process( actual, expectedResults, toolResults);
+							}
+						} // end while
+					} // end else
+				} // end if a directory
+			} // end for loop through all files in the directory
 
 		// process the results the normal way with a single results directory
 		} else { // Not "mixed"
@@ -415,7 +377,7 @@ public class BenchmarkScore {
 	 * The method takes in a tool scan results file and determined how well that tool did against the benchmark.
 	 * @param f - The results file to process. This is the native results file from the tool.
 	 * @param expectedResults - This is the expected results csv file for this version of the Benchmark.
-	 * @param toolResults - This list contains some information about the results for each tool. It is updated
+	 * @param toolreports - This list contains some information about the results for each tool. It is updated
 	 * in this method so that the menus across all the scorecards can be generated and a summary scorecard can be
 	 * computed. A new entry is added each time this method is called which adds the name of the tool, the filename of the
 	 * scorecard, and the report that was created for that tool.
@@ -438,6 +400,8 @@ public class BenchmarkScore {
                 String actualResultsFileName = "notProduced";
                 if (!(showAveOnlyMode && actualResults.isCommercial)) {
                 	actualResultsFileName = produceResultsFile (expectedResults);
+
+                	produceJUnitXMLFile(expectedResults);
                 }
 
                 Map<String,Counter> scores = calculateScores( expectedResults );
@@ -550,7 +514,7 @@ public class BenchmarkScore {
 
     /**
      * This method translates vulnerability categories, e.g., xss, to their long names for human consumption.
-     * @param The category to translate.
+     * @param category The category to translate.
      * @return The human readable value of that category.
      */
 	public static String translateCategoryToName(String category) {
@@ -574,7 +538,7 @@ public class BenchmarkScore {
 
     /**
      * This method translates vulnerability categories, e.g., xss, to their CWE number.
-     * @param The category to translate.
+     * @param category The category to translate.
      * @return The CWE # of that category.
      */
 	public static int translateCategoryToCWE(String category) {
@@ -597,7 +561,7 @@ public class BenchmarkScore {
 
     /**
      * This method translates vulnerability names, e.g., Cross-Site Scripting, to their CWE number.
-     * @param The category to translate.
+     * @param category The category to translate.
      * @return The CWE # of that category.
      */
 	public static int translateNameToCWE(String category) {
@@ -897,19 +861,19 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 				// Write meta data to file here.
 				TestCaseResult actualResult = actual.get(expectedResultsKey.intValue()).get(0);
 				ps.print(actualResult.getName());
-				ps.print(", " + actualResult.getCategory());
-				ps.print(", " + actualResult.getCWE());
+				ps.print("," + actualResult.getCategory());
+				ps.print("," + actualResult.getCWE());
 				if (fulldetails) {
 					ps.print("," + actualResult.getSource());
 					ps.print("," + actualResult.getDataFlow());
 					ps.print("," + actualResult.getSink());
 				}
 				boolean isreal = actualResult.isReal();
-				ps.print(", " + isreal);
+				ps.print("," + isreal);
 				boolean passed = actualResult.isPassed();
 				boolean toolresult = !(isreal^passed);
-				ps.print(", " + toolresult);
-				ps.println(", " + (passed ? "pass" : "fail"));
+				ps.print("," + toolresult);
+				ps.println("," + (passed ? "pass" : "fail"));
 			}
 
 			System.out.println("Actual results file generated: " + resultsFile.getAbsolutePath());
@@ -1210,17 +1174,73 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 	    }
 	}
 
-	private static Document getXMLDocument( File f ) throws Exception {
-        DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-		// Prevent XXE = Note, disabling this entirely breaks the parsing of some XML files, like a Burp results
-        // file, so have to use the alternate defense.
-		//dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-        docBuilderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-		docBuilderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-        DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-        InputSource is = new InputSource(new FileInputStream(f));
-        Document doc = docBuilder.parse(is);
-        return doc;
-	}
+	private static void produceJUnitXMLFile(TestResults actual){
+		final Set<Integer> keys = actual.keySet();
+		int numTests = 0;
+		int failedTests = 0;
+		for (final Integer key : keys){
+			numTests++;
+			final TestCaseResult tcr = actual.get(key).get(0);
 
+			if (!tcr.isPassed()){
+				failedTests++;
+			}
+		}
+
+		final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+		try{
+			final DocumentBuilder db = factory.newDocumentBuilder();
+			final Document dom = db.newDocument();
+
+			Element testsuiteElement = dom.createElement("testsuite");
+			testsuiteElement.setAttribute("name", "OWASP Benchmark");
+			testsuiteElement.setAttribute("tests", Integer.toString(numTests));
+			testsuiteElement.setAttribute("skipped", "0");
+			testsuiteElement.setAttribute("failures", Integer.toString(failedTests));
+
+			for (final Integer key : keys){
+				final TestCaseResult tcr = actual.get(key).get(0);
+
+				final Element testcase = dom.createElement("testcase");
+				testcase.setAttribute("name", tcr.getCategory());
+				testcase.setAttribute("classname", tcr.getName());
+				testcase.setAttribute("time", "0");
+
+				if (!tcr.isPassed()) {
+					final Element failure = dom.createElement("failure");
+
+					if (tcr.isReal()) {
+						failure.setTextContent("Contrast did not report a True Positive");
+					} else {
+						failure.setTextContent("Contrast reported a False Positive");
+					}
+
+					testcase.appendChild(failure);
+				}
+
+				final Element systemOut = dom.createElement("system-out");
+				testcase.appendChild(systemOut);
+				testsuiteElement.appendChild(testcase);
+			}
+
+			dom.appendChild(testsuiteElement);
+
+			TransformerFactory tranFactory = TransformerFactory.newInstance();
+			Transformer aTransformer = tranFactory.newTransformer();
+			Source src = new DOMSource(dom);
+
+			String resultsFileName = scoreCardDirName + File.separator + "Benchmark_v"
+					+ benchmarkVersion + "_XMLReport_for_" + actual.getToolNameAndVersion().replace( ' ', '_' )
+					+ ".xml";
+
+			Result dest = new StreamResult(new File(resultsFileName));
+			aTransformer.transform(src, dest);
+
+		}catch (ParserConfigurationException | TransformerException e) {
+			e.printStackTrace();
+		}
+
+
+	}
 }

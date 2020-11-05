@@ -56,7 +56,7 @@ public class TestResults {
 	public final boolean isCommercial;
 	public final ToolType toolType;
 	private Map<Integer, List<TestCaseResult>> map = new TreeMap<Integer, List<TestCaseResult>>();
-	
+
 	// Used to track if this tool has been anonymized
 	private boolean anonymous = false;
 	
@@ -127,7 +127,7 @@ public class TestResults {
 	
     /**
      * Sets the name of the tool. e.g., "HP Fortify"
-     * @param tool - Name of the tool.
+     * @param toolName - Name of the tool.
      */
 	public void setTool( String toolName ) {
 	    this.toolName = toolName;

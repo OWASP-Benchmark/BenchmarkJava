@@ -1,0 +1,61 @@
+---
+# This workflow integrates ShiftLeft NG SAST with GitHub
+# Visit https://docs.shiftleft.io for help
+name: ShiftLeft
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  NextGen-Static-Analysis:
+    runs-on: ubuntu-20.04    
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup Java JDK
+      uses: actions/setup-java@v1.4.3
+      with:
+        java-version: 1.8
+    - name: Download ShiftLeft cli
+      run: |
+        curl https://cdn.shiftleft.io/download/sl > ${GITHUB_WORKSPACE}/sl && chmod a+rx ${GITHUB_WORKSPACE}/sl
+    - name: Extract branch name
+      shell: bash
+      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+      id: extract_branch
+    - name: Build and Analyze
+      run: |
+        TARGET_DIR=target
+        BUILT=0
+        POM_COUNT=$(find . -maxdepth 1 -type f -name "pom.xml" -not -path '*/\.git/*' | wc -l | tr -d " ")
+        GRADLE_COUNT=$(find . -maxdepth 1 -type f -name "build.gradle" -not -path '*/\.git/*' | wc -l | tr -d " ")
+        SBT_COUNT=$(find . -maxdepth 1 -type f -name "build.sbt" -not -path '*/\.git/*' | wc -l | tr -d " ")
+        if [ "$POM_COUNT" != "0" ]; then
+          mvn compile package
+          BUILT=1
+        elif [ "$GRADLE_COUNT" != "0" ]; then
+          gradle jar
+          #./gradlew jar
+          TARGET_DIR=build
+          BUILT=1
+        elif [ "$SBT_COUNT" != "0" ]; then
+          echo "deb https://dl.bintray.com/sbt/debian /" | sudo tee -a /etc/apt/sources.list.d/sbt.list
+          curl -sL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E40A89B84B2DF73499E82A75642AC823" | sudo apt-key add
+          sudo apt update -y
+          sudo apt-get install sbt -y
+          sbt package
+          BUILT=1
+        fi
+        if [ "$BUILT" = "1" ] && [ -d "$TARGET_DIR" ]; then
+          jar cvf app.jar -C $TARGET_DIR .
+          ${GITHUB_WORKSPACE}/sl analyze --wait --app benchmark --tag branch=${{ github.head_ref || steps.extract_branch.outputs.branch }} --java --cpg app.jar
+        else
+          echo "Unable to build the project automatically. Please follow the instructions in our documentation to setup this project - https://docs.shiftleft.io/ngsast/analyzing-applications/java"  
+        fi
+      env:
+        SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
+     - name: Export API results
+       run: |
+        git clone https://github.com/ShiftLeftSecurity/field-integrations.git
+        cd field-integrations/shiftleft-utils
+        python3 export.py --app benchmark -f sl -o $HOME/Benchmark_1.2-ShiftLeft.sl

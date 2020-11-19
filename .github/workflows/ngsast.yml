@@ -54,8 +54,25 @@ jobs:
         fi
       env:
         SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
-     - name: Export API results
-       run: |
+    - name: Export findings
+      run: |
+        cd $HOME
         git clone https://github.com/ShiftLeftSecurity/field-integrations.git
         cd field-integrations/shiftleft-utils
-        python3 export.py --app benchmark -f sl -o $HOME/Benchmark_1.2-ShiftLeft.sl
+        mkdir -p ${GITHUB_WORKSPACE}/ngsast_results
+        python3 export.py --app benchmark -f sl -o ${GITHUB_WORKSPACE}/ngsast_results/Benchmark_1.2-ShiftLeft.sl
+    - name: Run benchmark
+      run: |
+        cd ${GITHUB_WORKSPACE}
+        mvn validate -Pbenchmarkscore -Dexec.args="expectedresults-1.2.csv ngsast_results ShiftLeft anonymous"
+        if [ -e "scorecard/Benchmark_v1.2_Scorecard_for_ShiftLeft.html" ]; then
+            echo "*** Thank you for Benchmarking ShiftLeft NextGen Static Analysis ***"
+            echo "You can find the results for ShiftLeft under scorecard/Benchmark_v1.2_Scorecard_for_ShiftLeft.html"
+        else
+            echo "Benchmark results were not produced correctly. Check if you have Java 1.8 installed"
+        fi
+    - uses: actions/upload-artifact@v2
+      with:
+        name: scorecard
+        path: ${GITHUB_WORKSPACE}/scorecard
+        

@@ -59,8 +59,8 @@ import org.owasp.benchmark.score.parsers.ArachniReader;
 import org.owasp.benchmark.score.parsers.BurpReader;
 import org.owasp.benchmark.score.parsers.CASTAIPReader;
 import org.owasp.benchmark.score.parsers.CheckmarxESReader;
-import org.owasp.benchmark.score.parsers.CheckmarxReader;
 import org.owasp.benchmark.score.parsers.CheckmarxIASTReader;
+import org.owasp.benchmark.score.parsers.CheckmarxReader;
 import org.owasp.benchmark.score.parsers.ContrastReader;
 import org.owasp.benchmark.score.parsers.Counter;
 import org.owasp.benchmark.score.parsers.CoverityReader;
@@ -715,28 +715,29 @@ public class BenchmarkScore {
 
 			String line1 = getLine( fileToParse, 0 );
 			String line2 = getLine( fileToParse, 1 );
+			String line4;
 
-			if ( line2.startsWith( "  <ProjectName>" )) {
+			if ( line2 != null && line2.startsWith( "  <ProjectName>" )) {
 				tr = new ThunderScanReader().parse(fileToParse);
 			}
 
-			else if ( line2.startsWith( "<pmd" )) {
+			else if ( line2 != null && line2.startsWith( "<pmd" )) {
 				tr = new PMDReader().parse( fileToParse );
 			}
 
-			else if ( line2.toLowerCase().startsWith( "<castaip" ) ) {
+			else if ( line2 != null && line2.toLowerCase().startsWith( "<castaip" ) ) {
 				tr = new CASTAIPReader().parse( fileToParse );
 			}
 
-			else if ( line2.startsWith( "<FusionLiteInsight" )) {
+			else if ( line2 != null && line2.startsWith( "<FusionLiteInsight" )) {
 				tr = new FusionLiteInsightReader().parse( fileToParse );
 			}
 
-			else if ( line2.startsWith( "<XanitizerFindingsList" )) {
+			else if ( line2 != null && line2.startsWith( "<XanitizerFindingsList" )) {
 				tr = new XanitizerReader().parse( fileToParse );
 			}
 
-			else if ( line2.startsWith( "<BugCollection" )) {
+			else if ( line2 != null && line2.startsWith( "<BugCollection" )) {
 				tr = new FindbugsReader().parse( fileToParse );
 
 				// change the name of the tool if the filename contains findsecbugs
@@ -749,39 +750,41 @@ public class BenchmarkScore {
 				}
 			}
 
-			else if ( line2.startsWith( "<ResultsSession" )) {
+			else if ( line2 != null && line2.startsWith( "<ResultsSession" )) {
 				tr = new ParasoftReader().parse( fileToParse );
 			}
 
-			else if ( line2.startsWith( "<detailedreport" )) {
+			else if ( line2 != null && line2.startsWith( "<detailedreport" )) {
 				tr = new VeracodeReader().parse( fileToParse );
 			}
 
-			else if ( line1.startsWith( "<total" )) {
+			else if ( line1.startsWith( "<total" ) || line1.startsWith( "<p>" )) {
 				tr = new SonarQubeReader().parse( fileToParse );
 			}
 
-			else if ( line1.contains( "<OWASPZAPReport" ) || line2.contains( "<OWASPZAPReport" )) {
+			else if ( line1.contains( "<OWASPZAPReport" ) ||
+				  ( line2 != null && line2.contains( "<OWASPZAPReport" )) ) {
 				tr = new ZapReader().parse( fileToParse );
 			}
 
-			else if ( line2.startsWith( "<CxXMLResults" )) {
+			else if ( line2 != null && line2.startsWith( "<CxXMLResults" )) {
 				tr = new CheckmarxReader().parse( fileToParse );
 			}
 
-			else if ( line2.contains( "Arachni" )) {
+			else if ( line2 != null && line2.contains( "Arachni" )) {
 				tr = new ArachniReader().parse( fileToParse );
 			}
 
-			else if ( line2.startsWith( "<analysisResult") || line2.startsWith( "<analysisReportResult")) {
+			else if ( line2 != null && (line2.startsWith( "<analysisResult") ||
+				    line2.startsWith( "<analysisReportResult"))) {
 				tr = new JuliaReader().parse( fileToParse );
 			}
 
-			else if (line2.startsWith("<CodeIssueCollection")) {
+			else if ( line2 != null && line2.startsWith("<CodeIssueCollection")) {
 				tr = new VisualCodeGrepperReader().parse(fileToParse);
 			}
 
-			else if ( getLine( fileToParse, 4 ).contains( "Wapiti" )) {
+			else if ( (line4 = getLine( fileToParse, 4 )) != null && line4.contains( "Wapiti" )) {
 				tr = new WapitiReader().parse( fileToParse );
 			}
 
@@ -910,50 +913,46 @@ public class BenchmarkScore {
 
 		else System.out.println("Error: No matching parser found for file: " + filename);
 
-		// If the version # of the tool is specified in the results file name, extract it, and set it.
-		// For example: Benchmark-1.1-Coverity-results-v1.3.2661-6720.json  (the version # is 1.3.2661 in this example).
-		// This code should also handle: Benchmark-1.1-Coverity-results-v1.3.2661.xml (where the compute time '-6720' isn't specified)
-		int indexOfVersionMarker = filename.lastIndexOf("-v");
-		if ( indexOfVersionMarker != -1) {
-			String restOfFileName = filename.substring(indexOfVersionMarker+2);
-			int endIndex = restOfFileName.lastIndexOf('-');
-			if (endIndex == -1) endIndex = restOfFileName.lastIndexOf('.');
-			String version = restOfFileName.substring(0, endIndex);
-			tr.setToolVersion(version);
+		// If we have results, see if the version # is in the results file name.
+		if (tr != null) {
+			// If version # specified in the results file name, extract it, and set it.
+			// For example: Benchmark-1.1-Coverity-results-v1.3.2661-6720.json  (the version # is 1.3.2661 in this example).
+			// This code should also handle: Benchmark-1.1-Coverity-results-v1.3.2661.xml (where the compute time '-6720' isn't specified)
+			int indexOfVersionMarker = filename.lastIndexOf("-v");
+			if ( indexOfVersionMarker != -1) {
+				String restOfFileName = filename.substring(indexOfVersionMarker+2);
+				int endIndex = restOfFileName.lastIndexOf('-');
+				if (endIndex == -1) endIndex = restOfFileName.lastIndexOf('.');
+				String version = restOfFileName.substring(0, endIndex);
+				tr.setToolVersion(version);
+			}
 		}
 
 		return tr;
 	}
 
 	/**
-	 * Read the 2nd line of the provided file. If its blank, skip all blank lines until a non-blank line
-	 * is found and return that. Return "" if no none blank line is found from the second line on.
-	 * @return The first non-blank line in the file starting with the 2nd line.
+	 * Read the specified line of the provided file. If its blank, skip all blank lines until a non-blank
+	 * line is found and return that. Return "" if no non-blank line is found from the specified line on.
+	 * @return The first non-blank line in the file starting with the specified line. null if there aren't
+	 * that many lines in the file.
 	 */
-	private static String getLine(File actual, int line) {
-	    BufferedReader br = null;
-	    try {
-    	    br = new BufferedReader( new FileReader( actual ) );
-    	    for ( int i=0; i<line; i++ ) {
-    	        br.readLine(); // Skip line 1
-    	    }
-    	    String line2 = "";
-    	    while ( line2.equals( "" ) ) {
-    	        line2 = br.readLine();
-    	    }
-    	    return line2;
-	    } catch( Exception e ) {
-	        return "";
-	    } finally {
-	    	try {
-		    	if (br != null) br.close();
-	    	} catch (IOException e) {
-	    		System.out.println("Can't close filereader for file: " + actual.getAbsolutePath() +
-	    			" for some reason.");
-	    		e.toString();
-	    	}
-	    }
-    }
+	private static String getLine(File actual, int lineNum) {
+
+		try (BufferedReader br = new BufferedReader( new FileReader( actual )) ) {
+			// Skip all the lines before the line # requested
+			String line = null;
+		    for ( int i=0; i<=lineNum; i++ ) {
+				line = br.readLine();
+    		}
+		    while ( "".equals( line )) {
+		    	line = br.readLine();
+		    }
+		    return line;
+		} catch( IOException e ) {
+			return "";
+		}
+	}
 
     // Go through each expected result, and figure out if this tool actually passed or not.
     // This updates the expected results to reflect what passed/failed.
@@ -1267,6 +1266,7 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
         			+ new DecimalFormat("0.0").format((float) commercialHighTotal/(float) numberOfVulnCategories) + "</td>");
         	htmlForCommercialAverages.append("<td></td>");
         	htmlForCommercialAverages.append("</tr>\n");
+        	htmlForCommercialAverages.append("</table>\n");
 
             try {
 
@@ -1340,7 +1340,6 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 			}
 		}
 
-		sb.append("</tr>\n");
 		sb.append("</table>");
 		return sb.toString();
 	}
@@ -1384,7 +1383,6 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
 			}
 		}
 
-		sb.append("</tr>\n");
 		sb.append("</table>");
 		sb.append("<p>*-Please refer to each tool's scorecard for the data used to calculate these values.");
 
@@ -1401,14 +1399,14 @@ private static final String BENCHMARK_VERSION_PREFIX = "Benchmark version: ";
         // Create tool menu
         StringBuffer sb = new StringBuffer();
         for ( Report toolReport : toolResults ) {
-			if (!(showAveOnlyMode && toolReport.isCommercial())) {
-	            sb.append("<li><a href=\"");
-	            sb.append(toolReport.getFilename());
-	            sb.append(".html\">");
-	            sb.append(toolReport.getToolNameAndVersion());
-	            sb.append("</a></li>");
-	            sb.append(System.lineSeparator());
-			}
+       	  if (!(showAveOnlyMode && toolReport.isCommercial())) {
+            sb.append("<li><a href=\"");
+            sb.append(toolReport.getFilename());
+            sb.append(".html\">");
+            sb.append(toolReport.getToolNameAndVersion());
+            sb.append("</a></li>");
+            sb.append(System.lineSeparator());
+          }
         }
 
         // Before finishing, check to see if there is a commercial average scorecard file, and if so

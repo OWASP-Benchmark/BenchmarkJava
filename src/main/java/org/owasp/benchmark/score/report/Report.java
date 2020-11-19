@@ -3,7 +3,7 @@
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project For details, please see
-* <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
 *
 * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details
 *
-* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Dave Wichers
 * @created 2015
 */
 
@@ -210,7 +210,7 @@ public class Report implements Comparable<Report> {
 			if (!Double.isNaN(r.score))
 				totalScore += r.score;
 		}
-		sb.append("<th>Totals*</th><th/>");
+		sb.append("<tr><th>Totals*</th><th/>");
 		sb.append("<th>" + totals.tp + "</th>");
 		sb.append("<th>" + totals.fn + "</th>");
 		sb.append("<th>" + totals.tn + "</th>");
@@ -219,7 +219,7 @@ public class Report implements Comparable<Report> {
 		sb.append("<th>" + total + "</th>");
 		sb.append("<th/><th/><th/></tr>\n");
 		
-		sb.append("<th>Overall Results*</th><th/><th/><th/><th/><th/><th/>");
+		sb.append("<tr><th>Overall Results*</th><th/><th/><th/><th/><th/><th/>");
 		double tpr = (totalTPR / scores.size());
 		sb.append("<th>" + new DecimalFormat("#0.00%").format(tpr) + "</th>");
 		double fpr = (totalFPR / scores.size());

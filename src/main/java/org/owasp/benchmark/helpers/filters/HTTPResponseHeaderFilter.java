@@ -18,7 +18,6 @@ package org.owasp.benchmark.helpers.filters;
 */
 
 import java.io.IOException;
-import java.sql.SQLException;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;

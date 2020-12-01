@@ -3,7 +3,7 @@
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project For details, please see
-* <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
 *
 * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details
 *
-* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Dave Wichers
 * @created 2015
 */
 
@@ -46,6 +46,7 @@ public class TestResults {
 	private static int nextCommercialSAST_ToolNumber = 1;
 	private static int nextCommercialDAST_ToolNumber = 1;
 	private static int nextCommercialIAST_ToolNumber = 1;
+	private static int nextCommercialHybrid_ToolNumber = 1;
 	
 	// The version of the Benchmark these test results are for
 	private String benchmarkVersion = "notSet";
@@ -121,6 +122,10 @@ public class TestResults {
         return this.toolName;
     }
     
+    /**
+     * Get the version of the tool these results are from.
+     * @return Version of the tool if determined. Null otherwise.
+     */
     public String getToolVersion() {
         return toolVersion;
     }
@@ -151,13 +156,19 @@ public class TestResults {
 			case DAST : {
 				if (nextCommercialDAST_ToolNumber < 10) {
 					this.setTool("DAST-0" + nextCommercialDAST_ToolNumber++);
-				} else this.setTool("DAST-" + nextCommercialDAST_ToolNumber++);				
+				} else this.setTool("DAST-" + nextCommercialDAST_ToolNumber++);
 				break;
 			}
 			case IAST : {
 				if (nextCommercialIAST_ToolNumber < 10) {
 					this.setTool("IAST-0" + nextCommercialIAST_ToolNumber++);
-				} else this.setTool("IAST-" + nextCommercialIAST_ToolNumber++);				
+				} else this.setTool("IAST-" + nextCommercialIAST_ToolNumber++);
+				break;
+			}
+			case Hybrid : {
+				if (nextCommercialHybrid_ToolNumber < 10) {
+					this.setTool("HYBR-0" + nextCommercialHybrid_ToolNumber++);
+				} else this.setTool("HYBR-" + nextCommercialHybrid_ToolNumber++);
 			}
 		}
 	}

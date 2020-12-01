@@ -1,3 +1,21 @@
+/**
+* OWASP Benchmark Project
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* Benchmark Project For details, please see
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
+*
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Juan GaMa
+* @created 2015
+*/
+
 package org.owasp.benchmark.helpers;
 
 import java.io.File;
@@ -15,7 +33,6 @@ import org.apache.directory.server.core.schema.SchemaPartition;
 import org.apache.directory.server.ldap.LdapServer;
 import org.apache.directory.server.protocol.shared.transport.TcpTransport;
 import org.apache.directory.server.xdbm.Index;
-import org.apache.directory.shared.ldap.entry.Entry;
 import org.apache.directory.shared.ldap.entry.ServerEntry;
 import org.apache.directory.shared.ldap.name.DN;
 import org.apache.directory.shared.ldap.schema.SchemaManager;
@@ -45,9 +62,10 @@ public class LDAPServer {
 		}
 
 		// Read an entry
-		Entry result = null;
+		//Entry result = null;
 		try {
-			result = service.getAdminSession().lookup(new DN("dc=apache,dc=org"));
+			//result =
+				service.getAdminSession().lookup(new DN("dc=apache,dc=org"));
 		} catch (Exception e) {
 			System.out.println("Error creating LDAP Server: " + e.getMessage());
 		}
@@ -100,6 +118,7 @@ public class LDAPServer {
 			service = new DefaultDirectoryService();
 		} catch (Exception e1) {
 			System.out.println("Error creating DefaultDirectoryService. " + e1.getMessage());
+			e1.printStackTrace();
 		}
 		service.setWorkingDirectory(workDir);
 
@@ -113,6 +132,7 @@ public class LDAPServer {
 			systemPartition = addPartition("system", ServerDNConstants.SYSTEM_DN);
 		} catch (Exception e1) {
 			System.out.println("Error addPartition system. " + e1.getMessage());
+			e1.printStackTrace();
 		}
 		service.setSystemPartition(systemPartition);
 
@@ -127,18 +147,23 @@ public class LDAPServer {
 			fooPartition = addPartition("foo", "dc=foo,dc=com");
 		} catch (Exception e1) {
 			System.out.println("Error addPartition foo. " + e1.getMessage());
+			e1.printStackTrace();
 		}
+
 		Partition barPartition = null;
 		try {
 			barPartition = addPartition("bar", "dc=bar,dc=com");
 		} catch (Exception e1) {
 			System.out.println("Error addPartition bar. " + e1.getMessage());
+			e1.printStackTrace();
 		}
+
 		Partition apachePartition = null;
 		try {
 			apachePartition = addPartition("apache", "dc=apache,dc=org");
 		} catch (Exception e1) {
 			System.out.println("Error addPartition apache. " + e1.getMessage());
+			e1.printStackTrace();
 		}
 
 		// Index some attributes on the apache partition
@@ -148,7 +173,9 @@ public class LDAPServer {
 			service.startup();
 		} catch (Exception e) {
 			System.out.println("Error at LDAP startup: " + e.getMessage());
+			e.printStackTrace();
 		}
+
 		// Inject the foo root entry if it does not already exist
 		try {
 			service.getAdminSession().lookup(fooPartition.getSuffixDn());
@@ -161,6 +188,7 @@ public class LDAPServer {
 				service.getAdminSession().add(entryFoo);
 			} catch (Exception e) {
 				System.out.println("Error creating new DN.");
+				e.printStackTrace();
 			}
 		}
 
@@ -176,6 +204,7 @@ public class LDAPServer {
 				service.getAdminSession().add(entryBar);
 			} catch (Exception e) {
 				System.out.println("Error creating new DN.");
+				e.printStackTrace();
 			}
 		}
 
@@ -190,12 +219,13 @@ public class LDAPServer {
 					service.getAdminSession().add(entryApache);
 				} catch (Exception e) {
 					System.out.println("Error creating new DN.");
+					e.printStackTrace();
 				}
 			}
 		} catch (Exception e) {
 			System.out.println("Error when checking if partition exists.");
+			e.printStackTrace();
 		}
-
 	}
 
 	/**
@@ -221,6 +251,8 @@ public class LDAPServer {
 			extractor.extractOrCopy( true );
 			//System.out.println("is Extracted: " + extractor.isExtracted());
 		} catch (Exception e) {
+			System.out.println("ERROR: parsing LDAP schema");
+			e.printStackTrace();
 		}
 		
 		schemaPartition.setWrappedPartition(ldifPartition);
@@ -233,7 +265,6 @@ public class LDAPServer {
 			// to initialize the Partitions, as we won't be able to parse
 			// and normalize their suffix DN
 			schemaManager.loadAllEnabled();
-
 			schemaPartition.setSchemaManager(schemaManager);
 
 			List<Throwable> errors = schemaManager.getErrors();
@@ -242,6 +273,8 @@ public class LDAPServer {
 				throw new Exception("Schema load failed : " + errors);
 			}
 		} catch (Exception e) {
+			System.out.println("ERROR: loading LDAP schema");
+			e.printStackTrace();
 		}
 	}
 
@@ -296,7 +329,6 @@ public class LDAPServer {
 		int serverPort = 10389;
 		server.setTransports(new TcpTransport(serverPort));
 		server.setDirectoryService(service);
-
 		server.start();
 	}
 
@@ -312,12 +344,12 @@ public class LDAPServer {
 	/**
 	 * Main class.
 	 *
-	 * @param args
-	 *            Not used.
+	 * @param args Not used.
 	 * @throws Exception 
 	 */
 	public static void main(String[] args) throws Exception {
-		LDAPServer ldap = new LDAPServer();
+		//LDAPServer ldap =
+			new LDAPServer();
 		//ldap.stopServer();
 	}
 

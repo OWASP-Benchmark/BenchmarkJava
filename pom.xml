@@ -330,7 +330,6 @@
 			   <plugins>
 			     <plugin>
 			       <artifactId>maven-antrun-plugin</artifactId>
-			       <version>1.7</version>
 			       <executions>
 			         <execution>
 			           <id>ldap-server</id>
@@ -1007,7 +1006,6 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.8</version>
 			</plugin>
 
 			<plugin>

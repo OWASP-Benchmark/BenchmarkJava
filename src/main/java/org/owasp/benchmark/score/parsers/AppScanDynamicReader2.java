@@ -3,7 +3,7 @@
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project For details, please see
-* <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
 *
 * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details
 *
-* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Dave Wichers
 * @created 2018
 */
 
@@ -104,7 +104,7 @@ public class AppScanDynamicReader2 extends Reader {
 	}
 	
 	// e.g., 3 Hour(s) 7 Minute(s) 58 Second(s)
-	private String parseTime(String message) {
+/*	private String parseTime(String message) {
 	    String[] parts = message.split( "\\) ");
         String hours = parts[0].substring( 0, parts[0].indexOf(' ') ).trim();
         if ( hours.length() < 2 ) hours = "0" + hours;
@@ -114,7 +114,7 @@ public class AppScanDynamicReader2 extends Reader {
         if ( secs.length() < 2 ) secs = "0" + secs;
 	    return hours + ":" + mins + ":" + secs;
     }
-
+*/
 	private static int cweLookup(String vtype, String testArea) {
 		int cwe = cweLookup(vtype);
 		if ("xpathi".equals(testArea) && cwe == 89) cwe = 643; // CWE for xpath injection

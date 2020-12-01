@@ -3,7 +3,7 @@
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project For details, please see
-* <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
 *
 * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details
 *
-* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Dave Wichers
 * @created 2015
 */
 
@@ -36,7 +36,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 public class AppScanSourceReader extends Reader {
-	
+
 	// This is the original AppScan Source reader, when they generated ".ozasmt" files.
 
 	public TestResults parse( File f ) throws Exception {
@@ -128,13 +128,12 @@ public class AppScanSourceReader extends Reader {
 	    return hours + ":" + mins + ":" + secs;
     }
 
-    private static void printPool(Map<Integer, String> vulns) {
+/*    private static void printPool(Map<Integer, String> vulns) {
 		for ( Map.Entry<Integer, String> e : vulns.entrySet() ) {
 			System.out.println( "  " + e.getKey() + " :: " + e.getValue() );
-		}
-		
-	}
-
+		}		
+	  }
+*/
 	private static int cweLookup(String vtype) {
 		switch( vtype ) {
 //		case "Vulnerability.AppDOS" : return 00;

@@ -120,7 +120,7 @@ public class AppScanSourceReader2 extends Reader {
 	}
 	
 	// e.g., 3 Hour(s) 7 Minute(s) 58 Second(s)
-	private String parseTime(String message) {
+/*	private String parseTime(String message) {
 	    String[] parts = message.split( "\\) ");
         String hours = parts[0].substring( 0, parts[0].indexOf(' ') ).trim();
         if ( hours.length() < 2 ) hours = "0" + hours;
@@ -130,7 +130,7 @@ public class AppScanSourceReader2 extends Reader {
         if ( secs.length() < 2 ) secs = "0" + secs;
 	    return hours + ":" + mins + ":" + secs;
     }
-
+*/
 	private static int cweLookup(String vtype) {
 		switch( vtype ) {
 //			case "AppDOS" : return 00;

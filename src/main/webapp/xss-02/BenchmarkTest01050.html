@@ -40,8 +40,8 @@ function submitForm() {
     xhr.onreadystatechange = function () {
         if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
             $("#code").html(xhr.responseText);
-        }else{
-        	$("#code").html("Error " + xhr.status + " ocurred.");
+        } else {
+            $("#code").html("Error " + xhr.status + " occurred.");
         }
     }
     xhr.send(formData);

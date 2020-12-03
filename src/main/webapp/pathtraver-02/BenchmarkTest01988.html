@@ -10,13 +10,12 @@
 <form action="/benchmark/pathtraver-02/BenchmarkTest01988"  method="POST" id="FormBenchmarkTest01988">
     <div><label>Please explain your answer:</label></div>
     <br/>
-	<div><textarea rows="4" cols="50" id="BenchmarkTest01988Area" name="BenchmarkTest01988Area" value=""></textarea></div>
+	<div><textarea rows="4" cols="50" id="BenchmarkTest01988Area" name="BenchmarkTest01988Area"></textarea></div>
 	<div><label>Any additional note for the reviewer:</label></div>
 	<div><input type="text" id="answer" name="answer"></input></div>
     <br/>
     <div><label>An AJAX request will be sent with a header named <input type="text" id="BenchmarkTest01988" name="BenchmarkTest01988" value="FileName" class="safe"></input>
-    and value of BenchmarkTest01988.</label>
-    </div>
+    and value of BenchmarkTest01988.</label></div>
 	<div><input type="button" id="login-btn" value="Login" onclick="submitForm()" /></div>
 </form>
 <div id="ajax-form-msg1"><pre><code class="prettyprint" id="code"></code></pre></div>
@@ -41,8 +40,8 @@ function submitForm() {
     xhr.onreadystatechange = function () {
         if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
 $("#code").text((xhr.responseText).decodeEscapeSequence());
-        }else{
-        	$("#code").html("Error " + xhr.status + " ocurred.");
+        } else {
+            $("#code").html("Error " + xhr.status + " occurred.");
         }
     }
     xhr.send(formData);

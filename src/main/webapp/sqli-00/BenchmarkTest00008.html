@@ -14,7 +14,7 @@
 	<div><label>Any additional note for the reviewer:</label></div>
 	<div><input type="text" id="answer" name="answer"></input></div>
     <br/>
-    <div><label>An AJAX request will be sent with a header named BenchmarkTest00008 and value:</label> <input type="text" id="BenchmarkTest00008" name="BenchmarkTest00008" value="verifyUserPassword('foo','bar')" class="safe"></input></div>
+    <div><label>An AJAX request will be sent with a header named BenchmarkTest00008 and value:</label> <input type="text" id="BenchmarkTest00008" name="BenchmarkTest00008" value="verifyUserPassword&#x28;&#x27;foo&#x27;,&#x27;bar&#x27;&#x29;" class="safe"></input></div>
 
 	<div><input type="button" id="login-btn" value="Login" onclick="submitForm()" /></div>
 </form>
@@ -40,8 +40,8 @@ function submitForm() {
     xhr.onreadystatechange = function () {
         if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
             $("#code").html(xhr.responseText);
-        }else{
-        	$("#code").html("Error " + xhr.status + " ocurred.");
+        } else {
+            $("#code").html("Error " + xhr.status + " occurred.");
         }
     }
     xhr.send(formData);

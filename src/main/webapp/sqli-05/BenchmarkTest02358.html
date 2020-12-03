@@ -10,7 +10,7 @@
 <form action="/benchmark/sqli-05/BenchmarkTest02358"  method="POST" id="FormBenchmarkTest02358">
     <div><label>Please explain your answer:</label></div>
     <br/>
-    <div><textarea rows="4" cols="50" id="BenchmarkTest02358Area" name="BenchmarkTest02358Area" value=""></textarea></div>
+    <div><textarea rows="4" cols="50" id="BenchmarkTest02358Area" name="BenchmarkTest02358Area"></textarea></div>
     <div><label>Any additional note for the reviewer:</label></div>
     <div><input type="text" id="answer" name="answer"></input></div>
     <br/>
@@ -27,7 +27,6 @@ $('.safe').keypress(function (e) {
   }
 });
 
-//$("#login-btn").click(function(){
 function submitForm() {
 	var text = $("#FormBenchmarkTest02358 input[id=BenchmarkTest02358]").val();
 	
@@ -49,8 +48,8 @@ function submitForm() {
     xhr.onreadystatechange = function () {
         if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
 $("#code").text((xhr.responseText).decodeEscapeSequence());
-        }else{
-        	$("#code").text("Error " + xhr.status + " " + xhr.statusText + " ocurred.");
+        } else {
+            $("#code").text("Error " + xhr.status + " " + xhr.statusText + " occurred.");
         }
     }
     xhr.send(formData);

@@ -51,7 +51,6 @@ public class ScatterHome extends ScatterPlot {
     public final String focus;
     public static final char INITIAL_LABEL = 'A';
 
-
     /**
      * This calculates the summary chart across all the tools analyzed against the Benchmark.
      * @param title - The title of the chart to be produced.
@@ -64,7 +63,7 @@ public class ScatterHome extends ScatterPlot {
         display("          " + title, height, toolResults );
     }
 
-    private JFreeChart display(String title, int height, Set<Report> toolResults ) {
+	private JFreeChart display(String title, int height, Set<Report> toolResults ) {
 
         //averages
         ArrayList<Double> averageCommercialFalseRates = new ArrayList<Double>();
@@ -135,7 +134,6 @@ public class ScatterHome extends ScatterPlot {
 
         return chart;
     }
-
     
     private void makeDataLabels( Set<Report> toolResults, XYPlot xyplot ) {        
         HashMap<Point2D,String> map = makePointList( toolResults );
@@ -157,7 +155,6 @@ public class ScatterHome extends ScatterPlot {
             }
         }
     }
- 
     
     private static String sort(String value) {
         String[] parts = value.split( "," );
@@ -170,7 +167,6 @@ public class ScatterHome extends ScatterPlot {
         return sb.toString();
     }
 
-    
     static SecureRandom sr = new SecureRandom();
     // This method generates all the points put on the home page chart. One per tool.
     private HashMap<Point2D, String> makePointList( Set<Report> toolResults ) {          
@@ -217,7 +213,6 @@ public class ScatterHome extends ScatterPlot {
         dedupify( map );
         return map;
     }
-
     
     private static void dedupify(HashMap<Point2D, String> map) {
         for (Entry<Point2D,String> e1 : map.entrySet() ) {
@@ -245,7 +240,6 @@ public class ScatterHome extends ScatterPlot {
         }
         return null;
     }
-
 
     private void makeLegend( Set<Report> toolResults, double x, double y, XYSeriesCollection dataset, XYPlot xyplot ) {
         char ch = INITIAL_LABEL; // This is the first label in the Key with all the tools processed by this scorecard
@@ -352,9 +346,10 @@ public class ScatterHome extends ScatterPlot {
 
     public static void generateComparisonChart(Set<Report> toolResults, String focus ) {
     	try {
-    		String scatterTitle = "OWASP Benchmark" 
-    				+ (BenchmarkScore.mixedMode ? "" : " v" + BenchmarkScore.benchmarkVersion) 
-            		+ " Results Comparison";
+            String scatterTitle = (BenchmarkScore.TESTSUITE.equals("Benchmark") ?
+                "OWASP Benchmark " : BenchmarkScore.TESTSUITE)
+                + (BenchmarkScore.mixedMode ? "" : " v" + BenchmarkScore.TESTSUITEVERSION)
+                + " Results Comparison";
     		ScatterHome scatter = new ScatterHome(scatterTitle, 800, toolResults, focus );
             scatter.writeChartToFile(new File("scorecard/benchmark_comparison.png"), 800);    		
     	} catch (IOException e) {

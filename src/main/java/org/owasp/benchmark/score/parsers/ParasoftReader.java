@@ -3,7 +3,7 @@
  *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Benchmark Project For details, please see
- * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+ * <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
  *
  * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
  * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details
  *
- * @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+ * @author Dave Wichers
  * @created 2015
  */
 
@@ -101,8 +101,8 @@ public class ParasoftReader extends Reader {
 
             String testcase = getAttributeValue( "locFile", flaw );
             testcase = testcase.substring( testcase.lastIndexOf('/') );
-            if ( testcase.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
-                String testno = testcase.substring( BenchmarkScore.BENCHMARKTESTNAME.length(), testcase.length() -5 );
+            if ( testcase.startsWith( BenchmarkScore.TESTCASENAME ) ) {
+                String testno = testcase.substring( BenchmarkScore.TESTCASENAME.length(), testcase.length() -5 );
                 tcr.setNumber( Integer.parseInt( testno ) );
                 return tcr;       
             }
@@ -134,8 +134,8 @@ public class ParasoftReader extends Reader {
         
         String testcase = getAttributeValue( "locFile", flaw );
         testcase = testcase.substring( testcase.lastIndexOf('/') + 1 );
-        if ( testcase.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
-            String testno = testcase.substring( BenchmarkScore.BENCHMARKTESTNAME.length(), testcase.length() -5 );
+        if ( testcase.startsWith( BenchmarkScore.TESTCASENAME ) ) {
+            String testno = testcase.substring( BenchmarkScore.TESTCASENAME.length(), testcase.length() -5 );
             tcr.setNumber( Integer.parseInt( testno ) );
             return tcr;
         }

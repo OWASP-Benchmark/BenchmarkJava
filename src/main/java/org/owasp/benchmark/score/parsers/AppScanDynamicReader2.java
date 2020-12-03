@@ -79,9 +79,9 @@ public class AppScanDynamicReader2 extends Reader {
 			String testcase = url.substring(startOfTestCase, url.length() );
 			testcase = testcase.split("\\.")[0]; // if test case has extension (e.g., BenchmarkTestCase#####.html), strip it off.
 // System.out.println("Candidate test case is: " + testcase);
-			if (testcase.startsWith(BenchmarkScore.BENCHMARKTESTNAME)) {
+			if (testcase.startsWith(BenchmarkScore.TESTCASENAME)) {
 				int tn = -1;
-				String testno = testcase.substring(BenchmarkScore.BENCHMARKTESTNAME.length() );
+				String testno = testcase.substring(BenchmarkScore.TESTCASENAME.length() );
 				try {
 					tn = Integer.parseInt(testno);
 				} catch (NumberFormatException e) {

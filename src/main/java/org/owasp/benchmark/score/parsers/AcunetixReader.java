@@ -132,8 +132,8 @@ public class AcunetixReader extends Reader {
       if ( testfile.contains("?") ) {
           testfile = testfile.substring(0, testfile.indexOf( "?" ) );
       }
-      if ( testfile.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
-          String testno = testfile.substring(BenchmarkScore.BENCHMARKTESTNAME.length());
+      if ( testfile.startsWith( BenchmarkScore.TESTCASENAME ) ) {
+          String testno = testfile.substring(BenchmarkScore.TESTCASENAME.length());
           if ( testno.endsWith( ".html" ) ) {
               testno = testno.substring(0, testno.length() -5 );
           }
@@ -198,8 +198,8 @@ public class AcunetixReader extends Reader {
             testfile = testfile.substring(0, testfile.indexOf( "?" ) );
         }
         
-        if ( testfile.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
-            String testno = testfile.substring(BenchmarkScore.BENCHMARKTESTNAME.length());
+        if ( testfile.startsWith( BenchmarkScore.TESTCASENAME ) ) {
+            String testno = testfile.substring(BenchmarkScore.TESTCASENAME.length());
             if ( testno.endsWith( ".html" ) ) {
                 testno = testno.substring(0, testno.length() -5 );
             }

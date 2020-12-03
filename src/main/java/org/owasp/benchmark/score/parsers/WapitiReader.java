@@ -77,11 +77,11 @@ public class WapitiReader extends Reader {
             List<Node> entries = getNamedChildren( "entry", entriesNode );
             for ( Node entry : entries ) {
                 String path = getNamedChild( "path", entry ).getTextContent();
-                if (path.contains(BenchmarkScore.BENCHMARKTESTNAME)) {
-                	String testCaseNum = path.substring(path.length() - BenchmarkScore.TESTNAMEIDLENGTH);
-                	TestCaseResult tcr = new TestCaseResult();
-                	tcr.setCWE(cwe);
-                	tcr.setCategory( getAttributeValue( "name", vuln ) );
+                if (path.contains(BenchmarkScore.TESTCASENAME)) {
+                    String testCaseNum = path.substring(path.length() - BenchmarkScore.TESTIDLENGTH);
+                    TestCaseResult tcr = new TestCaseResult();
+                    tcr.setCWE(cwe);
+                    tcr.setCategory( getAttributeValue( "name", vuln ) );
                     tcr.setEvidence( getNamedChild( "curl_command", entry ).getTextContent() );
                 	try {
                     	tcr.setNumber( Integer.parseInt( testCaseNum ) );

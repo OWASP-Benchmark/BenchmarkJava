@@ -3,7 +3,7 @@
  *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Benchmark Project For details, please see
- * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+ * <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
  *
  * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
  * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details
  *
- * @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+ * @author Dave Wichers
  * @created 2015
  */
 
@@ -99,14 +99,12 @@ public class ZapReader extends Reader {
 //      <otherinfo>The X-XSS-Protection HTTP response header allows the web server to enable or disable the web browser's XSS protection mechanism. The following values would attempt to enable it: 
 //        X-XSS-Protection: 1; mode=block
 //        </otherinfo>
-//      <reference>https://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet
+//      <reference>https://owasp.org/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet
 //        https://blog.veracode.com/2014/03/guidelines-for-setting-security-headers/
 //        </reference>
 //      <cweid>933</cweid>
 //      <wascid>14</wascid>
 //    </alertitem>
-    
-    
     
     private void parseAndAddZapIssues(Node flaw, TestResults tr) throws URISyntaxException {
         int cwe = -1;
@@ -148,8 +146,8 @@ public class ZapReader extends Reader {
         String testfile = url.getPath();
         testfile = testfile.substring( testfile.lastIndexOf('/') +1 );
        
-        if ( testfile.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
-            String testno = testfile.substring(BenchmarkScore.BENCHMARKTESTNAME.length());
+        if ( testfile.startsWith( BenchmarkScore.TESTCASENAME ) ) {
+            String testno = testfile.substring(BenchmarkScore.TESTCASENAME.length());
             if ( testno.endsWith( ".html" ) ) {
                 testno = testno.substring(0, testno.length() -5 );
             }
@@ -187,14 +185,7 @@ public class ZapReader extends Reader {
         return tcr;
     }
 
-    private int cweLookup(String orig) {   
-        
-        switch( orig ) {       
-        }
-        
+    private int cweLookup(String orig) {
         return Integer.parseInt( orig );
     }
-    
 }
-    
-    

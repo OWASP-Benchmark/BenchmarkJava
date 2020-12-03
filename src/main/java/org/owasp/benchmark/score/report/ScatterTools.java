@@ -35,7 +35,7 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.ui.TextAnchor;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-
+import org.owasp.benchmark.score.BenchmarkScore;
 import org.owasp.benchmark.score.parsers.OverallResult;
 import org.owasp.benchmark.score.parsers.OverallResults;
 
@@ -241,7 +241,9 @@ public class ScatterTools extends ScatterPlot {
 		or.add("Reflection Injection", 0, 0, 300, 5);
 		or.add("LDAP Injection", .5, 1, 6, 5);
 		or.add("Weak Encryption", .2, .9, 600, 5);
-		ScatterTools scatter = new ScatterTools("OWASP Benchmark Results for SomeTool", 800, or);
+		ScatterTools scatter = new ScatterTools((BenchmarkScore.TESTSUITE.equals("Benchmark") ?
+				"OWASP Benchmark" : BenchmarkScore.TESTSUITE)
+				+ " Results for SomeTool", 800, or);
 		scatter.writeChartToFile(new File("test.png"), 800);
 		System.exit(0);
 	}

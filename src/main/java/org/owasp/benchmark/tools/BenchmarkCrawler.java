@@ -18,7 +18,6 @@
 
 package org.owasp.benchmark.tools;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,16 +34,17 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+
 import org.owasp.benchmark.helpers.Utils;
+import org.owasp.benchmark.score.BenchmarkScore;
 
 public class BenchmarkCrawler {
-	public static String benchmarkVersion = "";
+	public static String testSuiteVersion = "";
 
 	protected void init() {
 		try {
-			String crawlerFile = System.getProperty("user.dir") + File.separator + "data" + File.separator
-					+ "benchmark-crawler-http.xml";
-			benchmarkVersion = Utils.getCrawlerBenchmarkVersion(new FileInputStream(crawlerFile));
+			String crawlerFile = Utils.DATA_DIR + "benchmark-crawler-http.xml";
+			testSuiteVersion = Utils.getCrawlerBenchmarkVersion(new FileInputStream(crawlerFile));
 			crawl(new FileInputStream(crawlerFile));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -71,8 +71,8 @@ public class BenchmarkCrawler {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Date date = new Date();
 
-		System.out.println("Crawl ran on " + dateFormat.format(date) + " for Benchmark v" + benchmarkVersion + " took "
-				+ seconds + " seconds");
+		System.out.println("Crawl ran on " + dateFormat.format(date) + " for " + BenchmarkScore.TESTSUITE
+				+ " v" + testSuiteVersion + " took " + seconds + " seconds");
 	}
 
 	/**

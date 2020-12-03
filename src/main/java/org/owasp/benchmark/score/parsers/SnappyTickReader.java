@@ -3,7 +3,7 @@
  *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Benchmark Project For details, please see
- * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+ * <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
  *
  * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
  * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details
  *
- * @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+ * @author Dave Wichers
  * @author Parthi Shah <a href="http://www.iappsecure.com">iAppSecure</a>
  * @created 2016
  *
@@ -97,8 +97,8 @@ public class SnappyTickReader extends Reader {
 
     private static int extractTestNumber(String testfile) {
 
-    	if ( testfile.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
-            String testno = testfile.substring(BenchmarkScore.BENCHMARKTESTNAME.length());
+        if ( testfile.startsWith( BenchmarkScore.TESTCASENAME ) ) {
+            String testno = testfile.substring(BenchmarkScore.TESTCASENAME.length());
             try {
                 return Integer.parseInt( testno );
             } catch( NumberFormatException e ) {
@@ -108,40 +108,26 @@ public class SnappyTickReader extends Reader {
         return -1;
     }
 
-    private static int cweLookup(String checkerKey)
-    {
+    private static int cweLookup(String checkerKey) {
 
-      switch (checkerKey.trim())
-      {
-        case "1004":
-          return 614; // HTTPOnly Flag Not Set For Cookies:insecure cookie use
-        case "614":
-          return 614; // Cookie not Sent Over SSL:insecure cookie use
-        case "78":
-          return 78;  // command injection
-        case "89":
-          return 89;  // SQL injection
-        case "755":
-          return 755; // SQL Exception Vulnerability:Info Leak
-        case "258":
-          return 0000; // "Use an empty string as a password"
-        case "20":
-          return 20; // "Input Validation Issue or Input Validation Required"
-        case "79":
-          return 79; // Malicious Scripting Attacks and xss
-        case "73":
-          return 22; // Path Manipulation: path traversal
-        case "538":
-          return 22; // File Disclosure Vulnerability:path traversal
-        case "330":
-          return 330; // Use of java.util.Random generator function:weak random
-        case "327":
-        	return 327; // Broken Cryptography or 
-          			  // Weak Encryption Insecure Mode of Operation:weak encryption
-        case "328":
-        	return 328; // Broken Hashing algorithm
+      switch (checkerKey.trim()) {
+
+        case "1004": return 614; // HTTPOnly Flag Not Set For Cookies:insecure cookie use
+        case "614":  return 614; // Cookie not Sent Over SSL:insecure cookie use
+        case "78":   return 78;  // command injection
+        case "89":   return 89;  // SQL injection
+        case "755":  return 755; // SQL Exception Vulnerability:Info Leak
+        case "258":  return 000; // "Use an empty string as a password"
+        case "20":   return 20;  // "Input Validation Issue or Input Validation Required"
+        case "79":   return 79;  // Malicious Scripting Attacks and xss
+        case "73":   return 22;  // Path Manipulation: path traversal
+        case "538":  return 22;  // File Disclosure Vulnerability:path traversal
+        case "330":  return 330; // Use of java.util.Random generator function:weak random
+        case "327":  return 327; // Broken Cryptography or 
+                                 // Weak Encryption Insecure Mode of Operation:weak encryption
+        case "328":  return 328; // Broken Hashing algorithm
         default:
-        	System.out.println("Found unrecognized vulnerability type in Snappy Tick results: " + checkerKey);
+           System.out.println("Found unrecognized vulnerability type in Snappy Tick results: " + checkerKey);
       }
       return 0;
     }

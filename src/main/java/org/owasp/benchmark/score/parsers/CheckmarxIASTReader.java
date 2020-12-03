@@ -14,13 +14,13 @@
  *
  * @author Yuuki Endo / Jason Khoo
  * @created 2020
- * This is the plugin for CxIAST
  */
 
 package org.owasp.benchmark.score.parsers;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
+import org.owasp.benchmark.score.BenchmarkScore;
 
 import java.io.File;
 import java.util.regex.Matcher;
@@ -140,14 +140,16 @@ public class CheckmarxIASTReader extends Reader
       TestCaseResult tcr = new TestCaseResult();
       tcr.setCategory(checkerKey);
       tcr.setCWE(cweLookup(checkerKey));
-      Pattern testCasePattern = Pattern.compile("BenchmarkTest[0-9]{5}");
+      Pattern testCasePattern = Pattern.compile(BenchmarkScore.TESTCASENAME + "[0-9]{" 
+                                   + BenchmarkScore.TESTIDLENGTH + "}");
       Matcher testCaseMatcher = testCasePattern.matcher(url);
       if(testCaseMatcher.find()) {
         String testCase = testCaseMatcher.group(0);
-//      System.out.println("testCase = "+testCase+" Test Num = "+testCase.substring(testCase.length()-5, testCase.length())); // For debugging YE
+//      System.out.println("testCase = "+testCase+" Test Num = "+testCase.substring(testCase.length()-Utils.TESTCASE_DIGITS, testCase.length())); // For debugging YE
         tcr.setTestCaseName(testCase);
-        //"BenchmarkTest00000" - "BenchmarkTest99999"
-            tcr.setNumber(Integer.parseInt(testCase.substring(testCase.length()-5, testCase.length())));
+        // BenchmarkTest00000 - BenchmarkTest99999
+            tcr.setNumber(Integer.parseInt(testCase.substring(testCase.length() -
+                                              BenchmarkScore.TESTIDLENGTH, testCase.length())));
             if (tcr.getCWE() != 0)
             {
                  tr.put(tcr);

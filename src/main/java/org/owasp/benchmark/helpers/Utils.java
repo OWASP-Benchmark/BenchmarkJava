@@ -70,6 +70,7 @@ import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
 
 import org.owasp.benchmark.service.pojo.StringMessage;
+import org.owasp.benchmark.score.BenchmarkScore;
 import org.owasp.benchmark.tools.AbstractTestCaseRequest;
 import org.owasp.benchmark.tools.ServletTestCaseRequest;
 import org.owasp.benchmark.tools.XMLCrawler;
@@ -82,27 +83,28 @@ import org.xml.sax.InputSource;
 
 public class Utils {
 
+	// Properties used by the generated test suite
+
 	public static final String USERDIR = System.getProperty("user.dir");
 
+	// A 'test' directory that target test files are created in so test cases can use them
+	public static final String TESTFILES_DIR = USERDIR + File.separator + "testfiles" + File.separator;
 	public static final String testfileDir = USERDIR + File.separator + "testfiles" + File.separator;
+	// Note: The above constant was renamed to be all CAPs, but generated test cases use old name. Remove
+	// after regenerating with new constant name.
 
-	public static final String failedTCFile = USERDIR + File.separator + "data" + File.separator + "benchmark-failed-http.xml";
+	public static final String DATA_DIR = USERDIR + File.separator + "data" + File.separator;
 
-	public static final String BENCHMARK_DATA = USERDIR + File.separator + "data" + File.separator;
-
+	// This constant is used by some of the generated Java test cases
 	public static final Set<String> commonHeaders = new HashSet<>(Arrays.asList("host", "user-agent", "accept",
 			"accept-language", "accept-encoding", "content-type", "x-requested-with", "referer", "content-length",
 			"connection", "pragma", "cache-control", "origin", "cookie"));
 
-	public static final String DATAFOLDER_PATH = USERDIR + File.separator + "data" + File.separator;
-
-	private static javax.crypto.Cipher cipher = null;
-
 	static {
-		File tempDir = new File(testfileDir);
+		File tempDir = new File(TESTFILES_DIR);
 		if (!tempDir.exists()) {
 			tempDir.mkdir();
-			File testFile = new File(testfileDir + "FileName");
+			File testFile = new File(TESTFILES_DIR + "FileName");
 			try {
 				PrintWriter out = new PrintWriter(testFile);
 				out.write("Test is a test file.\n");
@@ -110,7 +112,7 @@ public class Utils {
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
-			File testFile2 = new File(testfileDir + "SafeText");
+			File testFile2 = new File(TESTFILES_DIR + "SafeText");
 			try {
 				PrintWriter out = new PrintWriter(testFile2);
 				out.write("Test is a 'safe' test file.\n");
@@ -118,7 +120,7 @@ public class Utils {
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
-			File secreTestFile = new File(testfileDir + "SecretFile");
+			File secreTestFile = new File(TESTFILES_DIR + "SecretFile");
 			try {
 				PrintWriter out = new PrintWriter(secreTestFile);
 				out.write("Test is a 'secret' file that no one should find.\n");
@@ -427,7 +429,7 @@ public class Utils {
 		DocumentBuilderFactory newCrawlerBF = null;
 		DocumentBuilder newCrawlerBuilder = null;
 		Document newCrawlerDoc = null;
-		Element newCrawkerRootElement = null;
+		Element newCrawlerRootElement = null;
 		newCrawlerBF = DocumentBuilderFactory.newInstance();
 		Node newNode;
 
@@ -437,15 +439,17 @@ public class Utils {
 			System.out.println("Problem init the Crawler XML file");
 		}
 		newCrawlerDoc = newCrawlerBuilder.newDocument();
-		newCrawkerRootElement = newCrawlerDoc.createElement("benchmarkSuite");
-		newCrawlerDoc.appendChild(newCrawkerRootElement);
+		newCrawlerRootElement = newCrawlerDoc.createElement("benchmarkSuite");
+		newCrawlerDoc.appendChild(newCrawlerRootElement);
 
 		List<AbstractTestCaseRequest> requests = new ArrayList<AbstractTestCaseRequest>();
 		List<Node> tests = XMLCrawler.getNamedChildren("benchmarkTest", root);
 		for (Node test : tests) {
 			URL = XMLCrawler.getAttributeValue("URL", test).trim();
+			// ToDo: don't use 18 (instead calculate length of TESTCASE_NAME and # digits
 			if (failedTestCases
-					.contains(URL.substring(URL.indexOf("BenchmarkTest"), URL.indexOf("BenchmarkTest") + 18))) {
+					.contains(URL.substring(URL.indexOf(BenchmarkScore.TESTCASENAME), 
+							URL.indexOf(BenchmarkScore.TESTCASENAME) + 18))) {
 				requests.add(parseHttpTest(test));
 				newNode = test.cloneNode(true);
 				newCrawlerDoc.adoptNode(newNode);
@@ -454,6 +458,8 @@ public class Utils {
 				/* The test case passed */
 			}
 		}
+
+		String failedTCFile = DATA_DIR + "benchmark-failed-http.xml";
 
 		File file = new File(failedTCFile);
 		if (file.exists()) {
@@ -511,7 +517,7 @@ public class Utils {
 	public static AbstractTestCaseRequest parseHttpTest(Node test) throws Exception {
 		String tcType = XMLCrawler.getAttributeValue("tcType", test);
 		String fullURL = XMLCrawler.getAttributeValue("URL", test);
-		String name = "BenchmarkTest" + XMLCrawler.getAttributeValue("tname", test);
+		String name = BenchmarkScore.TESTCASENAME + XMLCrawler.getAttributeValue("tname", test);
 		String payload = "";
 
 		List<Node> headers = XMLCrawler.getNamedChildren("header", test);
@@ -548,6 +554,10 @@ public class Utils {
 		return csv;
 	}
 
+	/*
+	 * A utility method used by the generated Java Cipher test cases.
+	 */
+private static javax.crypto.Cipher cipher = null;
 	public static Cipher getCipher() {
 		if (cipher == null) {
 			try {

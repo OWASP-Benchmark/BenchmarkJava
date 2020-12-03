@@ -3,7 +3,7 @@
  *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Benchmark Project For details, please see
- * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+ * <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
  *
  * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
  * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details
  *
- * @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+ * @author Dave Wichers
  * @created 2015
  */
 
@@ -95,17 +95,17 @@ public class CheckmarxReader extends Reader {
         String name = getAttributeValue("name", query);
         tcr.setCategory( name );
         // filter out dynamic SQL queries because they report SQL injection separately - these are just dynamic SQL
-		//Other queries are filtered because they are a CHILD_OF of some other query and they share the same cwe id 
-		//We only want the results from the queries that are relevant (PARENT_OF) for the benchmark project
+        //Other queries are filtered because they are a CHILD_OF of some other query and they share the same cwe id 
+        //We only want the results from the queries that are relevant (PARENT_OF) for the benchmark project
         if ( name.equals( "Dynamic_SQL_Queries" ) ||
-			 name.equals( "Heuristic_2nd_Order_SQL_Injection" ) ||
-			 name.equals( "Heuristic_SQL_Injection" ) ||
-			 name.equals( "Second_Order_SQL_Injection" ) ||
-			 name.equals( "Blind_SQL_Injections" ) ||
-			 name.equals( "Improper_Build_Of_Sql_Mapping" ) ||
-			 name.equals( "SQL_Injection_Evasion_Attack" ) ||
-			 name.equals( "Potential_SQL_Injection" ) ||
-			 name.equals( "Client_Side_Injection" ) ||
+             name.equals( "Heuristic_2nd_Order_SQL_Injection" ) ||
+             name.equals( "Heuristic_SQL_Injection" ) ||
+             name.equals( "Second_Order_SQL_Injection" ) ||
+             name.equals( "Blind_SQL_Injections" ) ||
+             name.equals( "Improper_Build_Of_Sql_Mapping" ) ||
+             name.equals( "SQL_Injection_Evasion_Attack" ) ||
+             name.equals( "Potential_SQL_Injection" ) ||
+             name.equals( "Client_Side_Injection" ) ||
              name.equals( "GWT_DOM_XSS" ) ||
              name.equals( "GWT_Reflected_XSS" ) ||
              name.equals( "Heuristic_CGI_Stored_XSS" ) ||
@@ -120,18 +120,18 @@ public class CheckmarxReader extends Reader {
              name.equals( "Potential_O_Reflected_XSS_All_ClientsS" ) ||
              name.equals( "Potential_Stored_XSS" ) ||
              name.equals( "Potential_UTF7_XSS" ) ||
-			 name.equals( "Stored_Command_Injection" ) ||
+             name.equals( "Stored_Command_Injection" ) ||
              name.equals( "CGI_Reflected_XSS_All_Clients" ) ||
-	   name.equals( "Unprotected_Cookie" )) {
+             name.equals( "Unprotected_Cookie" )) {
             return null;
         }
 
-	//Output xml file from Checkmarx (depends on version) sometimes does not contain attribute on the node "query" named SeverityIndex
+        //Output xml file from Checkmarx (depends on version) sometimes does not contain attribute on the node "query" named SeverityIndex
         String SeverityIndex = getAttributeValue( "SeverityIndex", result);
-	boolean isGeneratedByCxWebClient = SeverityIndex != null && !SeverityIndex.equals("");
-	if(isGeneratedByCxWebClient) { 
-		tcr.setConfidence( Integer.parseInt( getAttributeValue( "SeverityIndex", result) ) );
-	}
+        boolean isGeneratedByCxWebClient = SeverityIndex != null && !SeverityIndex.equals("");
+        if (isGeneratedByCxWebClient) { 
+            tcr.setConfidence( Integer.parseInt( getAttributeValue( "SeverityIndex", result) ) );
+        }
 
         tcr.setEvidence( getAttributeValue( "name", query ) );
 
@@ -142,35 +142,33 @@ public class CheckmarxReader extends Reader {
 		*/
 		
 		//Get the Path element inside Result
-		 List<Node> paths = getNamedChildren("Path", result);
+		List<Node> paths = getNamedChildren("Path", result);
 		//Get ALL the PathNodes elements inside each Path
-		 List<Node> pathNodes = getNamedChildren("PathNode", paths.get(0));
+		List<Node> pathNodes = getNamedChildren("PathNode", paths.get(0));
 		//Get the lAST PathNode element from the list above
-		 Node last = pathNodes.get(pathNodes.size() -1);
+		Node last = pathNodes.get(pathNodes.size() -1);
 		//Get the FileName element inside the last PathNode
-		 List<Node> fileNames = getNamedChildren( "FileName", last );
-		 Node fileNameNode = fileNames.get(0);
+		List<Node> fileNames = getNamedChildren( "FileName", last );
+		Node fileNameNode = fileNames.get(0);
 
 		//If the result starts in a BenchmarkTest file
         String testcase = getAttributeValue("FileName", result);
 		//Output xml file from Checkmarx (depends on version) may use windows based '\\' or unix based '/' delimiters for path
 		if(isGeneratedByCxWebClient) { 
 			 testcase = testcase.substring( testcase.lastIndexOf('/') +1);
-		}
-		else{
+		} else {
 			 testcase = testcase.substring( testcase.lastIndexOf('\\') +1);
 		}
-		if ( testcase.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
-            String testno = testcase.substring( BenchmarkScore.BENCHMARKTESTNAME.length(), testcase.length() -5 );
+		if ( testcase.startsWith( BenchmarkScore.TESTCASENAME ) ) {
+            String testno = testcase.substring( BenchmarkScore.TESTCASENAME.length(), testcase.length() -5 );
             try {
                 tcr.setNumber( Integer.parseInt( testno ) );
             } catch ( NumberFormatException e ) {
                 e.printStackTrace();
             }
             return tcr;
-        }
-		//If not, then the last PastNode must end in a FileName that startsWith BenchmarkTest file
-        else{
+        } else {
+		    //If not, then the last PastNode must end in a FileName that startsWith BenchmarkTest file
             // Skipping nodes with no filename specified <FileName></FileName>
             if ( fileNameNode.getFirstChild() == null ) return null;
             
@@ -178,18 +176,17 @@ public class CheckmarxReader extends Reader {
    			//Output xml file from Checkmarx (depends on version) may use windows based '\\' or unix based '/' delimiters for path
 			if(isGeneratedByCxWebClient) { 
 				testcase2 = testcase2.substring( testcase2.lastIndexOf('/') +1);
-		  	}
-			else{
+		  	} else {
 				testcase2 = testcase2.substring( testcase2.lastIndexOf('\\') +1);
 			}
-			if ( testcase2.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
-            	String testno2 = testcase2.substring( BenchmarkScore.BENCHMARKTESTNAME.length(), testcase2.length() -5 );
+            if ( testcase2.startsWith( BenchmarkScore.TESTCASENAME ) ) {
+            	String testno2 = testcase2.substring( BenchmarkScore.TESTCASENAME.length(), testcase2.length() -5 );
             	try {
                 	tcr.setNumber( Integer.parseInt( testno2 ) );
               	} catch ( NumberFormatException e ) {
-                	  e.printStackTrace();
+                    e.printStackTrace();
               	}
-              return tcr;
+            return tcr;
           }
         }
 

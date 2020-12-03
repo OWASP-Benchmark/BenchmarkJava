@@ -3,7 +3,7 @@
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project For details, please see
-* <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
 *
 * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details
 *
-* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Dave Wichers
 * @created 2015
 */
 
@@ -79,9 +79,9 @@ public class FindbugsReader extends Reader {
 			Node cl = getNamedNode( "Class", n.getChildNodes() );
 			String classname = cl.getAttributes().getNamedItem("classname").getNodeValue();
 			classname = classname.substring( classname.lastIndexOf('.') + 1);
-			if ( classname.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
+			if ( classname.startsWith( BenchmarkScore.TESTCASENAME ) ) {
 				try {
-					String testNumber = classname.substring( BenchmarkScore.BENCHMARKTESTNAME.length() );
+					String testNumber = classname.substring( BenchmarkScore.TESTCASENAME.length() );
 					tcr.setNumber( Integer.parseInt( testNumber ) );
 				} catch (Exception e) {
 				// System.out.println("Error parsing node: " + n.toString() + " for classname: " + classname);
@@ -195,7 +195,5 @@ public class FindbugsReader extends Reader {
 		}
 
 		return 0;
-		
 	}
-
 }

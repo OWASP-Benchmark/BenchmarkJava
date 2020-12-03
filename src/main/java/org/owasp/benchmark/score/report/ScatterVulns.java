@@ -382,10 +382,12 @@ public class ScatterVulns extends ScatterPlot {
 
     public static ScatterVulns generateComparisonChart(String category, Set<Report> toolResults, String focus) {
         try {
-            String scatterTitle = "OWASP Benchmark" + (BenchmarkScore.mixedMode ? " -" : " v" 
-               + BenchmarkScore.benchmarkVersion) + " " + category + " Comparison";
+            String scatterTitle = (BenchmarkScore.TESTSUITE.equals("Benchmark") ?
+               "OWASP Benchmark" : BenchmarkScore.TESTSUITE)
+               + (BenchmarkScore.mixedMode ? " -" : " v" + BenchmarkScore.TESTSUITEVERSION)
+               + " " + category + " Comparison";
             ScatterVulns scatter = new ScatterVulns(scatterTitle, 800, category, toolResults, focus);
-            scatter.writeChartToFile(new File("scorecard/Benchmark_v" + BenchmarkScore.benchmarkVersion 
+            scatter.writeChartToFile(new File("scorecard/Benchmark_v" + BenchmarkScore.TESTSUITEVERSION
                + "_Scorecard_for_" + category.replace(' ', '_') + ".png"), 800);
             return scatter;
         } catch (IOException e) {

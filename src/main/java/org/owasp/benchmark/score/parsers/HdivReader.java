@@ -1,3 +1,21 @@
+/**
+ * OWASP Benchmark Project
+ *
+ * This file is part of the Open Web Application Security Project (OWASP)
+ * Benchmark Project For details, please see
+ * <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
+ *
+ * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU General Public License as published by the Free Software Foundation, version 2.
+ *
+ * The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details
+ *
+ * @author Joseba Ander Ruiz Ayesta
+ * @created 2017
+ */
+
 package org.owasp.benchmark.score.parsers;
 
 import java.io.BufferedReader;
@@ -42,7 +60,7 @@ public class HdivReader extends Reader {
 						process(tr, testNumber, Arrays.asList(line));
 						chunk.clear();
 						testNumber = "00000";
-						String fname = "/" + BenchmarkScore.BENCHMARKTESTNAME;
+						String fname = "/" + BenchmarkScore.TESTCASENAME;
 						int idx = line.indexOf(fname);
 						if (idx != -1) {
 							testNumber = line.substring(idx + fname.length(), idx + fname.length() + 5);
@@ -93,7 +111,7 @@ public class HdivReader extends Reader {
 		for (String line : chunk) {
 			TestCaseResult tcr = new TestCaseResult();
 
-			String fname = "/" + BenchmarkScore.BENCHMARKTESTNAME;
+			String fname = "/" + BenchmarkScore.TESTCASENAME;
 			int idx = line.indexOf(fname);
 			if (idx != -1) {
 				testNumber = line.substring(idx + fname.length(), idx + fname.length() + 5);

@@ -18,19 +18,22 @@
 
 package org.owasp.benchmark.score.parsers;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
-import org.w3c.dom.Element;
 import java.io.File;
 import java.io.FileInputStream;
-import org.xml.sax.InputSource;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.owasp.benchmark.score.BenchmarkScore;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 public class ThunderScanReader extends Reader {
     
@@ -64,7 +67,7 @@ public class ThunderScanReader extends Reader {
                 String file = vulnElement.getElementsByTagName("File").item(0).getTextContent();
                 String function = vulnElement.getElementsByTagName("Function").item(0).getTextContent();
                 
-                if(!file.contains("BenchmarkTest")) continue;
+                if(!file.contains(BenchmarkScore.TESTCASENAME)) continue;
                 if(function.matches("/printStackTrace|Cookie$|getMessage$/")) continue;
                 
                 TestCaseResult tcResult = parseThunderScanVulnerability(vulnElement, vulnerabilityType);
@@ -107,7 +110,7 @@ public class ThunderScanReader extends Reader {
         String line = ((Element)((Element)functionCalls).getElementsByTagName("CallStackItem").item(0)).getAttribute("Line");
 
         String testcase = file.substring(file.lastIndexOf('\\') + 1);
-        String testNumber = testcase.substring("BenchmarkTest".length(), testcase.length() - 5);
+        String testNumber = testcase.substring(BenchmarkScore.TESTCASENAME.length(), testcase.length() - 5);
                 
         if(cwe == 31339) {
             if(function.contains("Weak Enc")) cwe = 327;

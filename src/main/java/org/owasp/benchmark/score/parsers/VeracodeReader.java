@@ -3,7 +3,7 @@
  *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Benchmark Project For details, please see
- * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+ * <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
  *
  * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
  * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details
  *
- * @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+ * @author Dave Wichers
  * @created 2015
  */
 
@@ -121,8 +121,8 @@ public class VeracodeReader extends Reader {
         tcr.setEvidence( getAttributeValue( "categoryname", flaw ) );
  
         String testcase = getAttributeValue( "sourcefile", flaw );
-        if ( testcase.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
-            String testno = testcase.substring( BenchmarkScore.BENCHMARKTESTNAME.length(), testcase.length() -5 );
+        if ( testcase.startsWith( BenchmarkScore.TESTCASENAME ) ) {
+            String testno = testcase.substring( BenchmarkScore.TESTCASENAME.length(), testcase.length() -5 );
             tcr.setNumber( Integer.parseInt( testno ) );
             return tcr;
         }
@@ -134,7 +134,6 @@ public class VeracodeReader extends Reader {
         if ( cwe == 73 ) return 22;
         if ( cwe == 80 ) return 79;
         if ( cwe == 331 ) return 330;
-        if ( cwe == 91 ) return 643;
         return cwe;
     }
 }

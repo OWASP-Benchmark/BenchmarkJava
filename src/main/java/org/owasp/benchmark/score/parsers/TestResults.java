@@ -48,8 +48,8 @@ public class TestResults {
 	private static int nextCommercialIAST_ToolNumber = 1;
 	private static int nextCommercialHybrid_ToolNumber = 1;
 	
-	// The version of the Benchmark these test results are for
-	private String benchmarkVersion = "notSet";
+	// The version of the test suite these test results are for
+	private String testSuiteVersion = "notSet";
 	
 	private String toolName = "Unknown Tool";
     private String toolVersion = null;
@@ -67,13 +67,13 @@ public class TestResults {
 	    this.toolType = toolType;
 	}
 	
-	// Set the Benchmark version number for this specific set of TestResults
-	public void setBenchmarkVersion( String version ) {
-		this.benchmarkVersion = version;
+	// Set the version number for this specific set of TestResults
+	public void setTestSuiteVersion( String version ) {
+		this.testSuiteVersion = version;
 	}
 	
-	public String getBenchmarkVersion() {
-		return this.benchmarkVersion;
+	public String getTestSuiteVersion() {
+		return this.testSuiteVersion;
 	}
 	
 	public ToolType getToolType() {

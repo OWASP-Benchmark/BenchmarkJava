@@ -77,18 +77,18 @@ public class AppScanSourceReader2 extends Reader {
 				// Some method signatures have a filename attribute, others do not, depending on the vuln type.
 				if (filename != null) {
 					// Parse out test number from: BenchmarkTest02603:99
-					if ( filename.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
+					if ( filename.startsWith( BenchmarkScore.TESTCASENAME ) ) {
 						filename = filename.substring( 0, filename.indexOf(":") );
-						String testnum = filename.substring( BenchmarkScore.BENCHMARKTESTNAME.length() );
+						String testnum = filename.substring( BenchmarkScore.TESTCASENAME.length() );
 						tn = Integer.parseInt( testnum );
 						//System.out.println("Found a result in filename for test: " + tn);
 					}
 				} else {
 					// Parse out test # from: org.owasp.benchmark.testcode.BenchmarkTest01484.doPost(HttpServletRequest;HttpServletResponse):void
 					String methodSig = methodSigNode.getTextContent();
-					if ( methodSig != null && methodSig.contains(BenchmarkScore.BENCHMARKTESTNAME)) {
-						String s = methodSig.substring(methodSig.indexOf(BenchmarkScore.BENCHMARKTESTNAME) +
-							BenchmarkScore.BENCHMARKTESTNAME.length());
+					if ( methodSig != null && methodSig.contains(BenchmarkScore.TESTCASENAME)) {
+						String s = methodSig.substring(methodSig.indexOf(BenchmarkScore.TESTCASENAME) +
+							BenchmarkScore.TESTCASENAME.length());
 						String testnum = s.substring(0, s.indexOf("."));
 						tn = Integer.parseInt( testnum );
 						//System.out.println("Found a result in method location2 for test: " + tn);

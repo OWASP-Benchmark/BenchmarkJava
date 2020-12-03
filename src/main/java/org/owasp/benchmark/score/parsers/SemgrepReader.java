@@ -192,9 +192,9 @@ public class SemgrepReader {
 
             String className = result.getString("path");
             className = (className.substring(className.lastIndexOf('/') + 1)).split("\\.")[0];
-            if (className.startsWith(BenchmarkScore.BENCHMARKTESTNAME)) {
+            if (className.startsWith(BenchmarkScore.TESTCASENAME)) {
                 try {
-                    String testNumber = className.substring(BenchmarkScore.BENCHMARKTESTNAME.length());
+                    String testNumber = className.substring(BenchmarkScore.TESTCASENAME.length());
                     tcr.setNumber(Integer.parseInt(testNumber));
                 } catch (Exception e) {
                     // System.out.println("Error parsing node: " + n.toString() + " for className: "
@@ -213,4 +213,3 @@ public class SemgrepReader {
     }
 
 }
-

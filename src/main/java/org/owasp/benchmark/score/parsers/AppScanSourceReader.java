@@ -83,9 +83,9 @@ public class AppScanSourceReader extends Reader {
 			if ( filename.contains("/") ) {
 				filename = filename.substring( filename.lastIndexOf('/') + 1);
 			}
-			if ( filename.endsWith( ".java" ) && filename.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
+			if ( filename.endsWith( ".java" ) && filename.startsWith( BenchmarkScore.TESTCASENAME ) ) {
 				filename = filename.substring( 0, filename.length() - 5 );
-				String testnum = filename.substring( BenchmarkScore.BENCHMARKTESTNAME.length() );
+				String testnum = filename.substring( BenchmarkScore.TESTCASENAME.length() );
 				tn = Integer.parseInt( testnum );
 			}
 			
@@ -156,10 +156,9 @@ public class AppScanSourceReader extends Reader {
 		case "Vulnerability.SessionManagement.Cookies" : return 614;
 		case "Vulnerability.Validation.EncodingRequired" : return 79;
 		case "Vulnerability.Validation.Required" : return 501;
-	}
+		}
 	return 0;
 	}
-
 
 	/**
 	 * Returns a list of finding_id's for each file_id 
@@ -191,7 +190,6 @@ public class AppScanSourceReader extends Reader {
 		}
 		return map;
 	}
-
 
 	private Map<Integer,String> parsePool( Node root, String poolname, String keyname, String valuename, String prefix ) {
 		Map<Integer,String> map = new TreeMap<Integer,String>();

@@ -89,9 +89,6 @@ public class Utils {
 
 	// A 'test' directory that target test files are created in so test cases can use them
 	public static final String TESTFILES_DIR = USERDIR + File.separator + "testfiles" + File.separator;
-	public static final String testfileDir = USERDIR + File.separator + "testfiles" + File.separator;
-	// Note: The above constant was renamed to be all CAPs, but generated test cases use old name. Remove
-	// after regenerating with new constant name.
 
 	public static final String DATA_DIR = USERDIR + File.separator + "data" + File.separator;
 

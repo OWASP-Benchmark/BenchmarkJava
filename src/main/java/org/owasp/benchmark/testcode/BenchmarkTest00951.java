@@ -72,7 +72,7 @@ public class BenchmarkTest00951 extends HttpServlet {
 
 		try {
 			java.net.URI fileURI = new java.net.URI("file:" + startURIslashes 
-				+ org.owasp.benchmark.helpers.Utils.testfileDir.replace('\\', '/').replace(' ', '_') + bar);
+				+ org.owasp.benchmark.helpers.Utils.TESTFILES_DIR.replace('\\', '/').replace(' ', '_') + bar);
 			java.io.File fileTarget = new java.io.File(fileURI);
 			response.getWriter().println(
 "Access to file: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileTarget.toString()) + "' created." 

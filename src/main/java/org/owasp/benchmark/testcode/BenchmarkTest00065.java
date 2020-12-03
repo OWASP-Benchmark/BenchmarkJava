@@ -68,7 +68,7 @@ public class BenchmarkTest00065 extends HttpServlet {
 		}
 		
 		
-		String fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
+		String fileName = org.owasp.benchmark.helpers.Utils.TESTFILES_DIR + bar;
         java.io.InputStream is = null;
         
 		try {	

@@ -62,9 +62,6 @@ public class BenchmarkTest01524 extends HttpServlet {
 		}
 		if ("".equals(str)) str="No cookie value supplied";
 		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie", str);
-		// Note: Can't jam in SameSite attribute into cookie like this because the ; char
-		// in the cookie value gets rejected by the new Cookie() method.
-//		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie", str + "; SameSite=strict");
 		
 		cookie.setSecure(true);
 		cookie.setHttpOnly(true);

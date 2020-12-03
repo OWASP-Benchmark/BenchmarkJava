@@ -3,7 +3,7 @@
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
-* <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
 *
 * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details.
 *
-* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Dave Wichers
 * @created 2015
 */
 
@@ -54,7 +54,7 @@ public class BenchmarkTest01031 extends HttpServlet {
 		java.io.FileInputStream fis = null;
 
 		try {
-			fileName = org.owasp.benchmark.helpers.Utils.testfileDir + bar;
+			fileName = org.owasp.benchmark.helpers.Utils.TESTFILES_DIR + bar;
 			fis = new java.io.FileInputStream(fileName);
 			byte[] b = new byte[1000];
 			int size = fis.read(b);

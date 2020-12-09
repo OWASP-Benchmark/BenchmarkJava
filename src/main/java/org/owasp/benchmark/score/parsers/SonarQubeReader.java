@@ -236,12 +236,14 @@ public class SonarQubeReader extends Reader {
         case "S1948" : return 594;  //Fields in a"Serializable" class should either be transient or serializable
         case "S1989" : return 600;  //Exceptions should not be thrown from servlet methods
         case "S2068" : return 259;  //Credentials should not be hard-coded
-        case "S2070" : return 328;  //SHA-1 and Message-Digest hash algorithms should not be used
-        case "S2076" : return 78;   //Values passed to OS commands should be sanitized
-        case "S2077" : return 89;   //Values passed to SQL commands should be sanitized
-        case "S2078" : return 90;   //Values passed to LDAP queries should be sanitized
+        case "S2070" : return 328;  //Benchmark Vuln: SHA-1 and Message-Digest hash algorithms should not be used
+        case "S2076" : return 78;   //Benchmark Vuln: Values passed to OS commands should be sanitized
+        case "S2077" : return 89;   //Benchmark Vuln: Values passed to SQL commands should be sanitized
+        case "S2078" : return 90;   //Benchmark Vuln: Values passed to LDAP queries should be sanitized
+        case "S2083" : return 22;   //Benchmark Vuln: I/O function calls should not be vulnerable to path injection attacks
         case "S2089" : return 293;  //HTTP referers should not be relied on
-        case "S2092" : return 614;  //Cookies should be"secure"
+        case "S2091" : return 643;  //Benchmark Vuln: XPath expressions should not be vulnerable to injection attacks
+        case "S2092" : return 614;  //Benchmark Vuln: Cookies should be "secure"
         case "S2093" : return 0000; //Try-with-resources should be used
         case "S2095" : return 459;  //Resources should be closed
         case "S2130" : return 0000; //Parsing should be used to convert "Strings" to primitives
@@ -253,13 +255,13 @@ public class SonarQubeReader extends Reader {
         case "S2184" : return 190;  //Math operands should be cast before assignment
         case "S2222" : return 459;  //Locks should be released
         case "S2225" : return 476;  //"toString()" and"clone()" methods should not return null
-        case "S2245" : return 330;  //Pseudorandom number generators (PRNGs) should not be used in secure contexts
+        case "S2245" : return 330;  //Benchmark Vuln: Pseudorandom number generators (PRNGs) should not be used in secure contexts
         case "S2254" : return 0000; //"HttpServletRequest.getRequestedSessionId()" should not be used
-        case "S2257" : return 327;  //Only standard cryptographic algorithms should be used
+        case "S2257" : return 327;  //Benchmark Vuln: Only standard cryptographic algorithms should be used
         case "S2259" : return 476;  //Null pointers should not be dereferenced
         case "S2275" : return 0000; //Printf-style format strings should not lead to unexpected behavior at runtime
         case "S2277" : return 780;  //Cryptographic RSA algorithms should always incorporate OAEP (Optimal Asymmetric Encryption Padding)
-        case "S2278" : return 327;  //DES (Data Encryption Standard) and DESede (3DES) should not be used
+        case "S2278" : return 327;  //Benchmark Vuln: DES (Data Encryption Standard) and DESede (3DES) should not be used
         case "S2293" : return 0000; //The diamond operator ("<>") should be used
         case "S2384" : return 374;  //Mutable members should not be stored or returned directly
         case "S2386" : return 607;  //Mutable fields should not be "public static"
@@ -271,6 +273,7 @@ public class SonarQubeReader extends Reader {
         case "S2677" : return 0000; //"read" and "readLine" return values should be used
         case "S2681" : return 483;  //Multiline blocks should be enclosed in curly braces
         case "S2696" : return 0000; //Instance methods should not write to "static" fields
+        case "S2755" : return 611;  //XML parsers should not be vulnerable to XXE attacks
         case "S2786" : return 0000; //Nested "enum"s should not be declared static
         case "S2864" : return 0000; //"entrySet()" should be iterated when both the key and value are needed
         case "S3008" : return 0000; //Static non-final field names should comply with a naming convention
@@ -279,21 +282,25 @@ public class SonarQubeReader extends Reader {
         case "S3518" : return 369;  //Zero should not be a possible denominator
         case "S3599" : return 0000; //Double Brace Initialization should not be used
         case "S3626" : return 0000; //Jump statements should not be redundant
+        case "S3649" : return 89;   //Database queries should not be vulnerable to injection attacks
         case "S3740" : return 0000; //Raw types should not be used
         case "S3776" : return 0000; //Cognitive Complexity of methods should not be too high
         case "S3824" : return 0000; //"Map.get" and value test should be replaced with single method call
         case "S3973" : return 0000; //A conditionally executed single line should be denoted by indentation
         case "S4042" : return 0000; //"java.nio.Files#delete" should be preferred
+        case "S4435" : return 611;  //XML transformers should be secured
         case "S4488" : return 0000; //Composed "@RequestMapping" variants should be preferred
         case "S4719" : return 0000; //"StandardCharsets" constants should be preferred
         case "S4838" : return 0000; //An iteration on a Collection should be performed on the type handled by the Collection
+        case "S5131" : return 79;   //Endpoints should not be vulnerable to reflected cross-site scripting (XSS) attacks
         case "S5261" : return 0000; //"else" statements should be clearly matched with an "if"
         case "S5361" : return 0000; //"String#replace" should be preferred to "String#replaceAll"
-        case "S5542" : return 327;  //Encryption algorithms should be used with secure mode and padding scheme
-        case "S5547" : return 327;  //Cipher algorithms should be robust
+        case "S5542" : return 327;  //Benchmark Vuln: Encryption algorithms should be used with secure mode and padding scheme
+        case "S5547" : return 327;  //Benchmark Vuln: Cipher algorithms should be robust
 
         case "CallToDeprecatedMethod":
         case "ClassVariableVisibilityCheck":
+        case "DuplicatedBlocks":
         case "SwitchLastCaseIsDefaultCheck":
                 return 0000; // Don't care. Not sure why these are being returned instead of an S#### value
         }
@@ -301,5 +308,4 @@ public class SonarQubeReader extends Reader {
         System.out.println( "Failed to translate " + squidNumber );
         return -1;
     }
-
 }

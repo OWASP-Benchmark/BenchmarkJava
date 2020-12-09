@@ -48,6 +48,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.io.FileUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import org.owasp.benchmark.helpers.Utils;
@@ -88,6 +89,7 @@ import org.owasp.benchmark.score.parsers.SemgrepReader;
 import org.owasp.benchmark.score.parsers.ShiftLeftReader;
 import org.owasp.benchmark.score.parsers.SnappyTickReader;
 import org.owasp.benchmark.score.parsers.SonarQubeReader;
+import org.owasp.benchmark.score.parsers.SonarQubeJsonReader;
 import org.owasp.benchmark.score.parsers.SourceMeterReader;
 import org.owasp.benchmark.score.parsers.TestCaseResult;
 import org.owasp.benchmark.score.parsers.TestResults;
@@ -697,12 +699,19 @@ public class BenchmarkScore {
 				String content = new String(Files.readAllBytes(Paths.get(fileToParse.getPath())));
 				JSONObject jsonobj = new JSONObject(content);
 
-				if (jsonobj.getJSONArray("results") != null) {
+				try {
+					jsonobj.getJSONArray("results"); // Throws JSONException if this Node not found.
 					tr = new SemgrepReader().parse( jsonobj );
-				} else {
-                  System.out.println("Error: No matching parser found for JSON file: " + filename);
+				} catch (JSONException e) {
+
+					try {
+						jsonobj.getJSONArray("issues");
+						tr = new SonarQubeJsonReader().parse( fileToParse );
+					} catch (JSONException e2) {
+						System.out.println("Error: No matching parser found for JSON file: " + filename);
+					}
 				}
-			}
+            }
         }
 
         else if ( filename.endsWith( ".sarif" ) ) {

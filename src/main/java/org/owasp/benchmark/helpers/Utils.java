@@ -85,12 +85,16 @@ public class Utils {
 
 	// Properties used by the generated test suite
 
-	public static final String USERDIR = System.getProperty("user.dir");
+	public static final String USERDIR = System.getProperty("user.dir") + File.separator;
 
 	// A 'test' directory that target test files are created in so test cases can use them
-	public static final String TESTFILES_DIR = USERDIR + File.separator + "testfiles" + File.separator;
+	public static final String TESTFILES_DIR = USERDIR + "testfiles" + File.separator;
 
-	public static final String DATA_DIR = USERDIR + File.separator + "data" + File.separator;
+	public static final String DATA_DIR = USERDIR + "data" + File.separator;
+
+	public static final String RESOURCES_DIR = USERDIR + "src" + File.separator + "main" + File.separator
+			+ "resources" + File.separator;
+
 
 	// This constant is used by some of the generated Java test cases
 	public static final Set<String> commonHeaders = new HashSet<>(Arrays.asList("host", "user-agent", "accept",
@@ -143,7 +147,6 @@ public class Utils {
 				System.out.println("Problem while changing executable permissions: " + e.getMessage());
 			}
 		}
-
 	}
 
 	public static String getCookie( HttpServletRequest request, String paramName ) {

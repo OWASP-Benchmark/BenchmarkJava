@@ -382,8 +382,7 @@ public class ScatterVulns extends ScatterPlot {
 
     public static ScatterVulns generateComparisonChart(String category, Set<Report> toolResults, String focus) {
         try {
-            String scatterTitle = (BenchmarkScore.TESTSUITE.equals("Benchmark") ?
-               "OWASP Benchmark" : BenchmarkScore.TESTSUITE)
+            String scatterTitle = BenchmarkScore.fullTestSuiteName(BenchmarkScore.TESTSUITE)
                + (BenchmarkScore.mixedMode ? " -" : " v" + BenchmarkScore.TESTSUITEVERSION)
                + " " + category + " Comparison";
             ScatterVulns scatter = new ScatterVulns(scatterTitle, 800, category, toolResults, focus);

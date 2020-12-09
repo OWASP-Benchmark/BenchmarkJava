@@ -50,6 +50,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
 
+import org.owasp.benchmark.helpers.Utils;
 import org.owasp.benchmark.score.parsers.AcunetixReader;
 import org.owasp.benchmark.score.parsers.AppScanDynamicReader;
 import org.owasp.benchmark.score.parsers.AppScanDynamicReader2;
@@ -107,12 +108,14 @@ import org.xml.sax.InputSource;
 
 public class BenchmarkScore {
 
-	public static String TESTSUITEVERSION = null;
+	// This value is pulled from the expected results file being processed
+	public static String TESTSUITEVERSION;
 
-	// TODO: Make next 3 configurable values (via command line)
-	// Prefixes for generated test suites and file names. Used by lots of other classes too.
+	// TODO: Make next 3 configurable values (via command line or expected results file when invoking scorecard generation)
+	// Prefixes for generated test suites and file names. Used by lots of other classes for scorecard generation.
 	public static final String TESTSUITE = "Benchmark";
-	public static final String TESTCASENAME = TESTSUITE + "Test";
+	public static final String TEST = "Test";
+	public static final String TESTCASENAME = TESTSUITE + TEST;
 
 	// The # of numbers in a test case name. Must match what is actually generated.
 	public static final int TESTIDLENGTH = 5;
@@ -120,7 +123,8 @@ public class BenchmarkScore {
 	// TODO: Move to static initializer so these filenames can be changed during startup
 	private static final String GUIDEFILENAME = "OWASP_Benchmark_Guide.html";
 	private static final String HOMEFILENAME = "OWASP_Benchmark_Home.html";
-	public static final String PATHTOSCORECARDRESOURCES = "src/main/resources/scorecard/";
+	public static final String PATHTOSCORECARDRESOURCES = Utils.RESOURCES_DIR + "scorecard" + File.separator;
+	// scorecard dir normally created under current user directory
 	public static final String scoreCardDirName = "scorecard";
 
 	private static final String TESTSUITE_VERSION_PREFIX = BenchmarkScore.TESTSUITE + " version: ";
@@ -1463,6 +1467,12 @@ public class BenchmarkScore {
 
 		// rewrite HTML files with new menus
 		updateMenuTemplates( toolmenu, vulnmenu );
+	}
+
+	// A utility method for providing a more descriptive test suite name than the base, single word,
+	// test suite name.
+	public static String fullTestSuiteName(String suite) {
+		return ("Benchmark".equals(suite) ? "OWASP Benchmark" : suite);
 	}
 
 	private static void updateMenuTemplates( String toolmenu, String vulnmenu ) {

@@ -56,7 +56,7 @@ public class Report implements Comparable<Report> {
 		this.toolType = actualResults.toolType;
 		this.testSuiteVersion = actualResults.getTestSuiteVersion();
 
-		String fullTitle = (BenchmarkScore.TESTSUITE.equals("Benchmark") ? "OWASP Benchmark" : BenchmarkScore.TESTSUITE)
+		String fullTitle = BenchmarkScore.fullTestSuiteName(BenchmarkScore.TESTSUITE)
 			+ " Scorecard for " + actualResults.getToolNameAndVersion();// + getToolName() + version;
 		// If not in anonymous mode OR the tool is not commercial, add the type at the end of the name
 		// It's not added to anonymous commercial tools, because it would be redundant.

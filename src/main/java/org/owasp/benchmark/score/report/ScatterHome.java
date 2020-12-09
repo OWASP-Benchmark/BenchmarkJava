@@ -346,8 +346,7 @@ public class ScatterHome extends ScatterPlot {
 
     public static void generateComparisonChart(Set<Report> toolResults, String focus ) {
     	try {
-            String scatterTitle = (BenchmarkScore.TESTSUITE.equals("Benchmark") ?
-                "OWASP Benchmark " : BenchmarkScore.TESTSUITE)
+            String scatterTitle = BenchmarkScore.fullTestSuiteName(BenchmarkScore.TESTSUITE)
                 + (BenchmarkScore.mixedMode ? "" : " v" + BenchmarkScore.TESTSUITEVERSION)
                 + " Results Comparison";
     		ScatterHome scatter = new ScatterHome(scatterTitle, 800, toolResults, focus );

@@ -30,12 +30,15 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.owasp.benchmark.helpers.PropertiesManager;
 import org.owasp.benchmark.helpers.Utils;
 import org.owasp.benchmark.score.BenchmarkScore;
 
 public class StatusCodeResponseFilter implements Filter {
 	protected FilterConfig config;
 	private static final String STATUSCODE_PATH_FILE = Utils.DATA_DIR + "crawlerStatusCodes.txt";
+	private static final String TESTCASENAME = new PropertiesManager().getProperty("testsuite", "Benchmark")
+			+ BenchmarkScore.TEST;
 
 	@Override
 	public void init(FilterConfig config) throws ServletException {
@@ -59,9 +62,9 @@ public class StatusCodeResponseFilter implements Filter {
 			response.getWriter().write(text);
 		} else {
 			HttpServletRequest req = (HttpServletRequest) request;
-			if (req.getRequestURL().toString().contains(BenchmarkScore.TESTCASENAME)) {
+			if (req.getRequestURL().toString().contains(TESTCASENAME)) {
 				String line = req.getRequestURL() + "," + hsr.getStatus();
-				// System.out.println("Linea a escribir: " + line);
+				// System.out.println("Line to write: " + line);
 				Utils.writeLineToFile(Paths.get(Utils.DATA_DIR), STATUSCODE_PATH_FILE, line);
 			}
 			// System.out.println("empty response");

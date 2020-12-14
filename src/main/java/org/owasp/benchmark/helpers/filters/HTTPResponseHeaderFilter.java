@@ -45,8 +45,11 @@ public class HTTPResponseHeaderFilter implements Filter {
 		if (response instanceof HttpServletResponse) {
 			HttpServletResponse httpResponse = (HttpServletResponse) response;
 			// Note that setHeader overwrites any existing header already set with the same name.
+			// The 'unsafe-eval' value was added because Chrome would block XSS attacks via Referers with the error:
+			// Uncaught EvalError: Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed
+			// source of script in the following Content Security Policy directive: "default-src 'unsafe-inline' 'self'".
 			httpResponse.setHeader("Content-Security-Policy", "frame-ancestors 'self'; form-action 'self'; " +
-				"default-src 'unsafe-inline' 'self'; style-src 'unsafe-inline' 'self'; style-src-elem 'self' fonts.googleapis.com; " +
+				"default-src 'unsafe-inline' 'unsafe-eval' 'self'; style-src 'unsafe-inline' 'self'; style-src-elem 'self' fonts.googleapis.com; " +
 				"font-src 'self' fonts.gstatic.com");
 			// The proper setting for this header is 'private' but DAST tools still complain about it, so
 			// setting it this way even though the app will be slightly slower.

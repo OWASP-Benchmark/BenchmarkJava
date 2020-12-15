@@ -58,6 +58,7 @@ import org.owasp.benchmark.score.parsers.AppScanDynamicReader2;
 import org.owasp.benchmark.score.parsers.AppScanSourceReader;
 import org.owasp.benchmark.score.parsers.AppScanSourceReader2;
 import org.owasp.benchmark.score.parsers.ArachniReader;
+import org.owasp.benchmark.score.parsers.BurpJsonReader;
 import org.owasp.benchmark.score.parsers.BurpReader;
 import org.owasp.benchmark.score.parsers.CASTAIPReader;
 import org.owasp.benchmark.score.parsers.CheckmarxESReader;
@@ -88,8 +89,8 @@ import org.owasp.benchmark.score.parsers.SeekerReader;
 import org.owasp.benchmark.score.parsers.SemgrepReader;
 import org.owasp.benchmark.score.parsers.ShiftLeftReader;
 import org.owasp.benchmark.score.parsers.SnappyTickReader;
-import org.owasp.benchmark.score.parsers.SonarQubeReader;
 import org.owasp.benchmark.score.parsers.SonarQubeJsonReader;
+import org.owasp.benchmark.score.parsers.SonarQubeReader;
 import org.owasp.benchmark.score.parsers.SourceMeterReader;
 import org.owasp.benchmark.score.parsers.TestCaseResult;
 import org.owasp.benchmark.score.parsers.TestResults;
@@ -708,7 +709,13 @@ public class BenchmarkScore {
 						jsonobj.getJSONArray("issues");
 						tr = new SonarQubeJsonReader().parse( fileToParse );
 					} catch (JSONException e2) {
-						System.out.println("Error: No matching parser found for JSON file: " + filename);
+
+						try {
+							jsonobj.getJSONArray("issue_events");
+							tr = new BurpJsonReader().parse( fileToParse );
+						} catch (JSONException e3) {
+							System.out.println("Error: No matching parser found for JSON file: " + filename);
+						}
 					}
 				}
             }
@@ -1503,16 +1510,16 @@ public class BenchmarkScore {
 	}
 
 	private static Document getXMLDocument( File f ) throws Exception {
-        DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 		// Prevent XXE = Note, disabling this entirely breaks the parsing of some XML files, like a Burp results
-        // file, so have to use the alternate defense.
+		// file, so have to use the alternate defense.
 		//dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-        docBuilderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+		docBuilderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
 		docBuilderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-        DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-        InputSource is = new InputSource(new FileInputStream(f));
-        Document doc = docBuilder.parse(is);
-        return doc;
+		DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+		InputSource is = new InputSource(new FileInputStream(f));
+		Document doc = docBuilder.parse(is);
+		return doc;
 	}
-
 }
+

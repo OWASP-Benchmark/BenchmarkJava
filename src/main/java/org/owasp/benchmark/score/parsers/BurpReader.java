@@ -22,6 +22,7 @@ import java.io.File;
 import java.util.List;
 
 import org.owasp.benchmark.score.BenchmarkScore;
+
 import org.w3c.dom.Node;
 
 public class BurpReader extends Reader {
@@ -38,13 +39,8 @@ public class BurpReader extends Reader {
         String version = getAttributeValue("burpVersion", root);
         tr.setToolVersion(version);
 
-	// If the fliename includes an elapsed time in seconds (e.g., TOOLNAME-seconds.xml) set the compute time on the scorecard.
-	tr.setTime(f);
-
-        // String time = getAttributeValue("ScanTime", root);
-        // tr.setTime( time );
-        // TODO - fix it so you can get the time out of the Burp Results filename by default.
-        // TODO - Ideally, we'd get the time out of the Burp results file, if they can provide it
+        // If the filename includes an elapsed time in seconds (e.g., TOOLNAME-seconds.xml) set the compute time on the scorecard.
+        tr.setTime(f);
 
         List<Node> issueList = getNamedChildren("issue", root);
 
@@ -75,7 +71,7 @@ public class BurpReader extends Reader {
     private TestCaseResult parseBurpVulnerability(Node issue) {
         TestCaseResult tcr = new TestCaseResult();
         String cwe = getNamedChild("type", issue).getTextContent();
-        tcr.setCWE(translate(cwe));
+        tcr.setCWE(cweLookup(cwe));
 
         String name = getNamedChild("name", issue).getTextContent();
         tcr.setCategory(name);
@@ -102,7 +98,7 @@ public class BurpReader extends Reader {
     // https://portswigger.net/kb/issues - This page lists all the issue types Burp looks for, and their
     // customer ID #'s. There are more on this page. The following primarily lists those
     // that are currently relevant in the Benchmark.
-    private int translate(String id) {
+    static int cweLookup(String id) {
         switch (id) {
         case "1048832": return 78;   // Command Injection 
         case "1049088": return 89;   // SQL Injection
@@ -133,13 +129,9 @@ public class BurpReader extends Reader {
         case "8389120": return 9999; // HTML doesn't specify character set - Don't care. Map to nothing.
         case "8389632": return 9999; // Incorrect Content Type - Don't care. Map to nothing right now.
         case "8389888": return 16;   // Content type is not specified
-        
-            // case "Trust Boundary Violation" : return 501;
-            // case "Weak Cryptographic Hash" : return 328;
-            // case "Weak Encryption" : return 327;
+
         } // end switch(id)
-        System.out.println("Unknown id: " + id);
+        System.out.println("Unknown Burp rule id: " + id);
         return -1;
     }
-
 }

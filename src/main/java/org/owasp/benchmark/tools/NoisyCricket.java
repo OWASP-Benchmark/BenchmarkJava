@@ -42,6 +42,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.owasp.benchmark.helpers.Utils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -65,7 +66,7 @@ public class NoisyCricket {
             Element version = report.createElement("meta");
             version.setAttribute("tool", "NoisyCricket");
             version.setAttribute("version", "8.1");
-            version.setAttribute("url", "http://owasp.org/benchmark");
+            version.setAttribute("url", "https://owasp.org/benchmark");
             docroot.appendChild( version );
             
             vulns = report.createElement("vulnerabilities");
@@ -82,10 +83,10 @@ public class NoisyCricket {
                     return FileVisitResult.CONTINUE;
                 }
             };
-            // TODO - Change user.home to be the home directory of the Benchmark project.
-            Path p = FileSystems.getDefault().getPath( System.getProperty("user.home") );
+
+            Path p = FileSystems.getDefault().getPath( Utils.USERDIR );
             Files.walkFileTree(p, visitor);
-            
+
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");

@@ -296,7 +296,9 @@
 										-Xmx4G
 										-javaagent:${basedir}/tools/Contrast/contrast.jar
 										-Dcontrast.dir=${basedir}/tools/Contrast/working
+										-Dcontrast.agent.java.standalone_app_name=OWASPBenchmark
 										-Dcontrast.application.name=OWASPBenchmark
+										-Dcontrast.application.path=/
 										-Dcontrast.assess.rules.disabled_rules="autocomplete-missing,cache-controls-missing,clickjacking-control-missing,csrf"
 										-Dcontrast.assess.threshold.entries=100000
 										-Dcontrast.defend.enabled=false

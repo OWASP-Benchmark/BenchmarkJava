@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.json.JSONObject;
+
 import org.owasp.benchmark.score.BenchmarkScore;
 
 public class ContrastReader extends Reader {
@@ -49,11 +50,11 @@ public class ContrastReader extends Reader {
 					if (line.startsWith("{\"hash\":")) {
 						parseContrastFinding(tr, line);
 					} else if (line.contains("Agent Version:")) {
-						String version = line.substring(line.indexOf("Version:") + 8);
+						String version = line.substring(line.indexOf("Version:") + "Version:".length());
 						tr.setToolVersion(version.trim());
 					// TODO: expand length of "00001" to match length of TESTCASE_NAME rather than exactly 5
 					} else if (line.contains("DEBUG - >>> [URL") &&
-								line.contains(BenchmarkScore.TESTCASENAME+"00001")) {
+						line.contains(BenchmarkScore.TESTCASENAME+"00001")) {
 						firstLine = line;
 					} else if (line.contains("DEBUG - >>> [URL")) {
 						lastLine = line;
@@ -148,5 +149,4 @@ public class ContrastReader extends Reader {
 		}
 		return null;
 	}
-
 }

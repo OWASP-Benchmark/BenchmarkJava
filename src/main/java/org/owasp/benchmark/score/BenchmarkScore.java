@@ -705,19 +705,33 @@ public class BenchmarkScore {
 					tr = new SemgrepReader().parse( jsonobj );
 				} catch (JSONException e) {
 
-					try {
-						jsonobj.getJSONArray("issues");
-						tr = new SonarQubeJsonReader().parse( fileToParse );
-					} catch (JSONException e2) {
+				// Note: Each of the remaining try blocks is nested under the one above, but we shown them
+				// inline as they would get too deep otherwise
+				try {
+					// SonarQube has two different JSON formats, one for standard issues and
+					// another for 'hotspots' which are securit issues. Both are handled by the same
+					// parser for SonarQube.
+					jsonobj.getJSONArray("issues");
+					tr = new SonarQubeJsonReader().parse( fileToParse );
+				} catch (JSONException e2) {
 
-						try {
-							jsonobj.getJSONArray("issue_events");
-							tr = new BurpJsonReader().parse( fileToParse );
-						} catch (JSONException e3) {
+				try {
+					jsonobj.getJSONArray("hotspots");
+					tr = new SonarQubeJsonReader().parse( fileToParse );
+				} catch (JSONException e3) {
+
+				try {
+					jsonobj.getJSONArray("issue_events");
+					tr = new BurpJsonReader().parse( fileToParse );
+
+					// This is the final catch that says we couldn't find a matching parser
+						} catch (JSONException e4) {
 							System.out.println("Error: No matching parser found for JSON file: " + filename);
 						}
-					}
-				}
+
+						} // end catch SonarQubeJsonReader - hotspots
+					} // end catch SonarQubeJsonReader - issues
+				} // end catch SemgrepReader
             }
         }
 

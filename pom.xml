@@ -301,7 +301,7 @@
 										-Dcontrast.application.path=/
 										-Dcontrast.assess.rules.disabled_rules="autocomplete-missing,cache-controls-missing,clickjacking-control-missing,csrf"
 										-Dcontrast.assess.threshold.entries=100000
-										-Dcontrast.defend.enabled=false
+										-Dcontrast.protect.enable=false
 										-Dcontrast.level=debug
 										-Dcontrast.log.daily=true
 									</cargo.jvmargs>

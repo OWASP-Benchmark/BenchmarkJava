@@ -343,7 +343,7 @@
 			           <configuration>
 			             <target>
 			               <ant target="run" antfile="${basedir}/src/config/build.xml">
-			                 <reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+			                 <reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
 			               </ant>
 			             </target>
 			           </configuration>
@@ -357,7 +357,7 @@
 			           <configuration>
 			             <target>
 			               <ant target="databaseServer" antfile="${basedir}/src/config/build.xml">
-			                 <reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+			                 <reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
 			               </ant>
 			             </target>
 			           </configuration>
@@ -371,7 +371,7 @@
 			           <configuration>
 			             <target>
 			               <ant target="databaseInit" antfile="${basedir}/src/config/build.xml">
-			                 <reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+			                 <reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
 			               </ant>
 			             </target>
 			           </configuration>
@@ -546,7 +546,7 @@
 								<configuration>
 									<target>
 										<ant target="run" antfile="${basedir}/src/config/build.xml">
-											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
 										</ant>
 									</target>
 								</configuration>
@@ -560,7 +560,7 @@
 								<configuration>
 									<target>
 										<ant target="databaseServer" antfile="${basedir}/src/config/build.xml">
-											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
 										</ant>
 									</target>
 								</configuration>
@@ -574,7 +574,7 @@
 								<configuration>
 									<target>
 										<ant target="databaseInit" antfile="${basedir}/src/config/build.xml">
-											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
 										</ant>
 									</target>
 								</configuration>
@@ -840,7 +840,7 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk15on</artifactId>
 			<!-- version>1.66</version - Upgrading to this version causes a NullPointerException in maven-enforcer-plugin -->
-			<version>1.65.01</version>
+			<version>1.67</version>
 		</dependency>
 
 		<!-- Kevin's fix for jar version conflicts. For future Benchmark 1.3

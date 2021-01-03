@@ -7,11 +7,9 @@ IF EXIST .\cx-launcher.jar (
         rmdir /q /s .\logs
       )
 
-      ECHO ""
-
+      ECHO.
       ECHO Previous Checkmarx IAST results have been removed
-
-      ECHO ""
+      ECHO.
   )
     CD ..\..
 

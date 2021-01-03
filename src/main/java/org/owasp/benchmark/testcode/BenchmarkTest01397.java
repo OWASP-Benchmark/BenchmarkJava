@@ -59,24 +59,20 @@ public class BenchmarkTest01397 extends HttpServlet {
 			org.w3c.dom.Document xmlDocument = builder.parse(file);
 			javax.xml.xpath.XPathFactory xpf = javax.xml.xpath.XPathFactory.newInstance();
 			javax.xml.xpath.XPath xp = xpf.newXPath();
-			
-			response.getWriter().println(
-"Your query results are: <br/>"
-);
- 
-			String expression = "/Employees/Employee[@emplid='"+bar+"']";
-			response.getWriter().println(
-xp.evaluate(expression, xmlDocument) + "<br/>"
-);
 
-			
-		} catch (javax.xml.xpath.XPathExpressionException e) {
-			// OK to swallow
-			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
-		} catch (javax.xml.parsers.ParserConfigurationException e) {
-			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
-		} catch (org.xml.sax.SAXException e) {
-			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
+			String expression = "/Employees/Employee[@emplid='"+bar+"']";
+			String result = xp.evaluate(expression, xmlDocument);
+
+			response.getWriter().println(
+				"Your query results are: " + result + "<br/>"
+			);
+
+		} catch (javax.xml.xpath.XPathExpressionException | javax.xml.parsers.ParserConfigurationException
+				| org.xml.sax.SAXException e) {
+			response.getWriter().println(
+				"Error parsing XPath input: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(bar) + "'"
+			);
+			throw new ServletException(e);
 		}
 	}  // end doPost
 

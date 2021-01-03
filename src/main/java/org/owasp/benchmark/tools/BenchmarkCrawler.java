@@ -42,8 +42,9 @@ public class BenchmarkCrawler {
 	public static String testSuiteVersion = "";
 
 	protected void init() {
+		String crawlerFile = Utils.DATA_DIR + "benchmark-crawler-http.xml";
 		try {
-			String crawlerFile = Utils.DATA_DIR + "benchmark-crawler-http.xml";
+			// Have to open the stream twice so each method can read the whole file
 			testSuiteVersion = Utils.getCrawlerBenchmarkVersion(new FileInputStream(crawlerFile));
 			crawl(new FileInputStream(crawlerFile));
 		} catch (Exception e) {
@@ -132,8 +133,20 @@ public class BenchmarkCrawler {
 	}
 
 	public static void main(String[] args) throws Exception {
+		if (!menu(args)) {
+			return;
+		}
+
 		BenchmarkCrawler crawler = new BenchmarkCrawler();
 		crawler.init();
+	}
+
+	private static boolean menu(String[] args) {
+		if (args == null) {
+			System.out.println("Please verify required parameters are provided.");
+			return false;
+		}
+		return true;
 	}
 }
 
@@ -175,4 +188,3 @@ class ResponseInfo {
 		this.requestBase = requestBase;
 	}
 }
-

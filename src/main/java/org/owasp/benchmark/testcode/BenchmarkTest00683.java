@@ -63,28 +63,26 @@ public class BenchmarkTest00683 extends HttpServlet {
 			org.w3c.dom.Document xmlDocument = builder.parse(file);
 			javax.xml.xpath.XPathFactory xpf = javax.xml.xpath.XPathFactory.newInstance();
 			javax.xml.xpath.XPath xp = xpf.newXPath();
-			
+
 			String expression = "/Employees/Employee[@emplid='"+bar+"']";
-			
-			response.getWriter().println(
-"Your query results are: <br/>"
-);
- 
 			org.w3c.dom.NodeList nodeList = (org.w3c.dom.NodeList) xp.compile(expression).evaluate(xmlDocument, javax.xml.xpath.XPathConstants.NODESET);
+
+			response.getWriter().println(
+				"Your query results are: <br/>"
+			);
+ 
 			for (int i = 0; i < nodeList.getLength(); i++) {
 				org.w3c.dom.Element value = (org.w3c.dom.Element) nodeList.item(i);
 				response.getWriter().println(
-value.getTextContent() + "<br/>"
-);
-
+					value.getTextContent() + "<br/>"
+				);
 			}
-		} catch (javax.xml.xpath.XPathExpressionException e) {
-			// OK to swallow
-			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
-		} catch (javax.xml.parsers.ParserConfigurationException e) {
-			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
-		} catch (org.xml.sax.SAXException e) {
-			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
+		} catch (javax.xml.xpath.XPathExpressionException | javax.xml.parsers.ParserConfigurationException
+				| org.xml.sax.SAXException e) {
+			response.getWriter().println(
+				"Error parsing XPath input: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(bar) + "'"
+			);
+			throw new ServletException(e);
 		}
 	}
 	

@@ -67,6 +67,7 @@ import org.owasp.benchmark.score.parsers.CheckmarxReader;
 import org.owasp.benchmark.score.parsers.ContrastReader;
 import org.owasp.benchmark.score.parsers.Counter;
 import org.owasp.benchmark.score.parsers.CoverityReader;
+import org.owasp.benchmark.score.parsers.CrashtestReader;
 import org.owasp.benchmark.score.parsers.FaastReader;
 import org.owasp.benchmark.score.parsers.FindbugsReader;
 import org.owasp.benchmark.score.parsers.FortifyReader;
@@ -325,7 +326,7 @@ public class BenchmarkScore {
 				System.exit(-1);
 			} else {
 				System.out.println( "Read expected results from file: " + expected.getAbsolutePath());
-				int totalResults = expectedResults.totalResults();
+				int totalResults = expectedResults.getTotalResults();
 				if (totalResults != 0) {
 					System.out.println( totalResults + " results found.");
 					TESTSUITEVERSION = expectedResults.getTestSuiteVersion();
@@ -459,7 +460,7 @@ public class BenchmarkScore {
                 results.setTime( actualResults.getTime() );
 
                 // This has the side effect of also generating the report on disk.
-                Report scoreCard = new Report( actualResults, scores, results, expectedResults.totalResults(),
+                Report scoreCard = new Report( actualResults, scores, results, expectedResults.getTotalResults(),
                 		actualResultsFileName, actualResults.isCommercial(),actualResults.getToolType());
 
                 // Add this report to the list of reports
@@ -754,7 +755,7 @@ public class BenchmarkScore {
 
             // Handle XML results files where the 1st or 2nd line indicates the tool type
 
-            String line1 = getLine( fileToParse, 0 );
+            String line1 = getLine( fileToParse, 0 ); // line1 is frequently like: <?xml version="1.0"?>
             String line2 = getLine( fileToParse, 1 );
             String line4;
 
@@ -797,6 +798,10 @@ public class BenchmarkScore {
 
             else if ( line2 != null && line2.startsWith( "<detailedreport" )) {
                 tr = new VeracodeReader().parse( fileToParse );
+            }
+
+            else if ( line1.startsWith( "<testsuites name=\"" ) ) {
+                tr = new CrashtestReader().parse( fileToParse );
             }
 
             else if ( line1.startsWith( "<total" ) || line1.startsWith( "<p>" )) {

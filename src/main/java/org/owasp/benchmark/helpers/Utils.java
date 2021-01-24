@@ -95,7 +95,6 @@ public class Utils {
 	public static final String RESOURCES_DIR = USERDIR + "src" + File.separator + "main" + File.separator
 			+ "resources" + File.separator;
 
-
 	// This constant is used by some of the generated Java test cases
 	public static final Set<String> commonHeaders = new HashSet<>(Arrays.asList("host", "user-agent", "accept",
 			"accept-language", "accept-encoding", "content-type", "x-requested-with", "referer", "content-length",
@@ -215,6 +214,7 @@ public class Utils {
 		return cmds;
 	}
 
+	// A method used by the Benchmark JAVA test cases to format OS Command Output
 	public static void printOSCommandResults(java.lang.Process proc, HttpServletResponse response) throws IOException {
 		PrintWriter out = response.getWriter();
 		out.write(
@@ -252,6 +252,7 @@ public class Utils {
 		}
 	}
 
+	// A method used by the Benchmark JAVA test cases to format OS Command Output
 	public static void printOSCommandResults(java.lang.Process proc, List<StringMessage> resp) throws IOException {
 		BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 		BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
@@ -280,13 +281,14 @@ public class Utils {
 
 	public static File getFileFromClasspath(String fileName, ClassLoader classLoader) {
 		URL url = classLoader.getResource(fileName);
-		if (url != null) try {
-			return new File(url.toURI().getPath());
-		} catch (URISyntaxException e) {
-			System.out.println("The file '" + fileName + "' from the classpath cannot be loaded.");
-			e.printStackTrace();
-		}
-		else System.out.println("The file '" + fileName + "' from the classpath cannot be loaded.");
+		if (url != null) {
+			try {
+				return new File(url.toURI().getPath());
+			} catch (URISyntaxException e) {
+				System.out.println("The file '" + fileName + "' from the classpath cannot be loaded.");
+				e.printStackTrace();
+			}
+		} else System.out.println("The file '" + fileName + "' from the classpath cannot be loaded.");
 		return null;
 	}
 

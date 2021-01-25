@@ -52,7 +52,8 @@ public class CrashtestReader extends Reader {
 
 		Node crashtest = doc.getDocumentElement();
 		String time = crashtest.getAttributes().getNamedItem("time").getNodeValue();
-		tr.setTime(TestResults.formatTime(time));
+		// They provide the time in seconds but formatTime expects milliseconds
+		tr.setTime(TestResults.formatTime(time + "000"));
 		Node testsuite = getNamedChild( "testsuite", crashtest );
 //		tr.setToolVersion( version );
 

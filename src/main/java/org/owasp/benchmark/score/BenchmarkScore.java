@@ -48,6 +48,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.io.FileUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -77,6 +78,7 @@ import org.owasp.benchmark.score.parsers.HdivReader;
 import org.owasp.benchmark.score.parsers.JuliaReader;
 import org.owasp.benchmark.score.parsers.KiuwanReader;
 import org.owasp.benchmark.score.parsers.LGTMReader;
+import org.owasp.benchmark.score.parsers.CodeQLReader;
 import org.owasp.benchmark.score.parsers.NetsparkerReader;
 import org.owasp.benchmark.score.parsers.NoisyCricketReader;
 import org.owasp.benchmark.score.parsers.OverallResult;
@@ -736,9 +738,24 @@ public class BenchmarkScore {
             }
         }
 
-        else if ( filename.endsWith( ".sarif" ) ) {
-            tr = new LGTMReader().parse( fileToParse );
-        }
+		else if ( filename.endsWith( ".sarif" ) ) {
+			// CodeQL results and LGTM results both have the same extension .sarif
+			// But only the LGTM results have "semmle.sourceLanguage" as a key in ["run.properties"]
+			String content = new String(Files.readAllBytes(Paths.get(fileToParse.getPath())));
+			JSONObject jsonobj = new JSONObject(content);
+			JSONArray runs = jsonobj.getJSONArray("runs");
+
+			try{
+				for (int i = 0; i < runs.length(); i++){
+					JSONObject run = runs.getJSONObject(i);
+					JSONObject properties = run.getJSONObject("properties");
+					properties.getString("semmle.sourceLanguage");
+				}
+				tr = new LGTMReader().parse( fileToParse ); // If "semmle.sourceLanguage" is available set the LGTMReader
+			} catch (JSONException e){
+				tr = new CodeQLReader().parse( fileToParse ); // If "semmle.sourceLanguage" is not available set the CodeQLReader
+			}
+		}
 
         else if ( filename.endsWith( ".threadfix" ) ) {
             tr = new KiuwanReader().parse( fileToParse );

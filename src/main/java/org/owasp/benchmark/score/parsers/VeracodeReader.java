@@ -134,6 +134,7 @@ public class VeracodeReader extends Reader {
         if ( cwe == 73 ) return 22;
         if ( cwe == 80 ) return 79;
         if ( cwe == 331 ) return 330;
+	if ( cwe == 91 ) return 643;
         return cwe;
     }
 }

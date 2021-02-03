@@ -15,7 +15,7 @@ if [ -f ./secagent.jar ]; then
   mvn clean package cargo:run -Pdeploywhcl
 
   echo "Copying report to results directory"
-  cp tools/HCL/working/HCL-IAST.hcl results/HCL-IAST.hcl
+  cp tools/HCL/working/HCL-IAST.hcl results/Benchmark_HCL-IAST.hcl
   cd tools/HCL
 
 else 

@@ -3,7 +3,7 @@
  *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Benchmark Project For details, please see
- * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+ * <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
  *
  * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
  * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details
  *
- * @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+ * @author Dave Wichers
  * @created 2015
  */
 
@@ -40,8 +40,7 @@ public class ArachniReader extends Reader {
 //    <start_datetime>2015-08-17T14:21:14+03:00</start_datetime>
 //    <finish_datetime>2015-08-17T14:44:14+03:00</finish_datetime>
 //    <sitemap>    
-    
-    
+
     public TestResults parse(File f) throws Exception {
         DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 		// Prevent XXE
@@ -77,7 +76,7 @@ public class ArachniReader extends Reader {
         }
         return tr;
     }
-    
+
 //    <issue>
 //    <name>Cross-Site Scripting (XSS)</name>
 //    <description>
@@ -114,7 +113,7 @@ public class ArachniReader extends Reader {
 //      </inputs>
 //    </vector>
 //  </issue>
-    
+
     // 2015-08-17T14:21:14+03:00    
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
     private String calculateTime(String submitted, String published) {
@@ -127,9 +126,7 @@ public class ArachniReader extends Reader {
             return "Unknown";
         }
     }
-    
-    
-    
+
     private TestCaseResult parseArachniIssue(Node flaw) throws URISyntaxException {
         TestCaseResult tcr = new TestCaseResult();
         Node rule = getNamedChild("cwe", flaw);
@@ -141,7 +138,7 @@ public class ArachniReader extends Reader {
         tcr.setCategory( cat );
 
         // not used
-        String conf = getNamedChild( "severity", flaw ).getTextContent();
+        //String conf = getNamedChild( "severity", flaw ).getTextContent();
         
         // confidence not available
         // tcr.setConfidence( Integer.parseInt( conf ) );
@@ -154,8 +151,8 @@ public class ArachniReader extends Reader {
         String testfile = url.getPath();
         testfile = testfile.substring( testfile.lastIndexOf('/') +1 );
        
-        if ( testfile.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
-            String testno = testfile.substring(BenchmarkScore.BENCHMARKTESTNAME.length());
+        if ( testfile.startsWith( BenchmarkScore.TESTCASENAME ) ) {
+            String testno = testfile.substring(BenchmarkScore.TESTCASENAME.length());
             if ( testno.endsWith( ".html" ) ) {
                 testno = testno.substring(0, testno.length() -5 );
             }
@@ -168,16 +165,8 @@ public class ArachniReader extends Reader {
         }
         return null;
     }
-
     
-    private int cweLookup(String orig) {   
-        
-        switch( orig ) {       
-        }
-        
+    private int cweLookup(String orig) {
         return Integer.parseInt( orig );
     }
-    
 }
-    
-    

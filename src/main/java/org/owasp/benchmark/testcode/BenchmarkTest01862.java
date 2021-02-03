@@ -3,7 +3,7 @@
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
-* <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
 *
 * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details.
 *
-* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Nick Sanidas
 * @created 2015
 */
 
@@ -33,10 +33,12 @@ public class BenchmarkTest01862 extends HttpServlet {
 	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html;charset=UTF-8");
 		javax.servlet.http.Cookie userCookie = new javax.servlet.http.Cookie("BenchmarkTest01862", "whatever");
 		userCookie.setMaxAge(60*3); //Store cookie for 3 minutes
 		userCookie.setSecure(true);
 		userCookie.setPath(request.getRequestURI());
+		userCookie.setDomain(new java.net.URL(request.getRequestURL().toString()).getHost());
 		response.addCookie(userCookie);
 		javax.servlet.RequestDispatcher rd = request.getRequestDispatcher("/securecookie-00/BenchmarkTest01862.html");
 		rd.include(request, response);
@@ -68,8 +70,8 @@ public class BenchmarkTest01862 extends HttpServlet {
 			int i = ((java.io.InputStream) inputParam).read(input);
 			if (i == -1) {
 				response.getWriter().println(
-"This input source requires a POST, not a GET. Incompatible UI for the InputStream source."
-);
+				"This input source requires a POST, not a GET. Incompatible UI for the InputStream source."
+				);
 				return;
 			}			
 			str = new String(input, 0, i);
@@ -78,7 +80,7 @@ public class BenchmarkTest01862 extends HttpServlet {
 		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie", str);
 		
 		cookie.setSecure(true);
-//		cookie.setPath("/benchmark/" + this.getClass().getSimpleName());
+		cookie.setHttpOnly(true);
 		cookie.setPath(request.getRequestURI()); // i.e., set path to JUST this servlet
 												 // e.g., /benchmark/sql-01/BenchmarkTest01001
 		response.addCookie(cookie);

@@ -3,7 +3,7 @@
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project For details, please see
-* <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
 *
 * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details
 *
-* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Dave Wichers
 * @created 2015
 */
 
@@ -36,9 +36,7 @@ public class TestCaseResult {
 	// optional attributes
 	private String source = null;
 	private String dataflow = null;
-	private String dataflowfile = null;
 	private String sink = null;
-
 	
 	/*
 	 *  Set the name of the test case (E.g., BenchmarkTest00001). This is frequently only used for 
@@ -125,14 +123,6 @@ public class TestCaseResult {
 	
 	public void setDataFlow(String dataflow) {
 		this.dataflow = dataflow;
-	}
-
-	public String getDataFlowFile() {
-		return this.dataflowfile;
-	}
-	
-	public void setDataFlowFile(String dataflowfile) {
-		this.dataflowfile = dataflowfile;
 	}
 
 	public String getSink() {

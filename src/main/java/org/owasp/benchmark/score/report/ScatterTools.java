@@ -3,7 +3,7 @@
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project For details, please see
-* <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
 *
 * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details
 *
-* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Dave Wichers
 * @created 2015
 */
 
@@ -27,17 +27,15 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import javax.swing.JFrame;
-
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.XYTextAnnotation;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.ui.TextAnchor;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.ui.TextAnchor;
+import org.owasp.benchmark.score.BenchmarkScore;
 import org.owasp.benchmark.score.parsers.OverallResult;
 import org.owasp.benchmark.score.parsers.OverallResults;
 
@@ -50,9 +48,6 @@ public class ScatterTools extends ScatterPlot {
 	}
 
 	private JFreeChart display(String title, int height, OverallResults or) {
-
-		JFrame f = new JFrame(title);
-		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		XYSeriesCollection dataset = new XYSeriesCollection();
 		XYSeries series = new XYSeries("Scores");
@@ -71,18 +66,18 @@ public class ScatterTools extends ScatterPlot {
 		if ( or.getResults().size() > 1) {
 		    series.add(afpr * 100, atpr * 100);
 		}
-		
+
 		dataset.addSeries(series);
 
 		chart = ChartFactory.createScatterPlot(title, "False Positive Rate", "True Positive Rate", dataset, PlotOrientation.VERTICAL, true, true, false);
         theme.apply(chart);
 
 		XYPlot xyplot = chart.getXYPlot();
-		
+
 		initializePlot( xyplot );
-		
+
 		makeDataLabels(or, xyplot);
-        makeLegend( or, 103, 93, dataset, xyplot );
+		makeLegend( or, 103, 93, dataset, xyplot );
 
 		XYTextAnnotation time = new XYTextAnnotation("Tool run time: " + or.getTime(), 12, -5.6);
 		time.setTextAnchor(TextAnchor.TOP_LEFT);
@@ -90,11 +85,6 @@ public class ScatterTools extends ScatterPlot {
 		time.setPaint(Color.red);
 		xyplot.addAnnotation(time);
 
-		ChartPanel cp = new ChartPanel(chart, height, height, 400, 400, 1200, 1200, false, false, false, false, false, false);
-		f.add(cp);
-		f.pack();
-		f.setLocationRelativeTo(null);
-		// f.setVisible(true);
 		return chart;
 	}
 
@@ -251,7 +241,8 @@ public class ScatterTools extends ScatterPlot {
 		or.add("Reflection Injection", 0, 0, 300, 5);
 		or.add("LDAP Injection", .5, 1, 6, 5);
 		or.add("Weak Encryption", .2, .9, 600, 5);
-		ScatterTools scatter = new ScatterTools("OWASP Benchmark Results for SomeTool", 800, or);
+		ScatterTools scatter = new ScatterTools(BenchmarkScore.fullTestSuiteName(BenchmarkScore.TESTSUITE)
+				+ " Results for SomeTool", 800, or);
 		scatter.writeChartToFile(new File("test.png"), 800);
 		System.exit(0);
 	}

@@ -5,8 +5,25 @@
 	<artifactId>benchmark</artifactId>
 	<version>1.2</version>
 	<packaging>war</packaging>
+
 	<name>OWASP Benchmark Project</name>
-	<url>https://www.owasp.org/index.php/Benchmark</url>
+	<description>OWASP Benchmark is a Java test suite designed to evaluate the accuracy, coverage, and speed of automated software vulnerability detection tools.</description>
+	<url>https://owasp.org/www-project-benchmark/</url>
+
+	<developers>
+		<developer>
+			<id>davewichers</id>
+			<name>Dave Wichers</name>
+			<email>dave.wichers@owasp.org</email>
+		</developer>
+	</developers>
+
+	<licenses>
+		<license>
+			<name>GNU General Public License, version 2 (GPL2)</name>
+			<url>https://choosealicense.com/licenses/gpl-2.0/</url>
+		</license>
+	</licenses>
 
 	<profiles>
 		<profile>
@@ -32,7 +49,7 @@
 				</plugins>
 			</build>
 		</profile>
-		
+
 		<profile>
 			<id>benchmarkscore</id>
 			<build>
@@ -85,7 +102,7 @@
 								<plugin>
 									<groupId>com.h3xstream.findsecbugs</groupId>
 									<artifactId>findsecbugs-plugin</artifactId>
-									<version>1.9.0</version>
+									<version>1.10.1</version>
 								</plugin>
 							</plugins>
 						</configuration>
@@ -114,7 +131,7 @@
 								<configuration>
 									<target>
 										<ant target="run" antfile="${basedir}/src/config/build.xml">
-											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
 										</ant>
 									</target>
 								</configuration>
@@ -128,7 +145,7 @@
 								<configuration>
 									<target>
 										<ant target="databaseServer" antfile="${basedir}/src/config/build.xml">
-											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
 										</ant>
 									</target>
 								</configuration>
@@ -142,7 +159,7 @@
 								<configuration>
 									<target>
 										<ant target="databaseInit" antfile="${basedir}/src/config/build.xml">
-											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
 										</ant>
 									</target>
 								</configuration>
@@ -212,7 +229,7 @@
 								<configuration>
 									<target>
 										<ant target="run" antfile="${basedir}/src/config/build.xml">
-											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
 										</ant>
 									</target>
 								</configuration>
@@ -226,7 +243,7 @@
 								<configuration>
 									<target>
 										<ant target="databaseServer" antfile="${basedir}/src/config/build.xml">
-											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
 										</ant>
 									</target>
 								</configuration>
@@ -240,7 +257,7 @@
 								<configuration>
 									<target>
 										<ant target="databaseInit" antfile="${basedir}/src/config/build.xml">
-											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
 										</ant>
 									</target>
 								</configuration>
@@ -279,11 +296,14 @@
 										-Xmx4G
 										-javaagent:${basedir}/tools/Contrast/contrast.jar
 										-Dcontrast.dir=${basedir}/tools/Contrast/working
-										-Dcontrast.log.daily=true
-										-Dcontrast.level=debug
-										-Dcontrast.noteamserver.enable=true
-										-Dcontrast.teamserver.suppress=true
+										-Dcontrast.agent.java.standalone_app_name=OWASPBenchmark
+										-Dcontrast.application.name=OWASPBenchmark
+										-Dcontrast.application.path=/
+										-Dcontrast.assess.rules.disabled_rules="autocomplete-missing,cache-controls-missing,clickjacking-control-missing,csrf"
 										-Dcontrast.assess.threshold.entries=100000
+										-Dcontrast.protect.enable=false
+										-Dcontrast.level=debug
+										-Dcontrast.log.daily=true
 									</cargo.jvmargs>
 									<cargo.servlet.port>8443</cargo.servlet.port>
 									<cargo.protocol>https</cargo.protocol>
@@ -300,7 +320,213 @@
 				</plugins>
 			</build>
 		</profile>
-		
+
+		<profile>
+			<id>deploywseeker</id>
+			<properties>
+			   <skipTests>true</skipTests>
+			   <seeker.javaagent>-javaagent:${basedir}/tools/seeker/seeker-agent.jar</seeker.javaagent>
+			   <seeker.server.url>-Dseeker.server.url=https://server.example.com:8888</seeker.server.url>
+			   <seeker.project.key>-Dseeker.project.key=Benchmark</seeker.project.key>
+			</properties>
+			<build>
+			   <plugins>
+			     <plugin>
+			       <artifactId>maven-antrun-plugin</artifactId>
+			       <executions>
+			         <execution>
+			           <id>ldap-server</id>
+			           <phase>package</phase>
+			           <goals>
+			             <goal>run</goal>
+			           </goals>
+			           <configuration>
+			             <target>
+			               <ant target="run" antfile="${basedir}/src/config/build.xml">
+			                 <reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+			               </ant>
+			             </target>
+			           </configuration>
+			         </execution>
+			         <execution>
+			           <id>database-server</id>
+			           <phase>package</phase>
+			           <goals>
+			             <goal>run</goal>
+			           </goals>
+			           <configuration>
+			             <target>
+			               <ant target="databaseServer" antfile="${basedir}/src/config/build.xml">
+			                 <reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+			               </ant>
+			             </target>
+			           </configuration>
+			         </execution>
+			         <execution>
+			           <id>database-init</id>
+			           <phase>package</phase>
+			           <goals>
+			             <goal>run</goal>
+			           </goals>
+			           <configuration>
+			             <target>
+			               <ant target="databaseInit" antfile="${basedir}/src/config/build.xml">
+			                 <reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+			               </ant>
+			             </target>
+			           </configuration>
+			         </execution>
+			       </executions>
+			   </plugin>
+			   <plugin>
+			       <groupId>org.codehaus.cargo</groupId>
+			       <artifactId>cargo-maven2-plugin</artifactId>
+			       <version>1.6.0</version>
+			       <configuration>
+			         <container>
+			           <timeout>300000</timeout>
+			           <containerId>tomcat8x</containerId>
+			           <zipUrlInstaller>
+			           <url>http://archive.apache.org/dist/tomcat/tomcat-8/v8.0.38/bin/apache-tomcat-8.0.38.zip</url>
+			           </zipUrlInstaller>
+			         </container>
+			         <configuration>
+			           <configfiles>
+			             <configfile>
+			               <file>${basedir}/src/config/local/server.xml</file>
+			               <todir>conf</todir>
+			               <overwrite>true</overwrite>
+			             </configfile>
+			             <configfile>
+			               <file>${basedir}/src/config/local/context.xml</file>
+			               <todir>conf</todir>
+			               <overwrite>true</overwrite>
+			             </configfile>
+			           </configfiles>
+			           <properties>
+			             <cargo.jvmargs>
+			               ${seeker.javaagent} ${seeker.server.url} ${seeker.project.key} -Xss2m
+			             </cargo.jvmargs>
+			             <cargo.servlet.port>8443</cargo.servlet.port>
+			           <cargo.protocol>https</cargo.protocol>
+			           <cargo.tomcat.connector.clientAuth>false</cargo.tomcat.connector.clientAuth>
+			           <cargo.tomcat.connector.sslProtocol>TLS</cargo.tomcat.connector.sslProtocol>
+			           <cargo.tomcat.connector.keystoreFile>../../../../.keystore</cargo.tomcat.connector.keystoreFile>
+			           <cargo.tomcat.connector.keystorePass>changeit</cargo.tomcat.connector.keystorePass>
+			           <cargo.tomcat.connector.keyAlias>tomcat</cargo.tomcat.connector.keyAlias>
+			           <cargo.tomcat.httpSecure>true</cargo.tomcat.httpSecure>
+			           </properties>
+			         </configuration>
+			       </configuration>
+			     </plugin>
+			   </plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>deploywcxiast</id>
+			<properties>
+				<skipTests>true</skipTests>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>ldap-server</id>
+								<phase>package</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<ant target="run" antfile="${basedir}/src/config/build.xml">
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+										</ant>
+									</target>
+								</configuration>
+							</execution>
+							<execution>
+								<id>database-server</id>
+								<phase>package</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<ant target="databaseServer" antfile="${basedir}/src/config/build.xml">
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+										</ant>
+									</target>
+								</configuration>
+							</execution>
+							<execution>
+								<id>database-init</id>
+								<phase>package</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<ant target="databaseInit" antfile="${basedir}/src/config/build.xml">
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+										</ant>
+									</target>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.cargo</groupId>
+						<artifactId>cargo-maven2-plugin</artifactId>
+						<configuration>
+							<container>
+								<timeout>300000</timeout>
+								<containerId>tomcat${tomcat.major.version}x</containerId>
+								<zipUrlInstaller>
+									<url>${tomcat.url}</url>
+								</zipUrlInstaller>
+							</container>
+							<properties>
+								<cargo.jvmargs>-XX:MaxPermSize=6G -Xms1G –Xmx8G</cargo.jvmargs>
+							</properties>
+							<configuration>
+								<configfiles>
+									<configfile>
+										<file>${basedir}/src/config/local/server.xml</file>
+										<todir>conf</todir>
+										<overwrite>true</overwrite>
+									</configfile>
+									<configfile>
+										<file>${basedir}/src/config/local/context.xml</file>
+										<todir>conf</todir>
+										<overwrite>true</overwrite>
+									</configfile>
+								</configfiles>
+								<properties>
+									<cargo.jvmargs>
+										-Xmx4G
+										-javaagent:${basedir}/tools/CxIAST/cx-launcher.jar
+										-Diast.home=${basedir}/tools/CxIAST/
+										-Xverify:none
+									</cargo.jvmargs>
+									<cargo.servlet.port>8443</cargo.servlet.port>
+									<cargo.protocol>https</cargo.protocol>
+									<cargo.tomcat.connector.clientAuth>false</cargo.tomcat.connector.clientAuth>
+									<cargo.tomcat.connector.sslProtocol>TLS</cargo.tomcat.connector.sslProtocol>
+									<cargo.tomcat.connector.keystoreFile>../../../../.keystore</cargo.tomcat.connector.keystoreFile>
+									<cargo.tomcat.connector.keystorePass>changeit</cargo.tomcat.connector.keystorePass>
+									<cargo.tomcat.connector.keyAlias>tomcat</cargo.tomcat.connector.keyAlias>
+									<cargo.tomcat.httpSecure>true</cargo.tomcat.httpSecure>
+								</properties>
+							</configuration>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
 		<profile>
 			<id>deploywhcl</id>
 			<properties>
@@ -438,38 +664,23 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<!-- mvn dependency:analyze says this is an unused declared dependency, but its wrong. I think the webapp needs it somehow. -->
 		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>4.5.8</version>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-servlet</artifactId>
+			<version>${version.jersey}</version>
 		</dependency>
-
-		<!-- including to avoid warning: SLF4J: Defaulting to no-operation (NOP) logger implementation -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>${version.slf4j}</version>
-		</dependency>
-
-<!--
-		TODO: Need to add this to eliminate this error:
-[WARNING] [talledLocalContainer] ERROR StatusLogger Log4j2 could not find a logging implementation. Please add log4j-core to the classpath. Using SimpleLogger to log to the console...
-
-But it requires getting all the Log4j2 stuff configured right, and haven't done that yet.
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-core</artifactId>
-			<version>2.11.0</version>
-		</dependency>
--->
 
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			<version>1.12</version>
+			<version>1.15</version>
 		</dependency>
 
-		<!-- mvn dependency:analyze says this is an unused declared dependency, but its wrong. -->
+		<!-- mvn dependency:analyze says this is an unused declared dependency, but its wrong. Get this runtime error if it's not included:
+			Caused by: org.springframework.beans.factory.CannotLoadBeanClassException: Cannot find class [org.apache.commons.dbcp.BasicDataSource]
+			for bean with name 'dataSource' defined in class path resource [context.xml]; nested exception is java.lang.ClassNotFoundException:
+			org.apache.commons.dbcp.BasicDataSource -->
 		<dependency>
 			<groupId>commons-dbcp</groupId>
 			<artifactId>commons-dbcp</artifactId>
@@ -479,6 +690,7 @@ But it requires getting all the Log4j2 stuff configured right, and haven't done 
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
+			<!-- latest is: <version>2.7</version>, but 2.7+ requires Java 8 -->
 			<version>2.6</version>
 		</dependency>
 
@@ -488,25 +700,117 @@ But it requires getting all the Log4j2 stuff configured right, and haven't done 
 			<version>2.6</version>
 		</dependency>
 
+		<!-- Including slf4j lib to avoid warning: SLF4J: Defaulting to no-operation (NOP) logger implementation -->
+		<!-- Have to include early in the pom like this so this version takes precendence over the old version used by the apacheds libs. -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${version.slf4j}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.8</version>
-		</dependency>
-
-		<!-- mvn dependency:analyze says these 4 artifacts are used but not included in the pom, but adding
-		     them breaks the LDAP server startup. Maybe because apacheds-all includes them already? 
-		<dependency>
-			<groupId>org.apache.directory.shared</groupId>
-			<artifactId>shared-ldap</artifactId>
-			<version>${version.apache-shared-ldap}</version>
+			<artifactId>commons-csv</artifactId>
+			<!-- latest is: <version>1.8</version>, but 1.7+ requires Java 8 -->
+			<version>1.6</version>
 		</dependency>
 
 		<dependency>
-			<groupId>org.apache.directory.shared</groupId>
-			<artifactId>shared-ldap-schema</artifactId>
-			<version>${version.apache-shared-ldap}</version>
+			<groupId>org.apache.directory.server</groupId>
+			<artifactId>apacheds-core</artifactId>
+<!-- Upgrading to 2.0.0-M24 is an API breaking change.
+
+But it might be needed for Java 10, because I get this error, that I don't get with Java 8:
+
+     [java] at org.apache.directory.server.core.DefaultDirectoryService.initialize(DefaultDirectoryService.java:1426)
+     [java] at org.apache.directory.server.core.DefaultDirectoryService.startup(DefaultDirectoryService.java:907)
+     [java] at org.owasp.benchmark.helpers.LDAPServer.initDirectoryService(LDAPServer.java:148)
+     [java] at org.owasp.benchmark.helpers.LDAPServer.<init>(LDAPServer.java:42)
+     [java] at org.owasp.benchmark.helpers.LDAPServer.main(LDAPServer.java:320)
+     [java] Caused by: java.lang.NumberFormatException: multiple points
+     [java] at java.base/jdk.internal.math.FloatingDecimal.readJavaFormatString(FloatingDecimal.java:1914)
+-->
+			<version>${version.apacheds}</version>
+			<exclusions>
+				<!-- excluded because its old, and there is a bug in it causing an exception when using it. -->
+				<exclusion>
+					<groupId>bouncycastle</groupId>
+					<artifactId>bcprov-jdk15</artifactId>
+				</exclusion>
+				<!-- excluded because it conflicts with esapi's dependency, which is newer -->
+				<exclusion>
+					<groupId>commons-collections</groupId>
+					<artifactId>commons-collections</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
+
+                <dependency>
+                        <groupId>org.apache.directory.server</groupId>
+                        <artifactId>apacheds-core-api</artifactId>
+                        <version>${version.apacheds}</version>
+                </dependency>
+
+                <dependency>
+                        <groupId>org.apache.directory.server</groupId>
+                        <artifactId>apacheds-core-constants</artifactId>
+                        <version>${version.apacheds}</version>
+                </dependency>
+
+                <dependency>
+                        <groupId>org.apache.directory.server</groupId>
+                        <artifactId>apacheds-jdbm-partition</artifactId>
+                        <version>${version.apacheds}</version>
+                </dependency>
+
+                <dependency>
+                        <groupId>org.apache.directory.server</groupId>
+                        <artifactId>apacheds-jdbm-store</artifactId>
+                        <version>${version.apacheds}</version>
+                </dependency>
+
+                <dependency>
+                        <groupId>org.apache.directory.server</groupId>
+                        <artifactId>apacheds-ldif-partition</artifactId>
+                        <version>${version.apacheds}</version>
+                </dependency>
+
+                <dependency>
+                        <groupId>org.apache.directory.server</groupId>
+                        <artifactId>apacheds-protocol-ldap</artifactId>
+                        <version>${version.apacheds}</version>
+                </dependency>
+
+                <dependency>
+                        <groupId>org.apache.directory.server</groupId>
+                        <artifactId>apacheds-protocol-shared</artifactId>
+                        <version>${version.apacheds}</version>
+                </dependency>
+
+                <dependency>
+                        <groupId>org.apache.directory.server</groupId>
+                        <artifactId>apacheds-xdbm-base</artifactId>
+                        <version>${version.apacheds}</version>
+                </dependency>
+
+                <dependency>
+                        <groupId>org.apache.directory.shared</groupId>
+                        <artifactId>shared-ldap</artifactId>
+                        <version>${version.apache-shared-ldap}</version>
+                        <exclusions>
+                                <!-- excluded because it conflicts with esapi's dependency, which is newer -->
+                                <exclusion>
+                                        <groupId>commons-collections</groupId>
+                                        <artifactId>commons-collections</artifactId>
+                                </exclusion>
+                        </exclusions>
+                </dependency>
+
+                <dependency>
+                        <groupId>org.apache.directory.shared</groupId>
+                        <artifactId>shared-ldap-schema</artifactId>
+                        <version>${version.apache-shared-ldap}</version>
+                </dependency>
 
 		<dependency>
 			<groupId>org.apache.directory.shared</groupId>
@@ -518,15 +822,40 @@ But it requires getting all the Log4j2 stuff configured right, and haven't done 
 			<groupId>org.apache.directory.shared</groupId>
 			<artifactId>shared-ldap-schema-manager</artifactId>
 			<version>${version.apache-shared-ldap}</version>
-		</dependency -->
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.13</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpcore</artifactId>
-			<version>4.4.11</version>
+			<version>4.4.14</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk15on</artifactId>
+			<version>1.68</version>
 		</dependency>
 
 		<!-- Kevin's fix for jar version conflicts. For future Benchmark 1.3
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>${version.hibernate}</version>
+			<exclusions>
+				< excluded because it conflicts with esapi's dependency, which is newer >
+				<exclusion>
+					<groupId>commons-collections</groupId>
+					<artifactId>commons-collections</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
@@ -556,20 +885,15 @@ But it requires getting all the Log4j2 stuff configured right, and haven't done 
 		<dependency>
 			<groupId>cglib</groupId>
 			<artifactId>cglib-nodep</artifactId>
-			<version>3.2.8</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<version>${version.hibernate}</version>
+			<version>3.3.0</version>
 		</dependency>
 	 - END Kevin's fix for jar version conflicts -->
 
+		<!-- mvn dependency:analyze says this is an unused declared dependency, but its wrong. Get a runtime error if it's not included -->
 		<dependency>
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
-			<!-- <version>2.4.1</version> This is latest version, but requires Java 8 -->
+			<!-- <version>2.5.1</version> This is latest version, but requires Java 8. 2.3.6 is last version to support Java 7. -->
 			<version>2.3.6</version>
 		</dependency>
 
@@ -580,15 +904,28 @@ But it requires getting all the Log4j2 stuff configured right, and haven't done 
 		</dependency>
 
 		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>1.10.19</version>
+			<groupId>org.jfree</groupId>
+			<artifactId>jfreechart</artifactId>
+			<!-- <version>1.5.1</version> This is latest version, but requires Java 8. 1.5.0 is last version to support Java 7. -->
+			<version>1.5.0</version>
 		</dependency>
 
 		<dependency>
-			<groupId>xml-apis</groupId>
-			<artifactId>xml-apis</artifactId>
-			<version>1.4.01</version>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20201115</version>
+		</dependency>
+
+                <dependency>
+                        <groupId>org.mockito</groupId>
+                        <artifactId>mockito-core</artifactId>
+                        <version>1.10.19</version>
+                </dependency>
+
+		<dependency>
+			<groupId>org.owasp.esapi</groupId>
+			<artifactId>esapi</artifactId>
+			<version>2.2.2.0</version>
 		</dependency>
 
 		<dependency>
@@ -615,7 +952,7 @@ But it requires getting all the Log4j2 stuff configured right, and haven't done 
 			<version>${version.springframework}</version>
 		</dependency>
 
-		<!-- mvn dependency:analyze says this is an unused declared dependency, but its wrong. -->
+		<!-- mvn dependency:analyze says this is an unused declared dependency, but its wrong. It's needed by Spring somehow. -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
@@ -623,80 +960,23 @@ But it requires getting all the Log4j2 stuff configured right, and haven't done 
 		</dependency>
 
 		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>2.8.5</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<!-- versions higher than this require Java 8 -->
-			<version>25.1-jre</version>
-		</dependency>
-
-		<!-- mvn dependency:analyze says this is an unused declared dependency, but its wrong. -->
-		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-servlet</artifactId>
-			<version>${version.jersey}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-csv</artifactId>
-			<version>1.5</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.directory.server</groupId>
-			<artifactId>apacheds-all</artifactId>
-<!-- Upgrading to 2.0.0-M24 is an API breaking change.
-
-But it might be needed for Java 10, because I get this error, that I don't get with Java 8:
-
-     [java] at org.apache.directory.server.core.DefaultDirectoryService.initialize(DefaultDirectoryService.java:1426)
-     [java] at org.apache.directory.server.core.DefaultDirectoryService.startup(DefaultDirectoryService.java:907)
-     [java] at org.owasp.benchmark.helpers.LDAPServer.initDirectoryService(LDAPServer.java:148)
-     [java] at org.owasp.benchmark.helpers.LDAPServer.<init>(LDAPServer.java:42)
-     [java] at org.owasp.benchmark.helpers.LDAPServer.main(LDAPServer.java:320)
-     [java] Caused by: java.lang.NumberFormatException: multiple points
-     [java] at java.base/jdk.internal.math.FloatingDecimal.readJavaFormatString(FloatingDecimal.java:1914)
--->
-			<version>1.5.7</version>
-			<exclusions>
-				<!-- shared-ldap-schema module needs to be excluded to avoid multiple 
-					schema resources on the classpath -->
-				<exclusion>
-					<groupId>org.apache.directory.shared</groupId>
-					<artifactId>shared-ldap-schema</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jfree</groupId>
-			<artifactId>jfreechart</artifactId>
-			<!-- <version>1.5.0</version> This is latest version, but is an API breaking change. -->
-			<version>1.0.19</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.json</groupId>
-			<artifactId>json</artifactId>
-			<version>20180813</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.owasp.esapi</groupId>
-			<artifactId>esapi</artifactId>
-			<version>2.2.0.0</version>
+			<groupId>xml-apis</groupId>
+			<artifactId>xml-apis</artifactId>
+			<version>1.4.01</version>
 		</dependency>
 
 	</dependencies>
 
 	<build>
 		<finalName>benchmark</finalName>
+
+		<extensions>
+			<extension>
+				<groupId>co.leantechniques</groupId>
+				<artifactId>maven-buildtime-extension</artifactId>
+				<version>3.0.3</version>
+			</extension>
+		</extensions>
 
 		<resources>
 			<resource>
@@ -719,7 +999,7 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
-					<version>3.1.1</version>
+					<version>3.1.2</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -728,7 +1008,6 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.8</version>
 			</plugin>
 
 			<plugin>
@@ -740,7 +1019,7 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.7.0</version>
+				<version>3.8.1</version>
 				<configuration>
 					<fork>true</fork>
 					<meminitial>1000m</meminitial>
@@ -751,18 +1030,18 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
-				<version>2.8.2</version>
+				<version>3.0.0-M1</version>
 			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
-				<version>3.0.0-M2</version>
+				<version>3.0.0-M3</version>
 				<dependencies>
 					<dependency>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>extra-enforcer-rules</artifactId>
-						<version>1.2</version>
+						<version>1.3</version>
 					</dependency>
 				</dependencies>
 				<executions>
@@ -802,13 +1081,13 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-install-plugin</artifactId>
-				<version>2.5.2</version>
+				<version>3.0.0-M1</version>
 			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
-				<version>3.12.0</version>
+				<version>3.14.0</version>
 				<configuration>
 					<linkXref>true</linkXref>
 					<targetJdk>1.7</targetJdk>
@@ -818,25 +1097,25 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-project-info-reports-plugin</artifactId>
-				<version>3.0.0</version>
+				<version>3.1.1</version>
 			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
-				<version>3.1.0</version>
+				<version>3.2.0</version>
 			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
-				<version>3.7.1</version>
+				<version>3.9.1</version>
 			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.22.1</version>
+				<version>3.0.0-M5</version>
 			</plugin>
 
 			<plugin>
@@ -851,13 +1130,7 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 			<plugin>
 				<groupId>org.codehaus.cargo</groupId>
 				<artifactId>cargo-maven2-plugin</artifactId>
-				<version>1.7.3</version>
-			</plugin>
-
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>sonar-maven-plugin</artifactId>
-				<version>3.6.1.1688</version>
+				<version>1.8.2</version>
 			</plugin>
 
 			<!-- SpotBugs Static Analysis - the successor to FindBugs -->
@@ -870,6 +1143,15 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 					<threshold>Low</threshold>
 					<failOnError>true</failOnError>
 				</configuration>
+				<dependencies>
+				<!-- Overwrite dependency on SpotBugs if you want to specify the version of SpotBugs.
+					SpotBugs itself is frequently several versions ahead of the spotbugs-maven-plugin -->
+					<dependency>
+						<groupId>com.github.spotbugs</groupId>
+						<artifactId>spotbugs</artifactId>
+						<version>${version.spotbugs}</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 
 			<plugin>
@@ -909,6 +1191,18 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 					</reportSet>
 				</reportSets>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>3.0.0</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>dependency-convergence</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
 		</plugins>
 	</reporting>
 
@@ -921,18 +1215,19 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.war.webxml>${basedir}/src/config/web.xml</maven.war.webxml>
 		<runenv>local</runenv>
+		<version.apacheds>1.5.7</version.apacheds>
 		<version.apache-shared-ldap>0.9.19</version.apache-shared-ldap>
 		<version.exec.maven>1.6.0</version.exec.maven>
 		<version.hibernate>3.6.10.Final</version.hibernate>
 		<version.jackson>2.9.8</version.jackson>
 		<version.jersey>1.19.4</version.jersey>
-		<version.slf4j>1.7.26</version.slf4j>
-		<version.spotbugs.maven>3.1.12.2</version.spotbugs.maven>
-		<!-- Spring Framework 4.2x is an API breaking change. Would like to upgrade to 4.3x actually -->
-		<version.springframework>4.1.9.RELEASE</version.springframework>
+		<version.slf4j>1.7.30</version.slf4j>
+		<version.spotbugs.maven>4.1.4</version.spotbugs.maven>
+		<version.spotbugs>4.2.0</version.spotbugs>
+		<version.springframework>4.3.29.RELEASE</version.springframework>
 		<!-- tomcat 8.5 is last version to support Java 7. Tomcat 9+ requires Java 8. -->
 		<tomcat.major.version>8</tomcat.major.version>
-		<version.tomcat>8.5.40</version.tomcat>
+		<version.tomcat>8.5.56</version.tomcat>
 		<tomcat.url>http://archive.apache.org/dist/tomcat/tomcat-${tomcat.major.version}/v${version.tomcat}/bin/apache-tomcat-${version.tomcat}.zip</tomcat.url>
 	</properties>
 </project>

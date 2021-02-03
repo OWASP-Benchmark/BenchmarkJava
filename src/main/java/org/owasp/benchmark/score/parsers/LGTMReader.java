@@ -3,7 +3,7 @@
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project For details, please see
-* <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
 *
 * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -62,7 +62,7 @@ public class LGTMReader extends Reader {
 				
 				// Then, identify all the rules that report results and which CWEs they map to
 				JSONArray rules = driver.getJSONArray("rules");
-				System.out.println("Found: " + rules.length() + " rules.");
+				//System.out.println("Found: " + rules.length() + " rules.");
 				HashMap<String,Integer> rulesUsed = parseLGTMRules(rules);
 				//System.out.println("Parsed: " + rulesUsed.size() + " rules.");
 				
@@ -123,8 +123,8 @@ private static final int LGTMCWEPREFIXLENGTH = LGTMCWEPREFIX.length();
 			filename = locations.getJSONObject(0).getJSONObject("physicalLocation")
 					.getJSONObject("artifactLocation").getString("uri");
 			filename = filename.substring( filename.lastIndexOf( '/' ) );
-			if ( filename.contains( BenchmarkScore.BENCHMARKTESTNAME ) ) {
-				String testNumber = filename.substring( BenchmarkScore.BENCHMARKTESTNAME.length() + 1, filename.length() - 5 );
+			if ( filename.contains( BenchmarkScore.TESTCASENAME ) ) {
+				String testNumber = filename.substring( BenchmarkScore.TESTCASENAME.length() + 1, filename.length() - 5 );
 				tcr.setNumber( Integer.parseInt( testNumber ) );
 				String ruleId = finding.getString("ruleId");
 				Integer cweForRule = rulesUsed.get( ruleId );

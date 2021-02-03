@@ -3,7 +3,7 @@
  *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Benchmark Project For details, please see
- * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+ * <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
  *
  * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
  * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details
  *
- * @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+ * @author Dave Wichers
  * @created 2015
  */
 
@@ -26,6 +26,8 @@ import java.util.Date;
 
 import org.json.JSONObject;
 
+import org.owasp.benchmark.score.BenchmarkScore;
+
 public class ContrastReader extends Reader {
 
 	public static void main(String[] args) throws Exception {
@@ -34,7 +36,6 @@ public class ContrastReader extends Reader {
 		cr.parse(f);
 	}
 
-	
 	public TestResults parse(File f) throws Exception {
 		TestResults tr = new TestResults("Contrast", true, TestResults.ToolType.IAST);
 
@@ -49,9 +50,11 @@ public class ContrastReader extends Reader {
 					if (line.startsWith("{\"hash\":")) {
 						parseContrastFinding(tr, line);
 					} else if (line.contains("Agent Version:")) {
-						String version = line.substring(line.indexOf("Version:") + 8);
+						String version = line.substring(line.indexOf("Version:") + "Version:".length());
 						tr.setToolVersion(version.trim());
-					} else if (line.contains("DEBUG - >>> [URL") && line.contains("BenchmarkTest00001")) {
+					// TODO: expand length of "00001" to match length of TESTCASE_NAME rather than exactly 5
+					} else if (line.contains("DEBUG - >>> [URL") &&
+						line.contains(BenchmarkScore.TESTCASENAME+"00001")) {
 						firstLine = line;
 					} else if (line.contains("DEBUG - >>> [URL")) {
 						lastLine = line;
@@ -66,7 +69,6 @@ public class ContrastReader extends Reader {
 		return tr;
 	}
 
-
     private void parseContrastFinding(TestResults tr, String json) throws Exception {
         TestCaseResult tcr = new TestCaseResult();
         
@@ -79,8 +81,8 @@ public class ContrastReader extends Reader {
 	        JSONObject request = obj.getJSONObject("request");	        
 	        String uri = request.getString("uri" );
         
-	        if ( uri.contains( "BenchmarkTest" ) ) {
-		        String testNumber = uri.substring( uri.lastIndexOf('/') + "BenchmarkTest".length() + 1 );
+	        if ( uri.contains( BenchmarkScore.TESTCASENAME ) ) {
+		        String testNumber = uri.substring( uri.lastIndexOf('/') + BenchmarkScore.TESTCASENAME.length() + 1 );
 	            tcr.setNumber(Integer.parseInt(testNumber));
 		        if (tcr.getCWE() != 0) {
 		            // System.out.println( tcr.getNumber() + "\t" + tcr.getCWE() + "\t" + tcr.getCategory() );
@@ -92,7 +94,6 @@ public class ContrastReader extends Reader {
             // e.printStackTrace();
         }
     }
-
     
 	private static int cweLookup(String rule) {
 		switch (rule) {
@@ -148,5 +149,4 @@ public class ContrastReader extends Reader {
 		}
 		return null;
 	}
-
 }

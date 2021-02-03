@@ -3,7 +3,7 @@
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
-* <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
 *
 * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details.
 *
-* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Nick Sanidas
 * @created 2015
 */
 
@@ -85,7 +85,7 @@ public class BenchmarkTest00241 extends HttpServlet {
 		javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("SomeCookie", str);
 		
 		cookie.setSecure(false);
-//		cookie.setPath("/benchmark/" + this.getClass().getSimpleName());
+		cookie.setHttpOnly(true);
 		cookie.setPath(request.getRequestURI()); // i.e., set path to JUST this servlet
 												 // e.g., /benchmark/sql-01/BenchmarkTest01001
 		response.addCookie(cookie);

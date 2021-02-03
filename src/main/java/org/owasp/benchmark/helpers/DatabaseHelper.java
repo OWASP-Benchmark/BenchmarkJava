@@ -3,7 +3,7 @@
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project For details, please see
-* <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
 *
 * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details
 *
-* @author Juan Gama <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Juan Gama
 * @created 2015
 */
 
@@ -43,7 +43,7 @@ public class DatabaseHelper {
 
 	static {
 		
-		initDataBase();		
+		initDataBase();
 		System.out.println("Spring context init() ");
 		@SuppressWarnings("resource")
 		org.springframework.context.ApplicationContext ac =
@@ -182,7 +182,7 @@ public class DatabaseHelper {
 		out.write("<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n"
 				+ "<html>\n"
 				+ "<head>\n"
-				+ "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=ISO-8859-1\">\n"
+				+ "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n"
 				+ "</head>\n"
 				+ "<body>\n"
 				+ "<p>\n");

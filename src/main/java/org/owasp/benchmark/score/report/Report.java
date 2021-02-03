@@ -3,7 +3,7 @@
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project For details, please see
-* <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
 *
 * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details
 *
-* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Dave Wichers
 * @created 2015
 */
 
@@ -39,7 +39,7 @@ public class Report implements Comparable<Report> {
 	private ToolType toolType;
 	private String toolName = "not specified";
 	private final String toolNameAndVersion;
-	private final String benchmarkVersion;
+	private final String testSuiteVersion;
 	private final Map<String, Counter> scores;
 	private final OverallResults overallResults;
 	private final String reportPath;
@@ -54,17 +54,18 @@ public class Report implements Comparable<Report> {
 		this.toolName = actualResults.getTool();
 		this.toolNameAndVersion = actualResults.getToolNameAndVersion();
 		this.toolType = actualResults.toolType;
-		this.benchmarkVersion = actualResults.getBenchmarkVersion();
+		this.testSuiteVersion = actualResults.getTestSuiteVersion();
 
-		String fullTitle = "OWASP Benchmark Scorecard for " + actualResults.getToolNameAndVersion();// + getToolName() + version;
+		String fullTitle = BenchmarkScore.fullTestSuiteName(BenchmarkScore.TESTSUITE)
+			+ " Scorecard for " + actualResults.getToolNameAndVersion();// + getToolName() + version;
 		// If not in anonymous mode OR the tool is not commercial, add the type at the end of the name
 		// It's not added to anonymous commercial tools, because it would be redundant.
 		if (!BenchmarkScore.anonymousMode || !isCommercial) {
 			fullTitle += " (" + actualResults.toolType+ ")";			
 		}
 		
-		String shortTitle = "Benchmark v" + actualResults.getBenchmarkVersion() + " Scorecard for " + getToolName();
-		this.filename = "Benchmark v" + actualResults.getBenchmarkVersion() + " Scorecard for " 
+		String shortTitle = BenchmarkScore.TESTSUITE + " v" + actualResults.getTestSuiteVersion() + " Scorecard for " + getToolName();
+		this.filename = BenchmarkScore.TESTSUITE + " v" + actualResults.getTestSuiteVersion() + " Scorecard for "
 				+ actualResults.getToolNameAndVersion();
 		this.filename = filename.replace(' ', '_');
 
@@ -104,8 +105,8 @@ public class Report implements Comparable<Report> {
 		return toolType;
 	}
 
-	public String getBenchmarkVersion() {
-		return this.benchmarkVersion;
+	public String getTestSuiteVersion() {
+		return this.testSuiteVersion;
 	}
 	
 	/**
@@ -129,7 +130,7 @@ public class Report implements Comparable<Report> {
 	private String generateHtml(String title, TestResults actualResults, Map<String, Counter> scores, OverallResults or,
 			int totalResults, File img, String actualResultsFileName) throws IOException, URISyntaxException {
 		String template = new String(
-				Files.readAllBytes(Paths.get(BenchmarkScore.pathToScorecardResources + "template.html")));
+				Files.readAllBytes(Paths.get(BenchmarkScore.PATHTOSCORECARDRESOURCES + "template.html")));
 
 		// String template = new String(Files.readAllBytes(
 		// Paths.get(this.getClass().getClassLoader()
@@ -142,7 +143,7 @@ public class Report implements Comparable<Report> {
 		html = html.replace("${time}", or.getTime());
 		html = html.replace("${score}", "" + new DecimalFormat("#0.00%").format(or.getScore()));
 		html = html.replace("${tool}", actualResults.getTool());
-		html = html.replace("${version}", actualResults.getBenchmarkVersion());
+		html = html.replace("${version}", actualResults.getTestSuiteVersion());
 		html = html.replace("${actualResultsFile}", actualResultsFileName);
 
 		String imgTag = "<img align=\"middle\" src=\"" + img.getName() + "\" />";
@@ -210,7 +211,7 @@ public class Report implements Comparable<Report> {
 			if (!Double.isNaN(r.score))
 				totalScore += r.score;
 		}
-		sb.append("<th>Totals*</th><th/>");
+		sb.append("<tr><th>Totals*</th><th/>");
 		sb.append("<th>" + totals.tp + "</th>");
 		sb.append("<th>" + totals.fn + "</th>");
 		sb.append("<th>" + totals.tn + "</th>");
@@ -219,7 +220,7 @@ public class Report implements Comparable<Report> {
 		sb.append("<th>" + total + "</th>");
 		sb.append("<th/><th/><th/></tr>\n");
 		
-		sb.append("<th>Overall Results*</th><th/><th/><th/><th/><th/><th/>");
+		sb.append("<tr><th>Overall Results*</th><th/><th/><th/><th/><th/><th/>");
 		double tpr = (totalTPR / scores.size());
 		sb.append("<th>" + new DecimalFormat("#0.00%").format(tpr) + "</th>");
 		double fpr = (totalFPR / scores.size());

@@ -10,7 +10,7 @@
 <form action="/benchmark/xss-01/BenchmarkTest00544"  method="POST" id="FormBenchmarkTest00544">
     <div><label>Please explain your answer:</label></div>
     <br/>
-    <div><textarea rows="4" cols="50" id="BenchmarkTest00544Area" name="BenchmarkTest00544Area" value=""></textarea></div>
+    <div><textarea rows="4" cols="50" id="BenchmarkTest00544Area" name="BenchmarkTest00544Area"></textarea></div>
     <div><label>Any additional note for the reviewer:</label></div>
     <div><input type="text" id="answer" name="answer"></input></div>
     <br/>
@@ -27,7 +27,6 @@ $('.safe').keypress(function (e) {
   }
 });
 
-//$("#login-btn").click(function(){
 function submitForm() {
 	var text = $("#FormBenchmarkTest00544 input[id=BenchmarkTest00544]").val();
 	
@@ -44,12 +43,13 @@ function submitForm() {
 
 	var xhr = new XMLHttpRequest();
     xhr.open("POST", URL, true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
     xhr.onreadystatechange = function () {
         if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
 $("#code").text((xhr.responseText).decodeEscapeSequence());
-        }else{
-        	$("#code").text("Error " + xhr.status + " " + xhr.statusText + " ocurred.");
+        } else {
+            $("#code").text("Error " + xhr.status + " " + xhr.statusText + " occurred.");
         }
     }
     xhr.send(formData);

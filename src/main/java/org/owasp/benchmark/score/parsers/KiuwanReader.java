@@ -3,7 +3,7 @@
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project For details, please see
-* <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
 *
 * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -85,8 +85,8 @@ public class KiuwanReader extends Reader {
 			int propagationPathLength = dataFlow.length()-1;
 			String filename = dataFlow.getJSONObject(propagationPathLength).getString("file");
 			filename = filename.substring( filename.lastIndexOf( '/' ) );
-			if ( filename.contains( BenchmarkScore.BENCHMARKTESTNAME ) ) {
-				String testNumber = filename.substring( BenchmarkScore.BENCHMARKTESTNAME.length() + 1, filename.length() - 5 );
+			if ( filename.contains( BenchmarkScore.TESTCASENAME ) ) {
+				String testNumber = filename.substring( BenchmarkScore.TESTCASENAME.length() + 1, filename.length() - 5 );
 				tcr.setNumber( Integer.parseInt( testNumber ) );
 				
 				int cwe = -1;
@@ -120,12 +120,10 @@ public class KiuwanReader extends Reader {
 		return null;
 	}
 
-
 	private int fixCWE( String cweNumber ) {
 		int cwe = Integer.parseInt( cweNumber );
 		if ( cwe == 564 ) cwe = 89; // SQLi
 		if ( cwe == 77 ) cwe = 78;  // Command Injection
 		return cwe;
 	}
-	
 }

@@ -3,7 +3,7 @@
  *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Benchmark Project For details, please see
- * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+ * <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
  *
  * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
  * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details
  *
- * @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+ * @author Nick Sanidas
  * @created 2015
  */
 
@@ -45,13 +45,9 @@ import java.util.Set;
 
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.InitialDirContext;
-import javax.naming.directory.SearchControls;
-import javax.naming.directory.SearchResult;
 import javax.net.ssl.SSLContext;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -72,11 +68,13 @@ import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
-import org.mockito.Mockito;
+
 import org.owasp.benchmark.service.pojo.StringMessage;
+import org.owasp.benchmark.score.BenchmarkScore;
 import org.owasp.benchmark.tools.AbstractTestCaseRequest;
 import org.owasp.benchmark.tools.ServletTestCaseRequest;
 import org.owasp.benchmark.tools.XMLCrawler;
+
 import org.owasp.esapi.ESAPI;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -85,29 +83,28 @@ import org.xml.sax.InputSource;
 
 public class Utils {
 
-	public static final String testfileDir = System.getProperty("user.dir") + File.separator + "testfiles"
-			+ File.separator;
+	// Properties used by the generated test suite
 
-	public static final String failedTCFile = System.getProperty("user.dir") + File.separator + "data" + File.separator
-			+ "benchmark-failed-http.xml";
+	public static final String USERDIR = System.getProperty("user.dir") + File.separator;
 
-	public static final String BENCHMARK_DATA = System.getProperty("user.dir") + File.separator + "data"
-			+ File.separator;
+	// A 'test' directory that target test files are created in so test cases can use them
+	public static final String TESTFILES_DIR = USERDIR + "testfiles" + File.separator;
 
+	public static final String DATA_DIR = USERDIR + "data" + File.separator;
+
+	public static final String RESOURCES_DIR = USERDIR + "src" + File.separator + "main" + File.separator
+			+ "resources" + File.separator;
+
+	// This constant is used by some of the generated Java test cases
 	public static final Set<String> commonHeaders = new HashSet<>(Arrays.asList("host", "user-agent", "accept",
 			"accept-language", "accept-encoding", "content-type", "x-requested-with", "referer", "content-length",
 			"connection", "pragma", "cache-control", "origin", "cookie"));
 
-	public static final String DATAFOLDER_PATH = System.getProperty("user.dir") + File.separator + "data"
-			+ File.separator;
-
-	private static javax.crypto.Cipher cipher = null;
-
 	static {
-		File tempDir = new File(testfileDir);
+		File tempDir = new File(TESTFILES_DIR);
 		if (!tempDir.exists()) {
 			tempDir.mkdir();
-			File testFile = new File(testfileDir + "FileName");
+			File testFile = new File(TESTFILES_DIR + "FileName");
 			try {
 				PrintWriter out = new PrintWriter(testFile);
 				out.write("Test is a test file.\n");
@@ -115,7 +112,7 @@ public class Utils {
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
-			File testFile2 = new File(testfileDir + "SafeText");
+			File testFile2 = new File(TESTFILES_DIR + "SafeText");
 			try {
 				PrintWriter out = new PrintWriter(testFile2);
 				out.write("Test is a 'safe' test file.\n");
@@ -123,7 +120,7 @@ public class Utils {
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
-			File secreTestFile = new File(testfileDir + "SecretFile");
+			File secreTestFile = new File(TESTFILES_DIR + "SecretFile");
 			try {
 				PrintWriter out = new PrintWriter(secreTestFile);
 				out.write("Test is a 'secret' file that no one should find.\n");
@@ -149,7 +146,26 @@ public class Utils {
 				System.out.println("Problem while changing executable permissions: " + e.getMessage());
 			}
 		}
+	}
 
+	public static String getCookie( HttpServletRequest request, String paramName ) {
+		Cookie[] values = request.getCookies();
+		String param = "none";
+		if (paramName != null) {
+			for (int i = 0; i < values.length; i++)
+			{
+				if (values[i].getName().equals(paramName)) {
+					param = values[i].getValue();
+					break; // break out of for loop when param found
+				}
+			}
+		}
+		return param;
+	}
+ 
+	public static String getParam( HttpServletRequest request, String paramName ) {
+		String param = request.getParameter(paramName);
+		return param;
 	}
 
 	public static String getOSCommandString(String append) {
@@ -198,12 +214,13 @@ public class Utils {
 		return cmds;
 	}
 
+	// A method used by the Benchmark JAVA test cases to format OS Command Output
 	public static void printOSCommandResults(java.lang.Process proc, HttpServletResponse response) throws IOException {
 		PrintWriter out = response.getWriter();
 		out.write(
 				"<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n"
 						+ "<html>\n" + "<head>\n"
-						+ "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=ISO-8859-1\">\n" + "</head>\n"
+						+ "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n" + "</head>\n"
 						+ "<body>\n" + "<p>\n");
 
 		BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
@@ -235,6 +252,7 @@ public class Utils {
 		}
 	}
 
+	// A method used by the Benchmark JAVA test cases to format OS Command Output
 	public static void printOSCommandResults(java.lang.Process proc, List<StringMessage> resp) throws IOException {
 		BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 		BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
@@ -263,46 +281,53 @@ public class Utils {
 
 	public static File getFileFromClasspath(String fileName, ClassLoader classLoader) {
 		URL url = classLoader.getResource(fileName);
-		try {
-			return new File(url.toURI().getPath());
-		} catch (URISyntaxException e) {
-			System.out.println("The file form the classpath cannot be loaded.");
-		}
+		if (url != null) {
+			try {
+				return new File(url.toURI().getPath());
+			} catch (URISyntaxException e) {
+				System.out.println("The file '" + fileName + "' from the classpath cannot be loaded.");
+				e.printStackTrace();
+			}
+		} else System.out.println("The file '" + fileName + "' from the classpath cannot be loaded.");
 		return null;
-
 	}
 
 	public static List<String> getLinesFromFile(File file) {
 		if (!file.exists()) {
-			System.out.println("Can't find file to get lines from File.");
+			try {
+				System.out.println("Can't find file to get lines from: " + file.getCanonicalFile());
+			} catch (IOException e) {
+				System.out.println("Can't find file to get lines from.");
+				e.printStackTrace();
+			}
 			return null;
 		}
 
-		FileReader fr = null;
-		BufferedReader br = null;
-
 		List<String> sourceLines = new ArrayList<String>();
 
-		try {
-			fr = new FileReader(file);
-			br = new BufferedReader(fr);
+		try (
+			FileReader fr = new FileReader(file);
+			BufferedReader br = new BufferedReader(fr);
+		) {
 			String line;
 			while ((line = br.readLine()) != null) {
 				sourceLines.add(line);
 			}
 		} catch (Exception e) {
-			//
-		} finally {
 			try {
-				if (br != null)
-					br.close();
-				if (fr != null)
-					fr.close();
-			} catch (Exception ex) {
+				System.out.println("Problem reading contents of file: " + file.getCanonicalFile());
+			} catch (IOException e2) {
+				System.out.println("Problem reading file to get lines from.");
+				e2.printStackTrace();
 			}
+			e.printStackTrace();
 		}
 
 		return sourceLines;
+	}
+
+	public static List<String> getLinesFromFile(String filename) {
+		return getLinesFromFile(new File(filename));
 	}
 
 	public static String encodeForHTML(Object param) {
@@ -406,7 +431,7 @@ public class Utils {
 		DocumentBuilderFactory newCrawlerBF = null;
 		DocumentBuilder newCrawlerBuilder = null;
 		Document newCrawlerDoc = null;
-		Element newCrawkerRootElement = null;
+		Element newCrawlerRootElement = null;
 		newCrawlerBF = DocumentBuilderFactory.newInstance();
 		Node newNode;
 
@@ -416,15 +441,17 @@ public class Utils {
 			System.out.println("Problem init the Crawler XML file");
 		}
 		newCrawlerDoc = newCrawlerBuilder.newDocument();
-		newCrawkerRootElement = newCrawlerDoc.createElement("benchmarkSuite");
-		newCrawlerDoc.appendChild(newCrawkerRootElement);
+		newCrawlerRootElement = newCrawlerDoc.createElement("benchmarkSuite");
+		newCrawlerDoc.appendChild(newCrawlerRootElement);
 
 		List<AbstractTestCaseRequest> requests = new ArrayList<AbstractTestCaseRequest>();
 		List<Node> tests = XMLCrawler.getNamedChildren("benchmarkTest", root);
 		for (Node test : tests) {
 			URL = XMLCrawler.getAttributeValue("URL", test).trim();
+			// ToDo: don't use 18 (instead calculate length of TESTCASE_NAME and # digits
 			if (failedTestCases
-					.contains(URL.substring(URL.indexOf("BenchmarkTest"), URL.indexOf("BenchmarkTest") + 18))) {
+					.contains(URL.substring(URL.indexOf(BenchmarkScore.TESTCASENAME), 
+							URL.indexOf(BenchmarkScore.TESTCASENAME) + 18))) {
 				requests.add(parseHttpTest(test));
 				newNode = test.cloneNode(true);
 				newCrawlerDoc.adoptNode(newNode);
@@ -433,6 +460,8 @@ public class Utils {
 				/* The test case passed */
 			}
 		}
+
+		String failedTCFile = DATA_DIR + "benchmark-failed-http.xml";
 
 		File file = new File(failedTCFile);
 		if (file.exists()) {
@@ -490,7 +519,7 @@ public class Utils {
 	public static AbstractTestCaseRequest parseHttpTest(Node test) throws Exception {
 		String tcType = XMLCrawler.getAttributeValue("tcType", test);
 		String fullURL = XMLCrawler.getAttributeValue("URL", test);
-		String name = "BenchmarkTest" + XMLCrawler.getAttributeValue("tname", test);
+		String name = BenchmarkScore.TESTCASENAME + XMLCrawler.getAttributeValue("tname", test);
 		String payload = "";
 
 		List<Node> headers = XMLCrawler.getNamedChildren("header", test);
@@ -527,10 +556,14 @@ public class Utils {
 		return csv;
 	}
 
+	/*
+	 * A utility method used by the generated Java Cipher test cases.
+	 */
+private static javax.crypto.Cipher cipher = null;
 	public static Cipher getCipher() {
 		if (cipher == null) {
 			try {
-				cipher = javax.crypto.Cipher.getInstance("RSA/ECB/PKCS1Padding", "SunJCE");
+				cipher = javax.crypto.Cipher.getInstance("RSA/ECB/OAEPWithSHA-512AndMGF1Padding", "SunJCE");
 				// Prepare the cipher to encrypt
 				java.security.KeyPairGenerator keyGen = java.security.KeyPairGenerator.getInstance("RSA");
 				keyGen.initialize(4096);

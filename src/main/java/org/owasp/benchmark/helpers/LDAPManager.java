@@ -66,7 +66,7 @@ public class LDAPManager {
 		try {
 			initDirectoryService(workDir);
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
+			// Auto-generated catch block
 			e1.printStackTrace();
 		}
 */
@@ -226,7 +226,7 @@ public class LDAPManager {
 				ads.closeDirContext();
 				ads.stopServer();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
+				// Auto-generated catch block
 				e.printStackTrace();
 			}
 		}*/

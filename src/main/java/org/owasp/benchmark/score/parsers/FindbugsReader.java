@@ -3,7 +3,7 @@
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project For details, please see
-* <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
 *
 * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details
 *
-* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Dave Wichers
 * @created 2015
 */
 
@@ -79,9 +79,9 @@ public class FindbugsReader extends Reader {
 			Node cl = getNamedNode( "Class", n.getChildNodes() );
 			String classname = cl.getAttributes().getNamedItem("classname").getNodeValue();
 			classname = classname.substring( classname.lastIndexOf('.') + 1);
-			if ( classname.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
+			if ( classname.startsWith( BenchmarkScore.TESTCASENAME ) ) {
 				try {
-					String testNumber = classname.substring( BenchmarkScore.BENCHMARKTESTNAME.length() );
+					String testNumber = classname.substring( BenchmarkScore.TESTCASENAME.length() );
 					tcr.setNumber( Integer.parseInt( testNumber ) );
 				} catch (Exception e) {
 				// System.out.println("Error parsing node: " + n.toString() + " for classname: " + classname);
@@ -128,12 +128,13 @@ public class FindbugsReader extends Reader {
 		}
 
 		//This is a fallback mapping for unsupported/old versions of the Find Security Bugs plugin
+		//as defined in: findsecbugs-plugin/src/main/resources/metadata/findbugs.xml
 		//All important bug patterns have their CWE ID associated in later versions (1.4.3+).
 		switch ( cat ) {
 			//Cookies
 			case "SECIC" : 		return 614;  // insecure cookie use
-			case "SECCU" :      return 00; // servlet cookie
-			case "SECHOC" :		return 00; // HTTP Only not set on cookie - Information Leak / Disclosure (CWE-200)??
+			case "SECCU" : 		return 00;   // servlet cookie
+			case "SECHOC" :		return 00;   // HTTP Only not set on cookie - Information Leak / Disclosure (CWE-200)??
 
 			//Injections
 			case "SECSQLIHIB"     : return 564;  // Hibernate Injection, child of SQL Injection
@@ -156,7 +157,7 @@ public class FindbugsReader extends Reader {
 
 			//Weak encryption
 			case "SECDU" : 		return 327;  // weak encryption DES
-			case "CIPINT" : 	return 327;	 // weak encryption - cipher with no integrity
+			case "CIPINT" : 	return 327;  // weak encryption - cipher with no integrity
 			case "PADORA" : 	return 327;  // padding oracle -- FIXME: probably wrong
 			case "STAIV" : 		return 329;  // static initialization vector for crypto
 
@@ -173,25 +174,26 @@ public class FindbugsReader extends Reader {
 			case "SECXSS2" :	return 79;   // XSS
 
 			//XXE
-			case "SECXXEDOC" :  return 611;  // XXE
-			case "SECXXEREAD" :  return 611;  // XXE
-			case "SECXXESAX" :  return 611;  // XXE
+			case "SECXXEDOC" :      return 611;  // XXE
+			case "SECXXEREAD" :     return 611;  // XXE
+			case "SECXXESAX" :      return 611;  // XXE
 
 			//Input sources
-			case "SECSP" : 		return 00;	 // servlet parameter - not a vuln
-			case "SECSH" : 		return 00;   // servlet header -- not a vuln
+			case "SECSP" : 		return 00;   // servlet parameter - not a vuln
+			case "SECSH" : 		return 00;   // servlet header - not a vuln
 			case "SECSHR" : 	return 00;   // Use of Request Header -- spoofable
 			case "SECSSQ" : 	return 00;   // servlet query - not a vuln
 
 			//Technology detection
-			case "SECSC" : 		return 00;	 // found Spring endpoint - not a vuln
-			case "SECJRS"  :    return 00;   // JAX-RS Endpoint
+			case "SECSC" : 		return 00;   // found Spring endpoint - not a vuln
+			case "SECJRS" : 	return 00;   // JAX-RS Endpoint
+
+			//Configuration
+			case "SECOPFP" :        return 00;   // Overly Permissive File Permissions
 
 			default : System.out.println( "Unknown vuln category for FindBugs: " + cat );
 		}
 
 		return 0;
-		
 	}
-
 }

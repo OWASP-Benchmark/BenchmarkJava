@@ -3,7 +3,7 @@
  *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Benchmark Project For details, please see
- * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+ * <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
  *
  * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
  * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,13 +12,12 @@
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details
  *
- * @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+ * @author Dave Wichers
  * @created 2015
  */
 
 package org.owasp.benchmark.score.parsers;
 
-import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -144,14 +143,14 @@ public class AppScanDynamicReader extends Reader {
 
         // fixme: not really confidence
         // fixme: what is "noise" attribute?
-        String confidence = getNamedChild( "Severity", issue ).getTextContent();
+        // String confidence = getNamedChild( "Severity", issue ).getTextContent();
         // tcr.setConfidence( makeIntoInt( confidence ) );
 
         String testcase = getNamedChild("Url", issue).getTextContent();
         testcase = testcase.substring(testcase.lastIndexOf('/') + 1);
         testcase = testcase.split("\\.")[0];
-        if (testcase.startsWith(BenchmarkScore.BENCHMARKTESTNAME)) {
-            String testno = testcase.substring(BenchmarkScore.BENCHMARKTESTNAME.length() );
+        if (testcase.startsWith(BenchmarkScore.TESTCASENAME)) {
+            String testno = testcase.substring(BenchmarkScore.TESTCASENAME.length() );
             try {
                 tcr.setNumber(Integer.parseInt(testno));
             } catch (NumberFormatException e) {

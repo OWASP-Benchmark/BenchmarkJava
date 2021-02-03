@@ -3,7 +3,7 @@
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project For details, please see
-* <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
 *
 * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details
 *
-* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Dave Wichers
 * @created 2016
 */
 
@@ -100,8 +100,8 @@ public class CASTAIPReader extends Reader {
         String filename = getAttributeValue("name", flaw);
         filename = filename.replaceAll( "\\\\", "/");
         filename = filename.substring( filename.lastIndexOf( '/' ) );
-        if ( filename.contains( BenchmarkScore.BENCHMARKTESTNAME ) ) {
-            String testNumber = filename.substring( BenchmarkScore.BENCHMARKTESTNAME.length() + 1, filename.length() - 5 );
+        if ( filename.contains( BenchmarkScore.TESTCASENAME ) ) {
+            String testNumber = filename.substring( BenchmarkScore.TESTCASENAME.length() + 1, filename.length() - 5 );
             try {
                 tcr.setNumber( Integer.parseInt( testNumber ) );
                 return tcr;
@@ -143,4 +143,3 @@ public class CASTAIPReader extends Reader {
 		return 0000;
 	}
 }
-

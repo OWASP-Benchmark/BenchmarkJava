@@ -3,7 +3,7 @@
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project For details, please see
-* <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
 *
 * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details
 *
-* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Dave Wichers
 * @created 2015
 */
 
@@ -21,7 +21,6 @@ package org.owasp.benchmark.score.parsers;
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
-
 
 /*
  * This class holds the overall results for a single tool's scan of the Benchmark. It contains an OverallResult for 
@@ -136,7 +135,7 @@ public class OverallResults {
     public String getTime() {
         return time;
     }
-    
+
     /**
      * Set the amount of time it took to run a scan of the Benchmark with this tool.
      * @param The elapsed time.
@@ -152,9 +151,9 @@ public class OverallResults {
     	this.findingCounts.fn = fn;
     	this.findingCounts.tn = tn;
     }
-    
+
     public Counter getFindingCounts() {
     	return this.findingCounts;
     }
-    
+
 }

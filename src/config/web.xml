@@ -35,9 +35,40 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
+	<filter>
+		<filter-name>addMoreSecureResponseHeaders</filter-name>
+		<filter-class>org.owasp.benchmark.helpers.filters.HTTPResponseHeaderFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>addMoreSecureResponseHeaders</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<filter>
+		<filter-name>httpHeaderSecurity</filter-name>
+		<filter-class>org.apache.catalina.filters.HttpHeaderSecurityFilter</filter-class>
+		<init-param>
+			<param-name>hstsEnabled</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>hstsMaxAgeSeconds</param-name>
+			<param-value>31536000</param-value>
+		</init-param>
+		<init-param>
+			<param-name>hstsIncludeSubDomains</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>httpHeaderSecurity</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
 	<mime-mapping>
 		<extension>html</extension>
 		<mime-type>text/html;charset=UTF-8</mime-type>
 	</mime-mapping>
 
 </web-app>
+

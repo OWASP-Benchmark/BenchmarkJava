@@ -1,3 +1,21 @@
+/**
+* OWASP Benchmark Project
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* Benchmark Project For details, please see
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
+*
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Nuno Oliveira
+* @created 2019
+*/
+
 package org.owasp.benchmark.score.parsers;
 
 import org.json.JSONArray;
@@ -10,10 +28,9 @@ import java.nio.file.Paths;
 
 public class CheckmarxESReader extends Reader {
     public TestResults parse( File f ) throws Exception {
-        TestResults tr = new TestResults( "Checkmarx SAST" ,true,TestResults.ToolType.SAST);
+        TestResults tr = new TestResults( "Checkmarx SAST", true, TestResults.ToolType.SAST );
 
         String content = new String(Files.readAllBytes(Paths.get(f.getPath())));
-
         JSONObject obj = new JSONObject(content);
 
         //engine version
@@ -34,17 +51,17 @@ public class CheckmarxESReader extends Reader {
 
             //cwe
             int cwe = query.getJSONObject("Metadata").getInt("CweId");
-            try{
-                cwe = translate( Integer.parseInt("undefined"));
-            }
-            catch(NumberFormatException ex) {
+            try {
+                cwe = translate(cwe);
+            } catch(NumberFormatException ex) {
                 System.out.println( "flaw: " + query );
             }
 
             //category
             String category = query.getJSONObject("Metadata").getString("QueryName");
-            if(isIrrelevant(category))
+            if (isIrrelevant(category)) {
                 continue;
+            }
 
             //evidence
             String evidence = category;
@@ -57,8 +74,6 @@ public class CheckmarxESReader extends Reader {
                     tr.put( tcr );
                 }
             }
-
-
         }
 
         return tr;
@@ -89,15 +104,15 @@ public class CheckmarxESReader extends Reader {
                 name.equals( "Potential_Stored_XSS" ) ||
                 name.equals( "Potential_UTF7_XSS" ) ||
                 name.equals( "Stored_Command_Injection" ) ||
-                name.equals( "CGI_Reflected_XSS_All_Clients" );
+                name.equals( "CGI_Reflected_XSS_All_Clients" ) ||
+                name.equals( "Unprotected_Cookie" );
     }
 
     private int translate(int cwe) {
         switch( cwe ) {
             case 77 :   return 78;   // command injection
             case 36 :
-            case 23 :
-                return 22;   // path traversal
+            case 23 :   return 22;   // path traversal
             case 338:   return 330;  // weak random
         }
         return cwe;
@@ -115,8 +130,8 @@ public class CheckmarxESReader extends Reader {
             JSONArray nodes = result.getJSONArray("Nodes");
             String resultFileName = nodes.getJSONObject(0).getString("FileName");
             String testcaseName = resultFileName.substring(resultFileName.lastIndexOf('\\') + 1);
-            if (testcaseName.startsWith(BenchmarkScore.BENCHMARKTESTNAME)) {
-                String testNo = testcaseName.substring(BenchmarkScore.BENCHMARKTESTNAME.length(), testcaseName.length() - 5);
+            if (testcaseName.startsWith(BenchmarkScore.TESTCASENAME)) {
+                String testNo = testcaseName.substring(BenchmarkScore.TESTCASENAME.length(), testcaseName.length() - 5);
                 try {
                     tcr.setNumber(Integer.parseInt(testNo));
                 } catch (NumberFormatException e) {
@@ -124,12 +139,11 @@ public class CheckmarxESReader extends Reader {
                 }
 
                 return tcr;
-            }
-            else {
+            } else {
                 resultFileName = nodes.getJSONObject(nodes.length()-1).getString("FileName");
                 testcaseName = resultFileName.substring(resultFileName.lastIndexOf('\\') + 1);
-                if (testcaseName.startsWith(BenchmarkScore.BENCHMARKTESTNAME)) {
-                    String testNo = testcaseName.substring(BenchmarkScore.BENCHMARKTESTNAME.length(), testcaseName.length() - 5);
+                if (testcaseName.startsWith(BenchmarkScore.TESTCASENAME)) {
+                    String testNo = testcaseName.substring(BenchmarkScore.TESTCASENAME.length(), testcaseName.length() - 5);
                     try {
                         tcr.setNumber(Integer.parseInt(testNo));
                     } catch (NumberFormatException e) {
@@ -139,8 +153,7 @@ public class CheckmarxESReader extends Reader {
                 }
 
             }
-        }
-        catch(Exception ex){
+        } catch(Exception ex) {
             ex.printStackTrace();
         }
 

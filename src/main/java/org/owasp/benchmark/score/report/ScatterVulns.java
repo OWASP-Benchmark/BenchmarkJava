@@ -3,7 +3,7 @@
  *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Benchmark Project For details, please see
- * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+ * <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
  *
  * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
  * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details
  *
- * @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+ * @author Dave Wichers
  * @created 2015
  */
 
@@ -30,19 +30,17 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.swing.JFrame;
-
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.XYLineAnnotation;
 import org.jfree.chart.annotations.XYTextAnnotation;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.ui.TextAnchor;
 import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.ui.TextAnchor;
+
 import org.owasp.benchmark.score.BenchmarkScore;
 import org.owasp.benchmark.score.parsers.OverallResult;
 import org.owasp.benchmark.score.parsers.OverallResults;
@@ -85,8 +83,6 @@ public class ScatterVulns extends ScatterPlot {
     }
 
     private JFreeChart display(String title, int height, String category, Set<Report> toolResults) {
-        JFrame f = new JFrame(title);
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // averages
         ArrayList<Double> averageFalseRates = new ArrayList<Double>();
@@ -149,13 +145,6 @@ public class ScatterVulns extends ScatterPlot {
             XYLineAnnotation score = new XYLineAnnotation(x, y, z, z, dashed, Color.blue);
             xyplot.addAnnotation(score);
         }
-
-        ChartPanel cp = new ChartPanel(chart, height, height, 400, 400, 1200, 1200, false, false, false, 
-             false, false, false);
-        f.add(cp);
-        f.pack();
-        f.setLocationRelativeTo(null);
-        // f.setVisible(true);
 
         return chart;
     }
@@ -393,10 +382,11 @@ public class ScatterVulns extends ScatterPlot {
 
     public static ScatterVulns generateComparisonChart(String category, Set<Report> toolResults, String focus) {
         try {
-            String scatterTitle = "OWASP Benchmark" + (BenchmarkScore.mixedMode ? " -" : " v" 
-               + BenchmarkScore.benchmarkVersion) + " " + category + " Comparison";
+            String scatterTitle = BenchmarkScore.fullTestSuiteName(BenchmarkScore.TESTSUITE)
+               + (BenchmarkScore.mixedMode ? " -" : " v" + BenchmarkScore.TESTSUITEVERSION)
+               + " " + category + " Comparison";
             ScatterVulns scatter = new ScatterVulns(scatterTitle, 800, category, toolResults, focus);
-            scatter.writeChartToFile(new File("scorecard/Benchmark_v" + BenchmarkScore.benchmarkVersion 
+            scatter.writeChartToFile(new File("scorecard/Benchmark_v" + BenchmarkScore.TESTSUITEVERSION
                + "_Scorecard_for_" + category.replace(' ', '_') + ".png"), 800);
             return scatter;
         } catch (IOException e) {

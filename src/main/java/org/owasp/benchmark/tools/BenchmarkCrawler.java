@@ -1,6 +1,23 @@
+/**
+* OWASP Benchmark Project
+*
+* This file is part of the Open Web Application Security Project (OWASP)
+* Benchmark Project For details, please see
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
+*
+* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free Software Foundation, version 2.
+*
+* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details
+*
+* @author Juan Gama
+* @created 2017
+*/
+
 package org.owasp.benchmark.tools;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,16 +34,18 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+
 import org.owasp.benchmark.helpers.Utils;
+import org.owasp.benchmark.score.BenchmarkScore;
 
 public class BenchmarkCrawler {
-	public static String benchmarkVersion = "";
+	public static String testSuiteVersion = "";
 
 	protected void init() {
+		String crawlerFile = Utils.DATA_DIR + "benchmark-crawler-http.xml";
 		try {
-			String crawlerFile = System.getProperty("user.dir") + File.separator + "data" + File.separator
-					+ "benchmark-crawler-http.xml";
-			benchmarkVersion = Utils.getCrawlerBenchmarkVersion(new FileInputStream(crawlerFile));
+			// Have to open the stream twice so each method can read the whole file
+			testSuiteVersion = Utils.getCrawlerBenchmarkVersion(new FileInputStream(crawlerFile));
 			crawl(new FileInputStream(crawlerFile));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -53,8 +72,8 @@ public class BenchmarkCrawler {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Date date = new Date();
 
-		System.out.println("Crawl ran on " + dateFormat.format(date) + " for Benchmark v" + benchmarkVersion + " took "
-				+ seconds + " seconds");
+		System.out.println("Crawl ran on " + dateFormat.format(date) + " for " + BenchmarkScore.TESTSUITE
+				+ " v" + testSuiteVersion + " took " + seconds + " seconds");
 	}
 
 	/**
@@ -114,8 +133,20 @@ public class BenchmarkCrawler {
 	}
 
 	public static void main(String[] args) throws Exception {
+		if (!menu(args)) {
+			return;
+		}
+
 		BenchmarkCrawler crawler = new BenchmarkCrawler();
 		crawler.init();
+	}
+
+	private static boolean menu(String[] args) {
+		if (args == null) {
+			System.out.println("Please verify required parameters are provided.");
+			return false;
+		}
+		return true;
 	}
 }
 

@@ -3,7 +3,7 @@
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
-* <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
 *
 * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details.
 *
-* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Dave Wichers
 * @created 2015
 */
 
@@ -33,10 +33,12 @@ public class BenchmarkTest00947 extends HttpServlet {
 	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html;charset=UTF-8");
 		javax.servlet.http.Cookie userCookie = new javax.servlet.http.Cookie("BenchmarkTest00947", "Ms+Bar");
 		userCookie.setMaxAge(60*3); //Store cookie for 3 minutes
 		userCookie.setSecure(true);
 		userCookie.setPath(request.getRequestURI());
+		userCookie.setDomain(new java.net.URL(request.getRequestURL().toString()).getHost());
 		response.addCookie(userCookie);
 		javax.servlet.RequestDispatcher rd = request.getRequestDispatcher("/ldapi-00/BenchmarkTest00947.html");
 		rd.include(request, response);
@@ -62,41 +64,46 @@ public class BenchmarkTest00947 extends HttpServlet {
 		
 	org.owasp.benchmark.helpers.LDAPManager ads = new org.owasp.benchmark.helpers.LDAPManager();
 	try {
-			response.setContentType("text/html");
-			javax.naming.directory.DirContext ctx = ads.getDirContext();
-			String base = "ou=users,ou=system";
-			javax.naming.directory.SearchControls sc = new javax.naming.directory.SearchControls();
-			sc.setSearchScope(javax.naming.directory.SearchControls.SUBTREE_SCOPE);
-			String filter = "(&(objectclass=person))(|(uid="+bar+")(street={0}))";
-			Object[] filters = new Object[]{"The streetz 4 Ms bar"};
-			// System.out.println("Filter " + filter);
-			javax.naming.NamingEnumeration<javax.naming.directory.SearchResult> results = ctx.search(base, filter,filters, sc);
-			while (results.hasMore()) {
-				javax.naming.directory.SearchResult sr = (javax.naming.directory.SearchResult) results.next();
-				javax.naming.directory.Attributes attrs = sr.getAttributes();
+		response.setContentType("text/html;charset=UTF-8");
+		javax.naming.directory.DirContext ctx = ads.getDirContext();
+		String base = "ou=users,ou=system";
+		javax.naming.directory.SearchControls sc = new javax.naming.directory.SearchControls();
+		sc.setSearchScope(javax.naming.directory.SearchControls.SUBTREE_SCOPE);
+		String filter = "(&(objectclass=person))(|(uid="+bar+")(street={0}))";
+		Object[] filters = new Object[]{"The streetz 4 Ms bar"};
+		// System.out.println("Filter " + filter);
+		boolean found = false;
+		javax.naming.NamingEnumeration<javax.naming.directory.SearchResult> results = ctx.search(base, filter,filters, sc);
+		while (results.hasMore()) {
+			javax.naming.directory.SearchResult sr = (javax.naming.directory.SearchResult) results.next();
+			javax.naming.directory.Attributes attrs = sr.getAttributes();
 
-				javax.naming.directory.Attribute attr = attrs.get("uid");
-				javax.naming.directory.Attribute attr2 = attrs.get("street");
-				if (attr != null){
-					response.getWriter().println(
-"LDAP query results:<br>"
-							+ " Record found with name " + attr.get() + "<br>"
-									+ "Address: " + attr2.get() + "<br>"
-);
-					// System.out.println("record found " + attr.get());
-				} else response.getWriter().println(
-"LDAP query results: nothing found."
-);
+			javax.naming.directory.Attribute attr = attrs.get("uid");
+			javax.naming.directory.Attribute attr2 = attrs.get("street");
+			if (attr != null){
+				response.getWriter().println(
+					"LDAP query results:<br>"
+					+ "Record found with name " + attr.get() + "<br>"
+					+ "Address: " + attr2.get() + "<br>"
+				);
+				// System.out.println("record found " + attr.get());
+				found = true;
 			}
+		}
+		if (!found) {
+			response.getWriter().println(
+				"LDAP query results: nothing found for query: " + org.owasp.esapi.ESAPI.encoder().encodeForHTML(filter)
+			);
+		}
 	} catch (javax.naming.NamingException e) {
 		throw new ServletException(e);
-	}finally{
-    	try {
-    		ads.closeDirContext();
+	} finally {
+		try {
+			ads.closeDirContext();
 		} catch (Exception e) {
 			throw new ServletException(e);
 		}
-    }
+	}
 	}  // end doPost
 
 	

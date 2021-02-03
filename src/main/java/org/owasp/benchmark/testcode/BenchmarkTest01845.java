@@ -3,7 +3,7 @@
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
-* <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
 *
 * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details.
 *
-* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Nick Sanidas
 * @created 2015
 */
 
@@ -33,10 +33,12 @@ public class BenchmarkTest01845 extends HttpServlet {
 	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html;charset=UTF-8");
 		javax.servlet.http.Cookie userCookie = new javax.servlet.http.Cookie("BenchmarkTest01845", "someSecret");
 		userCookie.setMaxAge(60*3); //Store cookie for 3 minutes
 		userCookie.setSecure(true);
 		userCookie.setPath(request.getRequestURI());
+		userCookie.setDomain(new java.net.URL(request.getRequestURL().toString()).getHost());
 		response.addCookie(userCookie);
 		javax.servlet.RequestDispatcher rd = request.getRequestDispatcher("/hash-02/BenchmarkTest01845.html");
 		rd.include(request, response);
@@ -88,7 +90,7 @@ public class BenchmarkTest01845 extends HttpServlet {
 			
 			byte[] result = md.digest();
 			java.io.File fileTarget = new java.io.File(
-					new java.io.File(org.owasp.benchmark.helpers.Utils.testfileDir),"passwordFile.txt");
+					new java.io.File(org.owasp.benchmark.helpers.Utils.TESTFILES_DIR),"passwordFile.txt");
 			java.io.FileWriter fw = new java.io.FileWriter(fileTarget,true); //the true will append the new data
 			    fw.write("hash_value=" + org.owasp.esapi.ESAPI.encoder().encodeForBase64(result, true) + "\n");
 			fw.close();

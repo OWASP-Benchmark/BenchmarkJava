@@ -10,12 +10,12 @@
 <form action="/benchmark/cmdi-00/BenchmarkTest00571"  method="POST" id="FormBenchmarkTest00571">
     <div><label>Please explain your answer:</label></div>
     <br/>
-    <div><textarea rows="4" cols="50" id="BenchmarkTest00571Area" name="BenchmarkTest00571Area" value=""></textarea></div>
+    <div><textarea rows="4" cols="50" id="BenchmarkTest00571Area" name="BenchmarkTest00571Area"></textarea></div>
     <div><label>Any additional note for the reviewer:</label></div>
     <div><input type="text" id="answer" name="answer"></input></div>
     <br/>
     <div><label>An AJAX request will be sent with a parameter value 'BenchmarkTest00571' and name:</label>
-    <input type="text" id="BenchmarkTest00571" name="BenchmarkTest00571" value="FOO=echo Injection" class="safe"></input></div>
+    <input type="text" id="BenchmarkTest00571" name="BenchmarkTest00571" value="FOO&#x3d;echo Injection" class="safe"></input></div>
     <div><input type="button" id="login-btn" value="Login" onclick="submitForm()"/></div>
 </form>
 <div id="ajax-form-msg1"><pre><code class="prettyprint" id="code"></code></pre></div>
@@ -27,7 +27,6 @@ $('.safe').keypress(function (e) {
   }
 });
 
-//$("#login-btn").click(function(){
 function submitForm() {
 	var text = $("#FormBenchmarkTest00571 input[id=BenchmarkTest00571]").val();
 	
@@ -44,12 +43,13 @@ function submitForm() {
 
 	var xhr = new XMLHttpRequest();
     xhr.open("POST", URL, true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
     xhr.onreadystatechange = function () {
         if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
 $("#code").text((xhr.responseText).decodeEscapeSequence());
-        }else{
-        	$("#code").text("Error " + xhr.status + " " + xhr.statusText + " ocurred.");
+        } else {
+            $("#code").text("Error " + xhr.status + " " + xhr.statusText + " occurred.");
         }
     }
     xhr.send(formData);

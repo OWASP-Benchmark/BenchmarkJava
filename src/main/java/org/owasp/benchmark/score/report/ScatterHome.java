@@ -3,7 +3,7 @@
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project For details, please see
-* <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
 *
 * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details
 *
-* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Dave Wichers
 * @created 2015
 */
 
@@ -30,19 +30,17 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.swing.JFrame;
-
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.XYLineAnnotation;
 import org.jfree.chart.annotations.XYTextAnnotation;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.ui.TextAnchor;
 import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.ui.TextAnchor;
+
 import org.owasp.benchmark.score.BenchmarkScore;
 import org.owasp.benchmark.score.parsers.OverallResults;
 
@@ -53,7 +51,6 @@ public class ScatterHome extends ScatterPlot {
     public final String focus;
     public static final char INITIAL_LABEL = 'A';
 
-    
     /**
      * This calculates the summary chart across all the tools analyzed against the Benchmark.
      * @param title - The title of the chart to be produced.
@@ -66,10 +63,8 @@ public class ScatterHome extends ScatterPlot {
         display("          " + title, height, toolResults );
     }
 
-    private JFreeChart display(String title, int height, Set<Report> toolResults ) {
-        JFrame f = new JFrame(title);
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      
+	private JFreeChart display(String title, int height, Set<Report> toolResults ) {
+
         //averages
         ArrayList<Double> averageCommercialFalseRates = new ArrayList<Double>();
         ArrayList<Double> averageCommercialTrueRates = new ArrayList<Double>();
@@ -86,7 +81,7 @@ public class ScatterHome extends ScatterPlot {
                 }
             }
         }
-        
+
         int commercialToolCount = 0;
         for ( Report toolReport : toolResults ) {
             if ( toolReport.isCommercial() ) {
@@ -102,30 +97,30 @@ public class ScatterHome extends ScatterPlot {
                 }
             }
         }
-        
+
         for (double d : averageCommercialFalseRates) {
             afr += d;
         }
         afr = afr/averageCommercialFalseRates.size();
-        
+
         for (double d : averageCommercialTrueRates) {
             atr += d;
         }
         atr = atr/averageCommercialTrueRates.size();
-        
+
         if ( commercialToolCount > 1 || (BenchmarkScore.showAveOnlyMode && commercialToolCount == 1)) {
             series.add(afr *100, atr*100);
         }
-        
+
         dataset.addSeries(series);
-        
+
         chart = ChartFactory.createScatterPlot(title, "False Positive Rate", "True Positive Rate", dataset, PlotOrientation.VERTICAL, true, true, false);
         theme.apply(chart);
 
         XYPlot xyplot = chart.getXYPlot();
         initializePlot( xyplot );
         addGenerationDate( xyplot );
-        
+
         makeDataLabels( toolResults, xyplot );
         makeLegend( toolResults, 103, 100.5, dataset, xyplot );
 
@@ -137,14 +132,8 @@ public class ScatterHome extends ScatterPlot {
             xyplot.addAnnotation(score);
         }     
 
-        ChartPanel cp = new ChartPanel(chart, height, height, 400, 400, 1200, 1200, false, false, false, false, false, false);
-        f.add(cp);
-        f.pack();
-        f.setLocationRelativeTo(null);
-//      f.setVisible(true);
         return chart;
     }
-
     
     private void makeDataLabels( Set<Report> toolResults, XYPlot xyplot ) {        
         HashMap<Point2D,String> map = makePointList( toolResults );
@@ -166,7 +155,6 @@ public class ScatterHome extends ScatterPlot {
             }
         }
     }
- 
     
     private static String sort(String value) {
         String[] parts = value.split( "," );
@@ -179,7 +167,6 @@ public class ScatterHome extends ScatterPlot {
         return sb.toString();
     }
 
-    
     static SecureRandom sr = new SecureRandom();
     // This method generates all the points put on the home page chart. One per tool.
     private HashMap<Point2D, String> makePointList( Set<Report> toolResults ) {          
@@ -226,7 +213,6 @@ public class ScatterHome extends ScatterPlot {
         dedupify( map );
         return map;
     }
-
     
     private static void dedupify(HashMap<Point2D, String> map) {
         for (Entry<Point2D,String> e1 : map.entrySet() ) {
@@ -254,7 +240,6 @@ public class ScatterHome extends ScatterPlot {
         }
         return null;
     }
-
 
     private void makeLegend( Set<Report> toolResults, double x, double y, XYSeriesCollection dataset, XYPlot xyplot ) {
         char ch = INITIAL_LABEL; // This is the first label in the Key with all the tools processed by this scorecard
@@ -361,9 +346,9 @@ public class ScatterHome extends ScatterPlot {
 
     public static void generateComparisonChart(Set<Report> toolResults, String focus ) {
     	try {
-    		String scatterTitle = "OWASP Benchmark" 
-    				+ (BenchmarkScore.mixedMode ? "" : " v" + BenchmarkScore.benchmarkVersion) 
-            		+ " Results Comparison";
+            String scatterTitle = BenchmarkScore.fullTestSuiteName(BenchmarkScore.TESTSUITE)
+                + (BenchmarkScore.mixedMode ? "" : " v" + BenchmarkScore.TESTSUITEVERSION)
+                + " Results Comparison";
     		ScatterHome scatter = new ScatterHome(scatterTitle, 800, toolResults, focus );
             scatter.writeChartToFile(new File("scorecard/benchmark_comparison.png"), 800);    		
     	} catch (IOException e) {

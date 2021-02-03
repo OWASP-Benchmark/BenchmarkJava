@@ -3,7 +3,7 @@
  *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Benchmark Project For details, please see
- * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+ * <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
  *
  * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
  * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details
  *
- * @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+ * @author Dave Wichers
  * @author Parthi Shah <a href="http://www.iappsecure.com">iAppSecure</a>
  * @created 2016
  *
@@ -95,8 +95,8 @@ public class FusionLiteInsightReader extends Reader {
         String testfile = url.getPath();
         testfile = testfile.substring( testfile.lastIndexOf('/') +1 );
 
-        if ( testfile.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
-            String testno = testfile.substring(BenchmarkScore.BENCHMARKTESTNAME.length());
+        if ( testfile.startsWith( BenchmarkScore.TESTCASENAME ) ) {
+            String testno = testfile.substring(BenchmarkScore.TESTCASENAME.length());
             if ( testno.endsWith( ".html" ) ) {
                 testno = testno.substring(0, testno.length() -5 );
             }

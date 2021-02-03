@@ -3,7 +3,7 @@
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project. For details, please see
-* <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
 *
 * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details.
 *
-* @author Nick Sanidas <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Nick Sanidas
 * @created 2015
 */
 
@@ -33,10 +33,12 @@ public class BenchmarkTest01894 extends HttpServlet {
 	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html;charset=UTF-8");
 		javax.servlet.http.Cookie userCookie = new javax.servlet.http.Cookie("BenchmarkTest01894", "2222");
 		userCookie.setMaxAge(60*3); //Store cookie for 3 minutes
 		userCookie.setSecure(true);
 		userCookie.setPath(request.getRequestURI());
+		userCookie.setDomain(new java.net.URL(request.getRequestURL().toString()).getHost());
 		response.addCookie(userCookie);
 		javax.servlet.RequestDispatcher rd = request.getRequestDispatcher("/xpathi-00/BenchmarkTest01894.html");
 		rd.include(request, response);
@@ -69,24 +71,20 @@ public class BenchmarkTest01894 extends HttpServlet {
 			org.w3c.dom.Document xmlDocument = builder.parse(file);
 			javax.xml.xpath.XPathFactory xpf = javax.xml.xpath.XPathFactory.newInstance();
 			javax.xml.xpath.XPath xp = xpf.newXPath();
-			
-			response.getWriter().println(
-"Your query results are: <br/>"
-);
- 
-			String expression = "/Employees/Employee[@emplid='"+bar+"']";
-			response.getWriter().println(
-xp.evaluate(expression, xmlDocument) + "<br/>"
-);
 
-			
-		} catch (javax.xml.xpath.XPathExpressionException e) {
-			// OK to swallow
-			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
-		} catch (javax.xml.parsers.ParserConfigurationException e) {
-			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
-		} catch (org.xml.sax.SAXException e) {
-			System.out.println("XPath expression exception caught and swallowed: " + e.getMessage());
+			String expression = "/Employees/Employee[@emplid='"+bar+"']";
+			String result = xp.evaluate(expression, xmlDocument);
+
+			response.getWriter().println(
+				"Your query results are: " + result + "<br/>"
+			);
+
+		} catch (javax.xml.xpath.XPathExpressionException | javax.xml.parsers.ParserConfigurationException
+				| org.xml.sax.SAXException e) {
+			response.getWriter().println(
+				"Error parsing XPath input: '" + org.owasp.esapi.ESAPI.encoder().encodeForHTML(bar) + "'"
+			);
+			throw new ServletException(e);
 		}
 	}  // end doPost
 	

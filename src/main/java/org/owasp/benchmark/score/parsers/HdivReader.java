@@ -1,8 +1,27 @@
+/**
+ * OWASP Benchmark Project
+ *
+ * This file is part of the Open Web Application Security Project (OWASP)
+ * Benchmark Project For details, please see
+ * <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
+ *
+ * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU General Public License as published by the Free Software Foundation, version 2.
+ *
+ * The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details
+ *
+ * @author Joseba Ander Ruiz Ayesta
+ * @created 2017
+ */
+
 package org.owasp.benchmark.score.parsers;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,7 +60,7 @@ public class HdivReader extends Reader {
 						process(tr, testNumber, Arrays.asList(line));
 						chunk.clear();
 						testNumber = "00000";
-						String fname = "/" + BenchmarkScore.BENCHMARKTESTNAME;
+						String fname = "/" + BenchmarkScore.TESTCASENAME;
 						int idx = line.indexOf(fname);
 						if (idx != -1) {
 							testNumber = line.substring(idx + fname.length(), idx + fname.length() + 5);
@@ -65,14 +84,11 @@ public class HdivReader extends Reader {
 
 	private String calculateTime(final String firstLine, final String lastLine) {
 		try {
-			String start = firstLine.split(" ")[0];
-			String stop = lastLine.split(" ")[0];
-			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss,SSS");
-			Date startTime = sdf.parse(start);
-			Date stopTime = sdf.parse(stop);
-			long startMillis = startTime.getTime();
-			long stopMillis = stopTime.getTime();
-			return (stopMillis - startMillis) / 1000 + " seconds";
+			try {
+				return calculateTime(firstLine, lastLine, 0);
+			} catch (ParseException e) {
+				return calculateTime(firstLine, lastLine, 1);
+			}
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -80,11 +96,22 @@ public class HdivReader extends Reader {
 		return null;
 	}
 
+	private String calculateTime(final String firstLine, final String lastLine, final int timeColumn) throws ParseException {
+		String start = firstLine.split(" ")[timeColumn];
+		String stop = lastLine.split(" ")[timeColumn];
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss,SSS");
+		Date startTime = sdf.parse(start);
+		Date stopTime = sdf.parse(stop);
+		long startMillis = startTime.getTime();
+		long stopMillis = stopTime.getTime();
+		return (stopMillis - startMillis) / 1000 + " seconds";
+	}
+
 	private void process(final TestResults tr, String testNumber, final List<String> chunk) throws Exception {
 		for (String line : chunk) {
 			TestCaseResult tcr = new TestCaseResult();
 
-			String fname = "/" + BenchmarkScore.BENCHMARKTESTNAME;
+			String fname = "/" + BenchmarkScore.TESTCASENAME;
 			int idx = line.indexOf(fname);
 			if (idx != -1) {
 				testNumber = line.substring(idx + fname.length(), idx + fname.length() + 5);

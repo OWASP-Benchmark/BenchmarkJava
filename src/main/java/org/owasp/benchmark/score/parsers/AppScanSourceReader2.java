@@ -3,7 +3,7 @@
 *
 * This file is part of the Open Web Application Security Project (OWASP)
 * Benchmark Project For details, please see
-* <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
 *
 * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
 * of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,7 +12,7 @@
 * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details
 *
-* @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
+* @author Dave Wichers
 * @created 2018
 */
 
@@ -50,7 +50,10 @@ public class AppScanSourceReader2 extends Reader {
 		Node version = getNamedChild( "product-version", scanInfo );
 //    System.out.println("Product version is: " + version.getTextContent());
 		tr.setToolVersion( version.getTextContent() );
-        
+
+		// If the fliename includes an elapsed time in seconds (e.g., TOOLNAME-seconds.xml) set the compute time on the scorecard.
+		tr.setTime(f);
+
 		Node allIssues = getNamedChild( "issue-group", root);
 		List<Node> vulnerabilities = getNamedChildren( "item", allIssues );
 		
@@ -74,18 +77,18 @@ public class AppScanSourceReader2 extends Reader {
 				// Some method signatures have a filename attribute, others do not, depending on the vuln type.
 				if (filename != null) {
 					// Parse out test number from: BenchmarkTest02603:99
-					if ( filename.startsWith( BenchmarkScore.BENCHMARKTESTNAME ) ) {
+					if ( filename.startsWith( BenchmarkScore.TESTCASENAME ) ) {
 						filename = filename.substring( 0, filename.indexOf(":") );
-						String testnum = filename.substring( BenchmarkScore.BENCHMARKTESTNAME.length() );
+						String testnum = filename.substring( BenchmarkScore.TESTCASENAME.length() );
 						tn = Integer.parseInt( testnum );
 						//System.out.println("Found a result in filename for test: " + tn);
 					}
 				} else {
 					// Parse out test # from: org.owasp.benchmark.testcode.BenchmarkTest01484.doPost(HttpServletRequest;HttpServletResponse):void
 					String methodSig = methodSigNode.getTextContent();
-					if ( methodSig != null && methodSig.contains(BenchmarkScore.BENCHMARKTESTNAME)) {
-						String s = methodSig.substring(methodSig.indexOf(BenchmarkScore.BENCHMARKTESTNAME) +
-							BenchmarkScore.BENCHMARKTESTNAME.length());
+					if ( methodSig != null && methodSig.contains(BenchmarkScore.TESTCASENAME)) {
+						String s = methodSig.substring(methodSig.indexOf(BenchmarkScore.TESTCASENAME) +
+							BenchmarkScore.TESTCASENAME.length());
 						String testnum = s.substring(0, s.indexOf("."));
 						tn = Integer.parseInt( testnum );
 						//System.out.println("Found a result in method location2 for test: " + tn);
@@ -117,7 +120,7 @@ public class AppScanSourceReader2 extends Reader {
 	}
 	
 	// e.g., 3 Hour(s) 7 Minute(s) 58 Second(s)
-	private String parseTime(String message) {
+/*	private String parseTime(String message) {
 	    String[] parts = message.split( "\\) ");
         String hours = parts[0].substring( 0, parts[0].indexOf(' ') ).trim();
         if ( hours.length() < 2 ) hours = "0" + hours;
@@ -127,7 +130,7 @@ public class AppScanSourceReader2 extends Reader {
         if ( secs.length() < 2 ) secs = "0" + secs;
 	    return hours + ":" + mins + ":" + secs;
     }
-
+*/
 	private static int cweLookup(String vtype) {
 		switch( vtype ) {
 //			case "AppDOS" : return 00;

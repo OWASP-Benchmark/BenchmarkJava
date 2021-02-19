@@ -21,18 +21,28 @@ package org.owasp.benchmark.tools;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
 
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.util.EntityUtils;
 
 import org.owasp.benchmark.helpers.Utils;
@@ -53,7 +63,7 @@ public class BenchmarkCrawler {
 	}
 
 	protected void crawl(InputStream http) throws Exception {
-		CloseableHttpClient httpclient = HttpClients.custom().setSSLSocketFactory(Utils.getSSLFactory()).build();
+		CloseableHttpClient httpclient = createAcceptSelfSignedCertificateClient();
 		long start = System.currentTimeMillis();
 
 		List<AbstractTestCaseRequest> requests = Utils.parseHttpFile(http);
@@ -76,16 +86,37 @@ public class BenchmarkCrawler {
 				+ " v" + testSuiteVersion + " took " + seconds + " seconds");
 	}
 
+	// This method taken directly from: https://memorynotfound.com/ignore-certificate-errors-apache-httpclient/
+	static CloseableHttpClient createAcceptSelfSignedCertificateClient()
+			throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
+
+		// use the TrustSelfSignedStrategy to allow Self Signed Certificates
+		SSLContext sslContext = SSLContextBuilder
+				.create()
+				.loadTrustMaterial(new TrustSelfSignedStrategy())
+				.build();
+
+		// we can optionally disable hostname verification.
+		// if you don't want to further weaken the security, you don't have to include this.
+		HostnameVerifier allowAllHosts = new NoopHostnameVerifier();
+
+		// create an SSL Socket Factory to use the SSLContext with the trust self signed certificate strategy
+		// and allow all hosts verifier.
+		SSLConnectionSocketFactory connectionFactory = new SSLConnectionSocketFactory(sslContext, allowAllHosts);
+
+		// finally create the HttpClient using HttpClient factory methods and assign the ssl socket factory
+		return HttpClients
+				.custom()
+				.setSSLSocketFactory(connectionFactory)
+				.build();
+	}
+
 	/**
-	 * Issue the requested request, measure the time required to execute, then
-	 * output both to stdout and the global
-	 * variable timeString the URL tested, the time required to execute and the
-	 * response code.
+	 * Issue the requested request, measure the time required to execute, then output both to stdout and the
+	 * global variable timeString the URL tested, the time required to execute and the response code.
 	 * 
-	 * @param httpclient
-	 *            - The HTTP client to use to make the request
-	 * @param request
-	 *            - THe HTTP request to issue
+	 * @param httpclient - The HTTP client to use to make the request
+	 * @param request - THe HTTP request to issue
 	 * @throws IOException
 	 */
 	protected ResponseInfo sendRequest(CloseableHttpClient httpclient, AbstractTestCaseRequest requestTC) {

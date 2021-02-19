@@ -26,6 +26,7 @@ import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.message.BasicNameValuePair;
@@ -59,8 +60,9 @@ public class ServletTestCaseRequest extends AbstractTestCaseRequest {
 
 	@Override
 	HttpRequestBase createRequestInstance(String URL) {
-		HttpPost httpPost = new HttpPost(URL);
-		return httpPost;
+		// If there are query parameters, this must be a GET, otherwise a POST.
+		if (getQuery().length() == 0) return new HttpPost(URL);
+		  else return new HttpGet(URL);
 	}
 
 	@Override
@@ -79,6 +81,10 @@ public class ServletTestCaseRequest extends AbstractTestCaseRequest {
 		for (Node cookie : getCookies()) {
 			String name = XMLCrawler.getAttributeValue("name", cookie);
 			String value = XMLCrawler.getAttributeValue("value", cookie);
+			// Note: URL encoding of a space becomes a +, which is OK for URL params, but
+			// not in a cookie, as the + doesn't get decoded properly. So have to replace
+			// all spaces with %20 instead (at least for NodeJS). Will this break Java?
+			value = value.replaceAll(" ", "%20");
 			request.addHeader("Cookie", name + "=" + URLEncoder.encode(value));
 		}
 	}
@@ -93,12 +99,14 @@ public class ServletTestCaseRequest extends AbstractTestCaseRequest {
 			NameValuePair nvp = new BasicNameValuePair(name, value);
 			fields.add(nvp);
 		}
-		try {
-			((HttpEntityEnclosingRequestBase) request).setEntity(new UrlEncodedFormEntity(fields));
-		} catch (UnsupportedEncodingException e) {
-			System.out.println("Error encoding URL." + e.getMessage());
+		// Add the body parameters to the request if there were any
+		if (fields.size() > 0) {
+			try {
+				((HttpEntityEnclosingRequestBase) request).setEntity(new UrlEncodedFormEntity(fields));
+			} catch (UnsupportedEncodingException e) {
+				System.out.println("Error encoding URL." + e.getMessage());
+			}
 		}
-
 	}
 
 }

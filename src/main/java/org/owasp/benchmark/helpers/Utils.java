@@ -51,12 +51,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
+//import javax.xml.parsers.ParserConfigurationException;
+//import javax.xml.transform.Transformer;
+//import javax.xml.transform.TransformerException;
+//import javax.xml.transform.TransformerFactory;
+//import javax.xml.transform.dom.DOMSource;
+//import javax.xml.transform.stream.StreamResult;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -77,9 +77,10 @@ import org.owasp.benchmark.tools.XMLCrawler;
 
 import org.owasp.esapi.ESAPI;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+//import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
+//import org.xml.sax.SAXException;
 
 public class Utils {
 
@@ -418,51 +419,65 @@ public class Utils {
 		return result;
 	}
 
-	public static List<AbstractTestCaseRequest> parseHttpFile(InputStream http, List<String> failedTestCases)
-			throws Exception {
-		String URL = "";
+	/**
+	 * UNUSED METHOD!!! Why was it created?
+	 * Parses all the XML in the provided InputStream to generate a List of test case requests.
+	 * If testing that case fails, add its failure to the list of failed test cases. (Not sure about this aspect of
+	 * what it does.)
+	 * @param http
+	 *   The inputstream to parse the XML test case request from (e.g., contents of benchmark-crawler(or attack)-http.xml 
+	 * @param failedTestCases
+	 *   A list of error messages, 1 for each test case that failed.
+	 * @return A List of TestCaseRequest objects based on the file contents.
+	 * @throws Exception
+	 */
+/*	private static List<AbstractTestCaseRequest> parseHttpFile(InputStream http, List<String> failedTestCases) {
 
-		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-		InputSource is = new InputSource(http);
-		Document doc = docBuilder.parse(is);
-		Node root = doc.getDocumentElement();
-
-		DocumentBuilderFactory newCrawlerBF = null;
+		Node root = null;
 		DocumentBuilder newCrawlerBuilder = null;
-		Document newCrawlerDoc = null;
-		Element newCrawlerRootElement = null;
-		newCrawlerBF = DocumentBuilderFactory.newInstance();
-		Node newNode;
-
 		try {
+			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+			InputSource is = new InputSource(http);
+			Document doc = docBuilder.parse(is);
+			root = doc.getDocumentElement();
+
+			DocumentBuilderFactory newCrawlerBF = DocumentBuilderFactory.newInstance();
 			newCrawlerBuilder = newCrawlerBF.newDocumentBuilder();
 		} catch (ParserConfigurationException e) {
-			System.out.println("Problem init the Crawler XML file");
+			System.out.println("ERROR: Problem creating new DocumentBuilder");
+			e.printStackTrace();
+			System.exit(-1);
+		} catch (IOException | SAXException e2) {
+			System.out.println("ERROR: Parsing XML input file.");
+			e2.printStackTrace();
+			System.exit(-1);
 		}
-		newCrawlerDoc = newCrawlerBuilder.newDocument();
-		newCrawlerRootElement = newCrawlerDoc.createElement("benchmarkSuite");
+
+		Document newCrawlerDoc = newCrawlerBuilder.newDocument();
+		Element newCrawlerRootElement = newCrawlerDoc.createElement("benchmarkSuite");
 		newCrawlerDoc.appendChild(newCrawlerRootElement);
 
 		List<AbstractTestCaseRequest> requests = new ArrayList<AbstractTestCaseRequest>();
 		List<Node> tests = XMLCrawler.getNamedChildren("benchmarkTest", root);
+		// TODO: What does this loop do? Figure out, and document here, and in javadoc for this method.
 		for (Node test : tests) {
-			URL = XMLCrawler.getAttributeValue("URL", test).trim();
+			String URL = XMLCrawler.getAttributeValue("URL", test).trim();
 			// ToDo: don't use 18 (instead calculate length of TESTCASE_NAME and # digits
 			if (failedTestCases
 					.contains(URL.substring(URL.indexOf(BenchmarkScore.TESTCASENAME), 
 							URL.indexOf(BenchmarkScore.TESTCASENAME) + 18))) {
 				requests.add(parseHttpTest(test));
-				newNode = test.cloneNode(true);
+				Node newNode = test.cloneNode(true);
 				newCrawlerDoc.adoptNode(newNode);
 				newCrawlerDoc.getDocumentElement().appendChild(newNode);
 			} else {
-				/* The test case passed */
+				// The test case passed
 			}
 		}
 
+		// TODO: What is this delete for??
 		String failedTCFile = DATA_DIR + "benchmark-failed-http.xml";
-
 		File file = new File(failedTCFile);
 		if (file.exists()) {
 			if (file.delete()) {
@@ -489,7 +504,7 @@ public class Utils {
 
 		return requests;
 	}
-
+*/
 	public static String getCrawlerBenchmarkVersion(InputStream http) throws Exception {
 		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
@@ -516,7 +531,7 @@ public class Utils {
 		return requests;
 	}
 
-	public static AbstractTestCaseRequest parseHttpTest(Node test) throws Exception {
+	public static AbstractTestCaseRequest parseHttpTest(Node test) {
 		String tcType = XMLCrawler.getAttributeValue("tcType", test);
 		String fullURL = XMLCrawler.getAttributeValue("URL", test);
 		String name = BenchmarkScore.TESTCASENAME + XMLCrawler.getAttributeValue("tname", test);

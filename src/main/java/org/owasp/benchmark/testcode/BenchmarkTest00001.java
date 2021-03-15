@@ -31,6 +31,14 @@ public class BenchmarkTest00001 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 	
+	public byte[] md5(String password) {
+   	// ruleid: use-of-md5
+    		MessageDigest md5Digest = MessageDigest.getInstance("MD5");
+    		md5Digest.update(password.getBytes());
+    		byte[] hashValue = md5Digest.digest();
+    		return hashValue;
+  	}
+	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html;charset=UTF-8");

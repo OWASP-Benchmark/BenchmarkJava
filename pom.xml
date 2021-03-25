@@ -131,7 +131,7 @@
 								<configuration>
 									<target>
 										<ant target="run" antfile="${basedir}/src/config/build.xml">
-											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
 										</ant>
 									</target>
 								</configuration>
@@ -145,7 +145,7 @@
 								<configuration>
 									<target>
 										<ant target="databaseServer" antfile="${basedir}/src/config/build.xml">
-											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
 										</ant>
 									</target>
 								</configuration>
@@ -159,7 +159,7 @@
 								<configuration>
 									<target>
 										<ant target="databaseInit" antfile="${basedir}/src/config/build.xml">
-											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
 										</ant>
 									</target>
 								</configuration>
@@ -229,7 +229,7 @@
 								<configuration>
 									<target>
 										<ant target="run" antfile="${basedir}/src/config/build.xml">
-											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
 										</ant>
 									</target>
 								</configuration>
@@ -243,7 +243,7 @@
 								<configuration>
 									<target>
 										<ant target="databaseServer" antfile="${basedir}/src/config/build.xml">
-											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
 										</ant>
 									</target>
 								</configuration>
@@ -257,7 +257,7 @@
 								<configuration>
 									<target>
 										<ant target="databaseInit" antfile="${basedir}/src/config/build.xml">
-											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
 										</ant>
 									</target>
 								</configuration>
@@ -343,7 +343,7 @@
 			           <configuration>
 			             <target>
 			               <ant target="run" antfile="${basedir}/src/config/build.xml">
-			                 <reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+			                 <reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
 			               </ant>
 			             </target>
 			           </configuration>
@@ -357,7 +357,7 @@
 			           <configuration>
 			             <target>
 			               <ant target="databaseServer" antfile="${basedir}/src/config/build.xml">
-			                 <reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+			                 <reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
 			               </ant>
 			             </target>
 			           </configuration>
@@ -371,7 +371,7 @@
 			           <configuration>
 			             <target>
 			               <ant target="databaseInit" antfile="${basedir}/src/config/build.xml">
-			                 <reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+			                 <reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
 			               </ant>
 			             </target>
 			           </configuration>
@@ -442,7 +442,7 @@
 								<configuration>
 									<target>
 										<ant target="run" antfile="${basedir}/src/config/build.xml">
-											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
 										</ant>
 									</target>
 								</configuration>
@@ -456,7 +456,7 @@
 								<configuration>
 									<target>
 										<ant target="databaseServer" antfile="${basedir}/src/config/build.xml">
-											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
 										</ant>
 									</target>
 								</configuration>
@@ -470,7 +470,7 @@
 								<configuration>
 									<target>
 										<ant target="databaseInit" antfile="${basedir}/src/config/build.xml">
-											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
 										</ant>
 									</target>
 								</configuration>
@@ -546,7 +546,7 @@
 								<configuration>
 									<target>
 										<ant target="run" antfile="${basedir}/src/config/build.xml">
-											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
 										</ant>
 									</target>
 								</configuration>
@@ -560,7 +560,7 @@
 								<configuration>
 									<target>
 										<ant target="databaseServer" antfile="${basedir}/src/config/build.xml">
-											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
 										</ant>
 									</target>
 								</configuration>
@@ -574,7 +574,7 @@
 								<configuration>
 									<target>
 										<ant target="databaseInit" antfile="${basedir}/src/config/build.xml">
-											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+											<reference torefid="maven.compile.classpath" refid="maven.compile.classpath"/>
 										</ant>
 									</target>
 								</configuration>
@@ -925,7 +925,7 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 		<dependency>
 			<groupId>org.owasp.esapi</groupId>
 			<artifactId>esapi</artifactId>
-			<version>2.2.2.0</version>
+			<version>2.2.3.0</version>
 		</dependency>
 
 		<dependency>

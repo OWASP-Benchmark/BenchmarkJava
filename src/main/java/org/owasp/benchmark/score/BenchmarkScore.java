@@ -88,6 +88,7 @@ import org.owasp.benchmark.score.parsers.PMDReader;
 import org.owasp.benchmark.score.parsers.QualysWASReader;
 import org.owasp.benchmark.score.parsers.Rapid7Reader;
 import org.owasp.benchmark.score.parsers.Reader;
+import org.owasp.benchmark.score.parsers.SeczoneReader;
 import org.owasp.benchmark.score.parsers.SeekerReader;
 import org.owasp.benchmark.score.parsers.SemgrepReader;
 import org.owasp.benchmark.score.parsers.ShiftLeftReader;
@@ -959,7 +960,13 @@ public class BenchmarkScore {
 		}
 
         else if ( filename.endsWith( ".log" ) ) {
-            tr = new ContrastReader().parse( fileToParse );
+
+            String line1 = getLine( fileToParse, 0 ); // line1 contains: Starting Contrast!
+            if ( line1 != null && line1.contains( "Starting Contrast" )) {
+                tr = new ContrastReader().parse( fileToParse );
+            } else if ( line1 != null && line1.contains( "seczone.iast" )) {
+                tr = new SeczoneReader().parse( fileToParse );
+            } else System.out.println("Error: No matching parser found for .log file: " + filename);
         }
 
         else if ( filename.endsWith( ".hcl" ) ) {

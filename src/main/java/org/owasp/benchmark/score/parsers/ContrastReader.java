@@ -71,13 +71,13 @@ public class ContrastReader extends Reader {
 
     private void parseContrastFinding(TestResults tr, String json) throws Exception {
         TestCaseResult tcr = new TestCaseResult();
-        
+
         try {
 	        JSONObject obj = new JSONObject(json);
 	        String ruleId = obj.getString( "ruleId" );
 	        tcr.setCWE(cweLookup(ruleId));
 	        tcr.setCategory(ruleId);
-	
+
 	        JSONObject request = obj.getJSONObject("request");	        
 	        String uri = request.getString("uri" );
         
@@ -90,46 +90,61 @@ public class ContrastReader extends Reader {
 		        }
 	        }
         } catch (Exception e) {
-            // System.err.println("> Parse error: " + json);
-            // e.printStackTrace();
+        // There are a few crypto-bad-mac findings not associated with a request, so ignore errors associated with those.
+            if (!json.contains("\"ruleId\":\"crypto-bad-mac\"")) {
+                System.err.println("Contrast Results Parse error for: " + json);
+                e.printStackTrace();
+            }
         }
     }
-    
+
 	private static int cweLookup(String rule) {
 		switch (rule) {
-		case "cookie-flags-missing":
-			return 614; // insecure cookie use
-		case "sql-injection":
-			return 89; // sql injection
 		case "cmd-injection":
 			return 78; // command injection
-		case "ldap-injection":
-			return 90; // ldap injection
-		case "header-injection":
-			return 113; // header injection
-		case "hql-injection":
-			return 564; // hql injection
-		case "unsafe-readline":
-			return 0000; // unsafe readline
-		case "reflection-injection":
-			return 0000; // reflection injection
-		case "reflected-xss":
-			return 79; // xss
-		case "xpath-injection":
-			return 643; // xpath injection
-		case "path-traversal":
-			return 22; // path traversal
+		case "cookie-flags-missing":
+			return 614; // insecure cookie use
+		case "crypto-bad-ciphers":
+			return 327; // weak encryption
 		case "crypto-bad-mac":
 			return 328; // weak hash
 		case "crypto-weak-randomness":
 			return 330; // weak random
-		case "crypto-bad-ciphers":
-			return 327; // weak encryption
+		case "csp-header-insecure":
+			return 0000; // Don't care
+		case "csp-header-missing":
+			return 0000; // Don't care
+		case "header-injection":
+			return 113; // header injection
+		case "hql-injection":
+			return 564; // hql injection
+		case "hsts-header-missing":
+			return 319; // CWE-319: Cleartext Transmission of Sensitive Information
+		case "ldap-injection":
+			return 90; // ldap injection
+		case "path-traversal":
+			return 22; // path traversal
+		case "reflected-xss":
+			return 79; // xss
+		case "reflection-injection":
+			return 0000; // reflection injection
+		case "redos":
+			return 400; // regex denial of service - CWE-400: Uncontrolled Resource Consumption
+		case "sql-injection":
+			return 89; // sql injection
 		case "trust-boundary-violation":
 			return 501; // trust boundary
+		case "unsafe-readline":
+			return 0000; // unsafe readline
+		case "xcontenttype-header-missing":
+			return 0000; // Don't care
+		case "xpath-injection":
+			return 643; // xpath injection
 		case "xxe":
 			return 611; // xml entity
+		default: System.out.println("WARNING: Contrast-Unrecognized finding type: " + rule);
 		}
+
 		return 0;
 	}
 

@@ -71,6 +71,7 @@ import org.owasp.benchmark.score.parsers.CoverityReader;
 import org.owasp.benchmark.score.parsers.CrashtestReader;
 import org.owasp.benchmark.score.parsers.FaastReader;
 import org.owasp.benchmark.score.parsers.FindbugsReader;
+import org.owasp.benchmark.score.parsers.FluidAttacks;
 import org.owasp.benchmark.score.parsers.FortifyReader;
 import org.owasp.benchmark.score.parsers.FusionLiteInsightReader;
 import org.owasp.benchmark.score.parsers.HCLReader;
@@ -677,6 +678,8 @@ public class BenchmarkScore {
 				tr = new SeekerReader().parse(fileToParse);
 			} else if ( line1.contains("CWE") && line1.contains("URL") ) {		
 				tr = new CheckmarxIASTReader().parse(fileToParse);
+			} else if ( line1.contains("cwe") && line1.contains("what") ) {
+				tr = new FluidAttacks().parse(fileToParse);
 			} else System.out.println("Error: No matching parser found for CSV file: " + filename);
 		}
 

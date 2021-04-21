@@ -20,7 +20,6 @@ package org.owasp.benchmark.tools;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.NameValuePair;
@@ -29,14 +28,21 @@ import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.message.BasicNameValuePair;
-import org.w3c.dom.Node;
+
+/*
+ * This class is used by the crawlers to test the target Benchmark style web application. It tests Servlet style
+ * web applications that use traditional GET parameters in URLs, POST body parameters, header name/values, cookies,
+ * etc. Nothing fancy, specific to particular frameworks, like parameters embedded in the URL path, etc.
+ */
 
 public class ServletTestCaseRequest extends AbstractTestCaseRequest {
 
-	public ServletTestCaseRequest(String name, String fullURL, String tcType, List<Node> headers, List<Node> cookies,
-			List<Node> getParams, List<Node> formParams, String payload) {
-		super(name, fullURL, tcType, headers, cookies, getParams, formParams, payload);
+	public ServletTestCaseRequest(String fullURL, TestCaseType tcType, String category, String payload, String name,
+			String uiTemplateFile, String templateFile, String sourceFile, String sourceUIType, String dataflowFile,
+			String sinkFile, boolean isVulnerability, List<NameValuePair> headers, List<NameValuePair> cookies,
+			List<NameValuePair> getParams, List<NameValuePair> formParams) {
+		super(fullURL, tcType, category, payload, name, uiTemplateFile, templateFile, sourceFile, sourceUIType,
+				dataflowFile, sinkFile, isVulnerability, headers, cookies, getParams, formParams);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -44,15 +50,15 @@ public class ServletTestCaseRequest extends AbstractTestCaseRequest {
 	void buildQueryString() {
 		setQuery("");
 		boolean first = true;
-		for (Node field : getGetParams()) {
+		for (NameValuePair field : getGetParams()) {
 			if (first) {
 				setQuery("?");
 				first = false;
 			} else {
 				setQuery(getQuery() + "&");
 			}
-			String name = XMLCrawler.getAttributeValue("name", field);
-			String value = XMLCrawler.getAttributeValue("value", field);
+			String name = field.getName();
+			String value = field.getValue();
 			// System.out.println(query);
 			setQuery(getQuery() + (name + "=" + URLEncoder.encode(value)));
 		}
@@ -61,15 +67,18 @@ public class ServletTestCaseRequest extends AbstractTestCaseRequest {
 	@Override
 	HttpRequestBase createRequestInstance(String URL) {
 		// If there are query parameters, this must be a GET, otherwise a POST.
-		if (getQuery().length() == 0) return new HttpPost(URL);
-		  else return new HttpGet(URL);
+		if (getQuery().length() == 0) {
+			return new HttpPost(URL);
+		} else {
+			return new HttpGet(URL);
+		}
 	}
 
 	@Override
 	void buildHeaders(HttpRequestBase request) {
-		for (Node header : getHeaders()) {
-			String name = XMLCrawler.getAttributeValue("name", header);
-			String value = XMLCrawler.getAttributeValue("value", header);
+		for (NameValuePair header : getHeaders()) {
+			String name = header.getName();
+			String value = header.getValue();
 			// System.out.println("Header:" + name + "=" + value);
 			request.addHeader(name, value);
 		}
@@ -78,27 +87,22 @@ public class ServletTestCaseRequest extends AbstractTestCaseRequest {
 	@SuppressWarnings("deprecation")
 	@Override
 	void buildCookies(HttpRequestBase request) {
-		for (Node cookie : getCookies()) {
-			String name = XMLCrawler.getAttributeValue("name", cookie);
-			String value = XMLCrawler.getAttributeValue("value", cookie);
+		for (NameValuePair cookie : getCookies()) {
+			String name = cookie.getName();
+			String value = cookie.getValue();
 			// Note: URL encoding of a space becomes a +, which is OK for URL params, but
 			// not in a cookie, as the + doesn't get decoded properly. So have to replace
 			// all spaces with %20 instead (at least for NodeJS). Will this break Java?
-			value = value.replaceAll(" ", "%20");
+			// Yes. Yes it will. So commenting out...
+			// value = value.replaceAll(" ", "%20"); // Hack for NodeJS, but breaks Java, so commented out.
 			request.addHeader("Cookie", name + "=" + URLEncoder.encode(value));
 		}
 	}
 
 	@Override
 	void buildBodyParameters(HttpRequestBase request) {
-		List<NameValuePair> fields = new ArrayList<NameValuePair>();
-		for (Node field : getFormParams()) {
-			String name = XMLCrawler.getAttributeValue("name", field);
-			String value = XMLCrawler.getAttributeValue("value", field);
-			// System.out.println(name+"="+value);
-			NameValuePair nvp = new BasicNameValuePair(name, value);
-			fields.add(nvp);
-		}
+		List<NameValuePair> fields = getFormParams();
+
 		// Add the body parameters to the request if there were any
 		if (fields.size() > 0) {
 			try {

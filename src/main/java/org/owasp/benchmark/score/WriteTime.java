@@ -171,7 +171,9 @@ class WriteFiles {
 		}
 	}
 
-	public void deletePreviousResults(String toolName, String toolVersion, String benchmarkVersion) {
+	// TODO: Refactor hard coded uses of Benchmark name to use configurable value based on name of test suite
+	// being worked with. Here and in next method.
+	public void deletePreviousResults(String toolName, String toolVersion, String testSuiteVersion) {
 		if (!toolName.equals("")) {
 			File targetDir = new File("results/");
 			if (targetDir.exists()) {
@@ -179,7 +181,7 @@ class WriteFiles {
 				for (File file : files) {
 					if (file.isFile()
 							&& (file.getName().startsWith(
-									"Benchmark_" + benchmarkVersion + "-"
+									"Benchmark_" + testSuiteVersion + "-"
 											+ toolName + "-v" + toolVersion) && (file
 									.getName().endsWith("xml")))) {
 						file.delete();
@@ -190,8 +192,8 @@ class WriteFiles {
 		}
 	}
 
-	public void resultsFileName(String tool, String benchmarkVersion, String times, String toolVersion) {
-		String name = "results/Benchmark_" + benchmarkVersion + "-" + tool
+	public void resultsFileName(String tool, String testSuiteVersion, String times, String toolVersion) {
+		String name = "results/Benchmark_" + testSuiteVersion + "-" + tool
 				+ "-v" + toolVersion + "-" + times + ".xml";
 		File file = null;
 
@@ -222,36 +224,14 @@ class WriteFiles {
 				}
 				break;
 			case "crawler":
-				file = new File("results/" + findFile("results", CONTRAST_FILE + benchmarkVersion + "-Contrast"));
+				file = new File("results/" + findFile("results", CONTRAST_FILE + testSuiteVersion + "-Contrast"));
 				if (file.exists()) {
 					file.renameTo(new File("results/" + file.getName().replace(".zip", "-" + times + ".zip")));
 				}
 				break;
 		}
 	}
-/*
-	public static String getHttpResponse(String url, String errorMessege) {
-		StringBuffer response = new StringBuffer();
-		try {
-			URL obj = new URL(url);
-			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-			con.setRequestMethod("GET");
-			con.setRequestProperty("User-Agent", USER_AGENT);
 
-			BufferedReader in = new BufferedReader(new InputStreamReader(
-					con.getInputStream()));
-			String inputLine;
-
-			while ((inputLine = in.readLine()) != null) {
-				response.append(inputLine);
-			}
-			in.close();
-		} catch (Exception e) {
-			System.out.println(errorMessege);
-		}
-		return response.toString();
-	}
-*/
 	public String getToolTime(String toolName) {
 
 		List<String> lines = Utils.getLinesFromFile(Utils.getFileFromClasspath(

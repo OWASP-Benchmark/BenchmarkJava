@@ -21,6 +21,7 @@ package org.owasp.benchmark.helpers;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -33,6 +34,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import static java.nio.file.StandardOpenOption.APPEND;
+import static java.nio.file.StandardOpenOption.CREATE;
 import java.nio.file.attribute.PosixFilePermission;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -42,6 +45,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Vector;
 
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
@@ -51,36 +55,33 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-//import javax.xml.parsers.ParserConfigurationException;
-//import javax.xml.transform.Transformer;
-//import javax.xml.transform.TransformerException;
-//import javax.xml.transform.TransformerFactory;
-//import javax.xml.transform.dom.DOMSource;
-//import javax.xml.transform.stream.StreamResult;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
 
 import org.owasp.benchmark.service.pojo.StringMessage;
 import org.owasp.benchmark.score.BenchmarkScore;
 import org.owasp.benchmark.tools.AbstractTestCaseRequest;
+import org.owasp.benchmark.tools.AbstractTestCaseRequest.TestCaseType;
 import org.owasp.benchmark.tools.ServletTestCaseRequest;
 import org.owasp.benchmark.tools.XMLCrawler;
 
 import org.owasp.esapi.ESAPI;
 import org.w3c.dom.Document;
-//import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
-//import org.xml.sax.SAXException;
+import org.xml.sax.SAXException;
 
 public class Utils {
 
@@ -88,13 +89,14 @@ public class Utils {
 
 	public static final String USERDIR = System.getProperty("user.dir") + File.separator;
 
-	// A 'test' directory that target test files are created in so test cases can use them
+	// A 'test' directory that target test files are created in so test cases can
+	// use them
 	public static final String TESTFILES_DIR = USERDIR + "testfiles" + File.separator;
 
 	public static final String DATA_DIR = USERDIR + "data" + File.separator;
 
-	public static final String RESOURCES_DIR = USERDIR + "src" + File.separator + "main" + File.separator
-			+ "resources" + File.separator;
+	public static final String RESOURCES_DIR = USERDIR + "src" + File.separator + "main" + File.separator + "resources"
+			+ File.separator;
 
 	// This constant is used by some of the generated Java test cases
 	public static final Set<String> commonHeaders = new HashSet<>(Arrays.asList("host", "user-agent", "accept",
@@ -149,12 +151,11 @@ public class Utils {
 		}
 	}
 
-	public static String getCookie( HttpServletRequest request, String paramName ) {
+	public static String getCookie(HttpServletRequest request, String paramName) {
 		Cookie[] values = request.getCookies();
 		String param = "none";
 		if (paramName != null) {
-			for (int i = 0; i < values.length; i++)
-			{
+			for (int i = 0; i < values.length; i++) {
 				if (values[i].getName().equals(paramName)) {
 					param = values[i].getValue();
 					break; // break out of for loop when param found
@@ -163,8 +164,8 @@ public class Utils {
 		}
 		return param;
 	}
- 
-	public static String getParam( HttpServletRequest request, String paramName ) {
+
+	public static String getParam(HttpServletRequest request, String paramName) {
 		String param = request.getParameter(paramName);
 		return param;
 	}
@@ -289,7 +290,8 @@ public class Utils {
 				System.out.println("The file '" + fileName + "' from the classpath cannot be loaded.");
 				e.printStackTrace();
 			}
-		} else System.out.println("The file '" + fileName + "' from the classpath cannot be loaded.");
+		} else
+			System.out.println("The file '" + fileName + "' from the classpath cannot be loaded.");
 		return null;
 	}
 
@@ -331,6 +333,11 @@ public class Utils {
 		return getLinesFromFile(new File(filename));
 	}
 
+	/**
+	 * Encodes the supplied parameter using ESAPI's encodeForHTML(). Only supports Strings and InputStreams.
+	 * @param param - The String or InputStream to encode.
+	 * @return - HTML Entity encoded version of input, or "objectTypeUnknown" if not a supported type.
+	 */
 	public static String encodeForHTML(Object param) {
 
 		String value = "objectTypeUnknown";
@@ -353,31 +360,31 @@ public class Utils {
 		return ESAPI.encoder().encodeForHTML(value);
 	}
 
-	public static boolean writeTimeFile(Path pathToFileDir, String completeName, List<String> outputLines,
-			boolean append) {
-		boolean result = true;
-		PrintStream os = null;
-		try {
-			Files.createDirectories(pathToFileDir);
-			File f = new File(completeName);
-			if (!append) {
-				f.delete();
-			}
-			FileOutputStream fos = new FileOutputStream(f, append);
-			os = new PrintStream(fos);
+	/**
+	 * Write a single String to the specified file.
+	 * @param file - The path to the target file.
+	 * @param content - The content to write.
+	 * @param append - True to append to an existing file. False to create or overwrite the file.
+	 * @throws IOException
+	 */
+	public static void writeToFile(Path file, String content, boolean append) throws IOException {
+		PrintStream os = new PrintStream(Files.newOutputStream(file, append ? APPEND : CREATE));
+		os.println(content);
+	}
 
-			for (String ol : outputLines) {
-				os.println(ol);
-			}
+	/**
+	 * Write a list of Strings to the specified file.
+	 * @param file - The path to the target file.
+	 * @param content - The list of Strings to write out.
+	 * @param append - True to append to an existing file. False to create or overwrite the file.
+	 * @throws IOException
+	 */
+	public static void writeToFile(Path file, List<String> contentLines, boolean append) throws IOException {
+		PrintStream os = new PrintStream(Files.newOutputStream(file, append ? APPEND : CREATE));
 
-		} catch (IOException e1) {
-			result = false;
-			e1.printStackTrace();
-		} finally {
-			os.close();
+		for (String line : contentLines) {
+			os.println(line);
 		}
-
-		return result;
 	}
 
 	public static boolean writeLineToFile(Path pathToFileDir, String completeName, String line) {
@@ -387,10 +394,7 @@ public class Utils {
 			Files.createDirectories(pathToFileDir);
 			File f = new File(completeName);
 			if (!f.exists()) {
-				// System.out.println("Archivo llamado: " +
-				// f.getAbsolutePath());
 				f.createNewFile();
-				// System.out.println("Archivo no existia se creoooooooooo");
 			}
 			FileOutputStream fos = new FileOutputStream(f, true);
 			os = new PrintStream(fos);
@@ -420,14 +424,13 @@ public class Utils {
 	}
 
 	/**
-	 * UNUSED METHOD!!! Why was it created?
-	 * Parses all the XML in the provided InputStream to generate a List of test case requests.
-	 * If testing that case fails, add its failure to the list of failed test cases. (Not sure about this aspect of
-	 * what it does.)
-	 * @param http
-	 *   The inputstream to parse the XML test case request from (e.g., contents of benchmark-crawler(or attack)-http.xml 
-	 * @param failedTestCases
-	 *   A list of error messages, 1 for each test case that failed.
+	 * UNUSED METHOD!!! Why was it created? Parses all the XML in the provided InputStream to generate a
+	 * List of test case requests. If testing that case fails, add its failure to the list of failed
+	 * test cases. (Not sure about this aspect of what it does.)
+	 * 
+	 * @param http            The inputstream to parse the XML test case request from (e.g., contents of
+	 *                        benchmark-crawler(or attack)-http.xml
+	 * @param failedTestCases A list of error messages, 1 for each test case that failed.
 	 * @return A List of TestCaseRequest objects based on the file contents.
 	 * @throws Exception
 	 */
@@ -505,7 +508,7 @@ public class Utils {
 		return requests;
 	}
 */
-	public static String getCrawlerBenchmarkVersion(InputStream http) throws Exception {
+	public static String getCrawlerTestSuiteVersion(InputStream http) throws Exception {
 		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 		InputSource is = new InputSource(http);
@@ -515,41 +518,83 @@ public class Utils {
 		return XMLCrawler.getAttributeValue("version", root);
 	}
 
-	public static List<AbstractTestCaseRequest> parseHttpFile(InputStream http) throws Exception {
-		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-		InputSource is = new InputSource(http);
-		Document doc = docBuilder.parse(is);
-		Node root = doc.getDocumentElement();
-
+	public static List<AbstractTestCaseRequest> parseHttpFile(File file) throws TestCaseRequestFileParseException {
 		List<AbstractTestCaseRequest> requests = new ArrayList<AbstractTestCaseRequest>();
-		List<Node> tests = XMLCrawler.getNamedChildren("benchmarkTest", root);
-		for (Node test : tests) {
-			AbstractTestCaseRequest request = parseHttpTest(test);
-			requests.add(request);
+
+		try {
+			FileInputStream inputStream = new FileInputStream(file);
+			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+			InputSource is = new InputSource(inputStream);
+			Document doc = docBuilder.parse(is);
+			Node root = doc.getDocumentElement();
+
+			List<Node> tests = XMLCrawler.getNamedChildren("benchmarkTest", root);
+			for (Node test : tests) {
+				AbstractTestCaseRequest request = parseHttpTest(test);
+				requests.add(request);
+			}
+		} catch (ParserConfigurationException | SAXException | IOException e) {
+			throw new TestCaseRequestFileParseException("Error during parsing", e);
 		}
 		return requests;
 	}
 
-	public static AbstractTestCaseRequest parseHttpTest(Node test) {
-		String tcType = XMLCrawler.getAttributeValue("tcType", test);
-		String fullURL = XMLCrawler.getAttributeValue("URL", test);
-		String name = BenchmarkScore.TESTCASENAME + XMLCrawler.getAttributeValue("tname", test);
-		String payload = "";
+	public static AbstractTestCaseRequest parseHttpTest(Node test) throws TestCaseRequestFileParseException {
+		AbstractTestCaseRequest request = null;
 
-		List<Node> headers = XMLCrawler.getNamedChildren("header", test);
-		List<Node> cookies = XMLCrawler.getNamedChildren("cookie", test);
-		List<Node> getParams = XMLCrawler.getNamedChildren("getparam", test);
-		List<Node> formParams = XMLCrawler.getNamedChildren("formparam", test);
+		String url = XMLCrawler.getAttributeValue("URL", test);
+		TestCaseType tcType = TestCaseType.valueOf(XMLCrawler.getAttributeValue("tcType", test));
+		String category = XMLCrawler.getAttributeValue("tcCategory", test);
+		String name = BenchmarkScore.TESTCASENAME + XMLCrawler.getAttributeValue("tname", test);
+		String uiTemplateFile = XMLCrawler.getAttributeValue("tcUITemplateFile", test);
+		String templateFile = XMLCrawler.getAttributeValue("tcTemplateFile", test);
+		String sourceFile = XMLCrawler.getAttributeValue("tcSourceFile", test);
+		String sourceUIType = XMLCrawler.getAttributeValue("tsSourceUIType", test);
+		String dataflowFile = XMLCrawler.getAttributeValue("tcDataflowFile", test);
+		String sinkFile = XMLCrawler.getAttributeValue("tcSinkFile", test);
+		boolean isVulnerability = Boolean.valueOf(XMLCrawler.getAttributeValue("tcVulnerable", test));
+
+		List<Node> headerNodes = XMLCrawler.getNamedChildren("header", test);
+		List<NameValuePair> headers = parseNameValuePairs(headerNodes);
+
+		List<Node> cookieNodes = XMLCrawler.getNamedChildren("cookie", test);
+		List<NameValuePair> cookies = parseNameValuePairs(cookieNodes);
+
+		List<Node> getParamNodes = XMLCrawler.getNamedChildren("getparam", test);
+		List<NameValuePair> getParams = parseNameValuePairs(getParamNodes);
+
+		List<Node> formParamsNodes = XMLCrawler.getNamedChildren("formparam", test);
+		List<NameValuePair> formParams = parseNameValuePairs(formParamsNodes);
+
+		List<Node> payloadNodes = XMLCrawler.getNamedChildren("payload", test);
+		if (payloadNodes.size() > 1)
+			throw new TestCaseRequestFileParseException("There cannot be multiple payloads for a request");
+		String payload = XMLCrawler.getAttributeValue("value", payloadNodes.get(0));
 
 		switch (tcType) {
-		case "SERVLET":
-			ServletTestCaseRequest svlTC = new ServletTestCaseRequest(name, fullURL, tcType, headers, cookies,
-					getParams, formParams, payload);
-			return svlTC;
+		case SERVLET:
+			request = new ServletTestCaseRequest(url, tcType, category, payload, name, uiTemplateFile, templateFile,
+					sourceFile, sourceUIType, dataflowFile, sinkFile, isVulnerability, headers, cookies, getParams,
+					formParams);
+			break;
+		default:
+			throw new TestCaseRequestFileParseException("Unrecognized tcType: " + tcType);
 		}
 
-		return null;
+		return request;
+	}
+
+	private static List<NameValuePair> parseNameValuePairs(List<Node> nodes) throws TestCaseRequestFileParseException {
+		List<NameValuePair> nameValuePairs = new Vector<NameValuePair>();
+
+		for (Node nameValuePairNode : nodes) {
+			String name = XMLCrawler.getAttributeValue("name", nameValuePairNode);
+			String value = XMLCrawler.getAttributeValue("value", nameValuePairNode);
+			nameValuePairs.add(new BasicNameValuePair(name, value));
+		}
+
+		return nameValuePairs;
 	}
 
 	public static List<String> readCSVFailedTC(String csvFile) {
@@ -574,7 +619,8 @@ public class Utils {
 	/*
 	 * A utility method used by the generated Java Cipher test cases.
 	 */
-private static javax.crypto.Cipher cipher = null;
+	private static javax.crypto.Cipher cipher = null;
+
 	public static Cipher getCipher() {
 		if (cipher == null) {
 			try {

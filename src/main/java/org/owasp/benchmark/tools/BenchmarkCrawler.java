@@ -18,14 +18,15 @@
 
 package org.owasp.benchmark.tools;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -44,29 +45,34 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.util.EntityUtils;
-
 import org.owasp.benchmark.helpers.Utils;
 import org.owasp.benchmark.score.BenchmarkScore;
 
 public class BenchmarkCrawler {
 	public static String testSuiteVersion = "";
+	private static String DEFAULTCRAWLERFILENAME = "benchmark-crawler-http.xml";
+	private static String crawlerFile = Utils.DATA_DIR + DEFAULTCRAWLERFILENAME; // Default location if not specified
 
-	protected void init() {
-		String crawlerFile = Utils.DATA_DIR + "benchmark-crawler-http.xml";
+	/**
+	 * Crawl the target test suite.
+	 */
+	protected void run() {
 		try {
 			// Have to open the stream twice so each method can read the whole file
-			testSuiteVersion = Utils.getCrawlerBenchmarkVersion(new FileInputStream(crawlerFile));
-			crawl(new FileInputStream(crawlerFile));
+			testSuiteVersion = Utils.getCrawlerTestSuiteVersion(new FileInputStream(crawlerFile));
+			List<AbstractTestCaseRequest> requests = Utils.parseHttpFile(new File(crawlerFile));
+			Collections.sort(requests, AbstractTestCaseRequest.getNameComparator()); // Probably not necessary
+			crawl(requests);
 		} catch (Exception e) {
+			System.out.println("ERROR: Problem with specified crawler file: " + crawlerFile);
 			e.printStackTrace();
+			System.exit(-1);
 		}
 	}
 
-	protected void crawl(InputStream http) throws Exception {
+	protected void crawl(List<AbstractTestCaseRequest> requests) throws Exception {
 		CloseableHttpClient httpclient = createAcceptSelfSignedCertificateClient();
 		long start = System.currentTimeMillis();
-
-		List<AbstractTestCaseRequest> requests = Utils.parseHttpFile(http);
 
 		for (AbstractTestCaseRequest request : requests) {
 			try {
@@ -82,25 +88,24 @@ public class BenchmarkCrawler {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Date date = new Date();
 
-		System.out.println("Crawl ran on " + dateFormat.format(date) + " for " + BenchmarkScore.TESTSUITE
-				+ " v" + testSuiteVersion + " took " + seconds + " seconds");
+		System.out.println("Crawl ran on " + dateFormat.format(date) + " for " + BenchmarkScore.TESTSUITE + " v"
+				+ testSuiteVersion + " took " + seconds + " seconds");
 	}
 
-	// This method taken directly from: https://memorynotfound.com/ignore-certificate-errors-apache-httpclient/
+	// This method taken directly from:
+	// https://memorynotfound.com/ignore-certificate-errors-apache-httpclient/
 	static CloseableHttpClient createAcceptSelfSignedCertificateClient()
 			throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
 
 		// use the TrustSelfSignedStrategy to allow Self Signed Certificates
-		SSLContext sslContext = SSLContextBuilder
-				.create()
-				.loadTrustMaterial(new TrustSelfSignedStrategy())
-				.build();
+		SSLContext sslContext = SSLContextBuilder.create().loadTrustMaterial(new TrustSelfSignedStrategy()).build();
 
 		// we can optionally disable hostname verification.
 		// if you don't want to further weaken the security, you don't have to include this.
 		HostnameVerifier allowAllHosts = new NoopHostnameVerifier();
 
-		// create an SSL Socket Factory to use the SSLContext with the trust self signed certificate strategy
+		// create an SSL Socket Factory to use the SSLContext with the trust self signed certificate
+		// strategy
 		// and allow all hosts verifier.
 		SSLConnectionSocketFactory connectionFactory = new SSLConnectionSocketFactory(sslContext, allowAllHosts);
 
@@ -112,11 +117,12 @@ public class BenchmarkCrawler {
 	}
 
 	/**
-	 * Issue the requested request, measure the time required to execute, then output both to stdout and the
-	 * global variable timeString the URL tested, the time required to execute and the response code.
+	 * Issue the requested request, measure the time required to execute, then output both to stdout and
+	 * the global variable timeString the URL tested, the time required to execute and the response
+	 * code.
 	 * 
 	 * @param httpclient - The HTTP client to use to make the request
-	 * @param request - THe HTTP request to issue
+	 * @param request    - THe HTTP request to issue
 	 * @throws IOException
 	 */
 	protected ResponseInfo sendRequest(CloseableHttpClient httpclient, AbstractTestCaseRequest requestTC) {
@@ -163,59 +169,45 @@ public class BenchmarkCrawler {
 		return responseInfo;
 	}
 
+	/**
+	 * Process the command line arguments that make any configuration changes.
+	 * 
+	 * @param args - args passed to main().
+	 * @return true if valid command line arguments provided. False otherwise.
+	 */
+	private static boolean processCommandLineArgs(String[] args) {
+
+		if (args == null || args.length == 0) {
+			// No arguments is OK
+		} else if (args.length != 0 && args.length != 2) {
+			System.out.println("Usage: no arguments or -f /PATH/TO/" + DEFAULTCRAWLERFILENAME);
+			return false;
+		} else if (args.length == 2) {
+			if ("-f".equalsIgnoreCase(args[0])) {
+				// -f indicates use the specified crawler file
+				crawlerFile = args[1];
+				File theFile = new File(crawlerFile);
+				if (!theFile.exists()) {
+					System.out.println("ERROR: Crawler Configuration file: '" + crawlerFile + "' not found!");
+					return false;
+				}
+			} else if (!(args[0] == null && args[1] == null)) { // pom settings for crawler forces creation of 2 args,
+																// but if none are provided, they are null
+				System.out.println("Usage: -f /PATH/TO/" + DEFAULTCRAWLERFILENAME);
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public static void main(String[] args) throws Exception {
-		if (!menu(args)) {
+		if (!processCommandLineArgs(args)) {
 			return;
 		}
 
 		BenchmarkCrawler crawler = new BenchmarkCrawler();
-		crawler.init();
+		crawler.run();
 	}
 
-	private static boolean menu(String[] args) {
-		if (args == null) {
-			System.out.println("Please verify required parameters are provided.");
-			return false;
-		}
-		return true;
-	}
 }
 
-class ResponseInfo {
-	private String responseString;
-	private double time;
-	private int statusCode;
-	private HttpRequestBase requestBase;
-
-	public String getResponseString() {
-		return responseString;
-	}
-
-	public void setResponseString(String responseString) {
-		this.responseString = responseString;
-	}
-
-	public double getTime() {
-		return time;
-	}
-
-	public void setTime(double time) {
-		this.time = time;
-	}
-
-	public int getStatusCode() {
-		return statusCode;
-	}
-
-	public void setStatusCode(int statusCode) {
-		this.statusCode = statusCode;
-	}
-
-	public HttpRequestBase getRequestBase() {
-		return requestBase;
-	}
-
-	public void setRequestBase(HttpRequestBase requestBase) {
-		this.requestBase = requestBase;
-	}
-}

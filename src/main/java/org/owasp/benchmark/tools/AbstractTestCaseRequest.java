@@ -18,34 +18,63 @@
 
 package org.owasp.benchmark.tools;
 
+import java.lang.invoke.MethodHandles;
+import java.util.Comparator;
 import java.util.List;
 
+import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.w3c.dom.Node;
 
 public abstract class AbstractTestCaseRequest {
 
+	/*
+	 * The 1st three are Java.
+	 */
+	public enum TestCaseType {
+		SERVLET, SPRINGWS, JERSEYWS, NODEEXPRESS
+	}
+
 	private String fullURL;
 	private String query;
-	private String tcType;
+	private TestCaseType tcType;
+	private String category;
 	private String payload;
 	private String name;
-	private boolean passed;
-	private List<Node> headers;
-	private List<Node> cookies;
-	private List<Node> getParams;
-	private List<Node> formParams;
+	private String uiTemplateFile;
+	private String templateFile;
+	private String sourceFile;
+	private String sourceUIType;
+	private String dataflowFile;
+	private String sinkFile;
 
-	public AbstractTestCaseRequest(String name, String fullURL, String tcType, List<Node> headers, List<Node> cookies,
-			List<Node> getParams, List<Node> formParams, String payload) {
-		this.name = name;
+	private boolean isPassed;
+	private boolean isVulnerability;
+	private List<NameValuePair> headers;
+	private List<NameValuePair> cookies;
+	private List<NameValuePair> getParams;
+	private List<NameValuePair> formParams;
+
+	public AbstractTestCaseRequest(String fullURL, TestCaseType tcType, String category, String payload, String name,
+			String uiTemplateFile, String templateFile, String sourceFile, String sourceUIType, String dataflowFile,
+			String sinkFile, boolean isVulnerability, List<NameValuePair> headers, List<NameValuePair> cookies,
+			List<NameValuePair> getParams, List<NameValuePair> formParams) {
+		super();
 		this.fullURL = fullURL;
 		this.tcType = tcType;
+		this.category = category;
+		this.payload = payload;
+		this.name = name;
+		this.uiTemplateFile = uiTemplateFile;
+		this.templateFile = templateFile;
+		this.sourceFile = sourceFile;
+		this.sourceUIType = sourceUIType;
+		this.dataflowFile = dataflowFile;
+		this.sinkFile = sinkFile;
+		this.isVulnerability = isVulnerability;
 		this.headers = headers;
 		this.cookies = cookies;
 		this.getParams = getParams;
 		this.formParams = formParams;
-		this.payload = payload;
 	}
 
 	public HttpRequestBase buildRequest() {
@@ -58,8 +87,7 @@ public abstract class AbstractTestCaseRequest {
 	}
 
 	/**
-	 * Method to create a POST, GET, DELETE, HEAD, OPTIONS, TRACE request
-	 * object.
+	 * Method to create a POST, GET, DELETE, HEAD, OPTIONS, TRACE request object.
 	 * 
 	 * @return an instance of a subclass of HttpRequestBase
 	 */
@@ -93,43 +121,51 @@ public abstract class AbstractTestCaseRequest {
 		this.fullURL = fullURL;
 	}
 
-	public String getTcType() {
+	public TestCaseType getType() {
 		return tcType;
 	}
 
-	public void setTcType(String tcType) {
-		this.tcType = tcType;
+	public void setType(TestCaseType type) {
+		this.tcType = type;
 	}
 
-	public List<Node> getHeaders() {
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
+	public List<NameValuePair> getHeaders() {
 		return headers;
 	}
 
-	public void setHeaders(List<Node> headers) {
+	public void setHeaders(List<NameValuePair> headers) {
 		this.headers = headers;
 	}
 
-	public List<Node> getCookies() {
+	public List<NameValuePair> getCookies() {
 		return cookies;
 	}
 
-	public void setCookies(List<Node> cookies) {
+	public void setCookies(List<NameValuePair> cookies) {
 		this.cookies = cookies;
 	}
 
-	public List<Node> getGetParams() {
+	public List<NameValuePair> getGetParams() {
 		return getParams;
 	}
 
-	public void setGetParams(List<Node> getParams) {
+	public void setGetParams(List<NameValuePair> getParams) {
 		this.getParams = getParams;
 	}
 
-	public List<Node> getFormParams() {
+	public List<NameValuePair> getFormParams() {
 		return formParams;
 	}
 
-	public void setFormParams(List<Node> formParams) {
+	public void setFormParams(List<NameValuePair> formParams) {
 		this.formParams = formParams;
 	}
 
@@ -150,11 +186,19 @@ public abstract class AbstractTestCaseRequest {
 	}
 
 	public boolean isPassed() {
-		return passed;
+		return isPassed;
 	}
 
-	public void setPassed(boolean passed) {
-		this.passed = passed;
+	public void setPassed(boolean isPassed) {
+		this.isPassed = isPassed;
+	}
+
+	public boolean isVulnerability() {
+		return isVulnerability;
+	}
+
+	public void setVulnerability(boolean isVulnerability) {
+		this.isVulnerability = isVulnerability;
 	}
 
 	public String getName() {
@@ -165,12 +209,74 @@ public abstract class AbstractTestCaseRequest {
 		this.name = name;
 	}
 
+	public String getUiTemplateFile() {
+		return uiTemplateFile;
+	}
+
+	public void setUiTemplateFile(String uiTemplateFile) {
+		this.uiTemplateFile = uiTemplateFile;
+	}
+
+	public String getTemplateFile() {
+		return templateFile;
+	}
+
+	public void setTemplateFile(String templateFile) {
+		this.templateFile = templateFile;
+	}
+
+	public String getSourceFile() {
+		return sourceFile;
+	}
+
+	public void setSourceFile(String sourceFile) {
+		this.sourceFile = sourceFile;
+	}
+
+	public String getSourceUIType() {
+		return sourceUIType;
+	}
+
+	public void setSourceUIType(String sourceUIType) {
+		this.sourceUIType = sourceUIType;
+	}
+
+	public String getDataflowFile() {
+		return dataflowFile;
+	}
+
+	public void setDataflowFile(String dataflowFile) {
+		this.dataflowFile = dataflowFile;
+	}
+
+	public String getSinkFile() {
+		return sinkFile;
+	}
+
+	public void setSinkFile(String sinkFile) {
+		this.sinkFile = sinkFile;
+	}
+
 	@Override
 	public String toString() {
-		return "AbstractTestCaseRequest [fullURL=" + fullURL + ", query=" + query + ", tcType=" + tcType + ", payload="
-				+ payload + ", name=" + name + ", passed=" + passed + ", headers=" + headers + ", cookies=" + cookies
-				+ ", getParams=" + getParams + ", formParams=" + formParams + "]";
+		return MethodHandles.lookup().lookupClass().getSimpleName() + " [fullURL=" + fullURL + ", query=" + query
+				+ ", type=" + tcType + ", category=" + category + ", payload=" + payload + ", name=" + name
+				+ ", uiTemplateFile=" + uiTemplateFile + ", templateFile=" + templateFile + ", sourceFile=" + sourceFile
+				+ ", sourceUIType=" + sourceUIType + ", dataflowFile=" + dataflowFile + ", sinkFile=" + sinkFile
+				+ ", isPassed=" + isPassed + ", isVulnerability=" + isVulnerability + ", headers=" + headers
+				+ ", cookies=" + cookies + ", getParams=" + getParams + ", formParams=" + formParams + "]";
 	}
-	
-	
+
+	public static Comparator<AbstractTestCaseRequest> getNameComparator() {
+		return new Comparator<AbstractTestCaseRequest>() {
+
+			@Override
+			public int compare(AbstractTestCaseRequest o1, AbstractTestCaseRequest o2) {
+				if (!o1.name.equalsIgnoreCase(o2.name))
+					return o1.name.compareTo(o2.name);
+				return 0;
+			}
+		};
+	}
+
 }

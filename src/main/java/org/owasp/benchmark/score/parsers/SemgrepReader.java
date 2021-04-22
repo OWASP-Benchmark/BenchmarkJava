@@ -1,33 +1,31 @@
 /**
-* OWASP Benchmark Project
-*
-* This file is part of the Open Web Application Security Project (OWASP)
-* Benchmark Project For details, please see
-* <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
-*
-* The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
-* of the GNU General Public License as published by the Free Software Foundation, version 2.
-*
-* The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
-* even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details
-*
-* @author Nacho Guisado Obregón, Dave Wichers
-* @created 2020
-*/
-
+ * OWASP Benchmark Project
+ *
+ * <p>This file is part of the Open Web Application Security Project (OWASP) Benchmark Project For
+ * details, please see <a
+ * href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
+ *
+ * <p>The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU General Public License as published by the Free Software Foundation, version 2.
+ *
+ * <p>The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE. See the GNU General Public License for more details
+ *
+ * @author Nacho Guisado Obregón, Dave Wichers
+ * @created 2020
+ */
 package org.owasp.benchmark.score.parsers;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import org.owasp.benchmark.score.BenchmarkScore;
 
 public class SemgrepReader {
     public TestResults parse(JSONObject jsonResults) {
         TestResults tr = new TestResults("Semgrep", false, TestResults.ToolType.SAST);
 
-        JSONArray results =  jsonResults.getJSONArray("results");
+        JSONArray results = jsonResults.getJSONArray("results");
 
         // engine version
         // duration time
@@ -199,8 +197,9 @@ public class SemgrepReader {
                 } catch (Exception e) {
                     // System.out.println("Error parsing node: " + n.toString() + " for className: "
                     // + className);
-                    return null; // If we can't parse the test #, its not in a real test case file. e.g.,
-                                 // BenchmarkTesting.java
+                    return null; // If we can't parse the test #, its not in a real test case file.
+                    // e.g.,
+                    // BenchmarkTesting.java
                 }
             }
             return tcr;
@@ -211,5 +210,4 @@ public class SemgrepReader {
 
         return null;
     }
-
 }

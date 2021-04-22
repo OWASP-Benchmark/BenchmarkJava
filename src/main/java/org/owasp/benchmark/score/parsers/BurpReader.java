@@ -1,28 +1,25 @@
 /**
  * OWASP Benchmark Project
  *
- * This file is part of the Open Web Application Security Project (OWASP)
- * Benchmark Project For details, please see
- * <a href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
+ * <p>This file is part of the Open Web Application Security Project (OWASP) Benchmark Project For
+ * details, please see <a
+ * href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
  *
- * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
+ * <p>The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
  * of the GNU General Public License as published by the Free Software Foundation, version 2.
  *
- * The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details
+ * <p>The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE. See the GNU General Public License for more details
  *
  * @author Dave Wichers
  * @created 2015
  */
-
 package org.owasp.benchmark.score.parsers;
 
 import java.io.File;
 import java.util.List;
-
 import org.owasp.benchmark.score.BenchmarkScore;
-
 import org.w3c.dom.Node;
 
 public class BurpReader extends Reader {
@@ -39,7 +36,8 @@ public class BurpReader extends Reader {
         String version = getAttributeValue("burpVersion", root);
         tr.setToolVersion(version);
 
-        // If the filename includes an elapsed time in seconds (e.g., TOOLNAME-seconds.xml) set the compute time on the scorecard.
+        // If the filename includes an elapsed time in seconds (e.g., TOOLNAME-seconds.xml) set the
+        // compute time on the scorecard.
         tr.setTime(f);
 
         List<Node> issueList = getNamedChildren("issue", root);
@@ -47,7 +45,8 @@ public class BurpReader extends Reader {
         for (Node issue : issueList) {
             TestCaseResult tcr = parseBurpVulnerability(issue);
             if (tcr != null) {
-//                System.out.println( tcr.getNumber() + "\t" + tcr.getCWE() + "\t" + tcr.getEvidence() );
+                //                System.out.println( tcr.getNumber() + "\t" + tcr.getCWE() + "\t" +
+                // tcr.getEvidence() );
                 tr.put(tcr);
             }
         }
@@ -77,14 +76,14 @@ public class BurpReader extends Reader {
         tcr.setCategory(name);
         tcr.setEvidence(name);
 
-        //String confidence = getNamedChild( "confidence", issue ).getTextContent();
+        // String confidence = getNamedChild( "confidence", issue ).getTextContent();
         // tcr.setConfidence( makeIntoInt( confidence ) );
 
         String testcase = getNamedChild("path", issue).getTextContent();
         testcase = testcase.substring(testcase.lastIndexOf('/') + 1);
-        testcase = testcase.split("\\.")[0];        
+        testcase = testcase.split("\\.")[0];
         if (testcase.startsWith(BenchmarkScore.TESTCASENAME)) {
-            String testno = testcase.substring(BenchmarkScore.TESTCASENAME.length() );
+            String testno = testcase.substring(BenchmarkScore.TESTCASENAME.length());
             try {
                 tcr.setNumber(Integer.parseInt(testno));
             } catch (NumberFormatException e) {
@@ -95,41 +94,72 @@ public class BurpReader extends Reader {
 
         return null;
     }
-    // https://portswigger.net/kb/issues - This page lists all the issue types Burp looks for, and their
+    // https://portswigger.net/kb/issues - This page lists all the issue types Burp looks for, and
+    // their
     // customer ID #'s. There are more on this page. The following primarily lists those
     // that are currently relevant in the Benchmark.
     static int cweLookup(String id) {
         switch (id) {
-        case "1048832": return 78;   // Command Injection 
-        case "1049088": return 89;   // SQL Injection
-        case "1049344": return 22;   // File Path Traversal
-        case "1049600": return 611;  // XXE
-        case "1049856": return 90;   // LDAP Injection
-        case "1050112": return 643;  // XPATH Injection
-        case "1050368": return 643;  // XML Injection - Meaning what?
-        case "1051392": return 22;   // File Path Manipulation - Not sure exact difference with 1049344 above
-        case "2097408": return 79;   // Stored XSS
-        case "2097920": return 79;   // Reflected XSS
-        case "2097936": return 79;   // DOM-Based XSS (Probably want separate ID for this in the future)
-        case "2098944": return 352;  // CSRF Vulnerability
-        case "3146240": return 918;  // External service interaction (DNS)
-        case "4194560": return 9999; // Referer Dependent Response
-        case "4194576": return 9999; // X-Forwarded-For header dependency
-        case "4197376": return 20;   // Input returned in response (reflected)
-        case "4197632": return 20;   // Suspicious input transformation (reflected)
-        case "5243392": return 614;  // SSL cookie without secure flag set
-        case "5244416": return 9998; // Cookie without HttpOnly flag set - There is no CWE defined for this weakness
-        case "5245344": return 8888; // Clickjacking - There is no CWE # for this.
-        case "5245360": return 16;   // Browser cross-site scripting filter disabled
-        case "5245952": return 9999; // Ajax request header manipulation (DOM-based) - Map to nothing right now.
-        case "5247488": return 9999; // DOM Trust Boundary Violation - Map to nothing right now.
-        case "6291968": return 200;  // Information Disclosure - Email Address Disclosed 
-        case "6292736": return 200;  // Information Disclosure - Credit Card # Disclosed 
-        case "7340288": return 525;  // Information Exposure Through Browser Caching-Cacheable HTTPS Response
-        case "8389120": return 9999; // HTML doesn't specify character set - Don't care. Map to nothing.
-        case "8389632": return 9999; // Incorrect Content Type - Don't care. Map to nothing right now.
-        case "8389888": return 16;   // Content type is not specified
-
+            case "1048832":
+                return 78; // Command Injection
+            case "1049088":
+                return 89; // SQL Injection
+            case "1049344":
+                return 22; // File Path Traversal
+            case "1049600":
+                return 611; // XXE
+            case "1049856":
+                return 90; // LDAP Injection
+            case "1050112":
+                return 643; // XPATH Injection
+            case "1050368":
+                return 643; // XML Injection - Meaning what?
+            case "1051392":
+                return 22; // File Path Manipulation - Not sure exact difference with 1049344 above
+            case "2097408":
+                return 79; // Stored XSS
+            case "2097920":
+                return 79; // Reflected XSS
+            case "2097936":
+                return 79; // DOM-Based XSS (Probably want separate ID for this in the future)
+            case "2098944":
+                return 352; // CSRF Vulnerability
+            case "3146240":
+                return 918; // External service interaction (DNS)
+            case "4194560":
+                return 9999; // Referer Dependent Response
+            case "4194576":
+                return 9999; // X-Forwarded-For header dependency
+            case "4197376":
+                return 20; // Input returned in response (reflected)
+            case "4197632":
+                return 20; // Suspicious input transformation (reflected)
+            case "5243392":
+                return 614; // SSL cookie without secure flag set
+            case "5244416":
+                return 9998; // Cookie without HttpOnly flag set - There is no CWE defined for this
+                // weakness
+            case "5245344":
+                return 8888; // Clickjacking - There is no CWE # for this.
+            case "5245360":
+                return 16; // Browser cross-site scripting filter disabled
+            case "5245952":
+                return 9999; // Ajax request header manipulation (DOM-based) - Map to nothing right
+                // now.
+            case "5247488":
+                return 9999; // DOM Trust Boundary Violation - Map to nothing right now.
+            case "6291968":
+                return 200; // Information Disclosure - Email Address Disclosed
+            case "6292736":
+                return 200; // Information Disclosure - Credit Card # Disclosed
+            case "7340288":
+                return 525; // Information Exposure Through Browser Caching-Cacheable HTTPS Response
+            case "8389120":
+                return 9999; // HTML doesn't specify character set - Don't care. Map to nothing.
+            case "8389632":
+                return 9999; // Incorrect Content Type - Don't care. Map to nothing right now.
+            case "8389888":
+                return 16; // Content type is not specified
         } // end switch(id)
         System.out.println("Unknown Burp rule id: " + id);
         return -1;

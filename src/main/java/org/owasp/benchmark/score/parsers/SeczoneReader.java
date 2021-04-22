@@ -1,21 +1,20 @@
 /**
  * OWASP Benchmark Project
  *
- * This file is part of the Open Web Application Security Project (OWASP)
- * Benchmark Project For details, please see
- * <a href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
+ * <p>This file is part of the Open Web Application Security Project (OWASP) Benchmark Project For
+ * details, please see <a
+ * href="https://www.owasp.org/index.php/Benchmark">https://www.owasp.org/index.php/Benchmark</a>.
  *
- * The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
+ * <p>The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
  * of the GNU General Public License as published by the Free Software Foundation, version 2.
  *
- * The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details
+ * <p>The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE. See the GNU General Public License for more details
  *
  * @author Dave Wichers <a href="https://www.aspectsecurity.com">Aspect Security</a>
  * @created 2015
  */
-
 package org.owasp.benchmark.score.parsers;
 
 import java.io.BufferedReader;
@@ -25,7 +24,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import org.owasp.benchmark.score.BenchmarkScore;
 
 public class SeczoneReader extends Reader {
@@ -49,24 +47,26 @@ public class SeczoneReader extends Reader {
             try {
                 line = reader.readLine();
                 if (line != null) {
-                    if ( firstLine == null ) firstLine = line;
+                    if (firstLine == null) firstLine = line;
                     lastLine = line;
                     if (line.contains("Accept Request URL====>>") && !line.endsWith(".html")) {
-                        // ok, we're starting a new URL, so process this one and start the next chunk
+                        // ok, we're starting a new URL, so process this one and start the next
+                        // chunk
                         parseVulHunterFinding(tr, testNumber, chunk);
                         chunk.clear();
                         testNumber = "00000";
                         String fname = "/" + BenchmarkScore.TESTCASENAME;
-                        int idx = line.indexOf( fname );
-                        if ( idx != -1 ) {
-                            testNumber = line.substring(idx + fname.length(), idx + fname.length() + 5 );
+                        int idx = line.indexOf(fname);
+                        if (idx != -1) {
+                            testNumber =
+                                    line.substring(idx + fname.length(), idx + fname.length() + 5);
                         }
                     } else if (line.contains("Report BUG===>>>")) {
                         chunk.add(line);
                     } else if (line.contains("get engine jar")) {
-                    	String versionLine = line.substring(line.indexOf("\\engine-")
-                    			+ "\\engine-".length());
-                    	String version = versionLine.substring(0, versionLine.indexOf(".jar"));
+                        String versionLine =
+                                line.substring(line.indexOf("\\engine-") + "\\engine-".length());
+                        String version = versionLine.substring(0, versionLine.indexOf(".jar"));
                         tr.setToolVersion(version);
                     }
                 }
@@ -74,16 +74,16 @@ public class SeczoneReader extends Reader {
                 ex.printStackTrace();
             }
         }
-        //Last
-        if(!chunk.isEmpty()){
+        // Last
+        if (!chunk.isEmpty()) {
             // ok, we're starting a new URL, so process this one and start the next chunk
             parseVulHunterFinding(tr, testNumber, chunk);
             chunk.clear();
             testNumber = "00000";
             String fname = "/" + BenchmarkScore.TESTCASENAME;
-            int idx = lastLine.indexOf( fname );
-            if ( idx != -1 ) {
-                testNumber = lastLine.substring(idx + fname.length(), idx + fname.length() + 5 );
+            int idx = lastLine.indexOf(fname);
+            if (idx != -1) {
+                testNumber = lastLine.substring(idx + fname.length(), idx + fname.length() + 5);
             }
         }
         reader.close();
@@ -92,7 +92,7 @@ public class SeczoneReader extends Reader {
     }
 
     private String calculateTime(String firstLine, String lastLine) {
-    	// Lines start with: PID_8772 | 2020-12-11 19:00:51.370 INFO ...
+        // Lines start with: PID_8772 | 2020-12-11 19:00:51.370 INFO ...
         try {
             String start = firstLine.split(" ")[3];
             String stop = lastLine.split(" ")[3];
@@ -108,7 +108,8 @@ public class SeczoneReader extends Reader {
         return null;
     }
 
-    private void parseVulHunterFinding(TestResults tr, String testNumber, List<String> chunk) throws Exception {
+    private void parseVulHunterFinding(TestResults tr, String testNumber, List<String> chunk)
+            throws Exception {
         for (String line : chunk) {
             TestCaseResult tcr = new TestCaseResult();
 
@@ -123,7 +124,8 @@ public class SeczoneReader extends Reader {
             }
 
             if (tcr.getCWE() != 0) {
-                // System.out.println( tcr.getNumber() + "\t" + tcr.getCWE() + "\t" + tcr.getCategory() );
+                // System.out.println( tcr.getNumber() + "\t" + tcr.getCWE() + "\t" +
+                // tcr.getCategory() );
                 tr.put(tcr);
             }
         }
@@ -131,7 +133,7 @@ public class SeczoneReader extends Reader {
 
     private static int cweLookup(String rule) {
         switch (rule) {
-            case "cmd-injection"://12432
+            case "cmd-injection": // 12432
                 return 78; // command injection
             case "cookie-injection":
                 return 0000; // What is this exactly?
@@ -157,9 +159,9 @@ public class SeczoneReader extends Reader {
                 return 319; // CWE-319: Cleartext Transmission of Sensitive Information
             case "ldap-injection":
                 return 90; // ldap injection
-            case "path-traversal"://19703
+            case "path-traversal": // 19703
                 return 22; // path traversal
-            case "reflected-xss"://21290
+            case "reflected-xss": // 21290
                 return 79; // xss
             case "reflection-injection":
                 return 0000; // reflection injection
@@ -169,7 +171,7 @@ public class SeczoneReader extends Reader {
                 return 0000; // Don't care
             case "sensitive-data-response-tracking":
                 return 0000; // Don't care
-            case "sql-injection"://20501
+            case "sql-injection": // 20501
                 return 89; // sql injection
             case "trust-boundary-violation":
                 return 501; // trust boundary
@@ -187,9 +189,9 @@ public class SeczoneReader extends Reader {
                 return 643; // xpath injection
             case "xxe":
                 return 611; // xml entity
-            default: System.out.println("WARNING: VulHunter-Unrecognized finding type: " + rule);
+            default:
+                System.out.println("WARNING: VulHunter-Unrecognized finding type: " + rule);
         }
         return 0;
     }
-
 }

@@ -1,42 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE xml>
 <project>
-	<target name="run">
-		<parallel>
-			<daemons>
-				<java classname="org.owasp.benchmark.helpers.LDAPServer" fork="true" failonerror="true">
-					<classpath refid="maven.compile.classpath" />
-				</java>
-			</daemons>
-		</parallel>
-	</target>
-	<target name="permuteDatabaseServer">
-			<parallel>
-				<daemons>
-					<java classname="org.hsqldb.Server" fork="false" failonerror="true">
-						<arg line="--database.0 file:src/db/permute.db --dbname.0 permuteDataBase --port 9002 --remote_open true" />
-						<classpath refid="maven.compile.classpath" />
-					</java>
-				</daemons>
-			</parallel>
-	</target>
-	<target name="databaseServer">
-		<parallel>
-			<daemons>
-				<java classname="org.hsqldb.Server" fork="false" failonerror="true">
-					<arg line="--database.0 file:target/db/benchmark.db --dbname.0 benchmarkDataBase" />
-					<classpath refid="maven.compile.classpath" />
-				</java>
-			</daemons>
-		</parallel>
-	</target>
-	<target name="databaseInit">
-		<parallel>
-			<daemons>
-				<java classname="org.owasp.benchmark.helpers.DataBaseServer" fork="true" failonerror="true">
-					<classpath refid="maven.compile.classpath" />
-				</java>
-			</daemons>
-		</parallel>
-	</target>
+    <target name="run">
+        <parallel>
+            <daemons>
+                <java classname="org.owasp.benchmark.helpers.LDAPServer" fork="true" failonerror="true">
+                    <classpath refid="maven.compile.classpath" />
+                </java>
+            </daemons>
+        </parallel>
+    </target>
+    <target name="permuteDatabaseServer">
+        <parallel>
+            <daemons>
+                <java classname="org.hsqldb.Server" fork="false" failonerror="true">
+                    <arg line="--database.0 file:src/db/permute.db --dbname.0 permuteDataBase --port 9002 --remote_open true" />
+                    <classpath refid="maven.compile.classpath" />
+                </java>
+            </daemons>
+        </parallel>
+    </target>
+    <target name="databaseServer">
+        <parallel>
+            <daemons>
+                <java classname="org.hsqldb.Server" fork="false" failonerror="true">
+                    <arg line="--database.0 file:target/db/benchmark.db --dbname.0 benchmarkDataBase" />
+                    <classpath refid="maven.compile.classpath" />
+                </java>
+            </daemons>
+        </parallel>
+    </target>
+    <target name="databaseInit">
+        <parallel>
+            <daemons>
+                <java classname="org.owasp.benchmark.helpers.DataBaseServer" fork="true" failonerror="true">
+                    <classpath refid="maven.compile.classpath" />
+                </java>
+            </daemons>
+        </parallel>
+    </target>
 </project>

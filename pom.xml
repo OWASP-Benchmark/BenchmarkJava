@@ -1141,6 +1141,23 @@
 
                         <format>
                             <includes>
+                                <include>**/*.html</include>
+                            </includes>
+                            <excludes>
+                                <exclude>data/**/*.*</exclude>
+                                <exclude>results/**/*.*</exclude>
+                                <exclude>target/**/*.*</exclude>
+                            </excludes>
+                            <eclipseWtp>
+                                <type>HTML</type>
+                                <files>
+                                    <file>${basedir}/DevStyleHtml.prefs</file>
+                                </files>
+                            </eclipseWtp>
+                        </format>
+
+                        <format>
+                            <includes>
                                 <include>**/*.xml</include>
                             </includes>
                             <excludes>

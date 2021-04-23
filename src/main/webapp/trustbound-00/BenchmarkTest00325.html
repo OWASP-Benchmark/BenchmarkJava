@@ -2,66 +2,83 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<script src="/benchmark/js/jquery.min.js"></script>
+<script src="/benchmark/js/jquery.min.js" type="text/javascript"></script>
 <script type="text/javascript" src="/benchmark/js/js.cookie.js"></script>
 <title>BenchmarkTest00325</title>
 </head>
 <body>
-<form action="/benchmark/trustbound-00/BenchmarkTest00325"  method="POST" id="FormBenchmarkTest00325">
-    <div><label>Please explain your answer:</label></div>
-    <br/>
-	<div><textarea rows="4" cols="50" id="BenchmarkTest00325Area" name="BenchmarkTest00325Area"></textarea></div>
-	<div><label>Any additional note for the reviewer:</label></div>
-	<div><input type="text" id="answer" name="answer"></input></div>
-    <br/>
-    <div><label>An AJAX request will be sent with a header named BenchmarkTest00325 and value:</label> <input type="text" id="BenchmarkTest00325" name="BenchmarkTest00325" value="my_user_id" class="safe"></input></div>
+    <form action="/benchmark/trustbound-00/BenchmarkTest00325" method="POST" id="FormBenchmarkTest00325">
+        <div>
+            <label>Please explain your answer:</label>
+        </div>
+        <br />
+        <div>
+            <textarea rows="4" cols="50" id="BenchmarkTest00325Area" name="BenchmarkTest00325Area"></textarea>
+        </div>
+        <div>
+            <label>Any additional note for the reviewer:</label>
+        </div>
+        <div>
+            <input type="text" id="answer" name="answer"></input>
+        </div>
+        <br />
+        <div>
+            <label>An AJAX request will be sent with a header named BenchmarkTest00325 and value:</label> <input type="text" id="BenchmarkTest00325" name="BenchmarkTest00325" value="my_user_id" class="safe"></input>
+        </div>
 
-	<div><input type="button" id="login-btn" value="Login" onclick="submitForm()" /></div>
-</form>
-<div id="ajax-form-msg1"><pre><code class="prettyprint" id="code"></code></pre></div>
-<script>
-$('.safe').keypress(function (e) {
-  if (e.which == 13) {
-    submitForm();
-    return false;
-  }
-});
+        <div>
+            <input type="button" id="login-btn" value="Login" onclick="submitForm()" />
+        </div>
+    </form>
+    <div id="ajax-form-msg1">
+        <pre>
+            <code class="prettyprint" id="code"></code>
+        </pre>
+    </div>
+    <script type="text/javascript">
+        $('.safe').keypress(function (e) {
+            if (e.which == 13) {
+                submitForm();
+                return false;
+            }
+        });
 
-function submitForm() {
-    var formData = $("#FormBenchmarkTest00325").serialize();
-    var URL = $("#FormBenchmarkTest00325").attr("action");
-    var text = $("#FormBenchmarkTest00325 input[id=BenchmarkTest00325]").val();
-    
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", URL, true);
+        function submitForm() {
+            var formData = $("#FormBenchmarkTest00325").serialize();
+            var URL = $("#FormBenchmarkTest00325").attr("action");
+            var text = $("#FormBenchmarkTest00325 input[id=BenchmarkTest00325]")
+                    .val();
 
-    xhr.setRequestHeader('BenchmarkTest00325', text );
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", URL, true);
 
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
-            $("#code").html(xhr.responseText);
-        } else {
-            $("#code").html("Error " + xhr.status + " occurred.");
+            xhr.setRequestHeader('BenchmarkTest00325', text);
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+                    $("#code").html(xhr.responseText);
+                } else {
+                    $("#code").html("Error " + xhr.status + " occurred.");
+                }
+            }
+            xhr.send(formData);
         }
-    }
-    xhr.send(formData);
-}
 
-function escapeRegExp(str) {
-    return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
-}
+        function escapeRegExp(str) {
+            return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+        }
 
-function replaceAll(str, find, replace) {
-  return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);
-}
+        function replaceAll(str, find, replace) {
+            return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);
+        }
 
-String.prototype.decodeEscapeSequence = function() {
-    var txt = replaceAll(this,";","");
-    txt = replaceAll(txt,"&#","\\");
-    return txt.replace(/\\x([0-9A-Fa-f]{2})/g, function() {
-        return String.fromCharCode(parseInt(arguments[1], 16));
-    });
-};
-</script>
+        String.prototype.decodeEscapeSequence = function () {
+            var txt = replaceAll(this, ";", "");
+            txt = replaceAll(txt, "&#", "\\");
+            return txt.replace(/\\x([0-9A-Fa-f]{2})/g, function () {
+                return String.fromCharCode(parseInt(arguments[1], 16));
+            });
+        };
+    </script>
 </body>
 </html>

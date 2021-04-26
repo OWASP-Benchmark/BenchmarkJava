@@ -2,74 +2,91 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<script src="/benchmark/js/jquery.min.js"></script>
+<script src="/benchmark/js/jquery.min.js" type="text/javascript"></script>
 <script type="text/javascript" src="/benchmark/js/js.cookie.js"></script>
 <title>BenchmarkTest00584</title>
 </head>
 <body>
-<form action="/benchmark/weakrand-01/BenchmarkTest00584"  method="POST" id="FormBenchmarkTest00584">
-    <div><label>Please explain your answer:</label></div>
-    <br/>
-    <div><textarea rows="4" cols="50" id="BenchmarkTest00584Area" name="BenchmarkTest00584Area" value=""></textarea></div>
-    <div><label>Any additional note for the reviewer:</label></div>
-    <div><input type="text" id="answer" name="answer"></input></div>
-    <br/>
-    <div><label>An AJAX request will be sent with a parameter value 'BenchmarkTest00584' and name:</label>
-    <input type="text" id="BenchmarkTest00584" name="BenchmarkTest00584" value="whatever" class="safe"></input></div>
-    <div><input type="button" id="login-btn" value="Login" onclick="submitForm()"/></div>
-</form>
-<div id="ajax-form-msg1"><pre><code class="prettyprint" id="code"></code></pre></div>
-<script>
-$('.safe').keypress(function (e) {
-  if (e.which == 13) {
-    submitForm();
-    return false;
-  }
-});
+    <form action="/benchmark/weakrand-01/BenchmarkTest00584" method="POST" id="FormBenchmarkTest00584">
+        <div>
+            <label>Please explain your answer:</label>
+        </div>
+        <br />
+        <div>
+            <textarea rows="4" cols="50" id="BenchmarkTest00584Area" name="BenchmarkTest00584Area"></textarea>
+        </div>
+        <div>
+            <label>Any additional note for the reviewer:</label>
+        </div>
+        <div>
+            <input type="text" id="answer" name="answer"></input>
+        </div>
+        <br />
+        <div>
+            <label>An AJAX request will be sent with a parameter value 'BenchmarkTest00584' and name:</label> <input type="text" id="BenchmarkTest00584" name="BenchmarkTest00584" value="whatever" class="safe"></input>
+        </div>
+        <div>
+            <input type="button" id="login-btn" value="Login" onclick="submitForm()" />
+        </div>
+    </form>
+    <div id="ajax-form-msg1">
+        <pre>
+            <code class="prettyprint" id="code"></code>
+        </pre>
+    </div>
+    <script type="text/javascript">
+        $('.safe').keypress(function (e) {
+            if (e.which == 13) {
+                submitForm();
+                return false;
+            }
+        });
 
-//$("#login-btn").click(function(){
-function submitForm() {
-	var text = $("#FormBenchmarkTest00584 input[id=BenchmarkTest00584]").val();
-	
-	$("input.headerClass").remove();
-	
-	$("<input type='hidden' value='BenchmarkTest00584' />")
-     .attr("id", text)
-     .attr("name", text)
-     .addClass("headerClass")
-     .appendTo("#FormBenchmarkTest00584");
+        function submitForm() {
+            var text = $("#FormBenchmarkTest00584 input[id=BenchmarkTest00584]")
+                    .val();
 
-    var formData = $("#FormBenchmarkTest00584").serialize();
-    var URL = $("#FormBenchmarkTest00584").attr("action");
+            $("input.headerClass").remove();
 
-	var xhr = new XMLHttpRequest();
-    xhr.open("POST", URL, true);
+            $("<input type='hidden' value='BenchmarkTest00584' />").attr("id",
+                    text).attr("name", text).addClass("headerClass").appendTo(
+                    "#FormBenchmarkTest00584");
 
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
-$("#code").text((xhr.responseText).decodeEscapeSequence());
-        }else{
-        	$("#code").text("Error " + xhr.status + " " + xhr.statusText + " ocurred.");
+            var formData = $("#FormBenchmarkTest00584").serialize();
+            var URL = $("#FormBenchmarkTest00584").attr("action");
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", URL, true);
+            xhr.setRequestHeader('Content-Type',
+                    'application/x-www-form-urlencoded');
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+                    $("#code").text((xhr.responseText).decodeEscapeSequence());
+                } else {
+                    $("#code").text(
+                            "Error " + xhr.status + " " + xhr.statusText
+                                    + " occurred.");
+                }
+            }
+            xhr.send(formData);
         }
-    }
-    xhr.send(formData);
-}
 
-function escapeRegExp(str) {
-    return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
-}
+        function escapeRegExp(str) {
+            return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+        }
 
-function replaceAll(str, find, replace) {
-  return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);
-}
+        function replaceAll(str, find, replace) {
+            return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);
+        }
 
-String.prototype.decodeEscapeSequence = function() {
-    var txt = replaceAll(this,";","");
-    txt = replaceAll(txt,"&#","\\");
-    return txt.replace(/\\x([0-9A-Fa-f]{2})/g, function() {
-        return String.fromCharCode(parseInt(arguments[1], 16));
-    });
-};
-</script>
+        String.prototype.decodeEscapeSequence = function () {
+            var txt = replaceAll(this, ";", "");
+            txt = replaceAll(txt, "&#", "\\");
+            return txt.replace(/\\x([0-9A-Fa-f]{2})/g, function () {
+                return String.fromCharCode(parseInt(arguments[1], 16));
+            });
+        };
+    </script>
 </body>
 </html>

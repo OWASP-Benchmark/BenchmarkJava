@@ -712,6 +712,13 @@
         </dependency>
 
         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <!-- <version>3.10</version> is latest, but 3.9+ requires Java 8 -->
+            <version>3.8.1</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.directory.server</groupId>
             <artifactId>apacheds-core</artifactId>
             <!-- Upgrading to 2.0.0-M24 is an API breaking change. But it might be needed for Java 10, because I get this error, that I don't get with Java 8: [java] at org.apache.directory.server.core.DefaultDirectoryService.initialize(DefaultDirectoryService.java:1426) [java] at org.apache.directory.server.core.DefaultDirectoryService.startup(DefaultDirectoryService.java:907) [java] at org.owasp.benchmark.helpers.LDAPServer.initDirectoryService(LDAPServer.java:148) [java] at org.owasp.benchmark.helpers.LDAPServer.<init>(LDAPServer.java:42) [java] at org.owasp.benchmark.helpers.LDAPServer.main(LDAPServer.java:320) [java] Caused by: java.lang.NumberFormatException: multiple points [java] at java.base/jdk.internal.math.FloatingDecimal.readJavaFormatString(FloatingDecimal.java:1914) -->

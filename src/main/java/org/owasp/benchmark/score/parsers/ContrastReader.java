@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.owasp.benchmark.score.BenchmarkScore;
 
@@ -37,6 +38,10 @@ public class ContrastReader extends Reader {
         TestResults tr = new TestResults("Contrast", true, TestResults.ToolType.IAST);
 
         BufferedReader reader = new BufferedReader(new FileReader(f));
+        String FIRSTLINEINDICATOR =
+                BenchmarkScore.TESTCASENAME
+                        + StringUtils.repeat("0", BenchmarkScore.TESTIDLENGTH - 1)
+                        + "1";
         String firstLine = null;
         String lastLine = "";
         String line = "";
@@ -50,10 +55,8 @@ public class ContrastReader extends Reader {
                         String version =
                                 line.substring(line.indexOf("Version:") + "Version:".length());
                         tr.setToolVersion(version.trim());
-                        // TODO: expand length of "00001" to match length of TESTCASE_NAME rather
-                        // than exactly 5
                     } else if (line.contains("DEBUG - >>> [URL")
-                            && line.contains(BenchmarkScore.TESTCASENAME + "00001")) {
+                            && line.contains(FIRSTLINEINDICATOR)) {
                         firstLine = line;
                     } else if (line.contains("DEBUG - >>> [URL")) {
                         lastLine = line;
@@ -92,9 +95,10 @@ public class ContrastReader extends Reader {
                 }
             }
         } catch (Exception e) {
-            // There are a few crypto-bad-mac findings not associated with a request, so ignore
-            // errors associated with those.
-            if (!json.contains("\"ruleId\":\"crypto-bad-mac\"")) {
+            // There are a few crypto-bad-mac & crypto-weak-randomness findings not associated with
+            // a request, so ignore errors associated with those.
+            if (!json.contains("\"ruleId\":\"crypto-bad-mac\"")
+                    && !json.contains("\"ruleId\":\"crypto-weak-randomness\"")) {
                 System.err.println("Contrast Results Parse error for: " + json);
                 e.printStackTrace();
             }
@@ -169,3 +173,4 @@ public class ContrastReader extends Reader {
         return null;
     }
 }
+

@@ -225,6 +225,12 @@ public class FindbugsReader extends Reader {
             case "SECOPFP":
                 return 00; // Overly Permissive File Permissions
 
+                // Other
+            case "SECHPP":
+                return 235; // HTTP Parameter Polution
+            case "SECUNI":
+                return 00; // Improper Unicode
+
             default:
                 System.out.println("Unknown vuln category for FindBugs: " + cat);
         }

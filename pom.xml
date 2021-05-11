@@ -101,7 +101,7 @@
                                 <plugin>
                                     <groupId>com.h3xstream.findsecbugs</groupId>
                                     <artifactId>findsecbugs-plugin</artifactId>
-                                    <version>1.10.1</version>
+                                    <version>1.11.0</version>
                                 </plugin>
                             </plugins>
                         </configuration>
@@ -1262,8 +1262,8 @@
         <version.jackson>2.9.8</version.jackson>
         <version.jersey>1.19.4</version.jersey>
         <version.slf4j>1.7.30</version.slf4j>
-        <version.spotbugs.maven>4.2.2</version.spotbugs.maven>
-        <version.spotbugs>4.2.2</version.spotbugs>
+        <version.spotbugs.maven>4.2.3</version.spotbugs.maven>
+        <version.spotbugs>4.2.3</version.spotbugs>
         <version.spotless>2.10.1</version.spotless>
         <version.springframework>4.3.30.RELEASE</version.springframework>
         <!-- tomcat 8.5 is last version to support Java 7. Tomcat 9+ requires Java 8. -->

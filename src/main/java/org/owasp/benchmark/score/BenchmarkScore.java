@@ -100,9 +100,11 @@ import org.owasp.benchmark.score.parsers.TestResults;
 import org.owasp.benchmark.score.parsers.ThunderScanReader;
 import org.owasp.benchmark.score.parsers.VeracodeReader;
 import org.owasp.benchmark.score.parsers.VisualCodeGrepperReader;
+import org.owasp.benchmark.score.parsers.WapitiJsonReader;
 import org.owasp.benchmark.score.parsers.WapitiReader;
 import org.owasp.benchmark.score.parsers.WebInspectReader;
 import org.owasp.benchmark.score.parsers.XanitizerReader;
+import org.owasp.benchmark.score.parsers.ZapJsonReader;
 import org.owasp.benchmark.score.parsers.ZapReader;
 import org.owasp.benchmark.score.report.Report;
 import org.owasp.benchmark.score.report.ScatterHome;
@@ -808,6 +810,10 @@ public class BenchmarkScore {
                     // ShiftLeft Scan puts two JSON files into one, so we need to pass the string
                 } else if (ShiftLeftScanReader.isShiftLeftScanReport(content)) {
                     tr = new ShiftLeftScanReader().parse(content);
+                } else if (ZapJsonReader.isZapReport(jsonObj)) {
+                    tr = new ZapJsonReader().parse(jsonObj);
+                } else if (WapitiJsonReader.isWapitiReport(jsonObj)) {
+                    tr = WapitiJsonReader.parse(jsonObj);
                 } else {
                     try {
                         jsonObj.getJSONArray(

@@ -12,24 +12,27 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
  * PURPOSE. See the GNU General Public License for more details
  *
- * <p>This reader reads JSON reports from https://github.com/insidersec/insider</p>
+ * <p>This reader reads JSON reports from https://github.com/zaproxy/zaproxy
  *
  * @author Sascha Knoop
  * @created 2021
  */
 package org.owasp.benchmark.score.parsers;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.owasp.benchmark.score.BenchmarkScore;
 
-public class InsiderReader {
+public class ZapJsonReader extends Reader {
 
     private static final String[] expectedVulnerabilityKeys = {
-        "cvss", "cwe", "line", "class", "vul_id", "method", "column", "description"
+        "sourceid", "other", "method", "evidence", "pluginId", "cweid", "confidence", "wascid"
     };
 
-    public static boolean isInsiderReport(final JSONObject json) {
+    public static boolean isZapReport(JSONObject json) {
         try {
             return hasExpectedKeys(json.getJSONArray("vulnerabilities").getJSONObject(0));
         } catch (Exception e) {
@@ -48,7 +51,7 @@ public class InsiderReader {
     }
 
     public TestResults parse(JSONObject json) throws Exception {
-        TestResults tr = new TestResults("Insider", false, TestResults.ToolType.SAST);
+        TestResults tr = new TestResults("OWASP ZAP", false, TestResults.ToolType.DAST);
 
         JSONArray arr = json.getJSONArray("vulnerabilities");
 
@@ -64,53 +67,53 @@ public class InsiderReader {
 
     private TestCaseResult parseTestCaseResult(JSONObject finding) {
         try {
+            TestCaseResult tcr = new TestCaseResult();
+
             String filename = filename(finding);
 
             if (filename.contains(BenchmarkScore.TESTCASENAME)) {
-                TestCaseResult tcr = new TestCaseResult();
-
                 tcr.setNumber(testNumber(filename));
-                int cwe = cweNumber(finding);
-                tcr.setCWE(cwe);
 
-                return tcr;
+                tcr.setCWE(figureCwe(finding));
             }
+
+            return tcr;
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
-    private int cweNumber(JSONObject finding) {
-        String cwe = finding.getString("cwe").substring(4);
+    private String filename(JSONObject finding) {
+        String fullUrl = finding.getString("url");
+
+        try {
+            // get rid of everything except the test name
+            return new File(new URL(fullUrl).getPath()).getName().replace(".html", "");
+        } catch (MalformedURLException e) {
+            return null;
+        }
+    }
+
+    private int testNumber(String filename) {
+        return Integer.parseInt(filename.substring(BenchmarkScore.TESTCASENAME.length() + 1));
+    }
+
+    private int figureCwe(JSONObject finding) {
+        String cwe = finding.getString("cweid");
 
         switch (cwe) {
-            case "78":
-                return 78; // command injection
-            case "326":
-            case "327":
-                return 327; // weak encryption DES
-            case "330":
-                return 330; // weak random
-            case "532":
-                return 532; // sensitive log
+            case "22":
+                return 22; // path traversal
+            case "79":
+                return 79; // xss
+            case "89":
+                return 89; // SQL injection
 
             default:
                 System.out.println(
                         "INFO: Found following CWE which we haven't seen before: " + cwe);
                 return Integer.parseInt(cwe);
         }
-    }
-
-    private int testNumber(String filename) {
-        return Integer.parseInt(
-                filename.substring(
-                        BenchmarkScore.TESTCASENAME.length() + 1, filename.length() - 5));
-    }
-
-    private String filename(JSONObject vuln) {
-        String className = vuln.getString("class");
-        return className.substring(0, className.indexOf(' '));
     }
 }

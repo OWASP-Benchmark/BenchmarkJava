@@ -12,7 +12,7 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
  * PURPOSE. See the GNU General Public License for more details
  *
- * <p>This reader reads JSON reports from https://github.com/ZupIT/horusec
+ * <p>This reader reads JSON reports from https://github.com/ZupIT/horusec</p>
  *
  * @author Sascha Knoop
  * @created 2021

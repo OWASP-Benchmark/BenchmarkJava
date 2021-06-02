@@ -10,7 +10,7 @@
  *
  * <p>The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License for more details
+ * PURPOSE. See the GNU General Public License for more details.
  *
  * @author Dave Wichers
  * @created 2015
@@ -39,7 +39,7 @@ import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.owasp.benchmark.score.BenchmarkScore;
-import org.owasp.benchmark.score.parsers.OverallResults;
+import org.owasp.benchmark.score.OverallToolResults;
 
 public class ScatterHome extends ScatterPlot {
     private static char averageLabel;
@@ -71,7 +71,7 @@ public class ScatterHome extends ScatterPlot {
         XYSeries series = new XYSeries("Scores");
         for (Report toolReport : toolResults) {
             if (!toolReport.isCommercial()) {
-                OverallResults overallResults = toolReport.getOverallResults();
+                OverallToolResults overallResults = toolReport.getOverallResults();
                 series.add(
                         overallResults.getFalsePositiveRate() * 100,
                         overallResults.getTruePositiveRate() * 100);
@@ -86,7 +86,7 @@ public class ScatterHome extends ScatterPlot {
         for (Report toolReport : toolResults) {
             if (toolReport.isCommercial()) {
                 commercialToolCount++;
-                OverallResults overallResults = toolReport.getOverallResults();
+                OverallToolResults overallResults = toolReport.getOverallResults();
                 if (!BenchmarkScore.showAveOnlyMode) {
                     series.add(
                             overallResults.getFalsePositiveRate() * 100,
@@ -189,7 +189,7 @@ public class ScatterHome extends ScatterPlot {
         int commercialToolCount = 0;
         for (Report r : toolResults) {
             if (!r.isCommercial()) {
-                OverallResults or = r.getOverallResults();
+                OverallToolResults or = r.getOverallResults();
                 double x = or.getFalsePositiveRate() * 100 + sr.nextDouble() * .000001;
                 double y =
                         or.getTruePositiveRate() * 100
@@ -208,7 +208,7 @@ public class ScatterHome extends ScatterPlot {
             if (r.isCommercial()) {
                 commercialToolCount++;
                 if (!BenchmarkScore.showAveOnlyMode) {
-                    OverallResults or = r.getOverallResults();
+                    OverallToolResults or = r.getOverallResults();
                     double x = or.getFalsePositiveRate() * 100 + sr.nextDouble() * .000001;
                     double y =
                             or.getTruePositiveRate() * 100
@@ -284,7 +284,7 @@ public class ScatterHome extends ScatterPlot {
 
         // non-commercial results
         for (Report r : toolResults) {
-            OverallResults or = r.getOverallResults();
+            OverallToolResults or = r.getOverallResults();
             if (!r.isCommercial()) {
                 // print non-commercial label if there is at least one non-commercial tool
                 if (!printedNonCommercialLabel) {
@@ -329,7 +329,7 @@ public class ScatterHome extends ScatterPlot {
 
         for (Report r : toolResults) {
 
-            OverallResults or = r.getOverallResults();
+            OverallToolResults or = r.getOverallResults();
             if (r.isCommercial()) {
 
                 // print commercial label if there is at least one commercial tool
@@ -372,7 +372,7 @@ public class ScatterHome extends ScatterPlot {
                 totalScore += score;
             }
             if (r.getToolName().replace(' ', '_').equalsIgnoreCase(focus)) {
-                OverallResults orc = r.getOverallResults();
+                OverallToolResults orc = r.getOverallResults();
                 Point2D focusPoint =
                         new Point2D.Double(
                                 orc.getFalsePositiveRate() * 100, orc.getTruePositiveRate() * 100);
@@ -406,7 +406,8 @@ public class ScatterHome extends ScatterPlot {
         }
     }
 
-    public static void generateComparisonChart(Set<Report> toolResults, String focus) {
+    public static void generateComparisonChart(
+            Set<Report> toolResults, String focus, File scoreCardDir) {
         try {
             String scatterTitle =
                     BenchmarkScore.fullTestSuiteName(BenchmarkScore.TESTSUITE)
@@ -415,9 +416,9 @@ public class ScatterHome extends ScatterPlot {
                                     : " v" + BenchmarkScore.TESTSUITEVERSION)
                             + " Results Comparison";
             ScatterHome scatter = new ScatterHome(scatterTitle, 800, toolResults, focus);
-            scatter.writeChartToFile(new File("scorecard/benchmark_comparison.png"), 800);
+            scatter.writeChartToFile(new File(scoreCardDir, "toolresults_comparison.png"), 800);
         } catch (IOException e) {
-            System.out.println("Couldn't generate Benchmark comparison chart for some reason.");
+            System.out.println("Couldn't generate tool results comparison chart for some reason.");
             e.printStackTrace();
         }
     }

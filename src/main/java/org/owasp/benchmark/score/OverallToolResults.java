@@ -10,25 +10,25 @@
  *
  * <p>The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License for more details
+ * PURPOSE. See the GNU General Public License for more details.
  *
  * @author Dave Wichers
  * @created 2015
  */
-package org.owasp.benchmark.score.parsers;
+package org.owasp.benchmark.score;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
 /*
- * This class holds the overall results for a single tool's scan of the Benchmark. It contains an OverallResult for
+ * This class holds the overall results for a single tool's scan of a test suite. It contains an OverallResult for
  * each vulnerability category in the Benchmark. It also contains some overall results data like the overall score,
  * and the true positive and false positive rates.
  */
-public class OverallResults {
+public class OverallToolResults {
 
-    private Map<String, OverallResult> map = new TreeMap<String, OverallResult>();
+    private Map<String, CategoryResults> map = new TreeMap<String, CategoryResults>();
     private double score = 0; // The overall score for this tool
     private int total =
             0; // The total number of TP, FP, FN, TN across all test cases for this tool.
@@ -37,12 +37,12 @@ public class OverallResults {
     private double TPRate = 0;
     private double FPRate = 0;
 
-    private Counter findingCounts;
+    private TP_FN_TN_FP_Counts findingCounts;
 
     private String time = "Unknown";
 
     public void add(String category, double tpr, double fpr, int total, double score) {
-        OverallResult r = new OverallResult(category, tpr, fpr, total, score);
+        CategoryResults r = new CategoryResults(category, tpr, fpr, total, score);
         map.put(category, r);
     }
 
@@ -53,7 +53,7 @@ public class OverallResults {
      * @return The OverallResult for the specified vulnerability category. Null if the category
      *     isn't found.
      */
-    public OverallResult getResults(String category) {
+    public CategoryResults getResults(String category) {
         return map.get(category);
     }
 
@@ -62,7 +62,7 @@ public class OverallResults {
      *
      * @return A collection of the OverallResults.
      */
-    public Collection<OverallResult> getResults() {
+    public Collection<CategoryResults> getResults() {
         return map.values();
     }
 
@@ -153,14 +153,14 @@ public class OverallResults {
     }
 
     public void setFindingCounts(int tp, int fp, int fn, int tn) {
-        this.findingCounts = new Counter();
+        this.findingCounts = new TP_FN_TN_FP_Counts();
         this.findingCounts.tp = tp;
         this.findingCounts.fp = fp;
         this.findingCounts.fn = fn;
         this.findingCounts.tn = tn;
     }
 
-    public Counter getFindingCounts() {
+    public TP_FN_TN_FP_Counts getFindingCounts() {
         return this.findingCounts;
     }
 }

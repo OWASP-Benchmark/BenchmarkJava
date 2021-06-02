@@ -834,8 +834,58 @@
             <version>1.68</version>
         </dependency>
 
-        <!-- Kevin's fix for jar version conflicts. For future Benchmark 1.3 <dependency> <groupId>org.hibernate</groupId> <artifactId>hibernate-core</artifactId> <version>${version.hibernate}</version> <exclusions> < excluded because it conflicts with esapi's dependency, which is newer > <exclusion> <groupId>commons-collections</groupId> <artifactId>commons-collections</artifactId> </exclusion> </exclusions> </dependency> <dependency> <groupId>org.hibernate</groupId> <artifactId>hibernate-entitymanager</artifactId> <version>${version.hibernate}</version> <exclusions> <exclusion> <groupId>asm</groupId> <artifactId>asm</artifactId> </exclusion> <exclusion> <groupId>asm</groupId> <artifactId>asm-attrs</artifactId> </exclusion> <exclusion> <groupId>cglib</groupId> <artifactId>cglib</artifactId> </exclusion> </exclusions> </dependency> <dependency> <groupId>asm</groupId> <artifactId>asm</artifactId> <version>3.3.1</version> </dependency> <dependency> <groupId>cglib</groupId> <artifactId>cglib-nodep</artifactId>
-            <version>3.3.0</version> </dependency> - END Kevin's fix for jar version conflicts -->
+        <!-- Kevin's fix for jar version conflicts. For future Benchmark 1.3 -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${version.hibernate}</version>
+            <exclusions>
+                <!-- Excluded because it conflicts with esapi's dependency, which is newer -->
+                <exclusion>
+                    <groupId>commons-collections</groupId>
+                    <artifactId>commons-collections</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>${version.hibernate}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>asm</groupId>
+                    <artifactId>asm</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>asm</groupId>
+                    <artifactId>asm-attrs</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>cglib</groupId>
+                    <artifactId>cglib</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom2</artifactId>
+            <version>2.0.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>3.3.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib-nodep</artifactId>
+            <version>3.3.0</version>
+        </dependency>
+        <!-- END Kevin's fix for jar version conflicts -->
 
         <!-- mvn dependency:analyze says this is an unused declared dependency, but its wrong. Get a runtime error if it's not included -->
         <dependency>

@@ -23,13 +23,15 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.owasp.benchmark.score.BenchmarkScore;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
 public class WapitiReader extends Reader {
 
-    public TestResults parse(File f) throws Exception {
+    public TestSuiteResults parse(File f) throws Exception {
 
         DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
         // Prevent XXE
@@ -38,7 +40,7 @@ public class WapitiReader extends Reader {
         InputSource is = new InputSource(new FileInputStream(f));
         Document doc = docBuilder.parse(is);
 
-        TestResults tr = new TestResults("Wapiti", false, TestResults.ToolType.DAST);
+        TestSuiteResults tr = new TestSuiteResults("Wapiti", false, TestSuiteResults.ToolType.DAST);
 
         // Get the version of Wapiti out of the generatorVersion <info> element.
         Node root = doc.getDocumentElement();

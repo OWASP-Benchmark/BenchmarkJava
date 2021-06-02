@@ -22,17 +22,19 @@ package org.owasp.benchmark.score.parsers;
 
 import java.util.List;
 import org.owasp.benchmark.score.BenchmarkScore;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
 import org.w3c.dom.Node;
 
 public class SnappyTickReader extends Reader {
 
-    public TestResults parse(Node root) throws Exception {
+    public TestSuiteResults parse(Node root) throws Exception {
 
         // root Node is Report
         Node toolInfo = getNamedChild("ToolInfo", root);
         Node tool = getNamedChild("Tool", toolInfo);
         String toolName = getAttributeValue("Name", tool);
-        TestResults tr = new TestResults(toolName, true, TestResults.ToolType.SAST);
+        TestSuiteResults tr = new TestSuiteResults(toolName, true, TestSuiteResults.ToolType.SAST);
 
         String version = getAttributeValue("Version", tool);
         tr.setToolVersion(version);

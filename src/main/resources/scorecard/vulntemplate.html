@@ -26,18 +26,18 @@
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container-fluid">
             <div class="navbar-header">
-                <a class="navbar-brand" href="OWASP_Benchmark_Home.html">OWASP Benchmark v${version}</a>
+                <a class="navbar-brand" href="Scorecard_Home.html">${testsuite} v${version}</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="OWASP_Benchmark_Home.html">Home</a></li>
+                    <li><a href="Scorecard_Home.html">Home</a></li>
                     <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools<span class="caret"></span></a>
                         <ul class="dropdown-menu">${toolmenu}
                         </ul></li>
                     <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Vulnerabilities<span class="caret"></span></a>
                         <ul class="dropdown-menu">${vulnmenu}
                         </ul></li>
-                    <li><a href="OWASP_Benchmark_Guide.html">Guide</a></li>
+                    <li><a href="Scorecard_Guide.html">Guide</a></li>
                 </ul>
             </div>
         </div>
@@ -52,12 +52,12 @@
 
             <h3>${title}</h3>
 
-            <p>The OWASP Benchmark is a test suite designed to evaluate the speed, coverage, and accuracy of automated vulnerability detection tools. Without the ability to measure these tools, it is difficult to understand their strengths and weaknesses, and compare them to each other. The Benchmark contains thousands of test cases that are fully runnable and exploitable. The following is the scorecard showing how well all the tools perform against ${vulnerability} in version ${version} of the Benchmark. It shows how well each tool finds true positives and avoids false positives for that type of vulnerability in the Benchmark test cases.</p>
+            <p>${testsuite} is a test suite designed to evaluate the speed, coverage, and accuracy of automated vulnerability detection tools. Without the ability to measure these tools, it is difficult to understand their strengths and weaknesses, and compare them to each other. ${testsuite} contains thousands of test cases that are fully runnable and exploitable. The following is the scorecard showing how well all the tools perform against ${vulnerability} in version ${version} of ${testsuite}. It shows how well each tool finds true positives and avoids false positives for that type of vulnerability in the ${testsuite} test cases.</p>
 
             <p>
                 For more information, please visit the <a href="https://owasp.org/www-project-benchmark/">OWASP Benchmark Project Site</a>. <img src='${image}' alt="" />
-
             </p>
+
             <p />
             <p />
 

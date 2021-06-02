@@ -24,6 +24,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import org.json.JSONObject;
 import org.owasp.benchmark.score.BenchmarkScore;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
 
 public class HCLReader extends Reader {
 
@@ -33,8 +35,9 @@ public class HCLReader extends Reader {
         cr.parse(f);
     }
 
-    public TestResults parse(File f) throws Exception {
-        TestResults tr = new TestResults("HCL IAST", true, TestResults.ToolType.IAST);
+    public TestSuiteResults parse(File f) throws Exception {
+        TestSuiteResults tr =
+                new TestSuiteResults("HCL IAST", true, TestSuiteResults.ToolType.IAST);
 
         BufferedReader reader = new BufferedReader(new FileReader(f));
         String firstLine = null;
@@ -68,7 +71,7 @@ public class HCLReader extends Reader {
         return tr;
     }
 
-    private void parseFindings(TestResults tr, String json) throws Exception {
+    private void parseFindings(TestSuiteResults tr, String json) throws Exception {
         TestCaseResult tcr = new TestCaseResult();
 
         try {

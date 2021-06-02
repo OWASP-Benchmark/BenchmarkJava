@@ -10,7 +10,7 @@
  *
  * <p>The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License for more details
+ * PURPOSE. See the GNU General Public License for more details.
  *
  * @author Dave Wichers
  * @created 2018
@@ -23,6 +23,8 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.owasp.benchmark.score.BenchmarkScore;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -31,7 +33,7 @@ public class AppScanSourceReader2 extends Reader {
 
     // This is the new AppScan Source reader, where they generate ".xml" files.
 
-    public TestResults parse(File f) throws Exception {
+    public TestSuiteResults parse(File f) throws Exception {
 
         DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
         // Prevent XXE
@@ -42,7 +44,8 @@ public class AppScanSourceReader2 extends Reader {
 
         Node root = doc.getDocumentElement();
         Node scanInfo = getNamedChild("scan-information", root);
-        TestResults tr = new TestResults("IBM AppScan Cloud", true, TestResults.ToolType.SAST);
+        TestSuiteResults tr =
+                new TestSuiteResults("IBM AppScan Cloud", true, TestSuiteResults.ToolType.SAST);
 
         Node version = getNamedChild("product-version", scanInfo);
         //    System.out.println("Product version is: " + version.getTextContent());

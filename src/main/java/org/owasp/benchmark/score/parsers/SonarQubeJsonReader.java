@@ -24,12 +24,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.owasp.benchmark.score.BenchmarkScore;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
 
 public class SonarQubeJsonReader extends Reader {
 
-    public TestResults parse(File f) throws Exception {
+    public TestSuiteResults parse(File f) throws Exception {
 
-        TestResults tr = new TestResults("SonarQube", false, TestResults.ToolType.SAST);
+        TestSuiteResults tr =
+                new TestSuiteResults("SonarQube", false, TestSuiteResults.ToolType.SAST);
 
         // If the filename includes an elapsed time in seconds (e.g., TOOLNAME-seconds.xml),
         // set the compute time on the score card.

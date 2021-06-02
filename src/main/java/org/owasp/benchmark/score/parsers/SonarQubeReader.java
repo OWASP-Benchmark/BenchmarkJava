@@ -24,6 +24,8 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.owasp.benchmark.score.BenchmarkScore;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -31,7 +33,7 @@ import org.xml.sax.InputSource;
 
 public class SonarQubeReader extends Reader {
 
-    public TestResults parse(File f) throws Exception {
+    public TestSuiteResults parse(File f) throws Exception {
         DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
         // Prevent XXE
         docBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
@@ -54,10 +56,10 @@ public class SonarQubeReader extends Reader {
         //      <total>NUMFINDINGS</total><languages><name>Java</name><key>java</key>
         // while the new (in 2020) XML format from their SaaS portal starts with this:
         //      <p>20</p><total>NUMFINDINGS</total><components><path> ...
-        TestResults tr = null;
+        TestSuiteResults tr = null;
         if (fixed.startsWith("<sonar><p>")) {
             // Handle the new XML format
-            tr = new TestResults("SonarQube", false, TestResults.ToolType.SAST);
+            tr = new TestSuiteResults("SonarQube", false, TestSuiteResults.ToolType.SAST);
 
             NodeList rootList = doc.getDocumentElement().getChildNodes();
 
@@ -71,7 +73,9 @@ public class SonarQubeReader extends Reader {
 
         } else {
             // Handle the legacy XML format
-            tr = new TestResults("SonarQube Java Plugin", false, TestResults.ToolType.SAST);
+            tr =
+                    new TestSuiteResults(
+                            "SonarQube Java Plugin", false, TestSuiteResults.ToolType.SAST);
 
             NodeList rootList = doc.getDocumentElement().getChildNodes();
 

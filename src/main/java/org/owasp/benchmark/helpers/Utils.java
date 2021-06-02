@@ -10,7 +10,7 @@
  *
  * <p>The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License for more details
+ * PURPOSE. See the GNU General Public License for more details.
  *
  * @author Nick Sanidas
  * @created 2015
@@ -28,7 +28,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -71,7 +70,9 @@ import org.owasp.benchmark.score.BenchmarkScore;
 import org.owasp.benchmark.service.pojo.StringMessage;
 import org.owasp.benchmark.tools.AbstractTestCaseRequest;
 import org.owasp.benchmark.tools.AbstractTestCaseRequest.TestCaseType;
+import org.owasp.benchmark.tools.JerseyTestCaseRequest;
 import org.owasp.benchmark.tools.ServletTestCaseRequest;
+import org.owasp.benchmark.tools.SpringTestCaseRequest;
 import org.owasp.benchmark.tools.XMLCrawler;
 import org.owasp.esapi.ESAPI;
 import org.w3c.dom.Document;
@@ -85,8 +86,7 @@ public class Utils {
 
     public static final String USERDIR = System.getProperty("user.dir") + File.separator;
 
-    // A 'test' directory that target test files are created in so test cases can
-    // use them
+    // A 'test' directory that target test files are created in so test cases can use them
     public static final String TESTFILES_DIR = USERDIR + "testfiles" + File.separator;
 
     public static final String DATA_DIR = USERDIR + "data" + File.separator;
@@ -119,7 +119,20 @@ public class Utils {
                             "origin",
                             "cookie"));
 
+    private static final DocumentBuilderFactory safeDocBuilderFactory =
+            DocumentBuilderFactory.newInstance();
+
     static {
+        try {
+            // Make DBF safe from XXE by disabling doctype declarations (per OWASP XXE cheat sheet)
+            safeDocBuilderFactory.setFeature(
+                    "http://apache.org/xml/features/disallow-doctype-decl", true);
+        } catch (ParserConfigurationException e) {
+            System.out.println(
+                    "ERROR: couldn't set http://apache.org/xml/features/disallow-doctype-decl");
+            e.printStackTrace();
+        }
+
         File tempDir = new File(TESTFILES_DIR);
         if (!tempDir.exists()) {
             tempDir.mkdir();
@@ -470,14 +483,12 @@ public class Utils {
     		Node root = null;
     		DocumentBuilder newCrawlerBuilder = null;
     		try {
-    			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
     			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
     			InputSource is = new InputSource(http);
     			Document doc = docBuilder.parse(is);
     			root = doc.getDocumentElement();
 
-    			DocumentBuilderFactory newCrawlerBF = DocumentBuilderFactory.newInstance();
-    			newCrawlerBuilder = newCrawlerBF.newDocumentBuilder();
+    			newCrawlerBuilder = docBuilderFactory.newDocumentBuilder();
     		} catch (ParserConfigurationException e) {
     			System.out.println("ERROR: Problem creating new DocumentBuilder");
     			e.printStackTrace();
@@ -539,15 +550,6 @@ public class Utils {
     		return requests;
     	}
     */
-    public static String getCrawlerTestSuiteVersion(InputStream http) throws Exception {
-        DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-        InputSource is = new InputSource(http);
-        Document doc = docBuilder.parse(is);
-        Node root = doc.getDocumentElement();
-
-        return XMLCrawler.getAttributeValue("version", root);
-    }
 
     public static List<AbstractTestCaseRequest> parseHttpFile(File file)
             throws TestCaseRequestFileParseException {
@@ -555,11 +557,14 @@ public class Utils {
 
         try {
             FileInputStream inputStream = new FileInputStream(file);
-            DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+            DocumentBuilder docBuilder = safeDocBuilderFactory.newDocumentBuilder();
             InputSource is = new InputSource(inputStream);
             Document doc = docBuilder.parse(is);
             Node root = doc.getDocumentElement();
+
+            // Side effect: Set the test suite name and version # for global use
+            BenchmarkScore.TESTSUITE = XMLCrawler.getAttributeValue("testsuite", root);
+            BenchmarkScore.TESTSUITEVERSION = XMLCrawler.getAttributeValue("version", root);
 
             List<Node> tests = XMLCrawler.getNamedChildren("benchmarkTest", root);
             for (Node test : tests) {
@@ -579,13 +584,14 @@ public class Utils {
         String url = XMLCrawler.getAttributeValue("URL", test);
         TestCaseType tcType = TestCaseType.valueOf(XMLCrawler.getAttributeValue("tcType", test));
         String category = XMLCrawler.getAttributeValue("tcCategory", test);
-        String name = BenchmarkScore.TESTCASENAME + XMLCrawler.getAttributeValue("tname", test);
+        String name = XMLCrawler.getAttributeValue("tcName", test);
         String uiTemplateFile = XMLCrawler.getAttributeValue("tcUITemplateFile", test);
         String templateFile = XMLCrawler.getAttributeValue("tcTemplateFile", test);
         String sourceFile = XMLCrawler.getAttributeValue("tcSourceFile", test);
         String sourceUIType = XMLCrawler.getAttributeValue("tsSourceUIType", test);
         String dataflowFile = XMLCrawler.getAttributeValue("tcDataflowFile", test);
         String sinkFile = XMLCrawler.getAttributeValue("tcSinkFile", test);
+        String attackSuccessString = XMLCrawler.getAttributeValue("tcAttackSuccess", test);
         boolean isVulnerability =
                 Boolean.valueOf(XMLCrawler.getAttributeValue("tcVulnerable", test));
 
@@ -623,6 +629,49 @@ public class Utils {
                                 dataflowFile,
                                 sinkFile,
                                 isVulnerability,
+                                attackSuccessString,
+                                headers,
+                                cookies,
+                                getParams,
+                                formParams);
+                break;
+            case SPRINGWS:
+                request =
+                        new SpringTestCaseRequest(
+                                url,
+                                tcType,
+                                category,
+                                payload,
+                                name,
+                                uiTemplateFile,
+                                templateFile,
+                                sourceFile,
+                                sourceUIType,
+                                dataflowFile,
+                                sinkFile,
+                                isVulnerability,
+                                attackSuccessString,
+                                headers,
+                                cookies,
+                                getParams,
+                                formParams);
+                break;
+            case JERSEYWS:
+                request =
+                        new JerseyTestCaseRequest(
+                                url,
+                                tcType,
+                                category,
+                                payload,
+                                name,
+                                uiTemplateFile,
+                                templateFile,
+                                sourceFile,
+                                sourceUIType,
+                                dataflowFile,
+                                sinkFile,
+                                isVulnerability,
+                                attackSuccessString,
                                 headers,
                                 cookies,
                                 getParams,

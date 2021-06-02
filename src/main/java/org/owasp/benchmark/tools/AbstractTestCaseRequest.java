@@ -29,31 +29,44 @@ public abstract class AbstractTestCaseRequest {
      * The 1st three are Java.
      */
     public enum TestCaseType {
+        JERSEYWS,
         SERVLET,
         SPRINGWS,
-        JERSEYWS,
         NODEEXPRESS
     }
 
-    private String fullURL;
-    private String query;
-    private TestCaseType tcType;
-    private String category;
-    private String payload;
-    private String name;
-    private String uiTemplateFile;
-    private String templateFile;
-    private String sourceFile;
-    private String sourceUIType;
-    private String dataflowFile;
-    private String sinkFile;
+    public static Comparator<AbstractTestCaseRequest> getNameComparator() {
+        return new Comparator<AbstractTestCaseRequest>() {
 
+            @Override
+            public int compare(AbstractTestCaseRequest o1, AbstractTestCaseRequest o2) {
+                if (!o1.name.equalsIgnoreCase(o2.name)) return o1.name.compareTo(o2.name);
+                return 0;
+            }
+        };
+    }
+
+    private String category;
+    private List<NameValuePair> cookies;
+    private String dataflowFile;
+    private List<NameValuePair> formParams;
+    private String fullURL;
+    private List<NameValuePair> getParams;
+    private List<NameValuePair> headers;
     private boolean isPassed;
     private boolean isVulnerability;
-    private List<NameValuePair> headers;
-    private List<NameValuePair> cookies;
-    private List<NameValuePair> getParams;
-    private List<NameValuePair> formParams;
+    private String attackSuccessString;
+    private String name;
+    private String payload;
+
+    private String query;
+    private String sinkFile;
+    private String sourceFile;
+    private String sourceUIType;
+    private TestCaseType tcType;
+    private String templateFile;
+
+    private String uiTemplateFile;
 
     public AbstractTestCaseRequest(
             String fullURL,
@@ -68,6 +81,7 @@ public abstract class AbstractTestCaseRequest {
             String dataflowFile,
             String sinkFile,
             boolean isVulnerability,
+            String attackSuccessString,
             List<NameValuePair> headers,
             List<NameValuePair> cookies,
             List<NameValuePair> getParams,
@@ -85,11 +99,24 @@ public abstract class AbstractTestCaseRequest {
         this.dataflowFile = dataflowFile;
         this.sinkFile = sinkFile;
         this.isVulnerability = isVulnerability;
+        this.attackSuccessString = attackSuccessString;
         this.headers = headers;
         this.cookies = cookies;
         this.getParams = getParams;
         this.formParams = formParams;
     }
+
+    /** Defines what parameters in the body will be sent. */
+    abstract void buildBodyParameters(HttpRequestBase request);
+
+    /** Defines what cookies will be sent. */
+    abstract void buildCookies(HttpRequestBase request);
+
+    /** Defines what headers will be sent. */
+    abstract void buildHeaders(HttpRequestBase request);
+
+    /** Defines how to construct URL query string. */
+    abstract void buildQueryString();
 
     public HttpRequestBase buildRequest() {
         buildQueryString();
@@ -107,160 +134,152 @@ public abstract class AbstractTestCaseRequest {
      */
     abstract HttpRequestBase createRequestInstance(String URL);
 
-    /** Defines how to construct URL query string. */
-    abstract void buildQueryString();
-
-    /** Defines what headers will be send. */
-    abstract void buildHeaders(HttpRequestBase request);
-
-    /** Defines what cookies will be send. */
-    abstract void buildCookies(HttpRequestBase request);
-
-    /** Defines what parameter on the body will be send. */
-    abstract void buildBodyParameters(HttpRequestBase request);
-
-    public String getFullURL() {
-        return fullURL;
-    }
-
-    public void setFullURL(String fullURL) {
-        this.fullURL = fullURL;
-    }
-
-    public TestCaseType getType() {
-        return tcType;
-    }
-
-    public void setType(TestCaseType type) {
-        this.tcType = type;
+    public String getAttackSuccessString() {
+        return attackSuccessString;
     }
 
     public String getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public List<NameValuePair> getHeaders() {
-        return headers;
-    }
-
-    public void setHeaders(List<NameValuePair> headers) {
-        this.headers = headers;
-    }
-
     public List<NameValuePair> getCookies() {
         return cookies;
-    }
-
-    public void setCookies(List<NameValuePair> cookies) {
-        this.cookies = cookies;
-    }
-
-    public List<NameValuePair> getGetParams() {
-        return getParams;
-    }
-
-    public void setGetParams(List<NameValuePair> getParams) {
-        this.getParams = getParams;
-    }
-
-    public List<NameValuePair> getFormParams() {
-        return formParams;
-    }
-
-    public void setFormParams(List<NameValuePair> formParams) {
-        this.formParams = formParams;
-    }
-
-    public String getQuery() {
-        return query;
-    }
-
-    public void setQuery(String query) {
-        this.query = query;
-    }
-
-    public String getPayload() {
-        return payload;
-    }
-
-    public void setPayload(String payload) {
-        this.payload = payload;
-    }
-
-    public boolean isPassed() {
-        return isPassed;
-    }
-
-    public void setPassed(boolean isPassed) {
-        this.isPassed = isPassed;
-    }
-
-    public boolean isVulnerability() {
-        return isVulnerability;
-    }
-
-    public void setVulnerability(boolean isVulnerability) {
-        this.isVulnerability = isVulnerability;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getUiTemplateFile() {
-        return uiTemplateFile;
-    }
-
-    public void setUiTemplateFile(String uiTemplateFile) {
-        this.uiTemplateFile = uiTemplateFile;
-    }
-
-    public String getTemplateFile() {
-        return templateFile;
-    }
-
-    public void setTemplateFile(String templateFile) {
-        this.templateFile = templateFile;
-    }
-
-    public String getSourceFile() {
-        return sourceFile;
-    }
-
-    public void setSourceFile(String sourceFile) {
-        this.sourceFile = sourceFile;
-    }
-
-    public String getSourceUIType() {
-        return sourceUIType;
-    }
-
-    public void setSourceUIType(String sourceUIType) {
-        this.sourceUIType = sourceUIType;
     }
 
     public String getDataflowFile() {
         return dataflowFile;
     }
 
-    public void setDataflowFile(String dataflowFile) {
-        this.dataflowFile = dataflowFile;
+    public List<NameValuePair> getFormParams() {
+        return formParams;
+    }
+
+    public String getFullURL() {
+        return fullURL;
+    }
+
+    public List<NameValuePair> getGetParams() {
+        return getParams;
+    }
+
+    public List<NameValuePair> getHeaders() {
+        return headers;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getPayload() {
+        return payload;
+    }
+
+    public String getQuery() {
+        return query;
     }
 
     public String getSinkFile() {
         return sinkFile;
     }
 
+    public String getSourceFile() {
+        return sourceFile;
+    }
+
+    public String getSourceUIType() {
+        return sourceUIType;
+    }
+
+    public String getTemplateFile() {
+        return templateFile;
+    }
+
+    public TestCaseType getType() {
+        return tcType;
+    }
+
+    public String getUiTemplateFile() {
+        return uiTemplateFile;
+    }
+
+    public boolean isPassed() {
+        return isPassed;
+    }
+
+    public boolean isVulnerability() {
+        return isVulnerability;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public void setCookies(List<NameValuePair> cookies) {
+        this.cookies = cookies;
+    }
+
+    public void setDataflowFile(String dataflowFile) {
+        this.dataflowFile = dataflowFile;
+    }
+
+    public void setFormParams(List<NameValuePair> formParams) {
+        this.formParams = formParams;
+    }
+
+    public void setFullURL(String fullURL) {
+        this.fullURL = fullURL;
+    }
+
+    public void setGetParams(List<NameValuePair> getParams) {
+        this.getParams = getParams;
+    }
+
+    public void setHeaders(List<NameValuePair> headers) {
+        this.headers = headers;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPassed(boolean isPassed) {
+        this.isPassed = isPassed;
+    }
+
+    public void setPayload(String payload) {
+        this.payload = payload;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
+    }
+
     public void setSinkFile(String sinkFile) {
         this.sinkFile = sinkFile;
+    }
+
+    public void setSourceFile(String sourceFile) {
+        this.sourceFile = sourceFile;
+    }
+
+    public void setSourceUIType(String sourceUIType) {
+        this.sourceUIType = sourceUIType;
+    }
+
+    public void setTemplateFile(String templateFile) {
+        this.templateFile = templateFile;
+    }
+
+    public void setType(TestCaseType type) {
+        this.tcType = type;
+    }
+
+    public void setUiTemplateFile(String uiTemplateFile) {
+        this.uiTemplateFile = uiTemplateFile;
+    }
+
+    public void setVulnerability(boolean isVulnerability) {
+        this.isVulnerability = isVulnerability;
     }
 
     @Override
@@ -303,16 +322,5 @@ public abstract class AbstractTestCaseRequest {
                 + ", formParams="
                 + formParams
                 + "]";
-    }
-
-    public static Comparator<AbstractTestCaseRequest> getNameComparator() {
-        return new Comparator<AbstractTestCaseRequest>() {
-
-            @Override
-            public int compare(AbstractTestCaseRequest o1, AbstractTestCaseRequest o2) {
-                if (!o1.name.equalsIgnoreCase(o2.name)) return o1.name.compareTo(o2.name);
-                return 0;
-            }
-        };
     }
 }

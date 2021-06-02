@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.owasp.benchmark.score.BenchmarkScore;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
 
 public class SeczoneReader extends Reader {
 
@@ -34,8 +36,9 @@ public class SeczoneReader extends Reader {
         cr.parse(f);
     }
 
-    public TestResults parse(File f) throws Exception {
-        TestResults tr = new TestResults("VulHunter", true, TestResults.ToolType.IAST);
+    public TestSuiteResults parse(File f) throws Exception {
+        TestSuiteResults tr =
+                new TestSuiteResults("VulHunter", true, TestSuiteResults.ToolType.IAST);
 
         BufferedReader reader = new BufferedReader(new FileReader(f));
         String firstLine = null;
@@ -108,7 +111,7 @@ public class SeczoneReader extends Reader {
         return null;
     }
 
-    private void parseVulHunterFinding(TestResults tr, String testNumber, List<String> chunk)
+    private void parseVulHunterFinding(TestSuiteResults tr, String testNumber, List<String> chunk)
             throws Exception {
         for (String line : chunk) {
             TestCaseResult tcr = new TestCaseResult();

@@ -23,6 +23,8 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.owasp.benchmark.score.BenchmarkScore;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -30,7 +32,7 @@ import org.xml.sax.InputSource;
 
 public class ParasoftReader extends Reader {
 
-    public TestResults parse(File f) throws Exception {
+    public TestSuiteResults parse(File f) throws Exception {
         DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
         // Prevent XXE
         docBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
@@ -38,7 +40,8 @@ public class ParasoftReader extends Reader {
         InputSource is = new InputSource(new FileInputStream(f));
         Document doc = docBuilder.parse(is);
 
-        TestResults tr = new TestResults("Parasoft Jtest", true, TestResults.ToolType.SAST);
+        TestSuiteResults tr =
+                new TestSuiteResults("Parasoft Jtest", true, TestSuiteResults.ToolType.SAST);
 
         Node root = doc.getDocumentElement();
 

@@ -10,7 +10,7 @@
  *
  * <p>The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License for more details
+ * PURPOSE. See the GNU General Public License for more details.
  *
  * @author Dave Wichers
  * @created 2015
@@ -39,9 +39,9 @@ import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.owasp.benchmark.score.BenchmarkScore;
-import org.owasp.benchmark.score.parsers.OverallResult;
-import org.owasp.benchmark.score.parsers.OverallResults;
-import org.owasp.benchmark.score.parsers.TestResults;
+import org.owasp.benchmark.score.CategoryResults;
+import org.owasp.benchmark.score.OverallToolResults;
+import org.owasp.benchmark.score.TestSuiteResults;
 
 public class ScatterVulns extends ScatterPlot {
     char averageLabel;
@@ -51,9 +51,9 @@ public class ScatterVulns extends ScatterPlot {
     // Commercial Scores
     private int commercialToolCount = 0;
     private double commercialLow = 100;
-    private TestResults.ToolType commercialLowToolType = null;
+    private TestSuiteResults.ToolType commercialLowToolType = null;
     private double commercialHigh = 0;
-    private TestResults.ToolType commercialHighToolType = null;
+    private TestSuiteResults.ToolType commercialHighToolType = null;
     private double commercialAve = 0;
     public final String category;
     public final String focus;
@@ -86,7 +86,15 @@ public class ScatterVulns extends ScatterPlot {
 
         for (Report toolReport : toolResults) {
             if (!toolReport.isCommercial()) {
-                OverallResult overallResult = toolReport.getOverallResults().getResults(category);
+                CategoryResults overallResult = toolReport.getOverallResults().getResults(category);
+                if (Double.isNaN(overallResult.falsePositiveRate)) {
+                    System.out.println(
+                            "ERROR: false positive rate for category: " + category + " is NaN");
+                }
+                if (Double.isNaN(overallResult.truePositiveRate)) {
+                    System.out.println(
+                            "ERROR: true positive rate for category: " + category + " is NaN");
+                }
                 series.add(
                         overallResult.falsePositiveRate * 100,
                         overallResult.truePositiveRate * 100);
@@ -95,8 +103,16 @@ public class ScatterVulns extends ScatterPlot {
 
         for (Report toolReport : toolResults) {
             if (toolReport.isCommercial()) {
-                OverallResult overallResult = toolReport.getOverallResults().getResults(category);
+                CategoryResults overallResult = toolReport.getOverallResults().getResults(category);
                 if (!BenchmarkScore.showAveOnlyMode) {
+                    if (Double.isNaN(overallResult.falsePositiveRate)) {
+                        System.out.println(
+                                "ERROR: false positive rate for category: " + category + " is NaN");
+                    }
+                    if (Double.isNaN(overallResult.truePositiveRate)) {
+                        System.out.println(
+                                "ERROR: true positive rate for category: " + category + " is NaN");
+                    }
                     series.add(
                             overallResult.falsePositiveRate * 100,
                             overallResult.truePositiveRate * 100);
@@ -108,23 +124,30 @@ public class ScatterVulns extends ScatterPlot {
         }
 
         for (double d : averageFalseRates) {
-            afr += d;
+            this.afr += d;
         }
-        afr = afr / averageFalseRates.size();
+        this.afr = this.afr / averageFalseRates.size();
 
         for (double d : averageTrueRates) {
-            atr += d;
+            this.atr += d;
         }
-        atr = atr / averageTrueRates.size();
+        this.atr = this.atr / averageTrueRates.size();
 
         if (commercialToolCount > 1
                 || (BenchmarkScore.showAveOnlyMode && commercialToolCount == 1)) {
-            series.add(afr * 100, atr * 100);
+            if (Double.isNaN(this.afr)) {
+                System.out.println(
+                        "ERROR: average false positive rate for category: " + category + " is NaN");
+            }
+            if (Double.isNaN(this.atr)) {
+                System.out.println(
+                        "ERROR: average true positive rate for category: " + category + " is NaN");
+            }
+            series.add(this.afr * 100, this.atr * 100);
         }
 
         dataset.addSeries(series);
-
-        chart =
+        this.chart =
                 ChartFactory.createScatterPlot(
                         title,
                         "False Positive Rate",
@@ -134,9 +157,9 @@ public class ScatterVulns extends ScatterPlot {
                         true,
                         true,
                         false);
-        theme.apply(chart);
+        this.theme.apply(this.chart);
 
-        XYPlot xyplot = chart.getXYPlot();
+        XYPlot xyplot = this.chart.getXYPlot();
 
         initializePlot(xyplot);
 
@@ -198,7 +221,7 @@ public class ScatterVulns extends ScatterPlot {
 
         for (Report r : toolResults) {
             if (!r.isCommercial()) {
-                OverallResult or = r.getOverallResults().getResults(category);
+                CategoryResults or = r.getOverallResults().getResults(category);
                 // this puts the label just below the point
                 double x = or.falsePositiveRate * 100 + sr.nextDouble() * .000001;
                 double y = or.truePositiveRate * 100 + sr.nextDouble() * .000001 - 1;
@@ -215,7 +238,7 @@ public class ScatterVulns extends ScatterPlot {
             if (r.isCommercial()) {
                 commercialToolCount++;
                 if (!BenchmarkScore.showAveOnlyMode) {
-                    OverallResult or = r.getOverallResults().getResults(category);
+                    CategoryResults or = r.getOverallResults().getResults(category);
                     // this puts the label just below the point
                     double x = or.falsePositiveRate * 100 + sr.nextDouble() * .000001;
                     double y = or.truePositiveRate * 100 + sr.nextDouble() * .000001 - 1;
@@ -301,7 +324,7 @@ public class ScatterVulns extends ScatterPlot {
                     printedNonCommercialLabel = true;
                 }
 
-                OverallResults or = r.getOverallResults();
+                OverallToolResults or = r.getOverallResults();
                 // Special hack to make it line up better if the letter is an 'I' or 'i'
                 String label = (ch == 'I' || ch == 'i' ? ch + ":  " : "" + ch + ": ");
                 double score = or.getResults(category).score * 100;
@@ -333,7 +356,7 @@ public class ScatterVulns extends ScatterPlot {
         double commercialTotal = 0;
 
         for (Report r : toolResults) {
-            OverallResults or = r.getOverallResults();
+            OverallToolResults or = r.getOverallResults();
             if (r.isCommercial()) {
 
                 // print commercial label if there is at least one commercial
@@ -389,7 +412,7 @@ public class ScatterVulns extends ScatterPlot {
 
             // Add color emphasis to the tool of focus
             if (r.getToolName().replace(' ', '_').equalsIgnoreCase(focus)) {
-                OverallResult orc = r.getOverallResults().getResults(category);
+                CategoryResults orc = r.getOverallResults().getResults(category);
                 Point2D focusPoint =
                         new Point2D.Double(orc.falsePositiveRate * 100, orc.truePositiveRate * 100);
                 Color green = new Color(0, 1, 0, 0.5f);
@@ -424,7 +447,7 @@ public class ScatterVulns extends ScatterPlot {
     }
 
     public static ScatterVulns generateComparisonChart(
-            String category, Set<Report> toolResults, String focus) {
+            String category, Set<Report> toolResults, String focus, File scoreCardDir) {
         try {
             String scatterTitle =
                     BenchmarkScore.fullTestSuiteName(BenchmarkScore.TESTSUITE)
@@ -438,7 +461,9 @@ public class ScatterVulns extends ScatterPlot {
                     new ScatterVulns(scatterTitle, 800, category, toolResults, focus);
             scatter.writeChartToFile(
                     new File(
-                            "scorecard/Benchmark_v"
+                            scoreCardDir,
+                            BenchmarkScore.TESTSUITE
+                                    + "_v"
                                     + BenchmarkScore.TESTSUITEVERSION
                                     + "_Scorecard_for_"
                                     + category.replace(' ', '_')
@@ -446,7 +471,7 @@ public class ScatterVulns extends ScatterPlot {
                     800);
             return scatter;
         } catch (IOException e) {
-            System.out.println("Couldn't generate Benchmark vulnerability chart for some reason.");
+            System.out.println("Couldn't generate test suite vulnerability chart for some reason.");
             e.printStackTrace();
             return null;
         }
@@ -463,7 +488,7 @@ public class ScatterVulns extends ScatterPlot {
         return (int) Math.round(commercialLow);
     }
 
-    public TestResults.ToolType getCommercialLowToolType() {
+    public TestSuiteResults.ToolType getCommercialLowToolType() {
         return commercialLowToolType;
     }
 
@@ -475,7 +500,7 @@ public class ScatterVulns extends ScatterPlot {
         return (int) Math.round(commercialHigh);
     }
 
-    public TestResults.ToolType getCommercialHighToolType() {
+    public TestSuiteResults.ToolType getCommercialHighToolType() {
         return commercialHighToolType;
     }
 }

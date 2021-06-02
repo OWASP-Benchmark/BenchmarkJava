@@ -10,18 +10,18 @@
  *
  * <p>The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License for more details
+ * PURPOSE. See the GNU General Public License for more details.
  *
  * @author Dave Wichers
  * @created 2015
  */
-package org.owasp.benchmark.score.parsers;
+package org.owasp.benchmark.score;
 
 /**
  * This class simply tracks the counts for the true positives, false negatives, true negatives, and
  * false positives for a particular tool against the test suite.
  */
-public class Counter {
+public class TP_FN_TN_FP_Counts {
 
     public int tp = 0;
     public int fn = 0;

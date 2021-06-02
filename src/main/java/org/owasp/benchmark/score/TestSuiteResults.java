@@ -10,12 +10,12 @@
  *
  * <p>The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License for more details
+ * PURPOSE. See the GNU General Public License for more details.
  *
  * @author Dave Wichers
  * @created 2015
  */
-package org.owasp.benchmark.score.parsers;
+package org.owasp.benchmark.score;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,14 +24,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
-import org.owasp.benchmark.score.BenchmarkScore;
 
 /*
- * TestResults contains the actual results for a single tool against an entire test suite, or the
- * expected results, if its initialized with the expected results file.
+ * TestSuiteResults contains the expected results for each test case in a test suite, if its initialized with the expected results file. Or the actual results for a single tool against each test case in test suite.
  */
 
-public class TestResults {
+public class TestSuiteResults {
 
     // The types of tools that can generate results
     public static enum ToolType {
@@ -46,7 +44,8 @@ public class TestResults {
     private static int nextCommercialIAST_ToolNumber = 1;
     private static int nextCommercialHybrid_ToolNumber = 1;
 
-    // The version of the test suite these test results are for
+    // The name and version of the test suite these test results are for
+    private String testSuiteName = "notSet";
     private String testSuiteVersion = "notSet";
 
     private String toolName = "Unknown Tool";
@@ -59,10 +58,19 @@ public class TestResults {
     // Used to track if this tool has been anonymized
     private boolean anonymous = false;
 
-    public TestResults(String toolname, boolean isCommercial, ToolType toolType) {
+    public TestSuiteResults(String toolname, boolean isCommercial, ToolType toolType) {
         this.setTool(toolname);
         this.isCommercial = isCommercial;
         this.toolType = toolType;
+    }
+
+    // Set the test suite name for this specific set of TestResults
+    public void setTestSuiteName(String name) {
+        this.testSuiteVersion = name;
+    }
+
+    public String getTestSuiteName() {
+        return this.testSuiteName;
     }
 
     // Set the version number for this specific set of TestResults

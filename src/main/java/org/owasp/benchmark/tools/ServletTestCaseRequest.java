@@ -48,6 +48,7 @@ public class ServletTestCaseRequest extends AbstractTestCaseRequest {
             String dataflowFile,
             String sinkFile,
             boolean isVulnerability,
+            String attackSuccessString,
             List<NameValuePair> headers,
             List<NameValuePair> cookies,
             List<NameValuePair> getParams,
@@ -65,6 +66,7 @@ public class ServletTestCaseRequest extends AbstractTestCaseRequest {
                 dataflowFile,
                 sinkFile,
                 isVulnerability,
+                attackSuccessString,
                 headers,
                 cookies,
                 getParams,
@@ -116,13 +118,10 @@ public class ServletTestCaseRequest extends AbstractTestCaseRequest {
         for (NameValuePair cookie : getCookies()) {
             String name = cookie.getName();
             String value = cookie.getValue();
-            // Note: URL encoding of a space becomes a +, which is OK for URL params, but
-            // not in a cookie, as the + doesn't get decoded properly. So have to replace
-            // all spaces with %20 instead (at least for NodeJS). Will this break Java?
-            // Yes. Yes it will. So commenting out...
-            // value = value.replaceAll(" ", "%20"); // Hack for NodeJS, but breaks Java, so
-            // commented out.
-            request.addHeader("Cookie", name + "=" + URLEncoder.encode(value));
+            // Note: URL encoding of a space becomes a +, which is OK for Java, but
+            // not other languages. So after URLEncoding, replace all + with %20, which is the
+            // standard URL encoding for a space char.
+            request.addHeader("Cookie", name + "=" + URLEncoder.encode(value).replace("+", "%20"));
         }
     }
 

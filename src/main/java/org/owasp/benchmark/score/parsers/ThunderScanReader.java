@@ -26,6 +26,8 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.owasp.benchmark.score.BenchmarkScore;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -36,14 +38,15 @@ public class ThunderScanReader extends Reader {
 
     static List<String> fileListDuplicates = new ArrayList<String>();
 
-    public TestResults parse(File f) throws Exception {
+    public TestSuiteResults parse(File f) throws Exception {
 
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         InputSource fileInput = new InputSource(new FileInputStream(f));
         Document doc = dBuilder.parse(fileInput);
 
-        TestResults testResults = new TestResults("ThunderScan", true, TestResults.ToolType.SAST);
+        TestSuiteResults testResults =
+                new TestSuiteResults("ThunderScan", true, TestSuiteResults.ToolType.SAST);
 
         NodeList vulnTypeNodeList = doc.getElementsByTagName("VulnerabilityType");
 

@@ -10,7 +10,7 @@
  *
  * <p>The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License for more details
+ * PURPOSE. See the GNU General Public License for more details.
  *
  * @author Dave Wichers
  * @created 2015
@@ -19,11 +19,13 @@ package org.owasp.benchmark.score.parsers;
 
 import java.util.List;
 import org.owasp.benchmark.score.BenchmarkScore;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
 import org.w3c.dom.Node;
 
 public class AcunetixReader extends Reader {
 
-    public TestResults parse(Node root) throws Exception {
+    public TestSuiteResults parse(Node root) throws Exception {
 
         if (root.getNodeName().equalsIgnoreCase("acunetix-360")) {
 
@@ -40,7 +42,8 @@ public class AcunetixReader extends Reader {
             				<LookupId>cf5644f1-31ee-4092-0e15-ab6e04af7f51</LookupId>
             				...
             */
-            TestResults tr = new TestResults("Acunetix 360", true, TestResults.ToolType.DAST);
+            TestSuiteResults tr =
+                    new TestSuiteResults("Acunetix 360", true, TestSuiteResults.ToolType.DAST);
 
             Node target = getNamedChild("target", root);
             String duration = getNamedChild("duration", target).getTextContent();
@@ -82,7 +85,8 @@ public class AcunetixReader extends Reader {
                   </Scan>
                 </ScanGroup>
             */
-            TestResults tr = new TestResults("Acunetix WVS", true, TestResults.ToolType.DAST);
+            TestSuiteResults tr =
+                    new TestSuiteResults("Acunetix WVS", true, TestSuiteResults.ToolType.DAST);
             Node scan = getNamedChild("Scan", root);
 
             String duration = getNamedChild("ScanTime", scan).getTextContent();

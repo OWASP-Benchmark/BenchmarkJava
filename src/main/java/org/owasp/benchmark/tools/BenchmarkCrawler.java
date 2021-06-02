@@ -10,7 +10,7 @@
  *
  * <p>The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License for more details
+ * PURPOSE. See the GNU General Public License for more details.
  *
  * @author Juan Gama
  * @created 2017
@@ -18,7 +18,6 @@
 package org.owasp.benchmark.tools;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -46,17 +45,16 @@ import org.owasp.benchmark.helpers.Utils;
 import org.owasp.benchmark.score.BenchmarkScore;
 
 public class BenchmarkCrawler {
-    public static String testSuiteVersion = "";
-    private static String DEFAULTCRAWLERFILENAME = "benchmark-crawler-http.xml";
-    private static String crawlerFile =
-            Utils.DATA_DIR + DEFAULTCRAWLERFILENAME; // Default location if not specified
+    private File crawlerFile;
+
+    BenchmarkCrawler(File file) {
+        this.crawlerFile = file;
+    }
 
     /** Crawl the target test suite. */
     protected void run() {
         try {
-            // Have to open the stream twice so each method can read the whole file
-            testSuiteVersion = Utils.getCrawlerTestSuiteVersion(new FileInputStream(crawlerFile));
-            List<AbstractTestCaseRequest> requests = Utils.parseHttpFile(new File(crawlerFile));
+            List<AbstractTestCaseRequest> requests = Utils.parseHttpFile(crawlerFile);
             Collections.sort(
                     requests,
                     AbstractTestCaseRequest.getNameComparator()); // Probably not necessary
@@ -92,7 +90,7 @@ public class BenchmarkCrawler {
                         + " for "
                         + BenchmarkScore.TESTSUITE
                         + " v"
-                        + testSuiteVersion
+                        + BenchmarkScore.TESTSUITEVERSION
                         + " took "
                         + seconds
                         + " seconds");
@@ -112,13 +110,12 @@ public class BenchmarkCrawler {
         HostnameVerifier allowAllHosts = new NoopHostnameVerifier();
 
         // create an SSL Socket Factory to use the SSLContext with the trust self signed certificate
-        // strategy
-        // and allow all hosts verifier.
+        // strategy and allow all hosts verifier.
         SSLConnectionSocketFactory connectionFactory =
                 new SSLConnectionSocketFactory(sslContext, allowAllHosts);
 
-        // finally create the HttpClient using HttpClient factory methods and assign the ssl socket
-        // factory
+        // finally create the HttpClient using HttpClient factory methods and assign the SSL Socket
+        // Factory
         return HttpClients.custom().setSSLSocketFactory(connectionFactory).build();
     }
 
@@ -180,41 +177,46 @@ public class BenchmarkCrawler {
      * Process the command line arguments that make any configuration changes.
      *
      * @param args - args passed to main().
-     * @return true if valid command line arguments provided. False otherwise.
+     * @return specified crawler file if valid command line arguments provided. Null otherwise.
      */
-    private static boolean processCommandLineArgs(String[] args) {
+    private static File processCommandLineArgs(String[] args) {
+
+        String crawlerFileName = Utils.DATA_DIR + "benchmark-crawler-http.xml"; // default location
+        File crawlerFile = null;
 
         if (args == null || args.length == 0) {
             // No arguments is OK
+            crawlerFile = new File(crawlerFileName); // default location
         } else if (args.length != 0 && args.length != 2) {
-            System.out.println("Usage: no arguments or -f /PATH/TO/" + DEFAULTCRAWLERFILENAME);
-            return false;
+            System.out.println("Usage: no arguments or -f /PATH/TO/TESTSUITE-crawler-http.xml");
         } else if (args.length == 2) {
             if ("-f".equalsIgnoreCase(args[0])) {
                 // -f indicates use the specified crawler file
-                crawlerFile = args[1];
-                File theFile = new File(crawlerFile);
-                if (!theFile.exists()) {
-                    System.out.println(
-                            "ERROR: Crawler Configuration file: '" + crawlerFile + "' not found!");
-                    return false;
-                }
+                crawlerFileName = args[1];
+                crawlerFile = new File(crawlerFileName);
             } else if (!(args[0] == null
                     && args[1] == null)) { // pom settings for crawler forces creation of 2 args,
                 // but if none are provided, they are null
-                System.out.println("Usage: -f /PATH/TO/" + DEFAULTCRAWLERFILENAME);
-                return false;
+                System.out.println("Supported options: -f /PATH/TO/TESTSUITE-crawler-http.xml");
             }
         }
-        return true;
+        if (crawlerFile != null && !crawlerFile.exists()) {
+            System.out.println(
+                    "ERROR: Crawler Configuration file: '" + crawlerFileName + "' not found!");
+            crawlerFile = null;
+        }
+
+        return crawlerFile;
     }
 
     public static void main(String[] args) throws Exception {
-        if (!processCommandLineArgs(args)) {
+
+        File crawlerFile = processCommandLineArgs(args);
+        if (crawlerFile == null) {
             return;
         }
 
-        BenchmarkCrawler crawler = new BenchmarkCrawler();
+        BenchmarkCrawler crawler = new BenchmarkCrawler(crawlerFile);
         crawler.run();
     }
 }

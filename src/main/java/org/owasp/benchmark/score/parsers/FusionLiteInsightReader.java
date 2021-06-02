@@ -28,13 +28,15 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.owasp.benchmark.score.BenchmarkScore;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
 public class FusionLiteInsightReader extends Reader {
 
-    public TestResults parse(File f) throws Exception {
+    public TestSuiteResults parse(File f) throws Exception {
         DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
         // Prevent XXE
         docBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
@@ -43,7 +45,8 @@ public class FusionLiteInsightReader extends Reader {
         Document doc = docBuilder.parse(is);
 
         // Fusion Lite Insight specific changes by Parthi Shah
-        TestResults tr = new TestResults("Fusion Lite Insight", true, TestResults.ToolType.Hybrid);
+        TestSuiteResults tr =
+                new TestSuiteResults("Fusion Lite Insight", true, TestSuiteResults.ToolType.Hybrid);
 
         Node root = doc.getDocumentElement();
         String version = getAttributeValue("version", root);

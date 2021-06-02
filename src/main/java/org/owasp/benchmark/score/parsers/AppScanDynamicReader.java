@@ -10,7 +10,7 @@
  *
  * <p>The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License for more details
+ * PURPOSE. See the GNU General Public License for more details.
  *
  * @author Dave Wichers
  * @created 2015
@@ -21,13 +21,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.owasp.benchmark.score.BenchmarkScore;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
 import org.w3c.dom.Node;
 
 public class AppScanDynamicReader extends Reader {
 
-    public TestResults parse(Node root) throws Exception {
+    public TestSuiteResults parse(Node root) throws Exception {
 
-        TestResults tr = new TestResults("IBM AppScan", true, TestResults.ToolType.DAST);
+        TestSuiteResults tr =
+                new TestSuiteResults("IBM AppScan", true, TestSuiteResults.ToolType.DAST);
 
         //      <AppScanInfo>
         //        <Version>9.0.1.1</Version>
@@ -123,7 +126,7 @@ public class AppScanDynamicReader extends Reader {
             int minutes = Integer.parseInt(splits[1]);
             int seconds = Integer.parseInt(splits[2]);
             long millis = 1000 * (hours * 60 * 60 + minutes * 60 + seconds);
-            return TestResults.formatTime(millis);
+            return TestSuiteResults.formatTime(millis);
         } catch (Exception e) {
             e.printStackTrace();
             return "Unknown";

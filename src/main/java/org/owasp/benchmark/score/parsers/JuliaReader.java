@@ -22,6 +22,8 @@ import java.io.FileInputStream;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.owasp.benchmark.score.BenchmarkScore;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -29,7 +31,7 @@ import org.xml.sax.InputSource;
 
 public class JuliaReader extends Reader {
 
-    public TestResults parse(File f) throws Exception {
+    public TestSuiteResults parse(File f) throws Exception {
         DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
         docBuilderFactory.setFeature(
                 "http://apache.org/xml/features/disallow-doctype-decl", true); // Prevent XXE
@@ -37,13 +39,13 @@ public class JuliaReader extends Reader {
         InputSource is = new InputSource(new FileInputStream(f));
         Document doc = docBuilder.parse(is);
 
-        TestResults tr = new TestResults("Julia", true, TestResults.ToolType.SAST);
+        TestSuiteResults tr = new TestSuiteResults("Julia", true, TestSuiteResults.ToolType.SAST);
 
         Node root = doc.getDocumentElement();
 
         // Get run time from results file
         String runDuration = getNamedChild("runDuration", root).getTextContent();
-        tr.setTime(TestResults.formatTime(runDuration));
+        tr.setTime(TestSuiteResults.formatTime(runDuration));
 
         // Get the version number from the results file
         String juliaVersion = getNamedChild("engineVersion", root).getTextContent();

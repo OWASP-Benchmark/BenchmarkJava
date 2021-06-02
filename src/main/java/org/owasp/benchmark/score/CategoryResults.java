@@ -10,14 +10,14 @@
  *
  * <p>The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License for more details
+ * PURPOSE. See the GNU General Public License for more details.
  *
  * @author Dave Wichers
  * @created 2015
  */
-package org.owasp.benchmark.score.parsers;
+package org.owasp.benchmark.score;
 
-public class OverallResult {
+public class CategoryResults {
     public final String category;
     public final double truePositiveRate;
     public final double falsePositiveRate;
@@ -33,7 +33,16 @@ public class OverallResult {
      * @param total - The total number of TP, FP, TN, FN in this category
      * @param score - The tool's score in this category
      */
-    public OverallResult(String category, double tpr, double fpr, int total, double score) {
+    public CategoryResults(String category, double tpr, double fpr, int total, double score) {
+        if (Double.isNaN(fpr)) {
+            throw new IllegalArgumentException(
+                    "ERROR: false positive rate for category: " + category + " is NaN");
+        }
+        if (Double.isNaN(tpr)) {
+            throw new IllegalArgumentException(
+                    "ERROR: true positive rate for category: " + category + " is NaN");
+        }
+
         this.category = category;
         this.truePositiveRate = tpr;
         this.falsePositiveRate = fpr;

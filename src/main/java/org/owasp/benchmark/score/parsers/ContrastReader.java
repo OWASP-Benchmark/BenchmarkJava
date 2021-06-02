@@ -25,8 +25,12 @@ import java.util.Date;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.owasp.benchmark.score.BenchmarkScore;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
 
 public class ContrastReader extends Reader {
+
+    static final String NODEFINDINGLINEINDICATOR = "contrast:rules:sinks - ";
 
     public static void main(String[] args) throws Exception {
         File f = new File("results/Benchmark_1.2-Contrast.log");
@@ -34,10 +38,13 @@ public class ContrastReader extends Reader {
         cr.parse(f);
     }
 
-    public TestResults parse(File f) throws Exception {
-        TestResults tr = new TestResults("Contrast", true, TestResults.ToolType.IAST);
+    public TestSuiteResults parse(File f) throws Exception {
+        TestSuiteResults tr =
+                new TestSuiteResults("Contrast", true, TestSuiteResults.ToolType.IAST);
 
         BufferedReader reader = new BufferedReader(new FileReader(f));
+        // This use of repeat() allows test case IDs to be different lengths for different
+        // test suites.
         String FIRSTLINEINDICATOR =
                 BenchmarkScore.TESTCASENAME
                         + StringUtils.repeat("0", BenchmarkScore.TESTIDLENGTH - 1)
@@ -50,15 +57,30 @@ public class ContrastReader extends Reader {
                 line = reader.readLine();
                 if (line != null) {
                     if (line.startsWith("{\"hash\":")) {
-                        parseContrastFinding(tr, line);
-                    } else if (line.contains("Agent Version:")) {
+                        parseContrastJavaFinding(tr, line);
+                    } else if (line.contains(NODEFINDINGLINEINDICATOR)) {
+                        parseContrastNodeFinding(tr, line);
+                    } // Agent Version check for Java
+                    else if (line.contains("Agent Version:")) {
                         String version =
                                 line.substring(line.indexOf("Version:") + "Version:".length());
                         tr.setToolVersion(version.trim());
-                    } else if (line.contains("DEBUG - >>> [URL")
+                    } // Agent Version check for Node
+                    else if (line.contains("@contrast/agent@")) {
+                        String version =
+                                line.substring(
+                                        line.indexOf("@contrast/agent@")
+                                                + "@contrast/agent@".length());
+                        tr.setToolVersion(version);
+                    } // First line check for Java
+                    else if (line.contains("DEBUG - >>> [URL")
                             && line.contains(FIRSTLINEINDICATOR)) {
                         firstLine = line;
-                    } else if (line.contains("DEBUG - >>> [URL")) {
+                    } // First line check for Node
+                    else if (line.contains("Received request ")
+                            && line.contains(FIRSTLINEINDICATOR)) {
+                        firstLine = line;
+                    } else if (line.contains("DEBUG - >>>") || line.contains("Received request ")) {
                         lastLine = line;
                     }
                 }
@@ -71,7 +93,57 @@ public class ContrastReader extends Reader {
         return tr;
     }
 
-    private void parseContrastFinding(TestResults tr, String json) throws Exception {
+    private void parseContrastNodeFinding(TestSuiteResults tr, String line) throws Exception {
+
+        // Node findings look like:
+        // debug: 2021-05-12T21:00:46.118Z 12631 contrast:rules:sinks - crypto-bad-mac:
+        // /julietjs/sqli-00/JulietJSTest00001
+        // However, there are similar lines like this we have to avoid:
+        // debug: 2021-05-12T21:00:30.487Z 12631 contrast:rules:sinks - loading provider for
+        // hardcoded-password
+
+        if (line.contains("loading provider")) return;
+
+        int i = line.indexOf(NODEFINDINGLINEINDICATOR);
+        if (i < 0) {
+            System.out.println(
+                    "Bug in Contrast Parser. "
+                            + NODEFINDINGLINEINDICATOR
+                            + " not found in line: "
+                            + line);
+            return;
+        }
+
+        line = line.substring(i + NODEFINDINGLINEINDICATOR.length());
+        String[] elements = line.split(":");
+
+        TestCaseResult tcr = new TestCaseResult();
+        tcr.setCWE(cweLookup(elements[0]));
+        tcr.setCategory(elements[0]);
+
+        if (tcr.getCWE() != 0 && elements[1].contains(BenchmarkScore.TESTCASENAME)) {
+            String testNumber =
+                    elements[1].substring(
+                            elements[1].lastIndexOf('/')
+                                    + BenchmarkScore.TESTCASENAME.length()
+                                    + 1);
+            try {
+                tcr.setNumber(Integer.parseInt(testNumber));
+                tr.put(tcr);
+            } catch (Exception e) {
+                // There are a few crypto-bad-mac & crypto-weak-randomness findings not associated
+                // with
+                // a request, so ignore errors associated with those.
+                if (!line.contains("crypto-bad-mac") && !line.contains("crypto-weak-randomness")) {
+                    System.err.println("Contrast Node Results Parse error for: " + line);
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void parseContrastJavaFinding(TestSuiteResults tr, String json) throws Exception {
+
         TestCaseResult tcr = new TestCaseResult();
 
         try {
@@ -83,23 +155,21 @@ public class ContrastReader extends Reader {
             JSONObject request = obj.getJSONObject("request");
             String uri = request.getString("uri");
 
-            if (uri.contains(BenchmarkScore.TESTCASENAME)) {
+            if (tcr.getCWE() != 0 && uri.contains(BenchmarkScore.TESTCASENAME)) {
                 String testNumber =
                         uri.substring(
                                 uri.lastIndexOf('/') + BenchmarkScore.TESTCASENAME.length() + 1);
                 tcr.setNumber(Integer.parseInt(testNumber));
-                if (tcr.getCWE() != 0) {
-                    // System.out.println( tcr.getNumber() + "\t" + tcr.getCWE() + "\t" +
-                    // tcr.getCategory() );
-                    tr.put(tcr);
-                }
+                // System.out.println( tcr.getNumber() + "\t" + tcr.getCWE() + "\t" +
+                // tcr.getCategory() );
+                tr.put(tcr);
             }
         } catch (Exception e) {
             // There are a few crypto-bad-mac & crypto-weak-randomness findings not associated with
             // a request, so ignore errors associated with those.
             if (!json.contains("\"ruleId\":\"crypto-bad-mac\"")
                     && !json.contains("\"ruleId\":\"crypto-weak-randomness\"")) {
-                System.err.println("Contrast Results Parse error for: " + json);
+                System.err.println("Contrast Java Results Parse error for: " + json);
                 e.printStackTrace();
             }
         }
@@ -107,6 +177,8 @@ public class ContrastReader extends Reader {
 
     private static int cweLookup(String rule) {
         switch (rule) {
+            case "clickjacking-control-missing":
+                return 0000; // Don't care
             case "cmd-injection":
                 return 78; // command injection
             case "cookie-flags-missing":
@@ -129,6 +201,8 @@ public class ContrastReader extends Reader {
                 return 319; // CWE-319: Cleartext Transmission of Sensitive Information
             case "ldap-injection":
                 return 90; // ldap injection
+            case "nosql-injection":
+                return 89; // nosql injection
             case "path-traversal":
                 return 22; // path traversal
             case "reflected-xss":
@@ -160,7 +234,11 @@ public class ContrastReader extends Reader {
         try {
             String start = firstLine.split(" ")[1];
             String stop = lastLine.split(" ")[1];
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss,SSS");
+            SimpleDateFormat sdf;
+            if (start.endsWith("Z")) {
+                // Node log format: "2021-05-12T21:00:46.095Z"
+                sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            } else sdf = new SimpleDateFormat("HH:mm:ss,SSS"); // Java log format
             Date startTime = sdf.parse(start);
             Date stopTime = sdf.parse(stop);
             long startMillis = startTime.getTime();
@@ -173,4 +251,3 @@ public class ContrastReader extends Reader {
         return null;
     }
 }
-

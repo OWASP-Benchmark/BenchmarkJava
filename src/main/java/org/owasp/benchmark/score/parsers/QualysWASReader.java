@@ -20,15 +20,18 @@ package org.owasp.benchmark.score.parsers;
 import java.io.File;
 import java.util.List;
 import org.owasp.benchmark.score.BenchmarkScore;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
 import org.w3c.dom.Node;
 
 public class QualysWASReader extends Reader {
 
     // filename passed in so we can extract the scan time if it is included in the filename
     // root of XML doc passed in so we can parse the results
-    public TestResults parse(File f, Node root) throws Exception {
+    public TestSuiteResults parse(File f, Node root) throws Exception {
 
-        TestResults tr = new TestResults("Qualys WAS", true, TestResults.ToolType.DAST);
+        TestSuiteResults tr =
+                new TestSuiteResults("Qualys WAS", true, TestSuiteResults.ToolType.DAST);
 
         // If the fliename includes an elapsed time in seconds (e.g., TOOLNAME-seconds.xml) set the
         // compute time on the scorecard.

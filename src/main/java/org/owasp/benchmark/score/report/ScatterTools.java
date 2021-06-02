@@ -10,7 +10,7 @@
  *
  * <p>The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License for more details
+ * PURPOSE. See the GNU General Public License for more details.
  *
  * @author Dave Wichers
  * @created 2015
@@ -34,25 +34,25 @@ import org.jfree.chart.ui.TextAnchor;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.owasp.benchmark.score.BenchmarkScore;
-import org.owasp.benchmark.score.parsers.OverallResult;
-import org.owasp.benchmark.score.parsers.OverallResults;
+import org.owasp.benchmark.score.CategoryResults;
+import org.owasp.benchmark.score.OverallToolResults;
 
 public class ScatterTools extends ScatterPlot {
     public char averageLabel;
     public double atpr, afpr;
 
-    public ScatterTools(String title, int height, OverallResults or) {
+    public ScatterTools(String title, int height, OverallToolResults or) {
         display("          " + title, height, or);
     }
 
-    private JFreeChart display(String title, int height, OverallResults or) {
+    private JFreeChart display(String title, int height, OverallToolResults or) {
 
         XYSeriesCollection dataset = new XYSeriesCollection();
         XYSeries series = new XYSeries("Scores");
         int totalTools = 0;
         double totalToolTPR = 0;
         double totalToolFPR = 0;
-        for (OverallResult r : or.getResults()) {
+        for (CategoryResults r : or.getResults()) {
             series.add(r.falsePositiveRate * 100, r.truePositiveRate * 100);
             totalTools++;
             totalToolTPR += r.truePositiveRate;
@@ -95,7 +95,7 @@ public class ScatterTools extends ScatterPlot {
         return chart;
     }
 
-    private void makeDataLabels(OverallResults or, XYPlot xyplot) {
+    private void makeDataLabels(OverallToolResults or, XYPlot xyplot) {
         HashMap<Point2D, String> map = makePointList(or);
         for (Entry<Point2D, String> e : map.entrySet()) {
             if (e.getValue() != null) {
@@ -130,13 +130,13 @@ public class ScatterTools extends ScatterPlot {
 
     SecureRandom sr = new SecureRandom();
 
-    private HashMap<Point2D, String> makePointList(OverallResults or) {
+    private HashMap<Point2D, String> makePointList(OverallToolResults or) {
         HashMap<Point2D, String> map = new HashMap<Point2D, String>();
         char ch = ScatterHome.INITIAL_LABEL;
         int size = 0;
         // make a list of all points. Add in a tiny random to prevent exact
         // duplicate coordinates in map
-        for (OverallResult r : or.getResults()) {
+        for (CategoryResults r : or.getResults()) {
             size++;
             double x = r.falsePositiveRate * 100 + sr.nextDouble() * .000001;
             // this puts the label just below the point
@@ -190,12 +190,12 @@ public class ScatterTools extends ScatterPlot {
     }
 
     private void makeLegend(
-            OverallResults or, double x, double y, XYSeriesCollection dataset, XYPlot xyplot) {
+            OverallToolResults or, double x, double y, XYSeriesCollection dataset, XYPlot xyplot) {
         char ch = ScatterHome.INITIAL_LABEL;
         int i = 0;
         int toolCount = 0;
         double totalScore = 0;
-        for (OverallResult r : or.getResults()) {
+        for (CategoryResults r : or.getResults()) {
             toolCount++;
             // Special hack to make it line up better if the letter is an 'I' or 'i'
             String label = (ch == 'I' || ch == 'i' ? ch + ":  " : "" + ch + ": ");
@@ -238,7 +238,7 @@ public class ScatterTools extends ScatterPlot {
     }
 
     public static void main(String[] args) throws IOException {
-        OverallResults or = new OverallResults();
+        OverallToolResults or = new OverallToolResults();
         or.add("XSS1", .62, .2, 12, 5);
         or.add("XSS2", .64, .2, 12, 5);
 

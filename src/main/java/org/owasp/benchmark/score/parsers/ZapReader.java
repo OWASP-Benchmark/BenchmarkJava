@@ -25,13 +25,15 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.owasp.benchmark.score.BenchmarkScore;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
 public class ZapReader extends Reader {
 
-    public TestResults parse(File f) throws Exception {
+    public TestSuiteResults parse(File f) throws Exception {
         DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
         // Prevent XXE
         docBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
@@ -39,7 +41,8 @@ public class ZapReader extends Reader {
         InputSource is = new InputSource(new FileInputStream(f));
         Document doc = docBuilder.parse(is);
 
-        TestResults tr = new TestResults("OWASP ZAP", false, TestResults.ToolType.DAST);
+        TestSuiteResults tr =
+                new TestSuiteResults("OWASP ZAP", false, TestSuiteResults.ToolType.DAST);
 
         // If the filename includes an elapsed time in seconds (e.g., TOOLNAME-seconds.xml), set the
         // compute time on the score card.
@@ -110,7 +113,7 @@ public class ZapReader extends Reader {
     //      <wascid>14</wascid>
     //    </alertitem>
 
-    private void parseAndAddZapIssues(Node flaw, TestResults tr) throws URISyntaxException {
+    private void parseAndAddZapIssues(Node flaw, TestSuiteResults tr) throws URISyntaxException {
         int cwe = -1;
         Node rule = getNamedChild("cweid", flaw);
         if (rule != null) {
@@ -133,7 +136,8 @@ public class ZapReader extends Reader {
         }
     }
 
-    private void addIssue(Node alertData, TestResults tr, int cwe, String category, int confidence)
+    private void addIssue(
+            Node alertData, TestSuiteResults tr, int cwe, String category, int confidence)
             throws URISyntaxException {
         int testNumber = extractTestNumber(getNamedChild("uri", alertData).getTextContent());
         if (testNumber != -1) {

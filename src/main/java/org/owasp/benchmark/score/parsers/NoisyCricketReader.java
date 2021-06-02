@@ -19,12 +19,15 @@ package org.owasp.benchmark.score.parsers;
 
 import java.util.List;
 import org.owasp.benchmark.score.BenchmarkScore;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
 import org.w3c.dom.Node;
 
 public class NoisyCricketReader extends Reader {
 
-    public TestResults parse(Node root) throws Exception {
-        TestResults tr = new TestResults("NoisyCricket", false, TestResults.ToolType.SAST);
+    public TestSuiteResults parse(Node root) throws Exception {
+        TestSuiteResults tr =
+                new TestSuiteResults("NoisyCricket", false, TestSuiteResults.ToolType.SAST);
         tr.setTime("1 minute");
         Node meta = getNamedChild("meta", root);
         tr.setToolVersion(getAttributeValue("version", meta));
@@ -42,7 +45,7 @@ public class NoisyCricketReader extends Reader {
         return tr;
     }
 
-    private void parseNoisyCricketIssue(Node item, TestResults tr) {
+    private void parseNoisyCricketIssue(Node item, TestSuiteResults tr) {
         int testNumber = -1;
         String testcase = getAttributeValue("file", item);
         if (testcase.startsWith(BenchmarkScore.TESTCASENAME)) {

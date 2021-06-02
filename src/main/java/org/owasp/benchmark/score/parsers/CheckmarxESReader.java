@@ -23,10 +23,13 @@ import java.nio.file.Paths;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.owasp.benchmark.score.BenchmarkScore;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
 
 public class CheckmarxESReader extends Reader {
-    public TestResults parse(File f) throws Exception {
-        TestResults tr = new TestResults("Checkmarx SAST", true, TestResults.ToolType.SAST);
+    public TestSuiteResults parse(File f) throws Exception {
+        TestSuiteResults tr =
+                new TestSuiteResults("Checkmarx SAST", true, TestSuiteResults.ToolType.SAST);
 
         String content = new String(Files.readAllBytes(Paths.get(f.getPath())));
         JSONObject obj = new JSONObject(content);

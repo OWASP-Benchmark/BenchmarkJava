@@ -19,12 +19,15 @@ package org.owasp.benchmark.score.parsers;
 
 import java.util.List;
 import org.owasp.benchmark.score.BenchmarkScore;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
 import org.w3c.dom.Node;
 
 public class NetsparkerReader extends Reader {
 
-    public TestResults parse(Node root) throws Exception {
-        TestResults tr = new TestResults("Netsparker", true, TestResults.ToolType.DAST);
+    public TestSuiteResults parse(Node root) throws Exception {
+        TestSuiteResults tr =
+                new TestSuiteResults("Netsparker", true, TestSuiteResults.ToolType.DAST);
 
         Node target = getNamedChild("target", root);
 
@@ -36,7 +39,7 @@ public class NetsparkerReader extends Reader {
         String duration = getNamedChild("scantime", target).getTextContent();
         try {
             long millis = Long.parseLong(duration);
-            tr.setTime(TestResults.formatTime(millis));
+            tr.setTime(TestSuiteResults.formatTime(millis));
         } catch (Exception e) {
             tr.setTime(duration);
         }
@@ -52,8 +55,6 @@ public class NetsparkerReader extends Reader {
                 TestCaseResult tcr = parseNetsparkerIssue(issue);
                 if (tcr != null) {
                     tr.put(tcr);
-                    // System.out.println( tcr.getNumber() + ", " + tcr.getCategory() + ", " +
-                    // tcr.getCWE() + ", " + tcr.getEvidence() );
                 }
             } catch (Exception e) {
                 e.printStackTrace();

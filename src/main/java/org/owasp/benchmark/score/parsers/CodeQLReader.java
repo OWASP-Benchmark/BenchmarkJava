@@ -25,10 +25,12 @@ import java.util.HashMap;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.owasp.benchmark.score.BenchmarkScore;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
 
 public class CodeQLReader extends Reader {
 
-    public TestResults parse(File f) throws Exception {
+    public TestSuiteResults parse(File f) throws Exception {
         String content = new String(Files.readAllBytes(Paths.get(f.getPath())));
 
         /*
@@ -41,7 +43,7 @@ public class CodeQLReader extends Reader {
 
         JSONArray runs = obj.getJSONArray("runs");
 
-        TestResults tr = new TestResults("CodeQL", false, TestResults.ToolType.SAST);
+        TestSuiteResults tr = new TestSuiteResults("CodeQL", false, TestSuiteResults.ToolType.SAST);
         // Scan time is not included in the sarif-schema. But scan time is provided on their web
         // site next to results
         tr.setTime(f); // This grabs the scan time out of the filename, if provided

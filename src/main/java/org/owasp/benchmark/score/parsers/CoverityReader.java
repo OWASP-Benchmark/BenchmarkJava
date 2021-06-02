@@ -23,10 +23,12 @@ import java.nio.file.Paths;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.owasp.benchmark.score.BenchmarkScore;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
 
 public class CoverityReader extends Reader {
 
-    public TestResults parse(File f) throws Exception {
+    public TestSuiteResults parse(File f) throws Exception {
         String content = new String(Files.readAllBytes(Paths.get(f.getPath())));
 
         JSONObject obj = new JSONObject(content);
@@ -35,11 +37,11 @@ public class CoverityReader extends Reader {
         String key = version > 1 ? "issues" : "mergedIssues";
         JSONArray arr = obj.getJSONArray(key);
 
-        TestResults tr =
-                new TestResults(
+        TestSuiteResults tr =
+                new TestSuiteResults(
                         "Coverity Code Advisor",
                         true,
-                        TestResults.ToolType
+                        TestSuiteResults.ToolType
                                 .SAST); // Coverity's tool is called Code Advisor or Code Advisor On
         // Demand
         // Fixme: See if we can figure this out from some of the files they provide

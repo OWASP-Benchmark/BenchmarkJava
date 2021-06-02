@@ -23,13 +23,15 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.owasp.benchmark.score.BenchmarkScore;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
 public class CASTAIPReader extends Reader {
 
-    public TestResults parse(File f) throws Exception {
+    public TestSuiteResults parse(File f) throws Exception {
         DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
         // Prevent XXE
         docBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
@@ -37,7 +39,8 @@ public class CASTAIPReader extends Reader {
         InputSource is = new InputSource(new FileInputStream(f));
         Document doc = docBuilder.parse(is);
 
-        TestResults tr = new TestResults("CAST AIP", true, TestResults.ToolType.SAST);
+        TestSuiteResults tr =
+                new TestSuiteResults("CAST AIP", true, TestSuiteResults.ToolType.SAST);
         Node root = doc.getDocumentElement();
 
         //      <?xml version="1.0" encoding="UTF-8"?>
@@ -64,8 +67,6 @@ public class CASTAIPReader extends Reader {
                 TestCaseResult tcr = parseCASTAIPIssue(issue);
                 if (tcr != null) {
                     tr.put(tcr);
-                    // System.out.println( tcr.getNumber() + ", " + tcr.getCategory() + ", " +
-                    // tcr.getCWE() + ", " + tcr.getEvidence() );
                 }
             } catch (Exception e) {
                 e.printStackTrace();

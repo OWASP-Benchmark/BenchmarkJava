@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<Students>
+    <Student studentId="1">
+        <LastName>Tables</LastName>
+        <FirstName>Bobby</FirstName>
+        <Username>btables</Username>
+        <Password>Tr0ub4dor&amp;3</Password>
+    </Student>
+    <Student studentId="2">
+        <LastName>Mercury</LastName>
+        <FirstName>Freddy</FirstName>
+        <Username>btables2</Username>
+        <Password>Don'tRemember</Password>
+    </Student>
+    <Student studentId="3">
+        <LastName>Mouse</LastName>
+        <FirstName>Mickey</FirstName>
+        <Username>Disney</Username>
+        <Password>World4321</Password>
+    </Student>
+    <Student studentId="4">
+        <LastName>Skywalker</LastName>
+        <FirstName>Anakin</FirstName>
+        <Username>sithlord</Username>
+        <Password>ihatesand1234</Password>
+    </Student>
+</Students>
+

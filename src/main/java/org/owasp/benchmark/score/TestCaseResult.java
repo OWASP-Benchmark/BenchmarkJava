@@ -10,12 +10,12 @@
  *
  * <p>The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License for more details
+ * PURPOSE. See the GNU General Public License for more details.
  *
  * @author Dave Wichers
  * @created 2015
  */
-package org.owasp.benchmark.score.parsers;
+package org.owasp.benchmark.score;
 
 /* This class represents a single test case result. It documents the expected result (real),
  * and the actual result (result).

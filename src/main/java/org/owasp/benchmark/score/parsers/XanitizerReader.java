@@ -22,6 +22,8 @@ import javax.xml.XMLConstants;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.owasp.benchmark.score.BenchmarkScore;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -30,8 +32,9 @@ public class XanitizerReader extends Reader {
 
     public XanitizerReader() {}
 
-    public TestResults parse(final File f) throws Exception {
-        final TestResults tr = new TestResults("Xanitizer", false, TestResults.ToolType.SAST);
+    public TestSuiteResults parse(final File f) throws Exception {
+        final TestSuiteResults tr =
+                new TestSuiteResults("Xanitizer", false, TestSuiteResults.ToolType.SAST);
         tr.setTime(f);
 
         /*

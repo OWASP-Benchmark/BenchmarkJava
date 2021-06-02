@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+ "-//Hibernate/Hibernate Mapping DTD//EN"
+ "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="org.owasp.benchmark.helpers.entities.Employee" table="EMPLOYEE">
+        <meta attribute="class-description">
+            This class contains the employee detail.
+        </meta>
+        <id name="id" type="int" column="id">
+            <generator class="native" />
+        </id>
+        <set name="certificates" cascade="all">
+            <key column="employee_id" />
+            <one-to-many class="org.owasp.benchmark.helpers.entities.Certificate" />
+        </set>
+        <property name="firstName" column="first_name" type="string" />
+        <property name="lastName" column="last_name" type="string" />
+        <property name="salary" column="salary" type="int" />
+    </class>
+
+    <class name="org.owasp.benchmark.helpers.entities.Certificate" table="CERTIFICATE">
+        <meta attribute="class-description">
+            This class contains the certificate records.
+        </meta>
+        <id name="id" type="int" column="id">
+            <generator class="native" />
+        </id>
+        <property name="name" column="certificate_name" type="string" />
+    </class>
+
+</hibernate-mapping>
+

@@ -19,12 +19,15 @@ package org.owasp.benchmark.score.parsers;
 
 import java.util.List;
 import org.owasp.benchmark.score.BenchmarkScore;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
 import org.w3c.dom.Node;
 
 public class Rapid7Reader extends Reader {
 
-    public TestResults parse(Node root) throws Exception {
-        TestResults tr = new TestResults("Rapid7 AppSpider", true, TestResults.ToolType.DAST);
+    public TestSuiteResults parse(Node root) throws Exception {
+        TestSuiteResults tr =
+                new TestSuiteResults("Rapid7 AppSpider", true, TestSuiteResults.ToolType.DAST);
 
         //        <VulnSummary>
         //        <AppVersion>6.4.258.1</AppVersion>

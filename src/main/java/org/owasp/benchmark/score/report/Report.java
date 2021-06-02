@@ -10,7 +10,7 @@
  *
  * <p>The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License for more details
+ * PURPOSE. See the GNU General Public License for more details.
  *
  * @author Dave Wichers
  * @created 2015
@@ -25,11 +25,11 @@ import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.Map;
 import org.owasp.benchmark.score.BenchmarkScore;
-import org.owasp.benchmark.score.parsers.Counter;
-import org.owasp.benchmark.score.parsers.OverallResult;
-import org.owasp.benchmark.score.parsers.OverallResults;
-import org.owasp.benchmark.score.parsers.TestResults;
-import org.owasp.benchmark.score.parsers.TestResults.ToolType;
+import org.owasp.benchmark.score.CategoryResults;
+import org.owasp.benchmark.score.OverallToolResults;
+import org.owasp.benchmark.score.TP_FN_TN_FP_Counts;
+import org.owasp.benchmark.score.TestSuiteResults;
+import org.owasp.benchmark.score.TestSuiteResults.ToolType;
 
 public class Report implements Comparable<Report> {
 
@@ -38,21 +38,21 @@ public class Report implements Comparable<Report> {
     private String toolName = "not specified";
     private final String toolNameAndVersion;
     private final String testSuiteVersion;
-    private final Map<String, Counter> scores;
-    private final OverallResults overallResults;
-    private final String reportPath;
+    private final Map<String, TP_FN_TN_FP_Counts> scores;
+    private final OverallToolResults overallResults;
 
     // The name of the file that contains this scorecard report
     private String filename = null;
 
     public Report(
-            TestResults actualResults,
-            Map<String, Counter> scores,
-            OverallResults or,
+            TestSuiteResults actualResults,
+            Map<String, TP_FN_TN_FP_Counts> scores,
+            OverallToolResults or,
             int totalResults,
             String actualResultsFileName,
             boolean isCommercial,
-            ToolType toolType)
+            ToolType toolType,
+            File scoreCardDir)
             throws IOException, URISyntaxException {
         this.isCommercial = isCommercial;
         this.toolType = toolType;
@@ -64,10 +64,9 @@ public class Report implements Comparable<Report> {
         String fullTitle =
                 BenchmarkScore.fullTestSuiteName(BenchmarkScore.TESTSUITE)
                         + " Scorecard for "
-                        + actualResults.getToolNameAndVersion(); // + getToolName() + version;
+                        + actualResults.getToolNameAndVersion();
         // If not in anonymous mode OR the tool is not commercial, add the type at the end of the
-        // name
-        // It's not added to anonymous commercial tools, because it would be redundant.
+        // name. It's not added to anonymous commercial tools, because it would be redundant.
         if (!BenchmarkScore.anonymousMode || !isCommercial) {
             fullTitle += " (" + actualResults.toolType + ")";
         }
@@ -89,8 +88,8 @@ public class Report implements Comparable<Report> {
         this.scores = scores;
         this.overallResults = or;
 
-        this.reportPath = BenchmarkScore.scoreCardDirName + File.separator + filename + ".html";
-        File img = new File(BenchmarkScore.scoreCardDirName + File.separator + filename + ".png");
+        String reportPath = scoreCardDir.getAbsolutePath() + File.separator + filename + ".html";
+        File img = new File(scoreCardDir, filename + ".png");
         ScatterTools graph = new ScatterTools(shortTitle, 800, or);
 
         if (!(BenchmarkScore.showAveOnlyMode && this.isCommercial)) {
@@ -104,8 +103,8 @@ public class Report implements Comparable<Report> {
                             totalResults,
                             img,
                             actualResultsFileName);
-            Files.write(Paths.get(reportPath), reportHtml.getBytes());
-            System.out.println("Report written to: " + new File(reportPath).getAbsolutePath());
+            Files.write(new File(reportPath).toPath(), reportHtml.getBytes());
+            System.out.println("Report written to: " + reportPath);
         }
     }
 
@@ -148,15 +147,15 @@ public class Report implements Comparable<Report> {
      *
      * @return the overall results for this scorecard.
      */
-    public OverallResults getOverallResults() {
+    public OverallToolResults getOverallResults() {
         return this.overallResults;
     }
 
     private String generateHtml(
             String title,
-            TestResults actualResults,
-            Map<String, Counter> scores,
-            OverallResults or,
+            TestSuiteResults actualResults,
+            Map<String, TP_FN_TN_FP_Counts> scores,
+            OverallToolResults or,
             int totalResults,
             File img,
             String actualResultsFileName)
@@ -168,12 +167,10 @@ public class Report implements Comparable<Report> {
                                         BenchmarkScore.PATHTOSCORECARDRESOURCES
                                                 + "template.html")));
 
-        // String template = new String(Files.readAllBytes(
-        // Paths.get(this.getClass().getClassLoader()
-        // .getResource("template.html")
-        // .toURI())));
-
         String html = template;
+        html =
+                html.replace(
+                        "${testsuite}", BenchmarkScore.fullTestSuiteName(BenchmarkScore.TESTSUITE));
         html = html.replace("${title}", title);
         html = html.replace("${tests}", Integer.toString(totalResults));
         html = html.replace("${time}", or.getTime());
@@ -182,8 +179,7 @@ public class Report implements Comparable<Report> {
         html = html.replace("${version}", actualResults.getTestSuiteVersion());
         html = html.replace("${actualResultsFile}", actualResultsFileName);
 
-        String imgTag = "<img align=\"middle\" src=\"" + img.getName() + "\" />";
-        html = html.replace("${image}", imgTag);
+        html = html.replace("${image}", img.getName());
 
         String table = generateTable(actualResults, scores, or);
         html = html.replace("${table}", table);
@@ -193,7 +189,9 @@ public class Report implements Comparable<Report> {
 
     /** The method generates a Detailed results table for whatever tool results are passed in. */
     private String generateTable(
-            TestResults actualResults, Map<String, Counter> scores, OverallResults or) {
+            TestSuiteResults actualResults,
+            Map<String, TP_FN_TN_FP_Counts> scores,
+            OverallToolResults or) {
         StringBuilder sb = new StringBuilder();
         sb.append("<table class=\"table\">\n");
         sb.append("<tr>");
@@ -208,15 +206,15 @@ public class Report implements Comparable<Report> {
         sb.append("<th>FPR</th>");
         sb.append("<th>Score</th>");
         sb.append("</tr>\n");
-        Counter totals = new Counter();
+        TP_FN_TN_FP_Counts totals = new TP_FN_TN_FP_Counts();
         double totalTPR = 0;
         double totalFPR = 0;
         double totalScore = 0;
 
         for (String category : scores.keySet()) {
 
-            Counter c = scores.get(category);
-            OverallResult r = or.getResults(category);
+            TP_FN_TN_FP_Counts c = scores.get(category);
+            CategoryResults r = or.getResults(category);
             String style = "";
 
             if (Math.abs(r.truePositiveRate - r.falsePositiveRate) < .1) style = "class=\"danger\"";
@@ -277,7 +275,7 @@ public class Report implements Comparable<Report> {
                 .compareTo(r.getToolNameAndVersion().toLowerCase());
     }
 
-    public Map<String, Counter> getScores() {
+    public Map<String, TP_FN_TN_FP_Counts> getScores() {
         return this.scores;
     }
 }

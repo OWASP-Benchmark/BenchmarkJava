@@ -1,20 +1,18 @@
 @ECHO OFF
 IF EXIST .\contrast.jar (
   IF EXIST .\working (
-        DEL /F /Q .\working\contrast.log
+        DEL \F \Q .\working\contrast.log
 
-        RMDIR /S /Q .\working\cache
+        RMDIR \S .\working\cache
 
-        ECHO.
+        ECHO ""
+
         ECHO Previous Contrast results have been removed
-        ECHO.
+
+        ECHO ""
     )
 
     CD ..\..
-
-    ECHO After Crawl is Complete, hit Ctrl-C to stop Benchmark Tomcat instance.
-    ECHO When it asks "Terminate batch job (Y/N)?" Enter N, so script will complete and copy results to /results directory.
-    ECHO.
 
     CALL mvn clean package cargo:run -Pdeploywcontrast
 

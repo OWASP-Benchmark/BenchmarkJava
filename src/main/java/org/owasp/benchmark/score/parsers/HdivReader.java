@@ -29,6 +29,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.owasp.benchmark.score.BenchmarkScore;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
 
 public class HdivReader extends Reader {
 
@@ -40,8 +42,8 @@ public class HdivReader extends Reader {
         System.out.println(cr.parse(f));
     }
 
-    public TestResults parse(final File f) throws Exception {
-        TestResults tr = new TestResults("Hdiv", true, TestResults.ToolType.IAST);
+    public TestSuiteResults parse(final File f) throws Exception {
+        TestSuiteResults tr = new TestSuiteResults("Hdiv", true, TestSuiteResults.ToolType.IAST);
 
         BufferedReader reader = new BufferedReader(new FileReader(f));
         String firstLine = reader.readLine();
@@ -107,7 +109,7 @@ public class HdivReader extends Reader {
         return (stopMillis - startMillis) / 1000 + " seconds";
     }
 
-    private void process(final TestResults tr, String testNumber, final List<String> chunk)
+    private void process(final TestSuiteResults tr, String testNumber, final List<String> chunk)
             throws Exception {
         for (String line : chunk) {
             TestCaseResult tcr = new TestCaseResult();

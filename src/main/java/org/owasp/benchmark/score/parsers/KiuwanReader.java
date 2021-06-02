@@ -23,10 +23,12 @@ import java.nio.file.Paths;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.owasp.benchmark.score.BenchmarkScore;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
 
 public class KiuwanReader extends Reader {
 
-    public TestResults parse(File f) throws Exception {
+    public TestSuiteResults parse(File f) throws Exception {
         String content = new String(Files.readAllBytes(Paths.get(f.getPath())));
 
         /*
@@ -44,7 +46,7 @@ public class KiuwanReader extends Reader {
 
         String source = obj.getString("source");
 
-        TestResults tr = new TestResults(source, true, TestResults.ToolType.SAST);
+        TestSuiteResults tr = new TestSuiteResults(source, true, TestSuiteResults.ToolType.SAST);
 
         // Scan time is included in the threadfix schema: "metadata/Kiuwan-AnalysisDuration"
         if (null != metadata) {

@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.List;
 import org.apache.commons.io.IOUtils;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
 
 public class SourceMeterReader extends Reader {
 
@@ -33,9 +35,10 @@ public class SourceMeterReader extends Reader {
     // /home/istvan/owasp/ellenorzes/benchmark/src/main/java/org/owasp/benchmark/testcode/BenchmarkTest00023.java(80):(80,33,81,61)[0]
     // /home/istvan/owasp/ellenorzes/benchmark/src/main/java/org/owasp/benchmark/testcode/BenchmarkTest00023.java(80):(80,4,81,62)[0]
 
-    public TestResults parse(File fileToParse) throws Exception {
-        TestResults tr =
-                new TestResults("SourceMeter VulnerabilityHunter", true, TestResults.ToolType.SAST);
+    public TestSuiteResults parse(File fileToParse) throws Exception {
+        TestSuiteResults tr =
+                new TestSuiteResults(
+                        "SourceMeter VulnerabilityHunter", true, TestSuiteResults.ToolType.SAST);
 
         List<String> sourceLines = IOUtils.readLines(new FileInputStream(fileToParse));
 

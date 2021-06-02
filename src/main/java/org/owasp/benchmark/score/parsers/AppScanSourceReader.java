@@ -10,7 +10,7 @@
  *
  * <p>The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License for more details
+ * PURPOSE. See the GNU General Public License for more details.
  *
  * @author Dave Wichers
  * @created 2015
@@ -27,6 +27,8 @@ import java.util.TreeMap;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.owasp.benchmark.score.BenchmarkScore;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -36,7 +38,7 @@ public class AppScanSourceReader extends Reader {
 
     // This is the original AppScan Source reader, when they generated ".ozasmt" files.
 
-    public TestResults parse(File f) throws Exception {
+    public TestSuiteResults parse(File f) throws Exception {
         DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
         // Prevent XXE
         docBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
@@ -57,7 +59,8 @@ public class AppScanSourceReader extends Reader {
         // Map<Integer,String> sev = parsePool( root, "FindingDataPool", "id", "sev", "" );
         Map<Integer, Set<Integer>> assess = parseAssessments(root);
 
-        TestResults tr = new TestResults("IBM AppScan Source", true, TestResults.ToolType.SAST);
+        TestSuiteResults tr =
+                new TestSuiteResults("IBM AppScan Source", true, TestSuiteResults.ToolType.SAST);
 
         // <AssessmentRun name="webgoat-benchmark_3 - 5/18/15 12:01AM" version="9.0.1.0">
         String version = getAttributeValue("version", root);

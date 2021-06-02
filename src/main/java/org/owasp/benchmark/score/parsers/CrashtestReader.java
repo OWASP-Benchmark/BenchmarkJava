@@ -25,6 +25,8 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.owasp.benchmark.score.BenchmarkScore;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -38,7 +40,7 @@ public class CrashtestReader extends Reader {
     //	   <failure message="TLS 1.1 is offered by the server. This version of TLS is deprecated. You
     // should use TLS 1.2 or TLS 1.3" type="high"/>
 
-    public TestResults parse(File f) throws Exception {
+    public TestSuiteResults parse(File f) throws Exception {
         DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
         // Prevent XXE
         docBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
@@ -46,12 +48,13 @@ public class CrashtestReader extends Reader {
         InputSource is = new InputSource(new FileInputStream(f));
         Document doc = docBuilder.parse(is);
 
-        TestResults tr = new TestResults("Crashtest Security", false, TestResults.ToolType.DAST);
+        TestSuiteResults tr =
+                new TestSuiteResults("Crashtest Security", false, TestSuiteResults.ToolType.DAST);
 
         Node crashtest = doc.getDocumentElement();
         String time = crashtest.getAttributes().getNamedItem("time").getNodeValue();
         // They provide the time in seconds but formatTime expects milliseconds
-        tr.setTime(TestResults.formatTime(time + "000"));
+        tr.setTime(TestSuiteResults.formatTime(time + "000"));
         Node testsuite = getNamedChild("testsuite", crashtest);
         //		tr.setToolVersion( version );
 

@@ -52,7 +52,7 @@ public class ScatterPlot {
 
     // This variable is directly accessed by ScatterHome.java
     JFreeChart chart = null;
-    static final StandardChartTheme theme = initializeTheme();
+    final StandardChartTheme theme = initializeTheme();
     static final DecimalFormat pctFormat = new DecimalFormat("0'%'");
     static final Stroke dashed =
             new BasicStroke(
@@ -128,8 +128,7 @@ public class ScatterPlot {
         makeGuessingLine(xyplot);
     }
 
-    public static XYPointerAnnotation makePointer(
-            int x, int y, String msg, TextAnchor anchor, int angle) {
+    public XYPointerAnnotation makePointer(int x, int y, String msg, TextAnchor anchor, int angle) {
         XYPointerAnnotation pointer = new XYPointerAnnotation(msg, x, y, Math.toRadians(angle));
         pointer.setBackgroundPaint(Color.white);
         pointer.setTextAnchor(anchor);
@@ -144,11 +143,11 @@ public class ScatterPlot {
 
     public void writeChartToFile(File f, int height) throws IOException {
         FileOutputStream stream = new FileOutputStream(f);
-        ChartUtils.writeChartAsPNG(stream, chart, (int) Math.round(height * 1.4), height);
+        ChartUtils.writeChartAsPNG(stream, this.chart, (int) Math.round(height * 1.4), height);
         stream.close();
     }
 
-    public static void addGenerationDate(XYPlot xyplot) {
+    public void addGenerationDate(XYPlot xyplot) {
         // add scorecard generation date
         final String pattern = "dd MMM yyyy h:mm a";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
@@ -185,7 +184,7 @@ public class ScatterPlot {
         xyplot.addAnnotation(area);
     }
 
-    public static void makeGuessingLine(XYPlot xyplot) {
+    public void makeGuessingLine(XYPlot xyplot) {
         // draw guessing line
         XYLineAnnotation guessing = new XYLineAnnotation(-5, -5, 100, 100, dashed, Color.red);
         xyplot.addAnnotation(guessing);
@@ -230,7 +229,7 @@ public class ScatterPlot {
         return rotated;
     }
 
-    public static void makePointer(
+    public void makePointer(
             XYPlot plot, double x, double y, String msg, TextAnchor anchor, int angle) {
         //        TextTitle textTitle = new TextTitle(msg, theme.getSmallFont(), Color.red,
         // RectangleEdge.TOP, HorizontalAlignment.LEFT, VerticalAlignment.TOP, new
@@ -249,6 +248,5 @@ public class ScatterPlot {
         pointer.setPaint(Color.red);
         pointer.setFont(theme.getRegularFont());
         plot.addAnnotation(pointer);
-        ;
     }
 }

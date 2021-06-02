@@ -36,12 +36,19 @@ public class DatabaseHelper {
     private static Statement stmt;
     private static Connection conn;
     public static org.springframework.jdbc.core.JdbcTemplate JDBCtemplate;
+    public static org.owasp.benchmark.helpers.HibernateUtil hibernateUtil =
+            new org.owasp.benchmark.helpers.HibernateUtil(false);
+    public static org.owasp.benchmark.helpers.HibernateUtil hibernateUtilClassic =
+            new org.owasp.benchmark.helpers.HibernateUtil(true);
     public static final boolean hideSQLErrors =
             false; // If we want SQL Exceptions to be suppressed from being displayed to the user of
     // the web app.
 
     static {
         initDataBase();
+        org.owasp.benchmark.helpers.DatabaseHelper.hibernateUtil.initData();
+        org.owasp.benchmark.helpers.DatabaseHelper.hibernateUtilClassic.initClassicData();
+
         System.out.println("Spring context init() ");
         @SuppressWarnings("resource")
         org.springframework.context.ApplicationContext ac =

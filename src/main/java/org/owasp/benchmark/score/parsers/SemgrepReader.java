@@ -20,10 +20,13 @@ package org.owasp.benchmark.score.parsers;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.owasp.benchmark.score.BenchmarkScore;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
 
 public class SemgrepReader {
-    public TestResults parse(JSONObject jsonResults) {
-        TestResults tr = new TestResults("Semgrep", false, TestResults.ToolType.SAST);
+    public TestSuiteResults parse(JSONObject jsonResults) {
+        TestSuiteResults tr =
+                new TestSuiteResults("Semgrep", false, TestSuiteResults.ToolType.SAST);
 
         JSONArray results = jsonResults.getJSONArray("results");
 

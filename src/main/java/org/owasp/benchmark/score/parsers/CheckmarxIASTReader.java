@@ -23,6 +23,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.owasp.benchmark.score.BenchmarkScore;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
 
 public class CheckmarxIASTReader extends Reader {
 
@@ -122,8 +124,8 @@ public class CheckmarxIASTReader extends Reader {
         return 0;
     }
 
-    public TestResults parse(File f) throws Exception {
-        TestResults tr = new TestResults("CxIAST", true, TestResults.ToolType.IAST);
+    public TestSuiteResults parse(File f) throws Exception {
+        TestSuiteResults tr = new TestSuiteResults("CxIAST", true, TestSuiteResults.ToolType.IAST);
 
         java.io.Reader inReader = new java.io.FileReader(f);
         Iterable<CSVRecord> records = CSVFormat.RFC4180.withFirstRecordAsHeader().parse(inReader);
@@ -144,7 +146,7 @@ public class CheckmarxIASTReader extends Reader {
             Matcher testCaseMatcher = testCasePattern.matcher(url);
             if (testCaseMatcher.find()) {
                 String testCase = testCaseMatcher.group(0);
-                //      System.out.println("testCase = "+testCase+" Test Num =
+                // System.out.println("testCase = "+testCase+" Test Num =
                 // "+testCase.substring(testCase.length()-Utils.TESTCASE_DIGITS,
                 // testCase.length())); // For debugging YE
                 tcr.setTestCaseName(testCase);
@@ -157,8 +159,6 @@ public class CheckmarxIASTReader extends Reader {
                 if (tcr.getCWE() != 0) {
                     tr.put(tcr);
                 }
-                //      System.out.println(testCase+" "+tcr.getCWE()+" "+tcr.getCategory()); // For
-                // debugging YE
             }
         }
         tr.setTime("100");

@@ -20,6 +20,8 @@ package org.owasp.benchmark.score.parsers;
 import java.io.File;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
 
 public class SeekerReader extends Reader {
 
@@ -69,8 +71,8 @@ public class SeekerReader extends Reader {
         return 0;
     }
 
-    public TestResults parse(File f) throws Exception {
-        TestResults tr = new TestResults("Seeker", true, TestResults.ToolType.IAST);
+    public TestSuiteResults parse(File f) throws Exception {
+        TestSuiteResults tr = new TestSuiteResults("Seeker", true, TestSuiteResults.ToolType.IAST);
 
         java.io.Reader inReader = new java.io.FileReader(f);
         Iterable<CSVRecord> records = CSVFormat.RFC4180.withFirstRecordAsHeader().parse(inReader);

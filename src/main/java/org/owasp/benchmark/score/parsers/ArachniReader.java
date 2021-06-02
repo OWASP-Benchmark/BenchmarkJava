@@ -10,7 +10,7 @@
  *
  * <p>The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License for more details
+ * PURPOSE. See the GNU General Public License for more details.
  *
  * @author Dave Wichers
  * @created 2015
@@ -26,6 +26,8 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.owasp.benchmark.score.BenchmarkScore;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -39,7 +41,7 @@ public class ArachniReader extends Reader {
     //    <finish_datetime>2015-08-17T14:44:14+03:00</finish_datetime>
     //    <sitemap>
 
-    public TestResults parse(File f) throws Exception {
+    public TestSuiteResults parse(File f) throws Exception {
         DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
         // Prevent XXE
         docBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
@@ -47,7 +49,8 @@ public class ArachniReader extends Reader {
         InputSource is = new InputSource(new FileInputStream(f));
         Document doc = docBuilder.parse(is);
 
-        TestResults tr = new TestResults("Arachni", false, TestResults.ToolType.DAST);
+        TestSuiteResults tr =
+                new TestSuiteResults("Arachni", false, TestSuiteResults.ToolType.DAST);
 
         Node arachni = doc.getDocumentElement();
         String version = getNamedChild("version", arachni).getTextContent();
@@ -120,7 +123,7 @@ public class ArachniReader extends Reader {
         try {
             long start = sdf.parse(submitted).getTime();
             long finish = sdf.parse(published).getTime();
-            return TestResults.formatTime(finish - start);
+            return TestSuiteResults.formatTime(finish - start);
         } catch (Exception e) {
             e.printStackTrace();
             return "Unknown";

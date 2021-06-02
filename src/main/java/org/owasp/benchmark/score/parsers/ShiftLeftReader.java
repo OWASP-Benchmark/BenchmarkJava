@@ -21,7 +21,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import org.owasp.benchmark.score.parsers.TestResults.ToolType;
+import org.owasp.benchmark.score.TestCaseResult;
+import org.owasp.benchmark.score.TestSuiteResults;
+import org.owasp.benchmark.score.TestSuiteResults.ToolType;
 
 /*
  * This Reader was contributed by ShiftLeft and is used to parse a custom .csv file their custom scripts
@@ -31,9 +33,9 @@ import org.owasp.benchmark.score.parsers.TestResults.ToolType;
  */
 
 public class ShiftLeftReader extends Reader {
-    public TestResults parse(File f) throws IOException {
+    public TestSuiteResults parse(File f) throws IOException {
 
-        TestResults tr = new TestResults("ShiftLeft", true, ToolType.SAST);
+        TestSuiteResults tr = new TestSuiteResults("ShiftLeft", true, ToolType.SAST);
         try (BufferedReader reader = new BufferedReader(new FileReader(f)); ) {
             String line;
             while ((line = reader.readLine()) != null) {

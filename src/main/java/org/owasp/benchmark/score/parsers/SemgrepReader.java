@@ -10,7 +10,7 @@
  *
  * <p>The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License for more details
+ * PURPOSE. See the GNU General Public License for more details.
  *
  * @author Nacho Guisado Obregón, Dave Wichers
  * @created 2020
@@ -44,20 +44,31 @@ public class SemgrepReader {
     }
 
     private int translate(int cwe) {
-        /*
-        CWEs reported by semgrep and not mapped in this function:
-         * 113 // Header injection;
-         * 200 // Information Leak / Disclosure;
-         * 276 // Incorrect Default Permissions;
-         * 352 // CSRF;
-         * 696 // Incorrect Behavior Order;
-         */
+
         switch (cwe) {
+            case 113: // Header injection;
+            case 200: // Information Leak / Disclosure;
+            case 276: // Incorrect Default Permissions;
+            case 352: // CSRF;
+                break; // Don't care
+
+            case 78:
+                return 78; // Command Injection
+            case 89:
+                return 89; // SQL Injection
+            case 90:
+                return 90; // LDAP Injection
             case 326:
-            case 696:
+            case 327:
+            case 696: // Incorrect Behavior Order
                 return 327; // Weak Encryption
+            case 614:
             case 1004:
-                return 614; // Insecure cookie
+                return 614; // Insecure cookie use
+            default:
+                System.out.println(
+                        "INFO: Found following CWE in SemGrep results which we haven't seen before: "
+                                + cwe);
         }
         return cwe;
     }
@@ -167,33 +178,34 @@ public class SemgrepReader {
         }
          */
         try {
-            TestCaseResult tcr = new TestCaseResult();
-
-            JSONObject extra = result.getJSONObject("extra");
-            JSONObject metadata = extra.getJSONObject("metadata");
-
-            // CWE
-            int cwe = Integer.parseInt(metadata.getString("cwe").split(":")[0].split("-")[1]);
-            try {
-                cwe = translate(cwe);
-            } catch (NumberFormatException ex) {
-                System.out.println("CWE # not parseable from: " + metadata.getString("cwe"));
-            }
-
-            // category
-            String category = metadata.getString("owasp");
-
-            // evidence
-            String evidence = result.getString("check_id");
-
-            tcr.setCWE(cwe);
-            tcr.setCategory(category);
-            tcr.setEvidence(evidence);
-            tcr.setConfidence(0);
-
             String className = result.getString("path");
             className = (className.substring(className.lastIndexOf('/') + 1)).split("\\.")[0];
             if (className.startsWith(BenchmarkScore.TESTCASENAME)) {
+
+                TestCaseResult tcr = new TestCaseResult();
+
+                JSONObject extra = result.getJSONObject("extra");
+                JSONObject metadata = extra.getJSONObject("metadata");
+
+                // CWE
+                int cwe = Integer.parseInt(metadata.getString("cwe").split(":")[0].split("-")[1]);
+                try {
+                    cwe = translate(cwe);
+                } catch (NumberFormatException ex) {
+                    System.out.println("CWE # not parseable from: " + metadata.getString("cwe"));
+                }
+
+                // category
+                String category = metadata.getString("owasp");
+
+                // evidence
+                String evidence = result.getString("check_id");
+
+                tcr.setCWE(cwe);
+                tcr.setCategory(category);
+                tcr.setEvidence(evidence);
+                tcr.setConfidence(0);
+
                 try {
                     String testNumber = className.substring(BenchmarkScore.TESTCASENAME.length());
                     tcr.setNumber(Integer.parseInt(testNumber));
@@ -201,11 +213,10 @@ public class SemgrepReader {
                     // System.out.println("Error parsing node: " + n.toString() + " for className: "
                     // + className);
                     return null; // If we can't parse the test #, its not in a real test case file.
-                    // e.g.,
-                    // BenchmarkTesting.java
+                    // e.g., BenchmarkTesting.java
                 }
+                return tcr;
             }
-            return tcr;
 
         } catch (Exception ex) {
             ex.printStackTrace();

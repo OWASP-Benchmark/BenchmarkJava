@@ -72,6 +72,8 @@ import org.owasp.benchmark.score.parsers.FortifyReader;
 import org.owasp.benchmark.score.parsers.FusionLiteInsightReader;
 import org.owasp.benchmark.score.parsers.HCLReader;
 import org.owasp.benchmark.score.parsers.HdivReader;
+import org.owasp.benchmark.score.parsers.HorusecReader;
+import org.owasp.benchmark.score.parsers.InsiderReader;
 import org.owasp.benchmark.score.parsers.JuliaReader;
 import org.owasp.benchmark.score.parsers.KiuwanReader;
 import org.owasp.benchmark.score.parsers.LGTMReader;
@@ -93,9 +95,11 @@ import org.owasp.benchmark.score.parsers.SourceMeterReader;
 import org.owasp.benchmark.score.parsers.ThunderScanReader;
 import org.owasp.benchmark.score.parsers.VeracodeReader;
 import org.owasp.benchmark.score.parsers.VisualCodeGrepperReader;
+import org.owasp.benchmark.score.parsers.WapitiJsonReader;
 import org.owasp.benchmark.score.parsers.WapitiReader;
 import org.owasp.benchmark.score.parsers.WebInspectReader;
 import org.owasp.benchmark.score.parsers.XanitizerReader;
+import org.owasp.benchmark.score.parsers.ZapJsonReader;
 import org.owasp.benchmark.score.parsers.ZapReader;
 import org.owasp.benchmark.score.report.Report;
 import org.owasp.benchmark.score.report.ScatterHome;
@@ -645,7 +649,7 @@ public class BenchmarkScore {
     }
 
     /**
-     * This method translates vulnerability names, e.g., Cross-Site Scripting, to their CWE number.
+     * This method translates vulnerability names, e.g., Command Injection, to their CWE number.
      *
      * @param The category to translate.
      * @return The CWE # of that category.
@@ -668,7 +672,7 @@ public class BenchmarkScore {
      * Return map of category to array of results
      *
      * @param expectedResults
-     * @return
+     * @return A Map<String, TP_FN_TN_FP_Counts> which has the TP/FN/TN/FP Counts per CWE Category
      */
     private static Map<String, TP_FN_TN_FP_Counts> calculateScores(
             TestSuiteResults expectedResults) {
@@ -720,48 +724,52 @@ public class BenchmarkScore {
                 // type
 
                 String content = new String(Files.readAllBytes(Paths.get(fileToParse.getPath())));
-                JSONObject jsonobj = new JSONObject(content);
+                JSONObject jsonObj = new JSONObject(content);
 
-                try {
-                    jsonobj.getJSONArray("results"); // Throws JSONException if this Node not found.
-                    tr = new SemgrepReader().parse(jsonobj);
-                } catch (JSONException e) {
+                if (HorusecReader.isHorusecReport(jsonObj)) {
+                    tr = new HorusecReader().parse(jsonObj);
+                } else if (InsiderReader.isInsiderReport(jsonObj)) {
+                    tr = new InsiderReader().parse(jsonObj);
+                } else if (WapitiJsonReader.isWapitiReport(jsonObj)) {
+                    tr = WapitiJsonReader.parse(jsonObj);
+                } else if (ZapJsonReader.isZapReport(jsonObj)) {
+                    tr = new ZapJsonReader().parse(jsonObj);
 
-                    // Note: Each of the remaining try blocks is nested under the one above, but we
-                    // shown them inline as they would get too deep otherwise
+                } else {
                     try {
-                        // SonarQube has two different JSON formats, one for standard issues and
-                        // another for 'hotspots' which are security issues. Both are handled by the
-                        // same parser for SonarQube.
-                        jsonobj.getJSONArray("issues");
-                        tr = new SonarQubeJsonReader().parse(fileToParse);
-                    } catch (JSONException e2) {
+                        jsonObj.getJSONArray(
+                                "results"); // Throws JSONException if this Node not found.
+                        tr = new SemgrepReader().parse(jsonObj);
+                    } catch (JSONException e) {
 
                         try {
-                            jsonobj.getJSONArray("hotspots");
+                            // SonarQube has two different JSON formats, one for standard issues and
+                            // another for 'hotspots' which are security issues. Both are handled by
+                            // the same parser for SonarQube.
+                            jsonObj.getJSONArray("issues");
                             tr = new SonarQubeJsonReader().parse(fileToParse);
-                        } catch (JSONException e3) {
+                        } catch (JSONException e2) {
 
                             try {
-                                jsonobj.getJSONArray("issue_events");
-                                tr = new BurpJsonReader().parse(fileToParse);
+                                jsonObj.getJSONArray("hotspots");
+                                tr = new SonarQubeJsonReader().parse(fileToParse);
+                            } catch (JSONException e3) {
 
-                                // This is the final catch that says we couldn't find a matching
-                                // parser
-                            } catch (JSONException e4) {
-                                System.out.println(
-                                        "Error: No matching parser found for JSON file: "
-                                                + filename);
-                            }
+                                try {
+                                    jsonObj.getJSONArray("issue_events");
+                                    tr = new BurpJsonReader().parse(fileToParse);
 
-                            //  } else if ( fileContains(fileToParse,
-                            // "\"shiftleft_managed\":")) {
-                            //    tr = new ShiftLeftNGSASTReader().parse(fileToParse );
-                            //	else {
-
-                        } // end catch SonarQubeJsonReader - hotspots
-                    } // end catch SonarQubeJsonReader - issues
-                } // end catch SemgrepReader
+                                    // This is the final catch that says we couldn't find a matching
+                                    // parser
+                                } catch (JSONException e4) {
+                                    System.out.println(
+                                            "Error: No matching parser found for JSON file: "
+                                                    + filename);
+                                }
+                            } // end catch SonarQubeJsonReader - hotspots
+                        } // end catch SonarQubeJsonReader - issues
+                    } // end catch SemgrepReader
+                } // end else
             }
         } else if (filename.endsWith(".sarif")) {
             tr = new LGTMReader().parse(fileToParse);
@@ -869,13 +877,7 @@ public class BenchmarkScore {
                     tr = new WebInspectReader().parse(root);
                 } else if (nodeName.equals("WAS_SCAN_REPORT")) {
                     tr = new QualysWASReader().parse(fileToParse, root);
-                }
-
-                //  else if ( nodeName.equals( "all" ) ) {
-                //      tr = new ShiftLeftNGSASTReader().parse( fileToParse, root );
-                //  }
-
-                else
+                } else
                     System.out.println("Error: No matching parser found for XML file: " + filename);
             } // end else
         } // end if endsWith ".xml"
@@ -884,7 +886,7 @@ public class BenchmarkScore {
             // .fpr files are really .zip files. So we have to extract the .fvdl file out of it to
             // process it
             Path path = Paths.get(fileToParse.getPath());
-            FileSystem fileSystem = FileSystems.newFileSystem(path, (java.lang.ClassLoader) null);
+            FileSystem fileSystem = FileSystems.newFileSystem(path, (ClassLoader) null);
             File outputFile = File.createTempFile(filename, ".fvdl");
             Path source = fileSystem.getPath("audit.fvdl");
             Files.copy(source, outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
@@ -939,13 +941,7 @@ public class BenchmarkScore {
             tr = new HdivReader().parse(fileToParse);
         } else if (filename.endsWith(".sl")) {
             tr = new ShiftLeftReader().parse(fileToParse);
-        }
-        /*
-                else if ( filename.endsWith( ".sl_titles" ) ) {
-                    tr = new ShiftLeftReader2().parse( fileToParse );
-                }
-        */
-        else System.out.println("Error: No matching parser found for file: " + filename);
+        } else System.out.println("Error: No matching parser found for file: " + filename);
 
         // If we have results, see if the version # is in the results file name.
         if (tr != null) {

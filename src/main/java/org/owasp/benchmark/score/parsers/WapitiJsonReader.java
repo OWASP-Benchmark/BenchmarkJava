@@ -68,6 +68,8 @@ public class WapitiJsonReader extends Reader {
             }
         }
 
+        tr.setToolVersion(readVersion(json));
+
         return tr;
     }
 
@@ -95,5 +97,9 @@ public class WapitiJsonReader extends Reader {
 
     private static int testNumber(String filename) {
         return Integer.parseInt(filename.substring(BenchmarkScore.TESTCASENAME.length() + 1));
+    }
+
+    private static String readVersion(JSONObject json) {
+        return json.getJSONObject("infos").getString("version").substring("Wapiti ".length());
     }
 }

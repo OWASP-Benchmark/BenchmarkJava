@@ -21,6 +21,8 @@
 package org.owasp.benchmark.score.parsers;
 
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.owasp.benchmark.score.BenchmarkScore;
@@ -40,6 +42,8 @@ public class HorusecReader extends Reader {
         }
     }
 
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
     public TestSuiteResults parse(JSONObject json) throws Exception {
         TestSuiteResults tr =
                 new TestSuiteResults("Horusec", false, TestSuiteResults.ToolType.SAST);
@@ -52,6 +56,9 @@ public class HorusecReader extends Reader {
                 tr.put(tcr);
             }
         }
+
+        tr.setToolVersion(readVersion(json));
+        tr.setTime(calculateTime(json.getString("createdAt"), json.getString("finishedAt")));
 
         return tr;
     }
@@ -161,5 +168,31 @@ public class HorusecReader extends Reader {
 
     private String filename(JSONObject vuln) {
         return new File(vuln.getString("file")).getName();
+    }
+
+    private String calculateTime(String createdAt, String finishedAt) {
+        try {
+            long passedMilliseconds = unixMilliseconds(finishedAt) - unixMilliseconds(createdAt);
+            return TestSuiteResults.formatTime(passedMilliseconds);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Unknown";
+        }
+    }
+
+    private long unixMilliseconds(String createdAt) throws ParseException {
+        return sdf.parse(trimAfterDot(createdAt)).getTime();
+    }
+
+    private String trimAfterDot(String date) {
+        return date.substring(0, date.indexOf('.'));
+    }
+
+    private String readVersion(JSONObject json) {
+        if (json.has("version")) {
+            return json.getString("version");
+        } else {
+            return "0.0.0";
+        }
     }
 }

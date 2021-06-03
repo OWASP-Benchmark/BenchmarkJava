@@ -10,7 +10,7 @@
  *
  * <p>The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License for more details
+ * PURPOSE. See the GNU General Public License for more details.
  *
  * @author Dave Wichers
  * @author Nipuna Weerasekara
@@ -38,7 +38,7 @@ public class CodeQLReader extends Reader {
          * NOTE: To help understand contents of JSON file, use: http://jsonviewer.stack.hu to view it.
          */
         JSONObject obj = new JSONObject(content);
-        //		String resultsFormatVersion = obj.getString( "version" ); // Might be needed in future
+        // String resultsFormatVersion = obj.getString( "version" ); // Might be needed in future
         // if format changes
 
         JSONArray runs = obj.getJSONArray("runs");
@@ -96,16 +96,15 @@ public class CodeQLReader extends Reader {
                 for (int i = 0; i < tags.length(); i++) {
                     String val = tags.getString(i);
                     if (val.startsWith(LGTMCWEPREFIX)) {
-                        //						System.out.println("Rule found for CWE: " +
+                        // System.out.println("Rule found for CWE: " +
                         // Integer.parseInt(val.substring(LGTMCWEPREFIXLENGTH)));
-                        //						int cwe = fixCWE( cweNumber );
+                        // int cwe = fixCWE( cweNumber );
                         rulesUsed.put(
                                 ruleName, Integer.parseInt(val.substring(LGTMCWEPREFIXLENGTH)));
                         break; // Break out of for loop because we only want to use the first CWE it
-                        // is mapped to
-                        // currently. If they add rules where the first CWE is not the preferred
-                        // one, then we need
-                        // to implement fixCWE() and invoke it (commented out example below)
+                        // is mapped to currently. If they add rules where the first CWE is
+                        // not the preferred one, then we need to implement fixCWE() and
+                        // invoke it (commented out example below)
                     }
                 }
 
@@ -132,11 +131,12 @@ public class CodeQLReader extends Reader {
             if (filename.contains(BenchmarkScore.TESTCASENAME)) {
                 String testNumber =
                         filename.substring(
-                                BenchmarkScore.TESTCASENAME.length() + 1, filename.length() - 5);
+                                BenchmarkScore.TESTCASENAME.length() + 1,
+                                filename.length() - BenchmarkScore.TESTIDLENGTH);
                 tcr.setNumber(Integer.parseInt(testNumber));
                 String ruleId = finding.getString("ruleId");
                 Integer cweForRule = rulesUsed.get(ruleId);
-                //				System.out.println("Found finding in: " + testNumber + " of type: " + ruleId +
+                // System.out.println("Found finding in: " + testNumber + " of type: " + ruleId +
                 // " CWE: " + cweForRule);
                 if (cweForRule == null) {
                     return null;
@@ -148,7 +148,7 @@ public class CodeQLReader extends Reader {
                 }
                 int cwe = cweForRule.intValue();
                 tcr.setCWE(cwe);
-                //				tcr.setCategory( props.getString( "subcategoryShortDescription" ) ); //
+                // tcr.setCategory( props.getString( "subcategoryShortDescription" ) ); //
                 // Couldn't find any Category info in results file
                 tcr.setEvidence(finding.getJSONObject("message").getString("text"));
             }

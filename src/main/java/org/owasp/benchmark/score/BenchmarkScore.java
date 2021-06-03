@@ -88,6 +88,7 @@ import org.owasp.benchmark.score.parsers.SeczoneReader;
 import org.owasp.benchmark.score.parsers.SeekerReader;
 import org.owasp.benchmark.score.parsers.SemgrepReader;
 import org.owasp.benchmark.score.parsers.ShiftLeftReader;
+import org.owasp.benchmark.score.parsers.ShiftLeftScanReader;
 import org.owasp.benchmark.score.parsers.SnappyTickReader;
 import org.owasp.benchmark.score.parsers.SonarQubeJsonReader;
 import org.owasp.benchmark.score.parsers.SonarQubeReader;
@@ -730,6 +731,11 @@ public class BenchmarkScore {
                     tr = new HorusecReader().parse(jsonObj);
                 } else if (InsiderReader.isInsiderReport(jsonObj)) {
                     tr = new InsiderReader().parse(jsonObj);
+
+                    // ShiftLeft Scan puts two JSON files into one, so we need to pass the raw file
+                    // content
+                } else if (ShiftLeftScanReader.isShiftLeftScanReport(content)) {
+                    tr = new ShiftLeftScanReader().parse(content);
                 } else if (WapitiJsonReader.isWapitiReport(jsonObj)) {
                     tr = WapitiJsonReader.parse(jsonObj);
                 } else if (ZapJsonReader.isZapReport(jsonObj)) {

@@ -155,7 +155,8 @@ public class HorusecReader extends Reader {
     private int testNumber(String filename) {
         return Integer.parseInt(
                 filename.substring(
-                        BenchmarkScore.TESTCASENAME.length() + 1, filename.length() - 5));
+                        BenchmarkScore.TESTCASENAME.length() + 1,
+                        filename.length() - BenchmarkScore.TESTIDLENGTH));
     }
 
     private String filename(JSONObject vuln) {

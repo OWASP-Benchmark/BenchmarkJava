@@ -24,7 +24,7 @@
 
 
         <!-- A "Connector" represents an endpoint by which requests are received and responses are returned. Documentation at : Java HTTP Connector: /docs/config/http.html (blocking & non-blocking) Java AJP Connector: /docs/config/ajp.html APR (HTTP/AJP) Connector: /docs/apr.html Define a non-SSL/TLS HTTP/1.1 Connector on port 8080 -->
-        <Connector SSLEnabled="true" URIEncoding="ISO-8859-1" clientAuth="false" connectionTimeout="20000" keyAlias="tomcat" keystoreFile="../../../../.keystore" keystorePass="changeit" port="8443" protocol="HTTP/1.1" redirectPort="8443" scheme="https" secure="true" sslProtocol="TLS" />
+        <Connector SSLEnabled="true" URIEncoding="ISO-8859-1" clientAuth="false" connectionTimeout="20000" keyAlias="tomcat" keystoreFile="../../.keystore" keystorePass="changeit" port="8443" protocol="HTTP/1.1" redirectPort="8443" scheme="https" secure="true" sslProtocol="TLS" />
         <!-- A "Connector" using the shared thread pool -->
         <!-- <Connector executor="tomcatThreadPool" port="8080" protocol="HTTP/1.1" connectionTimeout="20000" redirectPort="8443" /> -->
         <!-- Define a SSL/TLS HTTP/1.1 Connector on port 8443 This connector uses the NIO implementation that requires the JSSE style configuration. When using the APR/native implementation, the OpenSSL style configuration is required as described in the APR/native documentation -->

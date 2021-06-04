@@ -199,6 +199,8 @@
                                 <properties>
                                     <cargo.servlet.port>8443</cargo.servlet.port>
                                     <cargo.protocol>https</cargo.protocol>
+                                    <cargo.tomcat.connector.protocolClass>HTTP/1.1</cargo.tomcat.connector.protocolClass>
+                                    <cargo.tomcat.connector.uriEncoding>ISO-8859-1</cargo.tomcat.connector.uriEncoding>
                                     <cargo.tomcat.connector.clientAuth>false</cargo.tomcat.connector.clientAuth>
                                     <cargo.tomcat.connector.sslProtocol>TLS</cargo.tomcat.connector.sslProtocol>
                                     <cargo.tomcat.connector.keystoreFile>${project.basedir}/.keystore</cargo.tomcat.connector.keystoreFile>
@@ -319,6 +321,8 @@
                                     </cargo.jvmargs>
                                     <cargo.servlet.port>8443</cargo.servlet.port>
                                     <cargo.protocol>https</cargo.protocol>
+                                    <cargo.tomcat.connector.protocolClass>HTTP/1.1</cargo.tomcat.connector.protocolClass>
+                                    <cargo.tomcat.connector.uriEncoding>ISO-8859-1</cargo.tomcat.connector.uriEncoding>
                                     <cargo.tomcat.connector.clientAuth>false</cargo.tomcat.connector.clientAuth>
                                     <cargo.tomcat.connector.sslProtocol>TLS</cargo.tomcat.connector.sslProtocol>
                                     <cargo.tomcat.connector.keystoreFile>${project.basedir}/.keystore</cargo.tomcat.connector.keystoreFile>
@@ -429,9 +433,11 @@
                                     </cargo.jvmargs>
                                     <cargo.servlet.port>8443</cargo.servlet.port>
                                     <cargo.protocol>https</cargo.protocol>
+                                    <cargo.tomcat.connector.protocolClass>HTTP/1.1</cargo.tomcat.connector.protocolClass>
+                                    <cargo.tomcat.connector.uriEncoding>ISO-8859-1</cargo.tomcat.connector.uriEncoding>
                                     <cargo.tomcat.connector.clientAuth>false</cargo.tomcat.connector.clientAuth>
                                     <cargo.tomcat.connector.sslProtocol>TLS</cargo.tomcat.connector.sslProtocol>
-                                    <cargo.tomcat.connector.keystoreFile>/${project.basedir}/.keystore</cargo.tomcat.connector.keystoreFile>
+                                    <cargo.tomcat.connector.keystoreFile>${project.basedir}/.keystore</cargo.tomcat.connector.keystoreFile>
                                     <cargo.tomcat.connector.keystorePass>changeit</cargo.tomcat.connector.keystorePass>
                                     <cargo.tomcat.connector.keyAlias>tomcat</cargo.tomcat.connector.keyAlias>
                                     <cargo.tomcat.httpSecure>true</cargo.tomcat.httpSecure>
@@ -537,9 +543,11 @@
                                     </cargo.jvmargs>
                                     <cargo.servlet.port>8443</cargo.servlet.port>
                                     <cargo.protocol>https</cargo.protocol>
+                                    <cargo.tomcat.connector.protocolClass>HTTP/1.1</cargo.tomcat.connector.protocolClass>
+                                    <cargo.tomcat.connector.uriEncoding>ISO-8859-1</cargo.tomcat.connector.uriEncoding>
                                     <cargo.tomcat.connector.clientAuth>false</cargo.tomcat.connector.clientAuth>
                                     <cargo.tomcat.connector.sslProtocol>TLS</cargo.tomcat.connector.sslProtocol>
-                                    <cargo.tomcat.connector.keystoreFile>/${project.basedir}/.keystore</cargo.tomcat.connector.keystoreFile>
+                                    <cargo.tomcat.connector.keystoreFile>${project.basedir}/.keystore</cargo.tomcat.connector.keystoreFile>
                                     <cargo.tomcat.connector.keystorePass>changeit</cargo.tomcat.connector.keystorePass>
                                     <cargo.tomcat.connector.keyAlias>tomcat</cargo.tomcat.connector.keyAlias>
                                     <cargo.tomcat.httpSecure>true</cargo.tomcat.httpSecure>
@@ -644,6 +652,8 @@
                                     </cargo.jvmargs>
                                     <cargo.servlet.port>8443</cargo.servlet.port>
                                     <cargo.protocol>https</cargo.protocol>
+                                    <cargo.tomcat.connector.protocolClass>HTTP/1.1</cargo.tomcat.connector.protocolClass>
+                                    <cargo.tomcat.connector.uriEncoding>ISO-8859-1</cargo.tomcat.connector.uriEncoding>
                                     <cargo.tomcat.connector.clientAuth>false</cargo.tomcat.connector.clientAuth>
                                     <cargo.tomcat.connector.sslProtocol>TLS</cargo.tomcat.connector.sslProtocol>
                                     <cargo.tomcat.connector.keystoreFile>${project.basedir}/.keystore</cargo.tomcat.connector.keystoreFile>
@@ -736,7 +746,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-csv</artifactId>
-            <!-- latest is: <version>1.8</version>, but 1.7+ requires Java 8 -->
+            <!-- Latest is: <version>1.8</version>, but 1.7+ requires Java 8 -->
             <version>1.6</version>
         </dependency>
 
@@ -750,15 +760,23 @@
         <dependency>
             <groupId>org.apache.directory.server</groupId>
             <artifactId>apacheds-core</artifactId>
-            <!-- Upgrading to 2.0.0-M24 is an API breaking change. But it might be needed for Java 10, because I get this error, that I don't get with Java 8: [java] at org.apache.directory.server.core.DefaultDirectoryService.initialize(DefaultDirectoryService.java:1426) [java] at org.apache.directory.server.core.DefaultDirectoryService.startup(DefaultDirectoryService.java:907) [java] at org.owasp.benchmark.helpers.LDAPServer.initDirectoryService(LDAPServer.java:148) [java] at org.owasp.benchmark.helpers.LDAPServer.<init>(LDAPServer.java:42) [java] at org.owasp.benchmark.helpers.LDAPServer.main(LDAPServer.java:320) [java] Caused by: java.lang.NumberFormatException: multiple points [java] at java.base/jdk.internal.math.FloatingDecimal.readJavaFormatString(FloatingDecimal.java:1914) -->
+            <!-- Upgrading to 2.0.0-M24 is an API breaking change. But it might be needed for Java
+                10, because I get this error, that I don't get with Java 8:
+                [java] at org.apache.directory.server.core.DefaultDirectoryService.initialize(DefaultDirectoryService.java:1426)
+                [java] at org.apache.directory.server.core.DefaultDirectoryService.startup(DefaultDirectoryService.java:907)
+                [java] at org.owasp.benchmark.helpers.LDAPServer.initDirectoryService(LDAPServer.java:148)
+                [java] at org.owasp.benchmark.helpers.LDAPServer.<init>(LDAPServer.java:42)
+                [java] at org.owasp.benchmark.helpers.LDAPServer.main(LDAPServer.java:320)
+                [java] Caused by: java.lang.NumberFormatException: multiple points
+                [java] at java.base/jdk.internal.math.FloatingDecimal.readJavaFormatString(FloatingDecimal.java:1914) -->
             <version>${version.apacheds}</version>
             <exclusions>
-                <!-- excluded because its old, and there is a bug in it causing an exception when using it. -->
+                <!-- Excluded because its old, and there is a bug in it causing an exception when using it. -->
                 <exclusion>
                     <groupId>bouncycastle</groupId>
                     <artifactId>bcprov-jdk15</artifactId>
                 </exclusion>
-                <!-- excluded because it conflicts with esapi's dependency, which is newer -->
+                <!-- Excluded because it conflicts with esapi's dependency, which is newer -->
                 <exclusion>
                     <groupId>commons-collections</groupId>
                     <artifactId>commons-collections</artifactId>
@@ -819,7 +837,7 @@
             <artifactId>shared-ldap</artifactId>
             <version>${version.apache-shared-ldap}</version>
             <exclusions>
-                <!-- excluded because it conflicts with esapi's dependency, which is newer -->
+                <!-- Excluded because it conflicts with esapi's dependency, which is newer -->
                 <exclusion>
                     <groupId>commons-collections</groupId>
                     <artifactId>commons-collections</artifactId>
@@ -1085,7 +1103,9 @@
                                         <!-- guava includes backports for Java 7 compatibility -->
                                         <exclude>com.google.guava:guava</exclude>
                                     </excludes>
-                                    <ignoredScopes>test</ignoredScopes>
+                                    <ignoredScopes>
+                                        <ignoreScope>test</ignoreScope>
+                                    </ignoredScopes>
                                     <message>Dependencies shouldn't require Java 8+.</message>
                                 </enforceBytecodeVersion>
                             </rules>

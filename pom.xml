@@ -65,6 +65,12 @@
                                 </goals>
                                 <configuration>
                                     <mainClass>org.owasp.benchmark.score.BenchmarkScore</mainClass>
+                                    <systemProperties>
+                                        <systemProperty>
+                                            <key>java.awt.headless</key>
+                                            <value>true</value>
+                                        </systemProperty>
+                                    </systemProperties>
                                 </configuration>
                             </execution>
                         </executions>

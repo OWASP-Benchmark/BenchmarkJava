@@ -884,7 +884,7 @@
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.68</version>
+            <version>1.69</version>
         </dependency>
 
         <!-- Kevin's fix for jar version conflicts. For future Benchmark 1.3 -->
@@ -1008,6 +1008,12 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <version>${version.springframework}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.29</version>
         </dependency>
 
         <dependency>
@@ -1381,7 +1387,7 @@
         <version.exec.maven>1.6.0</version.exec.maven>
         <version.hibernate>3.6.10.Final</version.hibernate>
         <version.jersey>1.19.4</version.jersey>
-        <version.slf4j>1.7.30</version.slf4j>
+        <version.slf4j>1.7.31</version.slf4j>
         <version.spotbugs.maven>4.2.3</version.spotbugs.maven>
         <version.spotbugs>4.2.3</version.spotbugs>
         <version.spotless>2.10.1</version.spotless>

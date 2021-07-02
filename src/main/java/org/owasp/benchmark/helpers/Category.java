@@ -19,13 +19,12 @@ package org.owasp.benchmark.helpers;
 
 /** This class contains a single vulnerability category. */
 public class Category {
-    private String id;
 
-    private String name;
-
-    private int cwe;
-
-    private boolean isInjection;
+    private final String id; // e.g., pathtraver
+    private final String name; // e.g., Path Traversal
+    private final int CWE;
+    private final boolean isInjection;
+    private final String shortName; // PATH
 
     /**
      * Create a vuln category.
@@ -35,43 +34,32 @@ public class Category {
      * @param cwe The associated CWE number.
      * @param isInjection Whether this vuln category is a type of injection attack.
      */
-    public Category(String id, String name, int cwe, boolean isInjection) {
+    public Category(String id, String name, int cwe, boolean isInjection, String shortname) {
         this.id = id;
         this.name = name;
-        this.cwe = cwe;
+        this.CWE = cwe;
         this.isInjection = isInjection;
+        this.shortName = shortname;
     }
 
     public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+        return this.id;
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getCwe() {
-        return cwe;
-    }
-
-    public void setCwe(int cwe) {
-        this.cwe = cwe;
+    public int getCWE() {
+        return this.CWE;
     }
 
     public boolean isInjection() {
-        return isInjection;
+        return this.isInjection;
     }
 
-    public void setInjection(boolean isInjection) {
-        this.isInjection = isInjection;
+    public String getShortName() {
+        return this.shortName;
     }
 
     @Override

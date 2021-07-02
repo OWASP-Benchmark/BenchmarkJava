@@ -50,10 +50,11 @@ public class ScatterInterpretation extends ScatterPlot {
                         true,
                         true,
                         false);
+
         theme.apply(chart);
+        initializePlot(chart);
 
         XYPlot xyplot = chart.getXYPlot();
-        initializePlot(xyplot);
 
         makePointer(xyplot, 7, 93, " Ideal vulnerability detection", TextAnchor.TOP_LEFT, 45);
         makePointer(xyplot, 10, 10, " Tool reports nothing is vulnerable", TextAnchor.TOP_LEFT, 45);

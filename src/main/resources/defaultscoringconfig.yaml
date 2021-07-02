@@ -1,0 +1,27 @@
+# The configuration for anything customizable in the scorecard generated for a particular test suite
+# Currently, only 1 set of scoring templates is supported, but what goes into those templates can be configured to a certain degree
+
+# Original command line parameters to scorecard generation
+
+# default expected results file
+expectedresults: expectedresults-1.2.csv
+
+# Default results directory. This can also be a specific results file, and only that file will be scored
+resultsfileordir: results
+
+# Which tool to emphasize during scorecard generation. Default is none.
+focustool: none
+
+anonymousmode: false # If true, anonymize names of commercial tools
+averageonlymode: false # If true, show averages by tool category (SAST, DAST, IAST), but don't show individual tool results
+mixedmode: false # If true, create scorecard that uses results from two versions of the same test suite
+
+## Configuration parameters for scorecard generation:
+
+# The general name of a CWE or set of CWEs.
+cwecategoryname: Vulnerabilities # default CWE type menu name for Benchmark. Juliet might call this ''Weakness Classes'
+tprlabel: TPR # default value for Benchmark. Also referred to as Recall
+includeprojectlink: true # By default, add the link to the OWASP Benchmark project page to scorecards
+includeprecision: false # OWASP scorecards don't include precision calculation in tables. But it can be added.
+
+# End of default configuration

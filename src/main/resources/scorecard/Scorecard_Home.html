@@ -33,7 +33,7 @@
                     <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools<span class="caret"></span></a>
                         <ul class="dropdown-menu">${toolmenu}
                         </ul></li>
-                    <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Vulnerabilities<span class="caret"></span></a>
+                    <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">${cwecategoryname}<span class="caret"></span></a>
                         <ul class="dropdown-menu">${vulnmenu}
                         </ul></li>
                     <li><a href="Scorecard_Guide.html">Guide</a></li>
@@ -56,12 +56,10 @@
             <p>
                 The chart below presents the overall results for this set of tools scored against version ${version} of ${testsuite}. The score for each tool is the overall true positive rate (TPR) across all the test categories, minus the overall false positive rate (FPR). To see the detailed results for any particular tool, select the tool from the menus above. For an explanation of all the metrics calculated for each tool, see the <a href="Scorecard_Guide.html">Guide</a> page.
             </p>
-
+            ${projectlink} <img src="toolresults_comparison.png" alt="" />
             <p>
-                For more information, please visit the <a href="https://owasp.org/www-project-benchmark/">OWASP Benchmark Project Site</a>. <img src="toolresults_comparison.png" alt="" />
+                <b>Legend:</b> Each line of the scorecard in the upper right has the name/version of a specific tool, followed by the overall % score for that tool. After each % is the overall TPR - FPR for that tool used to calculate this score. See the table below for more precise scoring details.
             </p>
-
-            <p></p>
             <p></p>
             <h2>Summary of Results by Tool</h2>
             ${table}
@@ -88,7 +86,7 @@
                     <th>False Positive (FP)</th>
                     <td>Tests with fake vulnerabilities that were incorrectly reported as vulnerable by the tool.</td>
                 </tr>
-
+                ${precisionkey}
                 <tr>
                     <th>True Positive Rate (TPR) = TP / ( TP + FN )</th>
                     <td>The rate at which the tool correctly reports real vulnerabilities. Also referred to as Recall, as defined at <a href="https://en.wikipedia.org/wiki/Precision_and_recall">Wikipedia</a>.
@@ -102,7 +100,7 @@
 
                 <tr>
                     <th>Score = TPR - FPR</th>
-                    <td>Normalized distance from the random guess line.</td>
+                    <td>How good the tool is at finding true positives and avoiding false positives.</td>
                 </tr>
 
             </table>

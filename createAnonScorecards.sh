@@ -1,2 +1,2 @@
-mvn validate -Pscorecard -Dexec.args="expectedresults-1.2.csv results none anonymous"
+mvn validate -Pscorecard -Dexec.args="-cr anonymousScoringConfig.yaml"
 

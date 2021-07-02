@@ -19,9 +19,8 @@ package org.owasp.benchmark.score.report;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
-import java.io.File;
-import java.io.IOException;
 import java.security.SecureRandom;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -33,26 +32,33 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.ui.TextAnchor;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.owasp.benchmark.score.BenchmarkScore;
 import org.owasp.benchmark.score.CategoryResults;
-import org.owasp.benchmark.score.OverallToolResults;
+import org.owasp.benchmark.score.ToolResults;
 
 public class ScatterTools extends ScatterPlot {
     public char averageLabel;
     public double atpr, afpr;
 
-    public ScatterTools(String title, int height, OverallToolResults or) {
-        display("          " + title, height, or);
+    public ScatterTools(String title, int height, ToolResults toolResults) {
+        display("          " + title, height, toolResults);
     }
 
-    private JFreeChart display(String title, int height, OverallToolResults or) {
+    /**
+     * Generate a 'Scatter' chart for one tool and return the created chart.
+     *
+     * @param title - Title of chart being created. This is included at top of generated chat.
+     * @param height - The height of the chart to create. Width is a fixed ratio of height.
+     * @param toolResults - The scores for this tool.
+     * @return The generated scatter chart for this tool's results.
+     */
+    private JFreeChart display(String title, int height, ToolResults toolResults) {
 
         XYSeriesCollection dataset = new XYSeriesCollection();
         XYSeries series = new XYSeries("Scores");
         int totalTools = 0;
         double totalToolTPR = 0;
         double totalToolFPR = 0;
-        for (CategoryResults r : or.getResults()) {
+        for (CategoryResults r : toolResults.getCategoryResults()) {
             series.add(r.falsePositiveRate * 100, r.truePositiveRate * 100);
             totalTools++;
             totalToolTPR += r.truePositiveRate;
@@ -61,7 +67,7 @@ public class ScatterTools extends ScatterPlot {
         atpr = totalToolTPR / totalTools;
         afpr = totalToolFPR / totalTools;
 
-        if (or.getResults().size() > 1) {
+        if (toolResults.getCategoryResults().size() > 1) {
             series.add(afpr * 100, atpr * 100);
         }
 
@@ -78,15 +84,15 @@ public class ScatterTools extends ScatterPlot {
                         true,
                         false);
         theme.apply(chart);
+        initializePlot(chart);
 
         XYPlot xyplot = chart.getXYPlot();
 
-        initializePlot(xyplot);
+        makeDataLabels(toolResults, xyplot);
+        makeLegend(toolResults, 103, 93, dataset, xyplot);
 
-        makeDataLabels(or, xyplot);
-        makeLegend(or, 103, 93, dataset, xyplot);
-
-        XYTextAnnotation time = new XYTextAnnotation("Tool run time: " + or.getTime(), 12, -5.6);
+        XYTextAnnotation time =
+                new XYTextAnnotation("Tool run time: " + toolResults.getScanTime(), 12, -5.6);
         time.setTextAnchor(TextAnchor.TOP_LEFT);
         time.setFont(theme.getRegularFont());
         time.setPaint(Color.red);
@@ -95,8 +101,8 @@ public class ScatterTools extends ScatterPlot {
         return chart;
     }
 
-    private void makeDataLabels(OverallToolResults or, XYPlot xyplot) {
-        HashMap<Point2D, String> map = makePointList(or);
+    private void makeDataLabels(ToolResults toolResults, XYPlot xyplot) {
+        HashMap<Point2D, String> map = makePointList(toolResults);
         for (Entry<Point2D, String> e : map.entrySet()) {
             if (e.getValue() != null) {
                 Point2D p = e.getKey();
@@ -117,6 +123,12 @@ public class ScatterTools extends ScatterPlot {
         }
     }
 
+    /**
+     * Sort the comma separated elements of the supplied string.
+     *
+     * @param value - The string to sort.
+     * @return A new comma separated string with the items in it in alphabetical order.
+     */
     private String sort(String value) {
         String[] parts = value.split(",");
         Arrays.sort(parts);
@@ -130,13 +142,13 @@ public class ScatterTools extends ScatterPlot {
 
     SecureRandom sr = new SecureRandom();
 
-    private HashMap<Point2D, String> makePointList(OverallToolResults or) {
+    private HashMap<Point2D, String> makePointList(ToolResults toolResults) {
         HashMap<Point2D, String> map = new HashMap<Point2D, String>();
         char ch = ScatterHome.INITIAL_LABEL;
         int size = 0;
         // make a list of all points. Add in a tiny random to prevent exact
         // duplicate coordinates in map
-        for (CategoryResults r : or.getResults()) {
+        for (CategoryResults r : toolResults.getCategoryResults()) {
             size++;
             double x = r.falsePositiveRate * 100 + sr.nextDouble() * .000001;
             // this puts the label just below the point
@@ -190,24 +202,46 @@ public class ScatterTools extends ScatterPlot {
     }
 
     private void makeLegend(
-            OverallToolResults or, double x, double y, XYSeriesCollection dataset, XYPlot xyplot) {
+            ToolResults or, double x, double y, XYSeriesCollection dataset, XYPlot xyplot) {
         char ch = ScatterHome.INITIAL_LABEL;
         int i = 0;
         int toolCount = 0;
         double totalScore = 0;
-        for (CategoryResults r : or.getResults()) {
+        for (CategoryResults r : or.getCategoryResults()) {
             toolCount++;
             // Special hack to make it line up better if the letter is an 'I' or 'i'
-            String label = (ch == 'I' || ch == 'i' ? ch + ":  " : "" + ch + ": ");
+            String label = (ch == 'I' || ch == 'i' ? ch + ":   " : ch + ": ");
+            // Another hack to make it line up better if the letter is a 'J' or 'j'
+            label = (ch == 'J' || ch == 'j' ? ch + ":  " : label);
             double score = 100 * (r.truePositiveRate - r.falsePositiveRate);
-            String msg = "\u25A0 " + label + r.category + " (" + Math.round(score) + "%)";
+            final DecimalFormat DF = new DecimalFormat("#0.0");
+            String TPR = DF.format(100 * r.truePositiveRate);
+            if (TPR.endsWith("0"))
+                TPR = TPR.substring(0, TPR.length() - 2); // trim off .0 if it ends that way.
+            String FPR = DF.format(100 * r.falsePositiveRate);
+            if (FPR.endsWith("0")) FPR = FPR.substring(0, FPR.length() - 2);
+            final String CAT = "\u25A0 " + label + r.category;
+            XYTextAnnotation catLabel = new XYTextAnnotation(CAT, x, y + i * -3.3);
+            catLabel.setTextAnchor(TextAnchor.CENTER_LEFT);
+            catLabel.setBackgroundPaint(Color.white);
+            catLabel.setPaint(Color.blue);
+            catLabel.setFont(theme.getRegularFont());
+            xyplot.addAnnotation(catLabel);
+            final String SCORE = Math.round(score) + "%";
+            XYTextAnnotation scoreLabel = new XYTextAnnotation(SCORE, x + 52, y + i * -3.3);
+            scoreLabel.setTextAnchor(TextAnchor.CENTER_RIGHT);
+            scoreLabel.setBackgroundPaint(Color.white);
+            scoreLabel.setPaint(Color.blue);
+            scoreLabel.setFont(theme.getRegularFont());
+            xyplot.addAnnotation(scoreLabel);
+            final String CALC = "(" + TPR + "-" + FPR + ")";
+            XYTextAnnotation calcLabel = new XYTextAnnotation(CALC, x + 58, y + i * -3.3);
+            calcLabel.setTextAnchor(TextAnchor.CENTER);
+            calcLabel.setBackgroundPaint(Color.white);
+            calcLabel.setPaint(Color.gray);
+            calcLabel.setFont(theme.getSmallFont());
+            xyplot.addAnnotation(calcLabel);
             totalScore += score;
-            XYTextAnnotation stroketext = new XYTextAnnotation(msg, x, y + i * -3.3);
-            stroketext.setTextAnchor(TextAnchor.CENTER_LEFT);
-            stroketext.setBackgroundPaint(Color.white);
-            stroketext.setPaint(Color.blue);
-            stroketext.setFont(theme.getRegularFont());
-            xyplot.addAnnotation(stroketext);
             i++;
             // Weak hack if there are more than 26 tools scored. This will only get us to 52.
             if (ch == 'Z') ch = 'a';
@@ -235,36 +269,5 @@ public class ScatterTools extends ScatterPlot {
             Point2D averagePoint = new Point2D.Double(afpr * 100, atpr * 100);
             makePoint(xyplot, averagePoint, 3, Color.magenta);
         }
-    }
-
-    public static void main(String[] args) throws IOException {
-        OverallToolResults or = new OverallToolResults();
-        or.add("XSS1", .62, .2, 12, 5);
-        or.add("XSS2", .64, .2, 12, 5);
-
-        or.add("XSS25", .5, .3, 12, 5);
-        or.add("XSS26", .5, .3, 12, 5);
-
-        or.add("XSS31", .34, .2, 12, 5);
-        or.add("XSS32", .36, .2, 12, 5);
-        or.add("XSS33", .38, .2, 12, 5);
-
-        or.add("XSS4", .72, .22, 12, 5);
-        or.add("XSS5", .72, .18, 12, 5);
-        or.add("XSS6", .28, .19, 12, 5);
-        or.add("XSS7", .28, .21, 12, 5);
-        or.add("SQL Injection", 1, .5, 1000, 5);
-        or.add("Header Injection", 0, .5, 4, 5);
-        or.add("Reflection Injection", 0, 0, 300, 5);
-        or.add("LDAP Injection", .5, 1, 6, 5);
-        or.add("Weak Encryption", .2, .9, 600, 5);
-        ScatterTools scatter =
-                new ScatterTools(
-                        BenchmarkScore.fullTestSuiteName(BenchmarkScore.TESTSUITE)
-                                + " Results for SomeTool",
-                        800,
-                        or);
-        scatter.writeChartToFile(new File("test.png"), 800);
-        System.exit(0);
     }
 }

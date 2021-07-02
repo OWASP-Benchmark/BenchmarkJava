@@ -53,7 +53,8 @@ public class TestSuiteResults {
     private String time = "Unknown"; // Scan time. e.g., '0:17:29'
     public final boolean isCommercial;
     public final ToolType toolType;
-    private Map<Integer, List<TestCaseResult>> map = new TreeMap<Integer, List<TestCaseResult>>();
+    private Map<Integer, List<TestCaseResult>> testCaseResults =
+            new TreeMap<Integer, List<TestCaseResult>>();
 
     // Used to track if this tool has been anonymized
     private boolean anonymous = false;
@@ -91,20 +92,25 @@ public class TestSuiteResults {
     }
 
     public void put(TestCaseResult tcr) {
-        List<TestCaseResult> results = map.get(tcr.getNumber());
+        List<TestCaseResult> results = testCaseResults.get(tcr.getNumber());
         if (results == null) {
             results = new ArrayList<TestCaseResult>();
-            map.put(tcr.getNumber(), results);
+            testCaseResults.put(tcr.getNumber(), results);
         }
         results.add(tcr);
     }
 
     public List<TestCaseResult> get(int tn) {
-        return map.get(tn);
+        return testCaseResults.get(tn);
     }
 
+    /**
+     * Get a Set of Keys into the Map of all the TestCaseResults for this TestSuite.
+     *
+     * @return The Set of Keys.
+     */
     public Set<Integer> keySet() {
-        return map.keySet();
+        return testCaseResults.keySet();
     }
 
     /**
@@ -112,7 +118,7 @@ public class TestSuiteResults {
      *
      * @return Name of the tool.
      */
-    public String getTool() {
+    public String getToolName() {
         return this.toolName;
     }
 
@@ -254,7 +260,7 @@ public class TestSuiteResults {
      * @return The total number of results.
      */
     public int getTotalResults() {
-        return map.size();
+        return testCaseResults.size();
     }
 
     /**

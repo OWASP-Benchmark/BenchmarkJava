@@ -4,111 +4,132 @@
 <categories>
     <category>
         <id>autocomp</id>
-        <name>Autocomplete</name>
+        <name>Autocomplete Not Disabled</name>
         <cwe>525</cwe>
+        <shortname>AUTO</shortname>
     </category>
     <category>
         <id>avail</id>
         <name>Availability</name>
+        <cwe>400</cwe>
+        <shortname>AVAIL</shortname>
     </category>
     <category>
         <id>cache</id>
         <name>Cache Control</name>
+        <shortname>CACHE</shortname>
     </category>
     <category>
         <id>cmdi</id>
         <name>Command Injection</name>
         <cwe>78</cwe>
         <isInjection>true</isInjection>
+        <shortname>CMDI</shortname>
     </category>
     <category>
         <id>crypto</id>
         <name>Weak Encryption Algorithm</name>
         <cwe>327</cwe>
+        <shortname>ENCR</shortname>
     </category>
     <category>
         <id>hash</id>
         <name>Weak Hashing Algorithm</name>
         <cwe>328</cwe>
+        <shortname>HASH</shortname>
     </category>
     <category>
         <id>headeri</id>
         <name>Header Injection</name>
         <cwe>113</cwe>
         <!-- isInjection>Don't set. Not a classic injection issue.</isInjection -->
+        <shortname>HEADI</shortname>
     </category>
     <category>
         <id>hqli</id>
         <name>Hibernate Injection</name>
         <cwe>564</cwe>
         <isInjection>true</isInjection>
+        <shortname>HQLI</shortname>
     </category>
     <category>
         <id>ldapi</id>
         <name>LDAP Injection</name>
         <cwe>90</cwe>
         <isInjection>true</isInjection>
+        <shortname>LDAPI</shortname>
     </category>
     <category>
         <id>pathtraver</id>
         <name>Path Traversal</name>
         <cwe>22</cwe>
         <!-- isInjection>Don't set. Not an injection issue.</isInjection -->
+        <shortname>PATHT</shortname>
     </category>
     <category>
         <id>redirect</id>
         <name>Unchecked Redirect</name>
         <cwe>601</cwe>
+        <shortname>REDIR</shortname>
     </category>
     <category>
         <id>reflecti</id>
         <name>Reflection</name>
         <cwe>470</cwe>
         <isInjection>true</isInjection>
+        <shortname>REFL</shortname>
     </category>
     <category>
         <id>securecookie</id>
         <name>Insecure Cookie</name>
         <cwe>614</cwe>
+        <shortname>COOKI</shortname>
     </category>
     <category>
         <id>sqli</id>
         <name>SQL Injection</name>
         <cwe>89</cwe>
         <isInjection>true</isInjection>
+        <shortname>SQLI</shortname>
     </category>
     <category>
         <id>trustbound</id>
         <name>Trust Boundary</name>
         <cwe>501</cwe>
+        <shortname>TRBO</shortname>
     </category>
     <category>
         <id>weakrand</id>
         <name>Weak Randomness</name>
         <cwe>330</cwe>
+        <shortname>RAND</shortname>
     </category>
     <category>
         <id>xpathi</id>
         <name>XPath Injection</name>
         <cwe>643</cwe>
         <isInjection>true</isInjection>
+        <shortname>XPATH</shortname>
     </category>
     <category>
         <id>xquery</id>
         <name>XQuery Injection</name>
         <cwe>652</cwe>
         <isInjection>true</isInjection>
+        <shortname>XQRY</shortname>
     </category>
     <category>
         <id>xss</id>
         <name>XSS (Cross-Site Scripting)</name>
         <cwe>79</cwe>
         <!-- isInjection>Don't set. Not a classic injection issue.</isInjection -->
+        <shortname>XSS</shortname>
     </category>
     <category>
         <id>xxe</id>
         <name>XML eXternal Entity Injection</name>
         <cwe>611</cwe>
         <isInjection>true</isInjection>
+        <shortname>XXE</shortname>
     </category>
 </categories>

@@ -10,7 +10,7 @@
  *
  * <p>The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License for more details
+ * PURPOSE. See the GNU General Public License for more details.
  *
  * @author Dave Wichers
  * @created 2015
@@ -52,7 +52,7 @@ public class ScatterPlot {
 
     // This variable is directly accessed by ScatterHome.java
     JFreeChart chart = null;
-    final StandardChartTheme theme = initializeTheme();
+    static final StandardChartTheme theme = initializeTheme();
     static final DecimalFormat pctFormat = new DecimalFormat("0'%'");
     static final Stroke dashed =
             new BasicStroke(
@@ -76,7 +76,8 @@ public class ScatterPlot {
         return theme;
     }
 
-    public void initializePlot(XYPlot xyplot) {
+    public static void initializePlot(JFreeChart chart) {
+        XYPlot xyplot = chart.getXYPlot();
         NumberAxis rangeAxis = (NumberAxis) xyplot.getRangeAxis();
         NumberAxis domainAxis = (NumberAxis) xyplot.getDomainAxis();
 
@@ -116,7 +117,7 @@ public class ScatterPlot {
         chart.setTextAntiAlias(true);
         chart.setAntiAlias(true);
         chart.removeLegend();
-        chart.setPadding(new RectangleInsets(20, 20, 20, 20));
+        chart.setPadding(new RectangleInsets(20, 20, 0, 20));
 
         Point2D legendLocation = new Point2D.Double(101, -10);
         makeRect(xyplot, legendLocation, 120, 74, Color.WHITE);
@@ -128,23 +129,14 @@ public class ScatterPlot {
         makeGuessingLine(xyplot);
     }
 
-    public XYPointerAnnotation makePointer(int x, int y, String msg, TextAnchor anchor, int angle) {
-        XYPointerAnnotation pointer = new XYPointerAnnotation(msg, x, y, Math.toRadians(angle));
-        pointer.setBackgroundPaint(Color.white);
-        pointer.setTextAnchor(anchor);
-        pointer.setArrowWidth(4);
-        pointer.setArrowLength(8);
-        pointer.setArrowPaint(Color.red);
-        pointer.setLabelOffset(2);
-        pointer.setPaint(Color.red);
-        pointer.setFont(theme.getRegularFont());
-        return pointer;
+    public static void writeChartToFile(File f, JFreeChart chart, int height) throws IOException {
+        FileOutputStream stream = new FileOutputStream(f);
+        ChartUtils.writeChartAsPNG(stream, chart, (int) Math.round(height * 1.4), height);
+        stream.close();
     }
 
     public void writeChartToFile(File f, int height) throws IOException {
-        FileOutputStream stream = new FileOutputStream(f);
-        ChartUtils.writeChartAsPNG(stream, this.chart, (int) Math.round(height * 1.4), height);
-        stream.close();
+        writeChartToFile(f, this.chart, height);
     }
 
     public void addGenerationDate(XYPlot xyplot) {
@@ -160,31 +152,7 @@ public class ScatterPlot {
         xyplot.addAnnotation(gendate);
     }
 
-    public static void makePoint(XYPlot xyplot, Point2D location, double radius, Color color) {
-        double x = location.getX() - radius / 2;
-        double y = location.getY() - radius / 2;
-        Shape dot = new Ellipse2D.Double(x, y, radius, radius);
-        XYShapeAnnotation area = new XYShapeAnnotation(dot, new BasicStroke(), color, color);
-        xyplot.addAnnotation(area);
-    }
-
-    public static void makeRect(
-            XYPlot xyplot, Point2D location, double height, double width, Color color) {
-        Shape rect = new Rectangle2D.Double(location.getX(), location.getY(), width, height);
-        XYShapeAnnotation area = new XYShapeAnnotation(rect, new BasicStroke(), color, color);
-        xyplot.addAnnotation(area);
-    }
-
-    public static void makeTriangle(XYPlot xyplot, Point2D location, Color color) {
-        Polygon p = new Polygon();
-        p.addPoint(0, 0);
-        p.addPoint(100, 0);
-        p.addPoint(100, 100);
-        XYShapeAnnotation area = new XYShapeAnnotation(p, new BasicStroke(), color, color);
-        xyplot.addAnnotation(area);
-    }
-
-    public void makeGuessingLine(XYPlot xyplot) {
+    public static void makeGuessingLine(XYPlot xyplot) {
         // draw guessing line
         XYLineAnnotation guessing = new XYLineAnnotation(-5, -5, 100, 100, dashed, Color.red);
         xyplot.addAnnotation(guessing);
@@ -219,25 +187,32 @@ public class ScatterPlot {
         xyplot.addAnnotation(area);
     }
 
-    public static Shape rotate(Shape shape, int angle) {
-        Rectangle bounds = shape.getBounds();
-        double radians = Math.toRadians(angle);
-        double anchorX = bounds.width / 2;
-        double anchorY = bounds.height / 2;
-        AffineTransform at = AffineTransform.getRotateInstance(radians, anchorX, anchorY);
-        Shape rotated = at.createTransformedShape(shape);
-        return rotated;
+    public static void makePoint(XYPlot xyplot, Point2D location, double radius, Color color) {
+        double x = location.getX() - radius / 2;
+        double y = location.getY() - radius / 2;
+        Shape dot = new Ellipse2D.Double(x, y, radius, radius);
+        XYShapeAnnotation area = new XYShapeAnnotation(dot, new BasicStroke(), color, color);
+        xyplot.addAnnotation(area);
     }
 
-    public void makePointer(
-            XYPlot plot, double x, double y, String msg, TextAnchor anchor, int angle) {
-        //        TextTitle textTitle = new TextTitle(msg, theme.getSmallFont(), Color.red,
-        // RectangleEdge.TOP, HorizontalAlignment.LEFT, VerticalAlignment.TOP, new
-        // RectangleInsets(2, 2, 2, 2));
-        //        XYTitleAnnotation title = new XYTitleAnnotation(x/100, y/100, textTitle,
-        // RectangleAnchor.TOP_LEFT);
-        //        plot.addAnnotation( title );
+    public static void makeRect(
+            XYPlot xyplot, Point2D location, double height, double width, Color color) {
+        Shape rect = new Rectangle2D.Double(location.getX(), location.getY(), width, height);
+        XYShapeAnnotation area = new XYShapeAnnotation(rect, new BasicStroke(), color, color);
+        xyplot.addAnnotation(area);
+    }
 
+    public static void makeTriangle(XYPlot xyplot, Point2D location, Color color) {
+        Polygon p = new Polygon();
+        p.addPoint(0, 0);
+        p.addPoint(100, 0);
+        p.addPoint(100, 100);
+        XYShapeAnnotation area = new XYShapeAnnotation(p, new BasicStroke(), color, color);
+        xyplot.addAnnotation(area);
+    }
+
+    public static XYPointerAnnotation makePointer(
+            int x, int y, String msg, TextAnchor anchor, int angle) {
         XYPointerAnnotation pointer = new XYPointerAnnotation(msg, x, y, Math.toRadians(angle));
         pointer.setBackgroundPaint(Color.white);
         pointer.setTextAnchor(anchor);
@@ -247,6 +222,33 @@ public class ScatterPlot {
         pointer.setLabelOffset(2);
         pointer.setPaint(Color.red);
         pointer.setFont(theme.getRegularFont());
-        plot.addAnnotation(pointer);
+        return pointer;
+    }
+
+    /**
+     * This method creates a pointer and adds it to the supplied plot, rather than returning the new
+     * pointer.
+     *
+     * @param plot
+     * @param x - X coordinate
+     * @param y - Y coordinate
+     * @param msg
+     * @param anchor
+     * @param angle
+     */
+    public static void makePointer(
+            XYPlot plot, int x, int y, String msg, TextAnchor anchor, int angle) {
+
+        plot.addAnnotation(makePointer(x, y, msg, anchor, angle));
+    }
+
+    public static Shape rotate(Shape shape, int angle) {
+        Rectangle bounds = shape.getBounds();
+        double radians = Math.toRadians(angle);
+        double anchorX = bounds.width / 2;
+        double anchorY = bounds.height / 2;
+        AffineTransform at = AffineTransform.getRotateInstance(radians, anchorX, anchorY);
+        Shape rotated = at.createTransformedShape(shape);
+        return rotated;
     }
 }

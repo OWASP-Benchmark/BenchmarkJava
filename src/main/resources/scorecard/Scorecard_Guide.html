@@ -9,7 +9,7 @@
 <meta name="author" content="">
 <link rel="icon" href="../../favicon.ico">
 
-<title>Guide to the OWASP Benchmark v${version}</title>
+<title>Guide to ${testsuite} v${version}</title>
 
 <!-- Bootstrap core CSS -->
 <link href="content/css/bootstrap.min.css" rel="stylesheet">
@@ -34,7 +34,7 @@
                     <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools<span class="caret"></span></a>
                         <ul class="dropdown-menu">${toolmenu}
                         </ul></li>
-                    <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Vulnerabilities<span class="caret"></span></a>
+                    <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">${cwecategoryname}<span class="caret"></span></a>
                         <ul class="dropdown-menu">${vulnmenu}
                         </ul></li>
                     <li><a href="Scorecard_Guide.html">Guide</a></li>
@@ -52,20 +52,16 @@
             <div>empty</div>
 
             <h2>Introduction</h2>
-            <p>The OWASP Benchmark is a test suite designed to evaluate the speed, coverage, and accuracy of automated vulnerability detection tools. Without the ability to measure these tools, it is difficult to understand their strengths and weaknesses, and compare them to each other. The Benchmark contains thousands of test cases that are fully runnable and exploitable.</p>
+            <p>${testsuite} is a test suite designed to evaluate the speed, coverage, and accuracy of automated vulnerability detection tools. Without the ability to measure these tools, it is difficult to understand their strengths and weaknesses, and compare them to each other. ${testsuite} contains thousands of test cases that are fully runnable and exploitable.</p>
 
-            <p>You can analyze the Benchmark with any type of Application Security Testing (AST) tool, including Static (SAST), Dynamic (DAST) (like OWASP ZAP), and Interactive (IAST) tools. The current version is implemented in Java. Future versions may expand to include other languages.</p>
-
-            <p>
-                For more information, please visit the <a href="https://owasp.org/www-project-benchmark/">OWASP Benchmark Project Site</a>.
-            </p>
-
+            <p>You can analyze ${testsuite} with any type of Application Security Testing (AST) tool, including Static (SAST), Dynamic (DAST) (like OWASP ZAP), and Interactive (IAST) tools.</p>
+            ${projectlink}
             <h2>Interpretation Guide</h2>
             <p>Security tools (SAST, DAST, and IAST) are amazing when they find a complex vulnerability in your code. But they can drive everyone crazy with complexity, false alarms, and missed vulnerabilities. Using these tools without understanding their strengths and weaknesses can lead to a dangerous false sense of security.</p>
 
             <p>We are on a quest to measure just how good these tools are at discovering and properly diagnosing security problems in applications. We rely on the long history of military and medical evaluation of detection technology as a foundation for our research. Therefore, the test suite tests both real and fake vulnerabilities.</p>
 
-            <p>There are four possible test outcomes in the Benchmark:</p>
+            <p>There are four possible test outcomes in ${testsuite}:</p>
             <ul>
                 <li>Tool correctly identifies a real vulnerability (True Positive - TP)</li>
                 <li>Tool fails to identify a real vulnerability (False Negative - FN)</li>
@@ -75,7 +71,7 @@
 
             <p>We can learn a lot about a tool from these four metrics. A tool that simply flags every line of code as vulnerable will perfectly identify all vulnerabilities in an application, but will also have 100% false positives. Similarly, a tool that reports nothing will have zero false positives, but will also identify zero real vulnerabilities. Imagine a tool that flips a coin to decide whether to report each vulnerability for every test case. The result would be 50% true positives and 50% false positives. We need a way to distinguish valuable security tools from these trivial ones.</p>
 
-            <p>If you imagine the line that connects all these points, from 0,0 to 100,100 establishes a line that roughly translates to "random guessing." The ultimate measure of a security tool is how much better it can do than this line. The diagram below shows how we will evaluate security tools against the Benchmark.</p>
+            <p>If you imagine the line that connects all these points, from 0,0 to 100,100 establishes a line that roughly translates to "random guessing." The ultimate measure of a security tool is how much better it can do than this line. The diagram below shows how we will evaluate security tools against ${testsuite}.</p>
 
             <img src="content/testsuite_guide.png" alt="" />
 
@@ -101,7 +97,7 @@
                     <th>False Positive (FP)</th>
                     <td>Tests with fake vulnerabilities that were incorrectly reported as vulnerable by the tool.</td>
                 </tr>
-
+                ${precisionkey}
                 <tr>
                     <th>True Positive Rate (TPR) = TP / ( TP + FN )</th>
                     <td>The rate at which the tool correctly reports real vulnerabilities. Also referred to as Recall, as defined at <a href="https://en.wikipedia.org/wiki/Precision_and_recall">Wikipedia</a>.
@@ -115,7 +111,7 @@
 
                 <tr>
                     <th>Score = TPR - FPR</th>
-                    <td>Normalized distance from the random guess line.</td>
+                    <td>How good the tool is at finding true positives and avoiding false positives.</td>
                 </tr>
             </table>
 

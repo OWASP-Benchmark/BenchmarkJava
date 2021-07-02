@@ -34,7 +34,7 @@
                     <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools<span class="caret"></span></a>
                         <ul class="dropdown-menu">${toolmenu}
                         </ul></li>
-                    <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Vulnerabilities<span class="caret"></span></a>
+                    <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">${cwecategoryname}<span class="caret"></span></a>
                         <ul class="dropdown-menu">${vulnmenu}
                         </ul></li>
                     <li><a href="Scorecard_Guide.html">Guide</a></li>
@@ -53,11 +53,10 @@
             <h3>${title}</h3>
 
             <p>${testsuite} is a test suite designed to evaluate the speed, coverage, and accuracy of automated vulnerability detection tools. Without the ability to measure these tools, it is difficult to understand their strengths and weaknesses, and compare them to each other. ${testsuite} contains thousands of test cases that are fully runnable and exploitable. The following is the scorecard for the tool ${tool} against version ${version} of ${testsuite}. It shows how well this tool finds true positives and avoids false positives in the ${testsuite} test cases.</p>
-
+            ${projectlink} <img align="middle" src="${image}" alt="" />
             <p>
-                For more information, please visit the <a href="https://owasp.org/www-project-benchmark/">OWASP Benchmark Project Site</a>. <img align="middle" src="${image}" alt="" />
+                <b>Legend:</b> Each line of the scorecard in the upper right has a category, followed by this tool's overall score in that category. After each % is this tool's TPR - FPR used to calculate this score. See the table below for more precise scoring details.
             </p>
-
             <h2>Statistics</h2>
             <table class="table">
                 <tr>
@@ -112,7 +111,7 @@
                     <th>False Positive (FP)</th>
                     <td>Tests with fake vulnerabilities that were incorrectly reported as vulnerable by the tool.</td>
                 </tr>
-
+                ${precisionkey}
                 <tr>
                     <th>True Positive Rate (TPR) = TP / ( TP + FN )</th>
                     <td>The rate at which the tool correctly reports real vulnerabilities. Also referred to as Recall, as defined at <a href="https://en.wikipedia.org/wiki/Precision_and_recall">Wikipedia</a>.
@@ -126,10 +125,11 @@
 
                 <tr>
                     <th>Score = TPR - FPR</th>
-                    <td>Normalized distance from the random guess line.</td>
+                    <td>How good the tool is at finding true positives and avoiding false positives.</td>
                 </tr>
 
             </table>
+            ${precisiontables}
 
         </div>
 

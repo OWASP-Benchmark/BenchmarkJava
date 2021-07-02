@@ -56,7 +56,7 @@ public class FortifyReader extends Reader {
         Node build = getNamedChild("Build", root);
         String source = getNamedChild("SourceBasePath", build).getTextContent();
         if (source.contains("ronq")) {
-            tr.setTool(tr.getTool() + "-OnDemand");
+            tr.setTool(tr.getToolName() + "-OnDemand");
         }
 
         // get engine build version and rulepack version

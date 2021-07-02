@@ -89,7 +89,9 @@ public class Categories {
                     isInjection =
                             Boolean.parseBoolean(isInjectionNodeList.item(0).getTextContent());
                 }
-                Category category = new Category(id, name, cwe, isInjection);
+                String shortname =
+                        eElement.getElementsByTagName("shortname").item(0).getTextContent();
+                Category category = new Category(id, name, cwe, isInjection, shortname);
                 idToCategoryMap.put(id, category);
                 nameToCategoryMap.put(name, category);
             }

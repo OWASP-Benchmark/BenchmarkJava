@@ -161,6 +161,9 @@ public class Utils {
                 e.printStackTrace();
             }
         }
+
+        // The target script is exploded out of the WAR file. When this occurs, the file
+        // loses its execute permissions. So this hack adds the required execute permissions back.
         if (!System.getProperty("os.name").contains("Windows")) {
             File script = getFileFromClasspath("insecureCmd.sh", Utils.class.getClassLoader());
             Set<PosixFilePermission> perms = new HashSet<PosixFilePermission>();

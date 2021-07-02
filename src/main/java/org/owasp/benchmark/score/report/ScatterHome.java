@@ -22,6 +22,7 @@ import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
 import java.security.SecureRandom;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -39,7 +40,8 @@ import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.owasp.benchmark.score.BenchmarkScore;
-import org.owasp.benchmark.score.OverallToolResults;
+import org.owasp.benchmark.score.Tool;
+import org.owasp.benchmark.score.ToolResults;
 
 public class ScatterHome extends ScatterPlot {
     private static char averageLabel;
@@ -49,19 +51,18 @@ public class ScatterHome extends ScatterPlot {
     public static final char INITIAL_LABEL = 'A';
 
     /**
-     * This calculates the summary chart across all the tools analyzed against the Benchmark.
+     * This calculates the summary chart across all the tools analyzed against a test suite.
      *
      * @param title - The title of the chart to be produced.
-     * @param height - Height of the chart (typically 800)
-     * @param width - Width of the chart (typically 800)
-     * @param toolResults - A list of each individual tool's results.
+     * @param tools - The set of all tools. Each includes that tool's scoring results.
+     * @param focus - The toolname to focus on. Blank or null if no tool should be emphasized.
      */
-    public ScatterHome(String title, int height, Set<Report> toolResults, String focus) {
+    public ScatterHome(String title, Set<Tool> tools, String focus) {
         this.focus = focus;
-        display("          " + title, height, toolResults);
+        display("          " + title, tools);
     }
 
-    private JFreeChart display(String title, int height, Set<Report> toolResults) {
+    private JFreeChart display(String title, Set<Tool> tools) {
 
         // averages
         ArrayList<Double> averageCommercialFalseRates = new ArrayList<Double>();
@@ -69,9 +70,9 @@ public class ScatterHome extends ScatterPlot {
 
         XYSeriesCollection dataset = new XYSeriesCollection();
         XYSeries series = new XYSeries("Scores");
-        for (Report toolReport : toolResults) {
+        for (Tool toolReport : tools) {
             if (!toolReport.isCommercial()) {
-                OverallToolResults overallResults = toolReport.getOverallResults();
+                ToolResults overallResults = toolReport.getOverallResults();
                 series.add(
                         overallResults.getFalsePositiveRate() * 100,
                         overallResults.getTruePositiveRate() * 100);
@@ -83,10 +84,10 @@ public class ScatterHome extends ScatterPlot {
         }
 
         int commercialToolCount = 0;
-        for (Report toolReport : toolResults) {
+        for (Tool toolReport : tools) {
             if (toolReport.isCommercial()) {
                 commercialToolCount++;
-                OverallToolResults overallResults = toolReport.getOverallResults();
+                ToolResults overallResults = toolReport.getOverallResults();
                 if (!BenchmarkScore.showAveOnlyMode) {
                     series.add(
                             overallResults.getFalsePositiveRate() * 100,
@@ -127,13 +128,13 @@ public class ScatterHome extends ScatterPlot {
                         true,
                         false);
         theme.apply(chart);
+        initializePlot(chart);
 
         XYPlot xyplot = chart.getXYPlot();
-        initializePlot(xyplot);
         addGenerationDate(xyplot);
 
-        makeDataLabels(toolResults, xyplot);
-        makeLegend(toolResults, 103, 100.5, dataset, xyplot);
+        makeDataLabels(tools, xyplot);
+        makeLegend(tools, 103, 100.5, dataset, xyplot);
 
         for (XYDataItem item : (List<XYDataItem>) series.getItems()) {
             double x = item.getX().doubleValue();
@@ -146,8 +147,8 @@ public class ScatterHome extends ScatterPlot {
         return chart;
     }
 
-    private void makeDataLabels(Set<Report> toolResults, XYPlot xyplot) {
-        HashMap<Point2D, String> map = makePointList(toolResults);
+    private void makeDataLabels(Set<Tool> tools, XYPlot xyplot) {
+        HashMap<Point2D, String> map = makePointList(tools);
         for (Entry<Point2D, String> e : map.entrySet()) {
             if (e.getValue() != null) {
                 Point2D p = e.getKey();
@@ -180,16 +181,16 @@ public class ScatterHome extends ScatterPlot {
 
     static SecureRandom sr = new SecureRandom();
     // This method generates all the points put on the home page chart. One per tool.
-    private HashMap<Point2D, String> makePointList(Set<Report> toolResults) {
+    private HashMap<Point2D, String> makePointList(Set<Tool> tools) {
         HashMap<Point2D, String> map = new HashMap<Point2D, String>();
         char ch = INITIAL_LABEL;
 
         // make a list of all points.  Add in a tiny random to prevent exact duplicate coordinates
         // in map
         int commercialToolCount = 0;
-        for (Report r : toolResults) {
+        for (Tool r : tools) {
             if (!r.isCommercial()) {
-                OverallToolResults or = r.getOverallResults();
+                ToolResults or = r.getOverallResults();
                 double x = or.getFalsePositiveRate() * 100 + sr.nextDouble() * .000001;
                 double y =
                         or.getTruePositiveRate() * 100
@@ -204,11 +205,11 @@ public class ScatterHome extends ScatterPlot {
             }
         }
 
-        for (Report r : toolResults) {
+        for (Tool r : tools) {
             if (r.isCommercial()) {
                 commercialToolCount++;
                 if (!BenchmarkScore.showAveOnlyMode) {
-                    OverallToolResults or = r.getOverallResults();
+                    ToolResults or = r.getOverallResults();
                     double x = or.getFalsePositiveRate() * 100 + sr.nextDouble() * .000001;
                     double y =
                             or.getTruePositiveRate() * 100
@@ -268,23 +269,18 @@ public class ScatterHome extends ScatterPlot {
     }
 
     private void makeLegend(
-            Set<Report> toolResults,
-            double x,
-            double y,
-            XYSeriesCollection dataset,
-            XYPlot xyplot) {
+            Set<Tool> tools, double x, double y, XYSeriesCollection dataset, XYPlot xyplot) {
         char ch =
                 INITIAL_LABEL; // This is the first label in the Key with all the tools processed by
         // this scorecard
-        int i = -2; // Used to keep track of which row in the key were are processing. Helps
-        // calculate the Y axis
-        // location where to put the Key entry
+        int i = -2; // Used to keep track of which row in the key we are processing. Helps calculate
+        // the Y axis location where to put the Key entry
 
         boolean printedNonCommercialLabel = false;
 
         // non-commercial results
-        for (Report r : toolResults) {
-            OverallToolResults or = r.getOverallResults();
+        for (Tool r : tools) {
+            ToolResults or = r.getOverallResults();
             if (!r.isCommercial()) {
                 // print non-commercial label if there is at least one non-commercial tool
                 if (!printedNonCommercialLabel) {
@@ -300,21 +296,39 @@ public class ScatterHome extends ScatterPlot {
                 }
 
                 // Special hack to make it line up better if the letter is an 'I' or 'i'
-                String label = (ch == 'I' || ch == 'i' ? ch + ":  " : "" + ch + ": ");
-                double score = or.getScore() * 100;
-                String msg =
-                        "\u25A0 "
-                                + label
-                                + r.getToolNameAndVersion()
-                                + " ("
-                                + Math.round(score)
-                                + "%)";
-                XYTextAnnotation stroketext3 = new XYTextAnnotation(msg, x, y + i * -3.3);
-                stroketext3.setTextAnchor(TextAnchor.CENTER_LEFT);
-                stroketext3.setBackgroundPaint(Color.white);
-                stroketext3.setPaint(Color.blue);
-                stroketext3.setFont(theme.getRegularFont());
-                xyplot.addAnnotation(stroketext3);
+                String label = (ch == 'I' || ch == 'i' ? ch + ":   " : ch + ": ");
+                // Another hack to make it line up better if the letter is a 'J' or 'j'
+                label = (ch == 'J' || ch == 'j' ? ch + ":  " : label);
+                double score = or.getOverallScore() * 100;
+                final DecimalFormat DF = new DecimalFormat("#0.0");
+                String TPR = DF.format(100 * or.getTruePositiveRate());
+                if (TPR.endsWith("0"))
+                    TPR = TPR.substring(0, TPR.length() - 2); // trim off .0 if it ends that way.
+                String FPR = DF.format(100 * or.getFalsePositiveRate());
+                if (FPR.endsWith("0")) FPR = FPR.substring(0, FPR.length() - 2);
+
+                final String TOOL = "\u25A0 " + label + r.getToolNameAndVersion();
+                XYTextAnnotation toolLabel = new XYTextAnnotation(TOOL, x, y + i * -3.3);
+                toolLabel.setTextAnchor(TextAnchor.CENTER_LEFT);
+                toolLabel.setBackgroundPaint(Color.white);
+                toolLabel.setPaint(Color.blue);
+                toolLabel.setFont(theme.getRegularFont());
+                xyplot.addAnnotation(toolLabel);
+                final String SCORE = Math.round(score) + "%";
+                XYTextAnnotation scoreLabel = new XYTextAnnotation(SCORE, x + 53, y + i * -3.3);
+                scoreLabel.setTextAnchor(TextAnchor.CENTER_RIGHT);
+                scoreLabel.setBackgroundPaint(Color.white);
+                scoreLabel.setPaint(Color.blue);
+                scoreLabel.setFont(theme.getRegularFont());
+                xyplot.addAnnotation(scoreLabel);
+                final String CALC = "(" + TPR + "-" + FPR + ")";
+                XYTextAnnotation calcLabel = new XYTextAnnotation(CALC, x + 59, y + i * -3.3);
+                calcLabel.setTextAnchor(TextAnchor.CENTER);
+                calcLabel.setBackgroundPaint(Color.white);
+                calcLabel.setPaint(Color.gray);
+                calcLabel.setFont(theme.getSmallFont());
+                xyplot.addAnnotation(calcLabel);
+
                 i++;
                 // Weak hack if there are more than 26 tools scored. This will only get us to 52.
                 if (ch == 'Z') ch = 'a';
@@ -327,9 +341,9 @@ public class ScatterHome extends ScatterPlot {
         boolean printedCommercialLabel = false;
         int commercialToolCount = 0;
 
-        for (Report r : toolResults) {
+        for (Tool r : tools) {
 
-            OverallToolResults or = r.getOverallResults();
+            ToolResults or = r.getOverallResults();
             if (r.isCommercial()) {
 
                 // print commercial label if there is at least one commercial tool
@@ -347,22 +361,43 @@ public class ScatterHome extends ScatterPlot {
 
                 commercialToolCount++;
                 // Special hack to make it line up better if the letter is an 'I' or 'i'
-                String label = (ch == 'I' || ch == 'i' ? ch + ":  " : "" + ch + ": ");
-                double score = or.getScore() * 100;
+                String label = (ch == 'I' || ch == 'i' ? ch + ":   " : ch + ": ");
+                // Another hack to make it line up better if the letter is a 'J' or 'j'
+                label = (ch == 'J' || ch == 'j' ? ch + ":  " : label);
+                double score = or.getOverallScore() * 100;
                 if (!BenchmarkScore.showAveOnlyMode) {
-                    String msg =
-                            "\u25A0 "
-                                    + label
-                                    + r.getToolNameAndVersion()
-                                    + " ("
-                                    + Math.round(score)
-                                    + "%)";
-                    XYTextAnnotation stroketext4 = new XYTextAnnotation(msg, x, y + i * -3.3);
-                    stroketext4.setTextAnchor(TextAnchor.CENTER_LEFT);
-                    stroketext4.setBackgroundPaint(Color.white);
-                    stroketext4.setPaint(Color.blue);
-                    stroketext4.setFont(theme.getRegularFont());
-                    xyplot.addAnnotation(stroketext4);
+
+                    final DecimalFormat DF = new DecimalFormat("#0.0");
+                    String TPR = DF.format(100 * or.getTruePositiveRate());
+                    if (TPR.endsWith("0"))
+                        TPR =
+                                TPR.substring(
+                                        0, TPR.length() - 2); // trim off .0 if it ends that way.
+                    String FPR = DF.format(100 * or.getFalsePositiveRate());
+                    if (FPR.endsWith("0")) FPR = FPR.substring(0, FPR.length() - 2);
+
+                    final String TOOL = "\u25A0 " + label + r.getToolNameAndVersion();
+                    XYTextAnnotation toolLabel = new XYTextAnnotation(TOOL, x, y + i * -3.3);
+                    toolLabel.setTextAnchor(TextAnchor.CENTER_LEFT);
+                    toolLabel.setBackgroundPaint(Color.white);
+                    toolLabel.setPaint(Color.blue);
+                    toolLabel.setFont(theme.getRegularFont());
+                    xyplot.addAnnotation(toolLabel);
+                    final String SCORE = Math.round(score) + "%";
+                    XYTextAnnotation scoreLabel = new XYTextAnnotation(SCORE, x + 53, y + i * -3.3);
+                    scoreLabel.setTextAnchor(TextAnchor.CENTER_RIGHT);
+                    scoreLabel.setBackgroundPaint(Color.white);
+                    scoreLabel.setPaint(Color.blue);
+                    scoreLabel.setFont(theme.getRegularFont());
+                    xyplot.addAnnotation(scoreLabel);
+                    final String CALC = "(" + TPR + "-" + FPR + ")";
+                    XYTextAnnotation calcLabel = new XYTextAnnotation(CALC, x + 59, y + i * -3.3);
+                    calcLabel.setTextAnchor(TextAnchor.CENTER);
+                    calcLabel.setBackgroundPaint(Color.white);
+                    calcLabel.setPaint(Color.gray);
+                    calcLabel.setFont(theme.getSmallFont());
+                    xyplot.addAnnotation(calcLabel);
+
                     i++;
                     // Weak hack if there are more than 26 tools scored. This will only get us to
                     // 52.
@@ -372,7 +407,7 @@ public class ScatterHome extends ScatterPlot {
                 totalScore += score;
             }
             if (r.getToolName().replace(' ', '_').equalsIgnoreCase(focus)) {
-                OverallToolResults orc = r.getOverallResults();
+                ToolResults orc = r.getOverallResults();
                 Point2D focusPoint =
                         new Point2D.Double(
                                 orc.getFalsePositiveRate() * 100, orc.getTruePositiveRate() * 100);
@@ -406,8 +441,7 @@ public class ScatterHome extends ScatterPlot {
         }
     }
 
-    public static void generateComparisonChart(
-            Set<Report> toolResults, String focus, File scoreCardDir) {
+    public static void generateComparisonChart(Set<Tool> tools, String focus, File scoreCardDir) {
         try {
             String scatterTitle =
                     BenchmarkScore.fullTestSuiteName(BenchmarkScore.TESTSUITE)
@@ -415,7 +449,7 @@ public class ScatterHome extends ScatterPlot {
                                     ? ""
                                     : " v" + BenchmarkScore.TESTSUITEVERSION)
                             + " Results Comparison";
-            ScatterHome scatter = new ScatterHome(scatterTitle, 800, toolResults, focus);
+            ScatterHome scatter = new ScatterHome(scatterTitle, tools, focus);
             scatter.writeChartToFile(new File(scoreCardDir, "toolresults_comparison.png"), 800);
         } catch (IOException e) {
             System.out.println("Couldn't generate tool results comparison chart for some reason.");

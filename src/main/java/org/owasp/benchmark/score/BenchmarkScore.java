@@ -25,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.SequenceInputStream;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -36,6 +37,7 @@ import java.security.SecureRandom;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -72,8 +74,6 @@ import org.owasp.benchmark.score.parsers.FortifyReader;
 import org.owasp.benchmark.score.parsers.FusionLiteInsightReader;
 import org.owasp.benchmark.score.parsers.HCLReader;
 import org.owasp.benchmark.score.parsers.HdivReader;
-import org.owasp.benchmark.score.parsers.HorusecReader;
-import org.owasp.benchmark.score.parsers.InsiderReader;
 import org.owasp.benchmark.score.parsers.JuliaReader;
 import org.owasp.benchmark.score.parsers.KiuwanReader;
 import org.owasp.benchmark.score.parsers.LGTMReader;
@@ -88,7 +88,6 @@ import org.owasp.benchmark.score.parsers.SeczoneReader;
 import org.owasp.benchmark.score.parsers.SeekerReader;
 import org.owasp.benchmark.score.parsers.SemgrepReader;
 import org.owasp.benchmark.score.parsers.ShiftLeftReader;
-import org.owasp.benchmark.score.parsers.ShiftLeftScanReader;
 import org.owasp.benchmark.score.parsers.SnappyTickReader;
 import org.owasp.benchmark.score.parsers.SonarQubeJsonReader;
 import org.owasp.benchmark.score.parsers.SonarQubeReader;
@@ -96,19 +95,18 @@ import org.owasp.benchmark.score.parsers.SourceMeterReader;
 import org.owasp.benchmark.score.parsers.ThunderScanReader;
 import org.owasp.benchmark.score.parsers.VeracodeReader;
 import org.owasp.benchmark.score.parsers.VisualCodeGrepperReader;
-import org.owasp.benchmark.score.parsers.WapitiJsonReader;
 import org.owasp.benchmark.score.parsers.WapitiReader;
 import org.owasp.benchmark.score.parsers.WebInspectReader;
 import org.owasp.benchmark.score.parsers.XanitizerReader;
-import org.owasp.benchmark.score.parsers.ZapJsonReader;
 import org.owasp.benchmark.score.parsers.ZapReader;
-import org.owasp.benchmark.score.report.Report;
 import org.owasp.benchmark.score.report.ScatterHome;
+import org.owasp.benchmark.score.report.ScatterInterpretation;
 import org.owasp.benchmark.score.report.ScatterVulns;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.yaml.snakeyaml.Yaml;
 
 public class BenchmarkScore {
 
@@ -133,74 +131,221 @@ public class BenchmarkScore {
     public static final String PATHTOSCORECARDRESOURCES =
             Utils.RESOURCES_DIR + SCORECARDDIRNAME + File.separator;
 
-    static Categories CATEGORIES;
+    // The name of this file if generated. This value is calculated by code below. Not set via
+    // config.
+    private static String commercialAveScorecardFilename = null;
 
-    // This is used to indicate that results from multiple versions of the Benchmark are included in
-    // these results. Each set in their own directory with their associated expectedresults file.
-    public static boolean mixedMode = false;
+    // The values stored in this is pulled from the categories.xml config file
+    public static Categories CATEGORIES;
+
+    // The values of these scorecard generation variables can be changed via scorecardconfig.yaml
+    // files. These affect overall scorecard generation. These were the original command line params
+    // to scorecard generation.
+
     // Indicates that the names of Commercial tools should be anonymized
     public static boolean anonymousMode = false;
     // Indicates that the results of Commercial tools should be suppressed. Only show their
     // averages.
     public static boolean showAveOnlyMode = false;
-    // The name of this file if generated
-    private static String commercialAveScorecardFilename = null;
     // The name of the tool to 'focus' on, if any
     private static String focus = "none";
+    // This is used to indicate that results from multiple versions of a test suite are included in
+    // these results. Each set in their own directory with their associated expectedresults file.
+    public static boolean mixedMode = false;
+
+    private static String expectedResultsFileName;
+    private static String resultsFileOrDirName;
+
+    // Customizations of these can be set via scorecardconfig.yaml files
+    // This affects details within whatever type of scorecards are being generated
+
+    public static String CWECATEGORYNAME =
+            "Vulnerabilities"; // Default name for vuln categories menu in scorecards.
+
+    public static String TPRLABEL = "TPR"; // Default label for True Positive Rate
+
+    // Indicates whether a link to the project should be included in generated pages. By default,
+    // yes.
+    public static boolean includeProjectLink = true;
+
+    // This is the default project link. This is set to "" if includeProjectLink set to false.
+    // TODO: Make this value configurable via .yaml file
+    public static String PROJECTLINKENTRY =
+            "            <p>\n"
+                    + "                For more information, please visit the <a href=\"https://owasp.org/www-project-benchmark/\">OWASP Benchmark Project Site</a>.\n"
+                    + "            </p>\n";
+
+    // Indicates whether Precision score should be included in generated tables. By default, no.
+    public static boolean includePrecision = false;
+
+    // This is the Key Entry for Precision, which is added to the Key for tables that include
+    // Precision. If includePrecision explicitly set to false via .yaml, then this default value set
+    // to "".
+    public static String PRECISIONKEYENTRY =
+            "<tr>\n"
+                    + "                    <th>Precision = TP / ( TP + FP )</th>\n"
+                    + "                    <td>The percentage of reported vulnerabilities that are true positives. Defined at <a href=\"https://en.wikipedia.org/wiki/Precision_and_recall\">Wikipedia</a>.</td>\n"
+                    + "                </tr>\n";
+
+    // This is the Key Entry for F-Score, which is added to the Key for tables that also include
+    // Precision. If includePrecision explicitly set to false via .yaml, then this default value set
+    // to "".
+    public static String FSCOREKEYENTRY =
+            "<tr>\n"
+                    + "                    <th>F-score = 2 * Precision * Recall / (Precision + Recall)</th>\n"
+                    + "                    <td>The harmonic mean of the precision and recall. A value of 1.0 indicates perfect precision and recall. Defined at <a href=\"https://en.wikipedia.org/wiki/F-score\">Wikipedia</a>.</td>\n"
+                    + "                </tr>\n";
 
     /*
-     * A list of the reports produced for each tool.
+     * The set of all the Tools. Each Tool includes the results for that tool.
      */
-    private static Set<Report> toolResults = new TreeSet<Report>();
+    private static Set<Tool> tools = new TreeSet<Tool>();
 
-    private static final String usageNotice =
-            "Usage: BenchmarkScore expected actual (optional) toolname anonymous/show_ave_only\n"
-                    + "  expected - path of expected results file from Benchmark distribution.\n"
-                    + "    Use value: 'mixed' if there are multiple results subdirectories for different versions of the Benchmark.\n"
-                    + "  actual   - results file, or directory with result files from tools (.ozasmt, .fpr, .fvdl, .xml, etc...\n"
-                    + "    For 'mixed' mode, this is the root directory that contains subdirectories with results files.\n"
-                    + "  An optional 3rd parameter - Name of tool to focus on, or 'none'. This highlights that particular tool in the"
-                    + "    generated charts."
-                    + "  And two optional 4th parameters - can only use one or the other"
-                    + "    anonymous - tells the scorecard generator to hide the names of commercial tools.\n"
-                    + "    show_ave_only - tells the scorecard generator to hide the commercial tool results"
-                    + "      entirely, and only show the commercial average.\n";
+    // These Average Category values are computed as a side effect of running
+    // generateVulnerabilityScorecards().
+    private static Map<String, CategoryResults> averageCommercialToolResults = null;
+    private static Map<String, CategoryResults> averageNonCommerciaToolResults = null;
+    private static Map<String, CategoryResults> overallAveToolResults = null;
 
-    public static void main(String[] args) {
-        if (args == null || args.length < 2) {
-            System.out.println(usageNotice);
-            System.exit(-1);
-        }
+    /**
+     * Process the command line arguments that make any configuration changes.
+     *
+     * @param args - args passed to main().
+     * @return true if valid command line arguments provided. False otherwise.
+     */
+    private static boolean processCommandLineArgs(String[] args) {
 
-        if (args.length > 2) {
-            focus = args[2].replace(' ', '_');
-        }
+        final String USAGE_MSG =
+                "Usage: -cf /PATH/TO/scoringconfigfile.yaml or -cr scoringconfigfile.yaml (where file is a resource)";
 
-        if (args.length > 3) {
-            if ("anonymous".equalsIgnoreCase(args[3])) {
-                anonymousMode = true;
-            } else if ("show_ave_only".equalsIgnoreCase(args[3])) {
-                showAveOnlyMode = true;
-            } else {
-                System.out.println(usageNotice);
-                System.exit(-1);
+        File yamlFile = null;
+        if (args == null || args.length == 0) {
+            // No arguments is OK
+        } else if (args.length != 0 && args.length != 2) {
+            System.out.println(USAGE_MSG);
+        } else if (args.length == 2) {
+            if ("-cf".equalsIgnoreCase(args[0])) {
+                // -cf indicates use the specified configuration file to config Permute params
+                yamlFile = new File(args[1]);
+                if (!yamlFile.exists()) {
+                    System.out.println(
+                            "ERROR: YAML scoring configuration file: '" + args[1] + "' not found!");
+                    return false;
+                }
+            } else if ("-cr".equalsIgnoreCase(args[0])) {
+                // -cr indicates use the specified configuration file resource to config Permute
+                // params
+                yamlFile =
+                        Utils.getFileFromClasspath(args[1], BenchmarkScore.class.getClassLoader());
+                if (yamlFile == null || !yamlFile.exists()) {
+                    System.out.println(
+                            "ERROR: YAML scoring configuration file: '"
+                                    + args[1]
+                                    + "' not found on classpath!");
+                    return false;
+                }
+            } else if (!(args[0] == null
+                    && args[1] == null)) { // pom settings for crawler forces creation of 2 args,
+                // but if none are provided, they are null
+                System.out.println(USAGE_MSG);
             }
         }
 
-        // TODO: Fix the poor error handling here and in main() overall.
+        // Find Default Scoring Config File
+        final String DEFAULTCONFIGFILE = "defaultscoringconfig.yaml";
+        File defYamlFile =
+                Utils.getFileFromClasspath(
+                        DEFAULTCONFIGFILE, BenchmarkScore.class.getClassLoader());
+        if (defYamlFile == null || !defYamlFile.exists()) {
+            System.out.println(
+                    "ERROR: default YAML scoring configuration file: '"
+                            + DEFAULTCONFIGFILE
+                            + "' not found on classpath!");
+            return false;
+        }
+
+        Yaml yaml = new Yaml();
+        Map<String, Object> yamlConfig = null;
+        if (yamlFile != null) {
+            // If specified, load Both Default and Custom YAML file in ONE Stream, so Custom Values
+            // Override Default
+            try (SequenceInputStream stream =
+                    new SequenceInputStream(
+                            new FileInputStream(defYamlFile), new FileInputStream(yamlFile))) {
+                yamlConfig = yaml.load(stream);
+                System.out.println(
+                        "YAML Scoring config file found and loaded. File used was: "
+                                + yamlFile.getAbsolutePath());
+            } catch (IOException e) {
+                // This can't happen, but just in case
+                e.printStackTrace();
+                return false;
+            }
+        } else { // just load the default file
+            try (FileInputStream yamlStream = new FileInputStream(defYamlFile)) {
+
+                yamlConfig = yaml.load(yamlStream);
+                System.out.println(
+                        "default YAML Scoring config file found and loaded. File used was: "
+                                + defYamlFile.getAbsolutePath());
+            } catch (IOException e) {
+                // This can't happen, but just in case
+                e.printStackTrace();
+            }
+        }
+
+        // Normally you'd do the following, but Yaml.load() prints out its own error messages in a
+        // prettier format and stops everything anyway.
+        // } catch (ScannerException e) {
+        // e.printStackTrace();
+        // }
+
+        boolean allParamsOK = true;
+        if (yamlConfig != null) {
+
+            // Now that the YAML config is loaded, set all the values that could be configured
+            expectedResultsFileName = (String) yamlConfig.get("expectedresults");
+            focus = (String) yamlConfig.get("focustool");
+            anonymousMode = ((Boolean) yamlConfig.get("anonymousmode")).booleanValue();
+            mixedMode = ((Boolean) yamlConfig.get("mixedmode")).booleanValue();
+            showAveOnlyMode = ((Boolean) yamlConfig.get("averageonlymode")).booleanValue();
+            resultsFileOrDirName = (String) yamlConfig.get("resultsfileordir");
+            CWECATEGORYNAME = (String) yamlConfig.get("cwecategoryname");
+            TPRLABEL = (String) yamlConfig.get("tprlabel");
+            includeProjectLink = ((Boolean) yamlConfig.get("includeprojectlink")).booleanValue();
+            if (!includeProjectLink) PROJECTLINKENTRY = "";
+            includePrecision = ((Boolean) yamlConfig.get("includeprecision")).booleanValue();
+            if (!includePrecision) {
+                // This two values are both included or not included together (currently)
+                PRECISIONKEYENTRY = "";
+                FSCOREKEYENTRY = "";
+            }
+        } else allParamsOK = false;
+
+        return allParamsOK;
+    }
+
+    public static void main(String[] args) {
+
+        if (!processCommandLineArgs(args)) {
+            System.out.println("Error processing configuration for Scoring. Aborting.");
+            System.exit(-1);
+        }
+
+        // Load in the categories definitions from the config file.
         try {
             File categoriesFile =
                     Utils.getFileFromClasspath(
                             Categories.FILENAME, BenchmarkScore.class.getClassLoader());
             CATEGORIES = new Categories(categoriesFile);
         } catch (ParserConfigurationException | SAXException | IOException e1) {
-            // TODO Auto-generated catch block
+            System.out.println("ERROR: couldn't load categories from categories config file.");
             e1.printStackTrace();
             System.exit(-1);
         }
 
         // Step 0: Make sure the results file or directory exists before doing anything.
-        File resultsFileOrDir = new File(args[1]);
+        File resultsFileOrDir = new File(resultsFileOrDirName);
         if (!resultsFileOrDir.exists()) {
             System.out.println(
                     "Error! - results file or directory: '"
@@ -210,8 +355,7 @@ public class BenchmarkScore {
         }
 
         // Prepare the scorecard results directory for the newly generated scorecards
-        // This directory is put in the same directory the results/ directory is located, which is
-        // specified by the .yaml file.
+        // This directory is put in the same directory the results/ directory is located.
 
         // Step 1: Create the dir if it doesn't exist, or delete everything in it if it does
         File scoreCardDir = new File(resultsFileOrDir.getParent(), SCORECARDDIRNAME);
@@ -258,15 +402,11 @@ public class BenchmarkScore {
             e.printStackTrace();
         }
 
-        // Steps 4 & 5: Read the expected results so we know what each tool 'should do' and the each
-        // results file. a) is for 'mixed' mode, and b) is for normal mode
+        // Steps 4 & 5: Read the expected results so we know what each tool 'should do' and each
+        // tool's results file. a) is for 'mixed' mode, and b) is for normal mode
         try {
 
-            if ("mixed".equalsIgnoreCase(args[0])) {
-
-                // Tells anyone that cares that we aren't processing a single version of Benchmark
-                // results
-                mixedMode = true;
+            if (mixedMode) {
 
                 if (!resultsFileOrDir.isDirectory()) {
                     System.out.println(
@@ -284,7 +424,6 @@ public class BenchmarkScore {
                 for (File rootDirFile : resultsFileOrDir.listFiles()) {
 
                     if (rootDirFile.isDirectory()) {
-
                         // Process this directory
                         TestSuiteResults expectedResults = null;
                         String expectedResultsFilename = null;
@@ -316,11 +455,19 @@ public class BenchmarkScore {
                                 expectedResultsFilename = resultsDirFile.getName();
                                 // The else clause supports the ability to score mixed results
                                 // across multiple versions of the same test suite.
-                                // This hasn't been used in a long while.
                                 if (TESTSUITEVERSION == null) {
                                     TESTSUITEVERSION = expectedResults.getTestSuiteVersion();
-                                } else
-                                    TESTSUITEVERSION += "," + expectedResults.getTestSuiteVersion();
+                                } else {
+                                    // Hack to sort the test suite versions so earlier versions are
+                                    // listed first. Won't always work for 3+ versions in the same
+                                    // scorecard
+                                    String newVersion = expectedResults.getTestSuiteVersion();
+
+                                    TESTSUITEVERSION =
+                                            TESTSUITEVERSION.compareTo(newVersion) < 0
+                                                    ? TESTSUITEVERSION + "," + newVersion
+                                                    : newVersion + "," + TESTSUITEVERSION;
+                                }
                                 System.out.println(
                                         "\nFound expected results file: "
                                                 + resultsDirFile.getAbsolutePath());
@@ -337,14 +484,16 @@ public class BenchmarkScore {
                             System.exit(-1);
                         }
 
-                        // Step 5a: Go through each result file and generate scorecard for that tool
+                        // Step 5a: Go through each result file, score the tool, and generate a
+                        // scorecard for that tool
                         if (!anonymousMode) {
                             for (File actual : rootDirFile.listFiles()) {
                                 // Don't confuse the expected results file as an actual results file
                                 // if its in the same directory
                                 if (!actual.isDirectory()
                                         && !expectedResultsFilename.equals(actual.getName())) {
-                                    process(actual, expectedResults, toolResults, scoreCardDir);
+                                    // process() populates tools with the supplied tool's results
+                                    process(actual, expectedResults, tools, scoreCardDir);
                                 }
                             }
                         } else {
@@ -365,7 +514,8 @@ public class BenchmarkScore {
                                 // if its in the same directory
                                 if (!actual.isDirectory()
                                         && !expectedResultsFilename.equals(actual.getName())) {
-                                    process(actual, expectedResults, toolResults, scoreCardDir);
+                                    // process() populates tools with the supplied tool's results
+                                    process(actual, expectedResults, tools, scoreCardDir);
                                 }
                             } // end while
                         } // end else
@@ -376,8 +526,8 @@ public class BenchmarkScore {
             } else { // Not "mixed" - i.e., the 'Normal' way
 
                 // Step 4b: Read the expected results so we know what each tool 'should do'
-                File expected = new File(args[0]);
-                System.out.println("Getting expected results from: " + args[0]);
+                File expected = new File(expectedResultsFileName);
+                System.out.println("Getting expected results from: " + expectedResultsFileName);
                 TestSuiteResults expectedResults = readExpectedResults(expected);
                 if (expectedResults == null) {
                     System.out.println("Couldn't read expected results file: " + expected);
@@ -404,7 +554,8 @@ public class BenchmarkScore {
                             // its in the same directory
                             if (!actual.isDirectory()
                                     && !expected.getName().equals(actual.getName())) {
-                                process(actual, expectedResults, toolResults, scoreCardDir);
+                                // process() populates tools with the supplied tool's results
+                                process(actual, expectedResults, tools, scoreCardDir);
                                 processedAtLeastOneResultsFile = true;
                             }
                         }
@@ -434,7 +585,8 @@ public class BenchmarkScore {
                             // its in the same directory
                             if (!actual.isDirectory()
                                     && !expected.getName().equals(actual.getName())) {
-                                process(actual, expectedResults, toolResults, scoreCardDir);
+                                // process() populates tools with the supplied tool's results
+                                process(actual, expectedResults, tools, scoreCardDir);
                             }
                         }
                     } // end else (!anonymousMode)
@@ -442,7 +594,8 @@ public class BenchmarkScore {
                 } else {
                     // This will process a single results file, if that is what the 2nd parameter
                     // points to. This has never been used.
-                    process(resultsFileOrDir, expectedResults, toolResults, scoreCardDir);
+                    // process() populates tools with the supplied tool's results
+                    process(resultsFileOrDir, expectedResults, tools, scoreCardDir);
                 } // end else ( f.isDirectory() )
             } // end else "Not mixed"
 
@@ -454,35 +607,59 @@ public class BenchmarkScore {
             e.printStackTrace();
         }
 
-        // Step 6: Now generate scorecards for each type of vulnerability across all the tools
+        // Step 6: Generate scorecards for each type of vulnerability across all the tools now that
+        // the results for all the individual tools have been calculated.
 
-        // First, we have to figure out the list of vulnerabilities
+        // First, we have to figure out the set of vulnerability types that were scored
         // A set is used here to eliminate duplicate categories across all the results
         Set<String> catSet = new TreeSet<String>();
-        for (Report toolReport : toolResults) {
-            catSet.addAll(toolReport.getOverallResults().getCategories());
+        for (Tool tool : tools) {
+            catSet.addAll(tool.getOverallResults().getCategories());
         }
 
         // Then we generate each vulnerability scorecard
-        BenchmarkScore.generateVulnerabilityScorecards(toolResults, catSet, scoreCardDir);
+        BenchmarkScore.generateVulnerabilityScorecards(tools, catSet, scoreCardDir);
         System.out.println("Vulnerability scorecards computed.");
 
-        // Step 7: Update all the menus for all the generated pages to reflect the tools and
+        // Step 7: Generate the tool scorecards now that the overall Vulnerability scorecards and
+        // stats have been calculated
+        for (Tool tool : tools) {
+            tool.generateScorecard(overallAveToolResults, scoreCardDir);
+        }
+
+        // Step 8: Update all the menus for all the generated pages to reflect the tools and
         // vulnerability categories
-        updateMenus(toolResults, catSet, scoreCardDir);
+        updateMenus(tools, catSet, scoreCardDir);
 
-        // Step 8: Generate the overall comparison chart for all the tools in this test
-        ScatterHome.generateComparisonChart(toolResults, focus, scoreCardDir);
+        // Step 9: Generate the overall comparison chart for all the tools in this test
+        ScatterHome.generateComparisonChart(tools, focus, scoreCardDir);
 
-        // Step 9: Generate the results table across all the tools in this test
-        String table = generateOverallStatsTable(toolResults);
+        // Step 10: Generate the results table across all the tools in this test
+        String table = generateOverallStatsTable(tools);
 
         try {
             String html = new String(Files.readAllBytes(homeFilePath));
+            html = html.replace("${projectlink}", BenchmarkScore.PROJECTLINKENTRY);
             html = html.replace("${table}", table);
+            html = html.replace("${tprlabel}", BenchmarkScore.TPRLABEL);
+            html =
+                    html.replace(
+                            "${precisionkey}",
+                            BenchmarkScore.PRECISIONKEYENTRY + BenchmarkScore.FSCOREKEYENTRY);
             Files.write(homeFilePath, html.getBytes());
         } catch (IOException e) {
             System.out.println("Error updating results table in: " + homeFilePath.getFileName());
+            e.printStackTrace();
+        }
+
+        // Step 11: Create the Interpretation Guide image with the name of this particular test
+        // suite
+        ScatterInterpretation scatter = new ScatterInterpretation(800);
+        try {
+            scatter.writeChartToFile(new File(scoreCardDir, "content/testsuite_guide.png"), 800);
+        } catch (IOException e) {
+            System.out.println(
+                    "ERROR: Couldn't create content/testsuite_guide.png file for some reason.");
             e.printStackTrace();
         }
 
@@ -492,24 +669,24 @@ public class BenchmarkScore {
     }
 
     /**
-     * The method takes in a tool scan results file and determined how well that tool did against
-     * the test suite.
+     * The method takes in a tool scan results file and determines how well that tool did against
+     * the test suite. And then it generates the HTML scorecard for that tool as writes it to disk.
      *
      * @param rawToolResultsFile - The raw results file to process. This is the native results file
      *     from the tool.
      * @param expectedResults - This is the expected results csv file for this version of the test
      *     suite.
-     * @param toolReports - The current set of tool reports. This contains information about the
-     *     results for each tool. It is updated in this method so that the menus across all the
-     *     scorecards can be generated and a summary scorecard can be computed. A new Report is
-     *     added each time this method is called which adds the name of the tool, the filename of
-     *     the scorecard, and the report that was created for that tool.
+     * @param tools - The current set of tools. This contains information about the results for each
+     *     tool. It is updated in this method so that the menus across all the scorecards can be
+     *     generated later and a summary scorecard can be computed. A new Tool is added each time
+     *     this method is called which adds the name of the tool, the filename of the scorecard, and
+     *     the report that was created for that tool.
      * @param scoreCardDir - The directory where the scorecard is being written to.
      */
     private static void process(
             File rawToolResultsFile,
             TestSuiteResults expectedResults,
-            Set<Report> toolReports,
+            Set<Tool> tools,
             File scoreCardDir) {
 
         try {
@@ -532,23 +709,21 @@ public class BenchmarkScore {
 
                 Map<String, TP_FN_TN_FP_Counts> scores = calculateScores(actualResults);
 
-                OverallToolResults metrics = calculateMetrics(scores);
-                metrics.setTime(rawToolResults.getTime());
+                ToolResults metrics = calculateMetrics(scores);
+                metrics.setScanTime(rawToolResults.getTime());
 
-                // This has the side effect of also generating the report in the scoreCardDir
-                Report scoreCard =
-                        new Report(
+                // This has the side effect of also generating the tool's report in the
+                // scoreCardDir.
+                Tool tool =
+                        new Tool(
                                 rawToolResults,
                                 scores,
                                 metrics,
-                                actualResults.getTotalResults(),
                                 actualResultsFileName,
-                                rawToolResults.isCommercial(),
-                                rawToolResults.getToolType(),
-                                scoreCardDir);
+                                rawToolResults.isCommercial());
 
-                // Add this report to the list of reports
-                toolReports.add(scoreCard);
+                // Add this tool to the set of tools processed so far
+                tools.add(tool);
 
                 // This is for debugging purposes. It indicates how may extra results were found in
                 // the actual results vice the expected results.
@@ -600,10 +775,9 @@ public class BenchmarkScore {
         return tmp;
     }
 
-    private static OverallToolResults calculateMetrics(Map<String, TP_FN_TN_FP_Counts> results) {
+    private static ToolResults calculateMetrics(Map<String, TP_FN_TN_FP_Counts> results) {
 
-        OverallToolResults metrics = new OverallToolResults();
-        double totalScore = 0;
+        ToolResults metrics = new ToolResults();
         double totalFPRate = 0;
         double totalTPRate = 0;
         int total = 0;
@@ -614,20 +788,14 @@ public class BenchmarkScore {
         for (String category : results.keySet()) {
             TP_FN_TN_FP_Counts c = results.get(category);
             int rowTotal = c.tp + c.fn + c.tn + c.fp;
+            double precision = (double) c.tp / (double) (c.tp + c.fp);
+            // c.tp & c.fp can both be zero, creating a precision of NaN. So set to 0.0.
+            if (Double.isNaN(precision)) precision = 0.0;
             double tpr = (double) c.tp / (double) (c.tp + c.fn);
             double fpr = (double) c.fp / (double) (c.fp + c.tn);
             // c.fp & c.tn can both be zero, creating an fpr of NaN. So set to 0.0.
             if (Double.isNaN(fpr)) fpr = 0.0;
 
-            // category score is distance from (fpr,tpr) to the guessing line
-            double side = tpr - fpr;
-            double hyp = side * Math.sqrt(2); // Pythagoras
-            double raw = hyp / 2;
-            double score = raw * Math.sqrt(2); // adjust scores to 0-1
-
-            if (!Double.isNaN(score)) {
-                totalScore += score;
-            }
             totalFPRate += fpr;
             totalTPRate += tpr;
             total += rowTotal;
@@ -636,21 +804,26 @@ public class BenchmarkScore {
             totalFN += c.fn;
             totalTN += c.tn;
 
-            metrics.add(category, tpr, fpr, rowTotal, score);
+            // Add the metrics for this particular category. But this add() doesn't automatically
+            // update the overall metrics, so those are set after this for loop completes.
+            metrics.add(category, precision, tpr, fpr, rowTotal);
         } // end for
 
         int resultsSize = results.size();
-        metrics.setScore(totalScore / resultsSize);
+        double totalPrecision = (double) totalTP / (double) (totalTP + totalFP);
+        // tp & fp can both be zero, creating a precision of NaN. If so, set to 0.0.
+        if (Double.isNaN(totalPrecision)) totalPrecision = 0.0;
+        metrics.setPrecision(totalPrecision);
         metrics.setFalsePositiveRate(totalFPRate / resultsSize);
         metrics.setTruePositiveRate(totalTPRate / resultsSize);
-        metrics.setTotal(total);
+        metrics.setTotalTestCases(total);
         metrics.setFindingCounts(totalTP, totalFP, totalFN, totalTN);
 
         return metrics;
     }
 
     /**
-     * This method translates vulnerability names, e.g., Command Injection, to their CWE number.
+     * This method translates vulnerability names, e.g., Cross-Site Scripting, to their CWE number.
      *
      * @param The category to translate.
      * @return The CWE # of that category.
@@ -663,24 +836,25 @@ public class BenchmarkScore {
             System.out.println("Error: Category: " + categoryName + " not supported.");
             cwe = -1;
         } else {
-            cwe = category.getCwe();
+            cwe = category.getCWE();
         }
 
         return cwe;
     }
 
     /**
-     * Return map of category to array of results
+     * Return map of each vuln category to the actual result counts for that category in the
+     * supplied TestSuiteResults.
      *
-     * @param expectedResults
-     * @return A Map<String, TP_FN_TN_FP_Counts> which has the TP/FN/TN/FP Counts per CWE Category
+     * @param actualResults to calculate scores from.
+     * @return A Map<String, TP_FN_TN_FP_Counts> of the vuln categories by name, to the scores for
+     *     this tool.
      */
-    private static Map<String, TP_FN_TN_FP_Counts> calculateScores(
-            TestSuiteResults expectedResults) {
+    private static Map<String, TP_FN_TN_FP_Counts> calculateScores(TestSuiteResults actualResults) {
         Map<String, TP_FN_TN_FP_Counts> map = new TreeMap<String, TP_FN_TN_FP_Counts>();
 
-        for (Integer tn : expectedResults.keySet()) {
-            TestCaseResult tcr = expectedResults.get(tn).get(0); // only one
+        for (Integer tn : actualResults.keySet()) {
+            TestCaseResult tcr = actualResults.get(tn).get(0); // only one
             String cat = CATEGORIES.getById(tcr.getCategory()).getName();
 
             TP_FN_TN_FP_Counts c = map.get(cat);
@@ -725,57 +899,48 @@ public class BenchmarkScore {
                 // type
 
                 String content = new String(Files.readAllBytes(Paths.get(fileToParse.getPath())));
-                JSONObject jsonObj = new JSONObject(content);
+                JSONObject jsonobj = new JSONObject(content);
 
-                if (HorusecReader.isHorusecReport(jsonObj)) {
-                    tr = new HorusecReader().parse(jsonObj);
-                } else if (InsiderReader.isInsiderReport(jsonObj)) {
-                    tr = new InsiderReader().parse(jsonObj);
+                try {
+                    jsonobj.getJSONArray("results"); // Throws JSONException if this Node not found.
+                    tr = new SemgrepReader().parse(jsonobj);
+                } catch (JSONException e) {
 
-                    // ShiftLeft Scan puts two JSON files into one, so we need to pass the raw file
-                    // content
-                } else if (ShiftLeftScanReader.isShiftLeftScanReport(content)) {
-                    tr = new ShiftLeftScanReader().parse(content);
-                } else if (WapitiJsonReader.isWapitiReport(jsonObj)) {
-                    tr = WapitiJsonReader.parse(jsonObj);
-                } else if (ZapJsonReader.isZapReport(jsonObj)) {
-                    tr = new ZapJsonReader().parse(jsonObj);
-
-                } else {
+                    // Note: Each of the remaining try blocks is nested under the one above, but we
+                    // shown them inline as they would get too deep otherwise
                     try {
-                        jsonObj.getJSONArray(
-                                "results"); // Throws JSONException if this Node not found.
-                        tr = new SemgrepReader().parse(jsonObj);
-                    } catch (JSONException e) {
+                        // SonarQube has two different JSON formats, one for standard issues and
+                        // another for 'hotspots' which are security issues. Both are handled by the
+                        // same parser for SonarQube.
+                        jsonobj.getJSONArray("issues");
+                        tr = new SonarQubeJsonReader().parse(fileToParse);
+                    } catch (JSONException e2) {
 
                         try {
-                            // SonarQube has two different JSON formats, one for standard issues and
-                            // another for 'hotspots' which are security issues. Both are handled by
-                            // the same parser for SonarQube.
-                            jsonObj.getJSONArray("issues");
+                            jsonobj.getJSONArray("hotspots");
                             tr = new SonarQubeJsonReader().parse(fileToParse);
-                        } catch (JSONException e2) {
+                        } catch (JSONException e3) {
 
                             try {
-                                jsonObj.getJSONArray("hotspots");
-                                tr = new SonarQubeJsonReader().parse(fileToParse);
-                            } catch (JSONException e3) {
+                                jsonobj.getJSONArray("issue_events");
+                                tr = new BurpJsonReader().parse(fileToParse);
 
-                                try {
-                                    jsonObj.getJSONArray("issue_events");
-                                    tr = new BurpJsonReader().parse(fileToParse);
+                                // This is the final catch that says we couldn't find a matching
+                                // parser
+                            } catch (JSONException e4) {
+                                System.out.println(
+                                        "Error: No matching parser found for JSON file: "
+                                                + filename);
+                            }
 
-                                    // This is the final catch that says we couldn't find a matching
-                                    // parser
-                                } catch (JSONException e4) {
-                                    System.out.println(
-                                            "Error: No matching parser found for JSON file: "
-                                                    + filename);
-                                }
-                            } // end catch SonarQubeJsonReader - hotspots
-                        } // end catch SonarQubeJsonReader - issues
-                    } // end catch SemgrepReader
-                } // end else
+                            //  } else if ( fileContains(fileToParse,
+                            // "\"shiftleft_managed\":")) {
+                            //    tr = new ShiftLeftNGSASTReader().parse(fileToParse );
+                            //	else {
+
+                        } // end catch SonarQubeJsonReader - hotspots
+                    } // end catch SonarQubeJsonReader - issues
+                } // end catch SemgrepReader
             }
         } else if (filename.endsWith(".sarif")) {
             tr = new LGTMReader().parse(fileToParse);
@@ -810,7 +975,7 @@ public class BenchmarkScore {
 
                 // change the name of the tool if the filename contains findsecbugs
                 if (fileToParse.getName().contains("findsecbugs")) {
-                    if (tr.getTool().startsWith("Find")) {
+                    if (tr.getToolName().startsWith("Find")) {
                         tr.setTool("FBwFindSecBugs");
                     } else {
                         tr.setTool("SBwFindSecBugs");
@@ -883,7 +1048,13 @@ public class BenchmarkScore {
                     tr = new WebInspectReader().parse(root);
                 } else if (nodeName.equals("WAS_SCAN_REPORT")) {
                     tr = new QualysWASReader().parse(fileToParse, root);
-                } else
+                }
+
+                //  else if ( nodeName.equals( "all" ) ) {
+                //      tr = new ShiftLeftNGSASTReader().parse( fileToParse, root );
+                //  }
+
+                else
                     System.out.println("Error: No matching parser found for XML file: " + filename);
             } // end else
         } // end if endsWith ".xml"
@@ -892,7 +1063,7 @@ public class BenchmarkScore {
             // .fpr files are really .zip files. So we have to extract the .fvdl file out of it to
             // process it
             Path path = Paths.get(fileToParse.getPath());
-            FileSystem fileSystem = FileSystems.newFileSystem(path, (ClassLoader) null);
+            FileSystem fileSystem = FileSystems.newFileSystem(path, (java.lang.ClassLoader) null);
             File outputFile = File.createTempFile(filename, ".fvdl");
             Path source = fileSystem.getPath("audit.fvdl");
             Files.copy(source, outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
@@ -922,7 +1093,7 @@ public class BenchmarkScore {
                         line = br.readLine();
                     }
                     if (sb.indexOf("Fortify-FOD-") > -1) {
-                        tr.setTool(tr.getTool() + "-OnDemand");
+                        tr.setTool(tr.getToolName() + "-OnDemand");
                     }
                 } finally {
                     br.close();
@@ -947,7 +1118,13 @@ public class BenchmarkScore {
             tr = new HdivReader().parse(fileToParse);
         } else if (filename.endsWith(".sl")) {
             tr = new ShiftLeftReader().parse(fileToParse);
-        } else System.out.println("Error: No matching parser found for file: " + filename);
+        }
+        /*
+                else if ( filename.endsWith( ".sl_titles" ) ) {
+                    tr = new ShiftLeftReader2().parse( fileToParse );
+                }
+        */
+        else System.out.println("Error: No matching parser found for file: " + filename);
 
         // If we have results, see if the version # is in the results file name.
         if (tr != null) {
@@ -1041,7 +1218,7 @@ public class BenchmarkScore {
         // compute anything, unless its the tool of 'focus'.
         if (BenchmarkScore.anonymousMode
                 && rawToolResults.isCommercial
-                && !rawToolResults.getTool().replace(' ', '_').equalsIgnoreCase(focus)) {
+                && !rawToolResults.getToolName().replace(' ', '_').equalsIgnoreCase(focus)) {
             rawToolResults.setAnonymous();
         }
 
@@ -1051,7 +1228,7 @@ public class BenchmarkScore {
             List<TestCaseResult> act =
                     rawToolResults.get(tc); // could be lots of results for this test
 
-            pass = compare(exp, act, rawToolResults.getTool());
+            pass = compare(exp, act, rawToolResults.getToolName());
 
             // helpful in debugging
             // System.out.println( tc + ", " + exp.getCategory() + ", " + exp.isReal() + ", " +
@@ -1063,7 +1240,7 @@ public class BenchmarkScore {
 
         // Record the name and version of the tool whose pass/fail values were recorded in
         // 'expected' results
-        expected.setTool(rawToolResults.getTool());
+        expected.setTool(rawToolResults.getToolName());
         expected.setToolVersion(rawToolResults.getToolVersion());
 
         // Return the modified expected as the actual.  Beware of the side effect!
@@ -1279,12 +1456,14 @@ public class BenchmarkScore {
         return null; // Should have returned results file name earlier if successful
     }
 
-    /*
-     * Generate all the vulnerability scorecards. And then 1 commercial tool scorecard if there are commercial tool
-     * results for at least 2 commercial tools.
+    /**
+     * Generate all the vulnerability scorecards. And then 1 commercial tool average scorecard if
+     * there are commercial tool results for at least 2 commercial tools. Also create the Tool
+     * objects for: averageCommercialToolResults, averageNonCommercialToolResults,
+     * overallAveToolResults.
      */
     private static void generateVulnerabilityScorecards(
-            Set<Report> toolResults, Set<String> catSet, File scoreCardDir) {
+            Set<Tool> tools, Set<String> catSet, File scoreCardDir) {
         StringBuilder htmlForCommercialAverages = null;
 
         int commercialToolTotal = 0;
@@ -1293,10 +1472,29 @@ public class BenchmarkScore {
         int commercialAveTotal = 0;
         int commercialHighTotal = 0;
 
+        // A side effect of this method is to calculate these averages
+        averageCommercialToolResults = new HashMap<String, CategoryResults>();
+        averageNonCommerciaToolResults = new HashMap<String, CategoryResults>();
+        overallAveToolResults = new HashMap<String, CategoryResults>();
+
         for (String cat : catSet) {
             try {
+
+                // Generate a comparison chart for all tools for this vuln category. When
+                // constructed, scatter contains the Overall, Non-commercial, and Commercial stats
+                // for this category across all tools.
                 ScatterVulns scatter =
-                        ScatterVulns.generateComparisonChart(cat, toolResults, focus, scoreCardDir);
+                        ScatterVulns.generateComparisonChart(cat, tools, focus, scoreCardDir);
+
+                // Before creating html for this vuln category, save the category level results into
+                // averageCommercialToolResults, averageNonCommerciaToolResults,
+                // overallAveToolResults
+                BenchmarkScore.averageCommercialToolResults.put(
+                        cat, scatter.getCommercialCategoryResults());
+                BenchmarkScore.averageNonCommerciaToolResults.put(
+                        cat, scatter.getNonCommercialCategoryResults());
+                BenchmarkScore.overallAveToolResults.put(cat, scatter.getOverallCategoryResults());
+
                 String filename =
                         TESTSUITE
                                 + "_v"
@@ -1307,7 +1505,6 @@ public class BenchmarkScore {
                 Files.copy(
                         Paths.get(PATHTOSCORECARDRESOURCES + "vulntemplate.html"),
                         new FileOutputStream(htmlFile));
-                //                        StandardCopyOption.REPLACE_EXISTING);
                 String html = new String(Files.readAllBytes(htmlFile.toPath()));
                 html =
                         html.replace(
@@ -1325,9 +1522,15 @@ public class BenchmarkScore {
                                 "${vulnerability}",
                                 cat + " (CWE #" + BenchmarkScore.translateNameToCWE(cat) + ")");
                 html = html.replace("${version}", TESTSUITEVERSION);
+                html = html.replace("${projectlink}", BenchmarkScore.PROJECTLINKENTRY);
 
-                String table = generateVulnStatsTable(toolResults, cat);
+                String table = generateVulnStatsTable(tools, cat);
                 html = html.replace("${table}", table);
+                html = html.replace("${tprlabel}", BenchmarkScore.TPRLABEL);
+                html =
+                        html.replace(
+                                "${precisionkey}",
+                                BenchmarkScore.PRECISIONKEYENTRY + BenchmarkScore.FSCOREKEYENTRY);
 
                 Files.write(htmlFile.toPath(), html.getBytes());
 
@@ -1430,9 +1633,15 @@ public class BenchmarkScore {
                                 "${testsuite}",
                                 BenchmarkScore.fullTestSuiteName(BenchmarkScore.TESTSUITE));
                 html = html.replace("${version}", TESTSUITEVERSION);
+                html = html.replace("${projectlink}", BenchmarkScore.PROJECTLINKENTRY);
 
                 String table = htmlForCommercialAverages.toString();
                 html = html.replace("${table}", table);
+                html = html.replace("${tprlabel}", BenchmarkScore.TPRLABEL);
+                html =
+                        html.replace(
+                                "${precisionkey}",
+                                BenchmarkScore.PRECISIONKEYENTRY + BenchmarkScore.FSCOREKEYENTRY);
 
                 Files.write(htmlfile, html.getBytes());
                 System.out.println("Commercial average scorecard computed.");
@@ -1447,33 +1656,35 @@ public class BenchmarkScore {
      * This generates the vulnerability stats table that goes at the bottom of each vulnerability
      * category page.
      *
-     * @param toolResults - The set of results across all the tools.
+     * @param tools - The set of all tools being scored. Each Tool includes it's scored results.
      * @param category - The vulnerability category to generate this table for.
      * @return The HTML of the vulnerability stats table.
      */
-    private static String generateVulnStatsTable(Set<Report> toolResults, String category) {
+    private static String generateVulnStatsTable(Set<Tool> tools, String category) {
         StringBuilder sb = new StringBuilder();
         sb.append("<table class=\"table\">\n");
         sb.append("<tr>");
         sb.append("<th>Tool</th>");
+        sb.append("<th>Type</th>");
         if (mixedMode) sb.append("<th>" + TESTSUITE + " Version</th>");
         sb.append("<th>TP</th>");
         sb.append("<th>FN</th>");
         sb.append("<th>TN</th>");
         sb.append("<th>FP</th>");
         sb.append("<th>Total</th>");
-        sb.append("<th>TPR</th>");
+        if (BenchmarkScore.includePrecision) sb.append("<th>Precision</th><th>F-score</th>");
+        sb.append("<th>${tprlabel}</th>");
         sb.append("<th>FPR</th>");
         sb.append("<th>Score</th>");
         sb.append("</tr>\n");
 
-        for (Report toolResult : toolResults) {
+        for (Tool tool : tools) {
 
-            if (!(showAveOnlyMode && toolResult.isCommercial())) {
-                OverallToolResults or = toolResult.getOverallResults();
-                Map<String, TP_FN_TN_FP_Counts> scores = toolResult.getScores();
+            if (!(showAveOnlyMode && tool.isCommercial())) {
+                ToolResults or = tool.getOverallResults();
+                Map<String, TP_FN_TN_FP_Counts> scores = tool.getScores();
                 TP_FN_TN_FP_Counts c = scores.get(category);
-                CategoryResults r = or.getResults(category);
+                CategoryResults r = or.getCategoryResults(category);
                 String style = "";
 
                 if (Math.abs(r.truePositiveRate - r.falsePositiveRate) < .1)
@@ -1481,13 +1692,18 @@ public class BenchmarkScore {
                 else if (r.truePositiveRate > .7 && r.falsePositiveRate < .3)
                     style = "class=\"success\"";
                 sb.append("<tr " + style + ">");
-                sb.append("<td>" + toolResult.getToolNameAndVersion() + "</td>");
-                if (mixedMode) sb.append("<td>" + toolResult.getTestSuiteVersion() + "</td>");
+                sb.append("<td>" + tool.getToolNameAndVersion() + "</td>");
+                sb.append("<td>" + tool.getToolType() + "</td>");
+                if (mixedMode) sb.append("<td>" + tool.getTestSuiteVersion() + "</td>");
                 sb.append("<td>" + c.tp + "</td>");
                 sb.append("<td>" + c.fn + "</td>");
                 sb.append("<td>" + c.tn + "</td>");
                 sb.append("<td>" + c.fp + "</td>");
-                sb.append("<td>" + r.total + "</td>");
+                sb.append("<td>" + r.totalTestCases + "</td>");
+                if (BenchmarkScore.includePrecision) {
+                    sb.append("<td>" + new DecimalFormat("#0.00%").format(r.precision) + "</td>");
+                    sb.append("<td>" + new DecimalFormat("#0.0000").format(r.fscore) + "</td>");
+                }
                 sb.append(
                         "<td>" + new DecimalFormat("#0.00%").format(r.truePositiveRate) + "</td>");
                 sb.append(
@@ -1504,25 +1720,26 @@ public class BenchmarkScore {
     /**
      * Generate the overall stats table across all the tools for the bottom of the home page.
      *
-     * @param toolResults - The set of results across all the tools.
+     * @param tools - The set of all tools being scored. Each Tool includes it's scored results.
      * @return The HTML of the overall stats table.
      */
-    private static String generateOverallStatsTable(Set<Report> toolResults) {
+    private static String generateOverallStatsTable(Set<Tool> tools) {
         StringBuilder sb = new StringBuilder();
         sb.append("<table class=\"table\">\n");
         sb.append("<tr>");
         sb.append("<th>Tool</th>");
         if (mixedMode) sb.append("<th>" + TESTSUITE + " Version</th>");
         sb.append("<th>Type</th>");
-        sb.append("<th>TPR*</th>");
+        if (BenchmarkScore.includePrecision) sb.append("<th>Precision*</th><th>F-score*</th>");
+        sb.append("<th>${tprlabel}*</th>");
         sb.append("<th>FPR*</th>");
         sb.append("<th>Score*</th>");
         sb.append("</tr>\n");
 
-        for (Report toolResult : toolResults) {
+        for (Tool tool : tools) {
 
-            if (!(showAveOnlyMode && toolResult.isCommercial())) {
-                OverallToolResults or = toolResult.getOverallResults();
+            if (!(showAveOnlyMode && tool.isCommercial())) {
+                ToolResults or = tool.getOverallResults();
                 String style = "";
 
                 if (Math.abs(or.getTruePositiveRate() - or.getFalsePositiveRate()) < .1)
@@ -1530,9 +1747,17 @@ public class BenchmarkScore {
                 else if (or.getTruePositiveRate() > .7 && or.getFalsePositiveRate() < .3)
                     style = "class=\"success\"";
                 sb.append("<tr " + style + ">");
-                sb.append("<td>" + toolResult.getToolNameAndVersion() + "</td>");
-                if (mixedMode) sb.append("<td>" + toolResult.getTestSuiteVersion() + "</td>");
-                sb.append("<td>" + toolResult.getToolType() + "</td>");
+                sb.append("<td>" + tool.getToolNameAndVersion() + "</td>");
+                if (mixedMode) sb.append("<td>" + tool.getTestSuiteVersion() + "</td>");
+                sb.append("<td>" + tool.getToolType() + "</td>");
+                if (BenchmarkScore.includePrecision) {
+                    sb.append(
+                            "<td>"
+                                    + new DecimalFormat("#0.00%").format(or.getPrecision())
+                                    + "</td>");
+                    sb.append(
+                            "<td>" + new DecimalFormat("#0.0000").format(or.getFScore()) + "</td>");
+                }
                 sb.append(
                         "<td>"
                                 + new DecimalFormat("#0.00%").format(or.getTruePositiveRate())
@@ -1541,7 +1766,10 @@ public class BenchmarkScore {
                         "<td>"
                                 + new DecimalFormat("#0.00%").format(or.getFalsePositiveRate())
                                 + "</td>");
-                sb.append("<td>" + new DecimalFormat("#0.00%").format(or.getScore()) + "</td>");
+                sb.append(
+                        "<td>"
+                                + new DecimalFormat("#0.00%").format(or.getOverallScore())
+                                + "</td>");
                 sb.append("</tr>\n");
             }
         }
@@ -1554,20 +1782,24 @@ public class BenchmarkScore {
     }
 
     /**
-     * This method updates the menus of all the scorecards previously generated so people can
-     * navigate between all the tool results.
+     * Updates the menus of all the scorecards previously generated so people can navigate between
+     * all the tool results. Also perform a few other tag replacements for things that need to be
+     * done in the final stages of scorecard generation.
+     *
+     * @param tools - All the scored tools.
+     * @param catSet - The set of vulnerability categories to create menus for
+     * @param scoreCardDir - The directory containing the HTML files to be updated.
      */
-    private static void updateMenus(
-            Set<Report> toolResults, Set<String> catSet, File scoreCardDir) {
+    private static void updateMenus(Set<Tool> tools, Set<String> catSet, File scoreCardDir) {
 
         // Create tool menu
         StringBuffer sb = new StringBuffer();
-        for (Report toolReport : toolResults) {
-            if (!(showAveOnlyMode && toolReport.isCommercial())) {
+        for (Tool tool : tools) {
+            if (!(showAveOnlyMode && tool.isCommercial())) {
                 sb.append("<li><a href=\"");
-                sb.append(toolReport.getFilename());
+                sb.append(tool.getScorecardFilename());
                 sb.append(".html\">");
-                sb.append(toolReport.getToolNameAndVersion());
+                sb.append(tool.getToolNameAndVersion());
                 sb.append("</a></li>");
                 sb.append(System.lineSeparator());
             }
@@ -1604,12 +1836,10 @@ public class BenchmarkScore {
         updateMenuTemplates(toolmenu, vulnmenu, scoreCardDir);
     }
 
-    // A utility method for providing a more descriptive test suite name than the base, single word,
-    // test suite name.
-    public static String fullTestSuiteName(String suite) {
-        return ("Benchmark".equals(suite) ? "OWASP Benchmark" : suite);
-    }
-
+    /*
+     * This method goes through all the already generated .html files and updates their menus and a few other
+     * things in those files.
+     */
     private static void updateMenuTemplates(String toolmenu, String vulnmenu, File scoreCardDir) {
         for (File f : scoreCardDir.listFiles()) {
             if (!f.isDirectory() && f.getName().endsWith(".html")) {
@@ -1622,6 +1852,14 @@ public class BenchmarkScore {
                                     "${testsuite}",
                                     BenchmarkScore.fullTestSuiteName(BenchmarkScore.TESTSUITE));
                     html = html.replace("${version}", TESTSUITEVERSION);
+                    html = html.replace("${projectlink}", BenchmarkScore.PROJECTLINKENTRY);
+                    html = html.replace("${cwecategoryname}", BenchmarkScore.CWECATEGORYNAME);
+                    html =
+                            html.replace(
+                                    "${precisionkey}",
+                                    BenchmarkScore.PRECISIONKEYENTRY
+                                            + BenchmarkScore.FSCOREKEYENTRY);
+
                     Files.write(f.toPath(), html.getBytes());
                 } catch (IOException e) {
                     System.out.println("Error updating menus in: " + f.getName());
@@ -1629,6 +1867,12 @@ public class BenchmarkScore {
                 }
             }
         }
+    }
+
+    // A utility method for providing a more descriptive test suite name than the base, single word,
+    // test suite name.
+    public static String fullTestSuiteName(String suite) {
+        return ("Benchmark".equals(suite) ? "OWASP Benchmark" : suite);
     }
 
     private static Document getXMLDocument(File f) throws Exception {

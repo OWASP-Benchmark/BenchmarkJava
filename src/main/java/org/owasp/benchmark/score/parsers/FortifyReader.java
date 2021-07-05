@@ -161,8 +161,6 @@ public class FortifyReader extends Reader {
     private static int cweLookup(String vtype, String subtype, Node unifiedNode) {
 
         switch (vtype) {
-
-                // case "Build Misconfiguration" : return 00;
             case "Command Injection":
                 return 78;
 
@@ -170,7 +168,11 @@ public class FortifyReader extends Reader {
                 {
                     // Verify its the exact type we are looking for (e.g., not HttpOnly finding)
                     if ("Cookie not Sent Over SSL".equals(subtype)) return 614;
+                    else return 00;
                 }
+
+            case "Cross-Site Request Forgery":
+                return 352;
 
             case "Cross-Site Scripting":
                 {
@@ -183,16 +185,33 @@ public class FortifyReader extends Reader {
                     return 79;
                 }
 
-                // case "Dead Code" : return 00;
-                // case "Denial of Service" : return 00;
+            case "Dead Code":
+                return 00;
+            case "Denial of Service":
+                return 400;
             case "Header Manipulation":
                 return 113;
+            case "Hidden Field":
+                return 472;
             case "Insecure Randomness":
                 return 330;
-                // case "J2EE Bad Practices" : return 00;
+            case "Key Management":
+                return 320;
 
             case "LDAP Injection":
                 return 90;
+
+            case "Mass Assignment":
+                return 915;
+
+            case "Missing Check against Null":
+                return 476;
+
+            case "Missing XML Validation":
+                return 112;
+
+            case "Null Dereference":
+                return 476;
 
                 // Fortify reports weak randomness issues under Obsolete by ESAPI, rather than in
                 // the Insecure Randomness category if it thinks you are using ESAPI. However, its
@@ -222,25 +241,32 @@ public class FortifyReader extends Reader {
                     }
                 }
 
-                // case "Missing Check against Null" : return 00;
-                // case "Null Dereference" : return 00;
             case "Password Management":
                 return 00;
             case "Path Manipulation":
                 return 22;
 
-                // case "Poor Error Handling" : return 00;
-                // case "Poor Logging Practice" : return 00;
-                // case "Poor Style" : return 00;
-                // case "Resource Injection" : return 00;
+            case "Poor Error Handling":
+                return 703;
+            case "Poor Logging Practice":
+                return 478;
+            case "Privacy Violation":
+                return 359;
+            case "Resource Injection":
+                return 99;
 
             case "SQL Injection":
                 return 89;
-                // case "System Information Leak" : return 00;
+            case "System Information Leak":
+                return 209;
             case "Trust Boundary Violation":
                 return 501;
-                // case "Unreleased Resource" : return 00;
-                // case "Unsafe Reflection" : return 00;
+            case "Unchecked Return Value":
+                return 252;
+            case "Unreleased Resource":
+                return 404;
+            case "Unsafe Reflection":
+                return 470;
 
             case "Weak Cryptographic Hash":
                 return 328;
@@ -264,6 +290,28 @@ public class FortifyReader extends Reader {
 
             case "XPath Injection":
                 return 643;
+
+            case "XML Entity Expansion Injection":
+                return 776;
+
+            case "XML External Entity Injection":
+                return 611;
+
+                // Things we don't care about
+            case "Build Misconfiguration":
+            case "Code Correctness":
+            case "Hardcoded Domain in HTML":
+            case "J2EE Bad Practices":
+            case "J2EE Misconfiguration":
+            case "Poor Style":
+            case "Portability Flaw":
+            case "Race Condition":
+            case "Redundant Null Check":
+                return 00;
+
+            default:
+                System.out.println(
+                        "Fortify parser encountered unknown vulnerability type: " + vtype);
         } // end switch
 
         return 0;

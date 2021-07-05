@@ -131,10 +131,13 @@ public class ContrastReader extends Reader {
                 tcr.setNumber(Integer.parseInt(testNumber));
                 tr.put(tcr);
             } catch (Exception e) {
-                // There are a few crypto-bad-mac & crypto-weak-randomness findings not associated
-                // with
-                // a request, so ignore errors associated with those.
-                if (!line.contains("crypto-bad-mac") && !line.contains("crypto-weak-randomness")) {
+                // There are a few crypto related findings not associated
+                // with a request, so ignore errors associated with those.
+                if (line.contains("crypto-bad-ciphers")
+                        || line.contains("crypto-bad-mac")
+                        || line.contains("crypto-weak-randomness")) {
+                    // do nothing
+                } else {
                     System.err.println("Contrast Node Results Parse error for: " + line);
                     e.printStackTrace();
                 }
@@ -165,10 +168,13 @@ public class ContrastReader extends Reader {
                 tr.put(tcr);
             }
         } catch (Exception e) {
-            // There are a few crypto-bad-mac & crypto-weak-randomness findings not associated with
-            // a request, so ignore errors associated with those.
-            if (!json.contains("\"ruleId\":\"crypto-bad-mac\"")
-                    && !json.contains("\"ruleId\":\"crypto-weak-randomness\"")) {
+            // There are a few crypto related findings not associated with
+            // a request, so ignore findings associated with those.
+            if (json.contains("\"ruleId\":\"crypto-bad-ciphers\"")
+                    || json.contains("\"ruleId\":\"crypto-bad-mac\"")
+                    || json.contains("\"ruleId\":\"crypto-weak-randomness\"")) {
+                // do nothing
+            } else {
                 System.err.println("Contrast Java Results Parse error for: " + json);
                 e.printStackTrace();
             }

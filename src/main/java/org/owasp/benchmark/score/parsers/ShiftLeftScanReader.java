@@ -35,10 +35,10 @@ public class ShiftLeftScanReader {
     }
 
     public TestSuiteResults parse(final String content) throws Exception {
-        int startOfSecondJson = content.indexOf("\n{\n");
+        String[] lines = content.split("\n");
 
-        JSONObject javaSourceAnalyzer = new JSONObject(content.substring(0, startOfSecondJson));
-        JSONObject classFileAnalyzer = new JSONObject(content.substring(startOfSecondJson));
+        JSONObject javaSourceAnalyzer = new JSONObject(lines[0]);
+        JSONObject classFileAnalyzer = new JSONObject(lines[1]);
 
         // false indicates this is an open source/free tool.
         TestSuiteResults tr =
@@ -47,7 +47,17 @@ public class ShiftLeftScanReader {
         parseAndAddResults(tr, javaSourceAnalyzer);
         parseAndAddResults(tr, classFileAnalyzer);
 
+        tr.setToolVersion(readVersion(javaSourceAnalyzer));
+
         return tr;
+    }
+
+    private String readVersion(JSONObject javaSourceAnalyzer) {
+        return javaSourceAnalyzer
+                .getJSONObject("tool")
+                .getJSONObject("driver")
+                .getString("version")
+                .replace("-scan", "");
     }
 
     private void parseAndAddResults(TestSuiteResults tr, JSONObject analyzerResults) {

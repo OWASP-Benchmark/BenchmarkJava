@@ -48,6 +48,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.io.FileUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.owasp.benchmark.helpers.Categories;
@@ -65,6 +66,7 @@ import org.owasp.benchmark.score.parsers.CASTAIPReader;
 import org.owasp.benchmark.score.parsers.CheckmarxESReader;
 import org.owasp.benchmark.score.parsers.CheckmarxIASTReader;
 import org.owasp.benchmark.score.parsers.CheckmarxReader;
+import org.owasp.benchmark.score.parsers.CodeQLReader;
 import org.owasp.benchmark.score.parsers.ContrastReader;
 import org.owasp.benchmark.score.parsers.CoverityReader;
 import org.owasp.benchmark.score.parsers.CrashtestReader;
@@ -943,7 +945,29 @@ public class BenchmarkScore {
                 } // end catch SemgrepReader
             }
         } else if (filename.endsWith(".sarif")) {
-            tr = new LGTMReader().parse(fileToParse);
+            // CodeQL results and LGTM results both have the same extension .sarif
+            // But only the LGTM results have "semmle.sourceLanguage" as a key in ["run.properties"]
+            String content = new String(Files.readAllBytes(Paths.get(fileToParse.getPath())));
+            JSONObject jsonobj = new JSONObject(content);
+            JSONArray runs = jsonobj.getJSONArray("runs");
+
+            try {
+                for (int i = 0; i < runs.length(); i++) {
+                    JSONObject run = runs.getJSONObject(i);
+                    JSONObject properties = run.getJSONObject("properties");
+                    properties.getString("semmle.sourceLanguage");
+                }
+                tr =
+                        new LGTMReader()
+                                .parse(fileToParse); // If "semmle.sourceLanguage" is available set
+                // the LGTMReader
+            } catch (JSONException e) {
+                tr =
+                        new CodeQLReader()
+                                .parse(fileToParse); // If "semmle.sourceLanguage" is not available
+                // set the CodeQLReader
+            }
+
         } else if (filename.endsWith(".threadfix")) {
             tr = new KiuwanReader().parse(fileToParse);
         } else if (filename.endsWith(".txt")) {

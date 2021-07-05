@@ -48,7 +48,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.io.FileUtils;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.owasp.benchmark.helpers.Categories;
@@ -947,16 +946,9 @@ public class BenchmarkScore {
         } else if (filename.endsWith(".sarif")) {
             // CodeQL results and LGTM results both have the same extension .sarif
             // But only the LGTM results have "semmle.sourceLanguage" as a key in ["run.properties"]
-            String content = new String(Files.readAllBytes(Paths.get(fileToParse.getPath())));
-            JSONObject jsonobj = new JSONObject(content);
-            JSONArray runs = jsonobj.getJSONArray("runs");
 
             try {
-                for (int i = 0; i < runs.length(); i++) {
-                    JSONObject run = runs.getJSONObject(i);
-                    JSONObject properties = run.getJSONObject("properties");
-                    properties.getString("semmle.sourceLanguage");
-                }
+                // So we simply try the LGTMReader first, and if that fails, we try CodeQL.
                 tr =
                         new LGTMReader()
                                 .parse(fileToParse); // If "semmle.sourceLanguage" is available set
@@ -967,7 +959,6 @@ public class BenchmarkScore {
                                 .parse(fileToParse); // If "semmle.sourceLanguage" is not available
                 // set the CodeQLReader
             }
-
         } else if (filename.endsWith(".threadfix")) {
             tr = new KiuwanReader().parse(fileToParse);
         } else if (filename.endsWith(".txt")) {

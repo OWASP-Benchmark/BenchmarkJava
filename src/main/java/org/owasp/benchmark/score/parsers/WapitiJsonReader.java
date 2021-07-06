@@ -51,20 +51,50 @@ public class WapitiJsonReader extends Reader {
         categoryCweMap.put("Command execution", 78); // aka command injection
         categoryCweMap.put("Path Traversal", 22);
         categoryCweMap.put("Secure Flag cookie", 614);
+        categoryCweMap.put("Blind SQL Injection", 89);
         categoryCweMap.put("SQL Injection", 89);
         categoryCweMap.put("Cross Site Scripting", 79);
+        categoryCweMap.put("XML External Entity", 611);
+
+        // Add others we don't currently care about, to make sure that all findings are considered,
+        // and no new finding types are ignored
+        // It is possible we'd care about some of these in the future
+        categoryCweMap.put("Content Security Policy Configuration", 1021);
+        categoryCweMap.put("Open Redirect", 601);
+        categoryCweMap.put("Server Side Request Forgery", 918);
+        categoryCweMap.put("Backup file", 0);
+        categoryCweMap.put("Fingerprint web application framework", 0);
+        categoryCweMap.put("Fingerprint web server", 0);
+        categoryCweMap.put("Htaccess Bypass", 0);
+        categoryCweMap.put("HTTP Secure Headers", 0);
+        categoryCweMap.put("HttpOnly Flag cookie", 1004);
+        categoryCweMap.put("Potentially dangerous file", 0);
+        categoryCweMap.put("Weak credentials", 0);
 
         for (Map.Entry<String, Integer> entry : categoryCweMap.entrySet()) {
             String category = entry.getKey();
             Integer cwe = entry.getValue();
 
-            JSONArray arr = vulnerabilities.getJSONArray(category);
+            // The following gets all the vulnerabilities reported for the specified category
+            // JSONArray arr = vulnerabilities.getJSONArray(category);
+            JSONArray arr = (JSONArray) vulnerabilities.remove(category);
 
-            for (int i = 0; i < arr.length(); i++) {
-                TestCaseResult tcr = parseTestCaseResult(arr.getJSONObject(i), cwe);
-                if (tcr != null) {
-                    tr.put(tcr);
+            // This then goes through all those results and adds every finding of that type reported
+            // within a specified test case file
+            if (arr != null) {
+                for (int i = 0; i < arr.length(); i++) {
+                    TestCaseResult tcr = parseTestCaseResult(arr.getJSONObject(i), cwe);
+                    if (tcr != null) {
+                        tr.put(tcr);
+                    }
                 }
+            }
+        }
+
+        // Now check to see if there are extra vulnerability types not yet mapped
+        if (!vulnerabilities.isEmpty()) {
+            for (String key : vulnerabilities.keySet()) {
+                System.out.println("Mapping missing for vulnerability category: " + key);
             }
         }
 
@@ -75,23 +105,23 @@ public class WapitiJsonReader extends Reader {
 
     private static TestCaseResult parseTestCaseResult(JSONObject finding, Integer cwe) {
         try {
-            TestCaseResult tcr = new TestCaseResult();
-
-            String filename = filename(finding);
+            String filename = getFilenameFromFinding(finding);
 
             if (filename.contains(BenchmarkScore.TESTCASENAME)) {
+                TestCaseResult tcr = new TestCaseResult();
                 tcr.setNumber(testNumber(filename));
                 tcr.setCWE(cwe);
+                return tcr;
             }
 
-            return tcr;
+            return null;
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    private static String filename(JSONObject finding) {
+    private static String getFilenameFromFinding(JSONObject finding) {
         return new File(finding.getString("path")).getName();
     }
 

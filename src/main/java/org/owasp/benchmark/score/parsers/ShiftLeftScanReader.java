@@ -118,8 +118,9 @@ public class ShiftLeftScanReader {
                 return 22;
             case "COMMAND_INJECTION":
                 return 78;
-            case "XSS_SERVLET":
             case "HTTP_RESPONSE_SPLITTING":
+                return 113;
+            case "XSS_SERVLET":
             case "HRS_REQUEST_PARAMETER_TO_COOKIE":
             case "XSS_REQUEST_PARAMETER_TO_SERVLET_WRITER":
                 return 79;
@@ -131,6 +132,7 @@ public class ShiftLeftScanReader {
             case "LDAP_INJECTION":
                 return 90;
             case "PADDING_ORACLE":
+                return 209;
             case "DES_USAGE":
             case "CIPHER_INTEGRITY":
                 return 327;
@@ -143,8 +145,9 @@ public class ShiftLeftScanReader {
                 return 330;
             case "TRUST_BOUNDARY_VIOLATION":
                 return 501;
-            case "INSECURE_COOKIE":
             case "HTTPONLY_COOKIE":
+                return 1004;
+            case "INSECURE_COOKIE":
                 return 614;
             case "XPATH_INJECTION":
                 return 643;

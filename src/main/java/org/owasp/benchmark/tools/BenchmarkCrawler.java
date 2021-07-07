@@ -182,13 +182,13 @@ public class BenchmarkCrawler {
     private static File processCommandLineArgs(String[] args) {
 
         String crawlerFileName = Utils.DATA_DIR + "benchmark-crawler-http.xml"; // default location
-        File crawlerFile = null;
+        File crawlerFile = new File(crawlerFileName); // default location;
 
         if (args == null || args.length == 0) {
             // No arguments is OK
-            crawlerFile = new File(crawlerFileName); // default location
         } else if (args.length != 0 && args.length != 2) {
             System.out.println("Usage: no arguments or -f /PATH/TO/TESTSUITE-crawler-http.xml");
+            return null;
         } else if (args.length == 2) {
             if ("-f".equalsIgnoreCase(args[0])) {
                 // -f indicates use the specified crawler file
@@ -196,13 +196,15 @@ public class BenchmarkCrawler {
                 crawlerFile = new File(crawlerFileName);
             } else if (!(args[0] == null
                     && args[1] == null)) { // pom settings for crawler forces creation of 2 args,
-                // but if none are provided, they are null
                 System.out.println("Supported options: -f /PATH/TO/TESTSUITE-crawler-http.xml");
+                return null;
             }
         }
-        if (crawlerFile != null && !crawlerFile.exists()) {
+        if (!crawlerFile.exists()) {
             System.out.println(
-                    "ERROR: Crawler Configuration file: '" + crawlerFileName + "' not found!");
+                    "ERROR: Crawler Configuration file: '"
+                            + crawlerFile.getAbsolutePath()
+                            + "' not found!");
             crawlerFile = null;
         }
 

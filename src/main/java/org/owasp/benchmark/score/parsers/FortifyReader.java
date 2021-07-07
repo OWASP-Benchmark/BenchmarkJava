@@ -161,6 +161,9 @@ public class FortifyReader extends Reader {
     private static int cweLookup(String vtype, String subtype, Node unifiedNode) {
 
         switch (vtype) {
+            case "Access Control":
+                return 284;
+
             case "Command Injection":
                 return 78;
 
@@ -189,6 +192,8 @@ public class FortifyReader extends Reader {
                 return 00;
             case "Denial of Service":
                 return 400;
+            case "Dynamic Code Evaluation":
+                return 95;
             case "Header Manipulation":
                 return 113;
             case "Hidden Field":
@@ -205,6 +210,7 @@ public class FortifyReader extends Reader {
                 return 915;
 
             case "Missing Check against Null":
+            case "Missing Check for Null Parameter":
                 return 476;
 
             case "Missing XML Validation":
@@ -303,6 +309,7 @@ public class FortifyReader extends Reader {
             case "Hardcoded Domain in HTML":
             case "J2EE Bad Practices":
             case "J2EE Misconfiguration":
+            case "Object Model Violation":
             case "Poor Style":
             case "Portability Flaw":
             case "Race Condition":

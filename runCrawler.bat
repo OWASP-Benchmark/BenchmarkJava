@@ -1,1 +1,2 @@
-call mvn compile -Pcrawler
+CALL mvn validate -Pcrawler
+

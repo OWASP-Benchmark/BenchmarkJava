@@ -35,12 +35,16 @@
                         <version>${version.exec.maven}</version>
                         <executions>
                             <execution>
-                                <phase>compile</phase>
+                                <phase>validate</phase>
                                 <goals>
                                     <goal>java</goal>
                                 </goals>
                                 <configuration>
                                     <mainClass>org.owasp.benchmark.tools.BenchmarkCrawler</mainClass>
+                                    <arguments>
+                                        <argument>${addlArg1}</argument> <!-- -f here -->
+                                        <argument>${addlArg2}</argument> <!-- filename here -->
+                                    </arguments>
                                 </configuration>
                             </execution>
                         </executions>

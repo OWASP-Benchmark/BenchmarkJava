@@ -1,2 +1,2 @@
-sourceanalyzer -b benchmark -Xmx6G -scan -f benchmark.fpr
+sourceanalyzer -b benchmark -Xmx10G -scan -f benchmark.fpr
 

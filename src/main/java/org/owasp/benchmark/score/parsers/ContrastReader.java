@@ -159,10 +159,19 @@ public class ContrastReader extends Reader {
             String uri = request.getString("uri");
 
             if (tcr.getCWE() != 0 && uri.contains(BenchmarkScore.TESTCASENAME)) {
-                String testNumber =
+                // Normal uri's look like: "uri":"/benchmark/cmdi-00/BenchmarkTest00215", but for
+                // web services, they can look like:
+                // "uri":"/benchmark/rest/xxe-00/BenchmarkTest03915/send"
+                String testNumberStr =
                         uri.substring(
-                                uri.lastIndexOf('/') + BenchmarkScore.TESTCASENAME.length() + 1);
-                tcr.setNumber(Integer.parseInt(testNumber));
+                                uri.indexOf(BenchmarkScore.TESTCASENAME)
+                                        + BenchmarkScore.TESTCASENAME.length());
+                // At this point testNumber could contain '00215', or '03915/send'
+                int slashIndex = testNumberStr.indexOf('/');
+                if (slashIndex > 0) {
+                    testNumberStr = testNumberStr.substring(0, slashIndex);
+                }
+                tcr.setNumber(Integer.parseInt(testNumberStr));
                 // System.out.println( tcr.getNumber() + "\t" + tcr.getCWE() + "\t" +
                 // tcr.getCategory() );
                 tr.put(tcr);

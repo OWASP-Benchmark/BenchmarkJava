@@ -1,6 +1,12 @@
 .DS_Store
 .java-version
+.classpath
+.project
+.settings/
 reports/
 target/
 testfiles/
+tools/Contrast/contrast.jar
+tools/Contrast/contrast.yaml
+tools/Contrast/working/
 

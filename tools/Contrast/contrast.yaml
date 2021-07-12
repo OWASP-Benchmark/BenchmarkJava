@@ -1,0 +1,27 @@
+# Contrast Security configuration file
+
+# Fill in your credentials from *your* Contrast TeamServer below:
+api:
+  url: https://___________/Contrast
+  api_key: ________________
+  service_key: ________________
+  user_name: _____________________ # The email address you login to TeamServer with
+
+# These settings are for OWASP Benchmark and shouldn't be changed
+java:
+  standalone_app_name: owasp-benchmark
+agent:
+  logger:
+    level: debug
+server:
+  name: owasp-server
+  environment: development
+assess:
+  enable: true
+  threshold:
+    entries: 100000
+  rules:
+    disabled_rules: autocomplete-missing,cache-controls-missing,clickjacking-control-missing,csrf
+protect:
+  enable: false
+

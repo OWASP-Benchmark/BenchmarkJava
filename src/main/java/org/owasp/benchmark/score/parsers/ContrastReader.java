@@ -31,6 +31,7 @@ import org.owasp.benchmark.score.TestSuiteResults;
 public class ContrastReader extends Reader {
 
     static final String NODEFINDINGLINEINDICATOR = "contrast:rules:sinks - ";
+    static final String NODEAGENTVERSIONLINEINDICATOR = "contrast:contrast-init - agent v";
 
     public static void main(String[] args) throws Exception {
         File f = new File("results/Benchmark_1.2-Contrast.log");
@@ -66,11 +67,12 @@ public class ContrastReader extends Reader {
                                 line.substring(line.indexOf("Version:") + "Version:".length());
                         tr.setToolVersion(version.trim());
                     } // Agent Version check for Node
-                    else if (line.contains("@contrast/agent@")) {
+                    else if (line.contains(NODEAGENTVERSIONLINEINDICATOR)) {
                         String version =
                                 line.substring(
-                                        line.indexOf("@contrast/agent@")
-                                                + "@contrast/agent@".length());
+                                        line.indexOf(NODEAGENTVERSIONLINEINDICATOR)
+                                                + NODEAGENTVERSIONLINEINDICATOR.length(),
+                                        line.indexOf(','));
                         tr.setToolVersion(version);
                     } // First line check for Java
                     else if (line.contains("DEBUG - >>> [URL")
@@ -127,21 +129,24 @@ public class ContrastReader extends Reader {
                             elements[1].lastIndexOf('/')
                                     + BenchmarkScore.TESTCASENAME.length()
                                     + 1);
-            try {
-                tcr.setNumber(Integer.parseInt(testNumber));
-                tr.put(tcr);
-            } catch (Exception e) {
-                // There are a few crypto related findings not associated
-                // with a request, so ignore errors associated with those.
-                if (line.contains("crypto-bad-ciphers")
-                        || line.contains("crypto-bad-mac")
-                        || line.contains("crypto-weak-randomness")) {
-                    // do nothing
-                } else {
-                    System.err.println("Contrast Node Results Parse error for: " + line);
-                    e.printStackTrace();
+            // Contrast detects potential vulns when requesting .html pages through certain Node
+            // frameworks. Ignore those if they are detected.
+            if (!testNumber.endsWith(".html"))
+                try {
+                    tcr.setNumber(Integer.parseInt(testNumber));
+                    tr.put(tcr);
+                } catch (Exception e) {
+                    // There are a few crypto related findings not associated
+                    // with a request, so ignore errors associated with those.
+                    if (line.contains("crypto-bad-ciphers")
+                            || line.contains("crypto-bad-mac")
+                            || line.contains("crypto-weak-randomness")) {
+                        // do nothing
+                    } else {
+                        System.err.println("Contrast Node Results Parse error for: " + line);
+                        e.printStackTrace();
+                    }
                 }
-            }
         }
     }
 
@@ -192,8 +197,10 @@ public class ContrastReader extends Reader {
 
     private static int cweLookup(String rule) {
         switch (rule) {
+            case "cache-controls-missing":
+                return 525; // Web Browser Cache Containing Sensitive Info
             case "clickjacking-control-missing":
-                return 0000; // Don't care
+                return 1021; // Improper Restriction of Rendered UI Layers (i.e., Clickjacking)
             case "cmd-injection":
                 return 78; // command injection
             case "cookie-flags-missing":

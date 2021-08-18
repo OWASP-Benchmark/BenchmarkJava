@@ -96,9 +96,9 @@ public class CodeQLReader extends Reader {
                 for (int i = 0; i < tags.length(); i++) {
                     String val = tags.getString(i);
                     if (val.startsWith(LGTMCWEPREFIX)) {
-                        // System.out.println("Rule found for CWE: " +
-                        // Integer.parseInt(val.substring(LGTMCWEPREFIXLENGTH)));
-                        // int cwe = fixCWE( cweNumber );
+                        // NOTE: If you try to map the rules here, you have to map EVERY rule in the
+                        // current ruleset, even though many of those rules won't have results. So
+                        // instead we map them later when there is actually a finding by that rule.
                         rulesUsed.put(
                                 ruleName, Integer.parseInt(val.substring(LGTMCWEPREFIXLENGTH)));
                         break; // Break out of for loop because we only want to use the first CWE it
@@ -127,26 +127,40 @@ public class CodeQLReader extends Reader {
                             .getJSONObject("physicalLocation")
                             .getJSONObject("artifactLocation")
                             .getString("uri");
-            filename = filename.substring(filename.lastIndexOf('/'));
-            if (filename.contains(BenchmarkScore.TESTCASENAME)) {
+            filename = filename.substring(filename.lastIndexOf('/') + 1);
+            if (filename.startsWith(BenchmarkScore.TESTCASENAME)) {
                 String testNumber =
                         filename.substring(
-                                BenchmarkScore.TESTCASENAME.length() + 1,
-                                filename.length() - BenchmarkScore.TESTIDLENGTH);
+                                BenchmarkScore.TESTCASENAME.length(), filename.lastIndexOf('.'));
                 tcr.setNumber(Integer.parseInt(testNumber));
                 String ruleId = finding.getString("ruleId");
                 Integer cweForRule = rulesUsed.get(ruleId);
                 // System.out.println("Found finding in: " + testNumber + " of type: " + ruleId +
                 // " CWE: " + cweForRule);
                 if (cweForRule == null) {
+                    switch (ruleId) {
+                        case "java/inefficient-empty-string-test":
+                        case "java/missing-override-annotation":
+                        case "java/non-static-nested-class":
+                            break; // We've seen these before and they're OK, so don't print warning
+
+                        default:
+
+                            // The parseLGTMRules() method strips out rules that don't have a CWE.
+                            // So this error can happen. As such, we filter out the ones we've seen.
+                            System.out.println(
+                                    "WARNING: finding found for ruleId: "
+                                            + ruleId
+                                            + " with no CWE mapping");
+                    }
                     return null;
                 }
                 if (locations.length() > 1) {
                     System.out.println(
-                            "Unexpectedly found more than one location for finding against rule: "
+                            "WARNING: Unexpectedly found more than one location for finding against rule: "
                                     + ruleId);
                 }
-                int cwe = cweForRule.intValue();
+                int cwe = mapCWE(cweForRule);
                 tcr.setCWE(cwe);
                 // tcr.setCategory( props.getString( "subcategoryShortDescription" ) ); //
                 // Couldn't find any Category info in results file
@@ -159,13 +173,65 @@ public class CodeQLReader extends Reader {
         return null;
     }
 
-    /*
-    	private int fixCWE( String cweNumber ) {
-    		int cwe = Integer.parseInt( cweNumber );
-    		if ( cwe == 94 ) cwe = 643;
-    		if ( cwe == 36 ) cwe = 22;
-    		if ( cwe == 23 ) cwe = 22;
-    		return cwe;
-    	}
-    */
+    private int mapCWE(Integer cweNumber) {
+
+        switch (cweNumber) {
+                // These are properly mapped by default
+            case 22: // java/path-injection and zipslip
+            case 78: // java/command-line-injection
+            case 79: // java/xss
+            case 89: // java/sql-injection and similar sqli rules
+            case 90: // java/ldap-injection
+            case 327: // java/weak-cryptographic-algorithm
+            case 611: // java/xxe
+            case 614: // java/insecure-cookie
+            case 643: // java/xml/xpath-injection
+                return cweNumber.intValue(); // Return CWE as is
+
+                // These rules we care about, but have to map to the CWE we expect
+            case 335: // java/predictable-seed - This mapping improves the tool's score
+                return 330; // Weak Random
+
+                /*
+                 * These rules exist in the java-code-scanning.qls query set, but we don't see findings
+                 * for them in Benchmark currently. They are left here in case we do see them in the
+                 * future to make it easier to support them.
+                // These rules we care about, but have to map to the CWE we expect
+                    case 338: // java/jhipster-prng
+                        return 330; // Weak Random
+                    case 347: // java/missing-jwt-signature-check - TODO - Does this affect score?
+                        return 327; // Weak Crypto
+
+                    // These rules we don't care about now, but we return their CWE value anyway in case
+                    // we care in the future
+                    case 94: // java/insecure-bean-validation and many others
+                    case 190: // java/implicit-cast-in-compound-assignment
+                    case 197: // java/tainted-numeric-cast
+                    case 297: // java/unsafe-hostname-verification
+                    case 300: // java/maven/non-https-url
+                    case 315: // java/cleartext-storage-in-cookie
+                    case 352: // java/spring-disabled-csrf-protection
+                    case 502: // java/unsafe-deserialization
+                    case 601: // java/unvalidated-url-redirection
+                    case 732: // java/world-writable-file-read
+                    case 807: // java/tainted-permissions-check
+                    case 917: // java/ognl-injection
+                    case 918: // java/ssrf
+                    case 1104: // java/maven/dependency-upon-bintray
+                */
+
+            case 113: // java/http-response-splitting
+            case 134: // java/tainted-format-string
+            case 209: // java/stack-trace-exposure
+            case 404: // java/TODO
+            case 561: // java/TODO
+            case 570: // java/TODO
+            case 685: // java/TODO
+                return cweNumber.intValue(); // Return CWE as is
+            default:
+                System.out.println(
+                        "CodeQL parser encountered new unmapped vulnerability type: " + cweNumber);
+        }
+        return 0; // Not mapped to anything
+    }
 }

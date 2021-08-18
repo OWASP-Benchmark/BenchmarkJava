@@ -43,6 +43,7 @@ public class Certificate {
         this.name = name;
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) return false;
         if (!this.getClass().equals(obj.getClass())) return false;
@@ -54,6 +55,7 @@ public class Certificate {
         return false;
     }
 
+    @Override
     public int hashCode() {
         int tmp = 0;
         tmp = (id + name).hashCode();

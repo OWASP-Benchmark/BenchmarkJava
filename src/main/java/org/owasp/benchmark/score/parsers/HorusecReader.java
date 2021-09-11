@@ -142,6 +142,7 @@ public class HorusecReader extends Reader {
         switch (category(details)) {
             case "Java Crypto import":
             case "DES is considered deprecated. AES is the recommended cipher.":
+            case "DES is considered deprecated. AES is the recommended cipher. Upgrade to use AES. See https://www.nist.gov/news-events/news/2005/06/nist-withdraws-outdated-data-encryption-standard for more information.":
                 return "327";
             case "Weak block mode for Cryptographic Hash Function":
             case "Message Digest":

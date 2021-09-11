@@ -21,7 +21,6 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.owasp.benchmark.score.BenchmarkScore;
 import org.owasp.benchmark.score.TestCaseResult;
@@ -39,42 +38,41 @@ public class SonarQubeJsonReader extends Reader {
         tr.setTime(f);
 
         String content = new String(Files.readAllBytes(Paths.get(f.getPath())));
-
         JSONObject obj = new JSONObject(content);
-        // int version = obj.getInt( "formatVersion" );
-        JSONArray arr;
 
-        boolean hotSpotIssue = true;
+        parseIssues(tr, obj);
+        parseHotspots(tr, obj);
 
-        // Figure out if there are quality issues or security hotspots in the JSON file
-        // Each has a different JSON format.
-        try {
-            arr = obj.getJSONArray("issues");
-            hotSpotIssue = false;
-        } catch (JSONException e) {
-            try {
-                arr = obj.getJSONArray("hotspots");
-            } catch (JSONException e2) {
-                System.out.println(
-                        "ERROR: Couldn't find 'issues' or 'hotspots' element in SonarQube JSON results."
-                                + " Maybe not SonarQube results file?");
-                return null;
-            }
+        return tr;
+    }
+
+    private void parseHotspots(TestSuiteResults tr, JSONObject obj) {
+        parseResults(tr, obj, true);
+    }
+
+    private void parseIssues(TestSuiteResults tr, JSONObject obj) {
+        parseResults(tr, obj, false);
+    }
+
+    private void parseResults(TestSuiteResults tr, JSONObject obj, boolean isHotspots) {
+        String key = isHotspots ? "hotspots" : "issues";
+
+        if (!obj.has(key)) {
+            return;
         }
 
+        JSONArray arr = obj.getJSONArray(key);
         int numIssues = arr.length();
-        for (int i = 0; i < numIssues; i++) {
 
+        for (int i = 0; i < numIssues; i++) {
             TestCaseResult tcr =
-                    (hotSpotIssue
+                    (isHotspots
                             ? parseSonarQubeHotSpotIssue(arr.getJSONObject(i))
                             : parseSonarQubeQualityIssue(arr.getJSONObject(i)));
             if (tcr != null) {
                 tr.put(tcr);
             }
         }
-
-        return tr;
     }
 
     /**
@@ -197,9 +195,12 @@ public class SonarQubeJsonReader extends Reader {
                         .equals(message)
                 || "Ensure that string concatenation is required and safe for this SQL query."
                         .equals(message)
+                || "Make sure using a dynamically formatted SQL query is safe here.".equals(message)
                 || "Make sure creating this cookie without the \"secure\" flag is safe here."
                         .equals(message)
                 || "Make sure that hashing data is safe here.".equals(message)
+                || "Make sure this weak hash algorithm is not used in a sensitive context here."
+                        .equals(message)
                 || "Make sure creating this cookie without the \"HttpOnly\" flag is safe."
                         .equals(message))) {
             System.out.println(

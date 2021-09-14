@@ -386,6 +386,7 @@ public class Utils {
 
         String value = "objectTypeUnknown";
         if (param instanceof String) {
+            value = (String) param;
         } else if (param instanceof java.io.InputStream) {
             byte[] buff = new byte[1000];
             int length = 0;

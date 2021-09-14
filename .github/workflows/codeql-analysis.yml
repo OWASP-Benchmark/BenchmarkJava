@@ -34,8 +34,11 @@ jobs:
         languages: ${{ matrix.language }}
         # queries: ./path/to/local/query, your-org/your-repo/queries@main
 
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v1
+    #- name: Autobuild
+    #  uses: github/codeql-action/autobuild@v1
+      
+    - name: Build with Maven
+      run: mvn -DskipTests=true install
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1

@@ -1,6 +1,8 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 # Check for install/updates at https://github.com/ZupIT/horusec
+
+source scripts/requireDocker.sh
 
 benchmark_version=$(scripts/getBenchmarkVersion.sh)
 horusec_version=$(docker run horuszup/horusec-cli horusec version 2>&1 | grep version | awk '{print $NF}')

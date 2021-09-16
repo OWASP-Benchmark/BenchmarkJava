@@ -1,6 +1,8 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 # Check for install/updates at https://github.com/returntocorp/semgrep
+
+source scripts/requireDocker.sh
 
 benchmark_version=$(scripts/getBenchmarkVersion.sh)
 semgrep_version=$(docker run --rm returntocorp/semgrep --version)

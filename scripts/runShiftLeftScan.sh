@@ -1,6 +1,8 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 # Check for install/updates at https://github.com/ShiftLeftSecurity/sast-scan
+
+source scripts/requireDocker.sh
 
 benchmark_version=$(scripts/getBenchmarkVersion.sh)
 shiflteft_version="2.0.3" # it's not (yet) possible to get the release version so we just assume it

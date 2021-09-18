@@ -1,15 +1,31 @@
 #!/usr/bin/env bash
 
+source scripts/requireCommand.sh
+
+requireCommand curl
+requireCommand jq
+
 # Check for install/updates at https://github.com/SonarSource/sonarqube
 
-sonar_host="http://localhost:9000"
-sonar_project="benchmark"
-sonar_token="291e50b66b5f5198e6ac0d49bf1057ac3a3a0fc8"
+if [ ! -f scripts/SonarQubeCredentials.sh ]; then
+  cat > scripts/SonarQubeCredentials.sh << EOF
+#!/usr/bin/env bash
 
-mvn sonar:sonar \
-  -Dsonar.projectKey="$sonar_project" \
-  -Dsonar.host.url="$sonar_host" \
-  -Dsonar.login="$sonar_token"
+sonar_host="" # e. g. http://localhost:9000
+sonar_project=""
+sonar_token=""
+EOF
+  chmod +x scripts/SonarQubeCredentials.sh
+fi
+
+source scripts/SonarQubeCredentials.sh
+
+if [ -z "$sonar_host" ] || [ -z "$sonar_project" ] || [ -z "$sonar_token" ]; then
+  echo "Please provide credentials in SonarQubeCredentials.sh"
+  exit 1
+fi
+
+mvn sonar:sonar -Dsonar.projectKey="$sonar_project" -Dsonar.host.url="$sonar_host" -Dsonar.login="$sonar_token"
 
 sleep 300s # might be replaced with polling of $sonar_host/api/ce/component?component=$sonar_project
 

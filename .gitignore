@@ -12,3 +12,5 @@ tools/Contrast/working/
 
 .idea/
 *.iml
+
+scripts/SonarQubeCredentials.sh

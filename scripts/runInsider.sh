@@ -2,7 +2,10 @@
 
 # Check for install/updates at https://github.com/insidersec/insider
 
-which insider > /dev/null || (echo 'Insider not found. Visit https://github.com/insidersec/insider and follow installation instructions' && exit 1)
+if ! command -v insider &> /dev/null; then
+    echo "Insider not found. Visit https://github.com/insidersec/insider and follow installation instructions"
+    exit 1
+fi
 
 benchmark_version=$(scripts/getBenchmarkVersion.sh)
 insider_version=$(insider -version | grep Version | cut -d' ' -f2)

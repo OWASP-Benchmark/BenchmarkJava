@@ -2,7 +2,9 @@
 
 # Check for install/updates at https://github.com/returntocorp/semgrep
 
-source scripts/requireDocker.sh
+source scripts/requireCommand.sh
+
+requireCommand docker
 
 benchmark_version=$(scripts/getBenchmarkVersion.sh)
 semgrep_version=$(docker run --rm returntocorp/semgrep --version)

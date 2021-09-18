@@ -2,7 +2,9 @@
 
 # Check for install/updates at https://github.com/ZupIT/horusec
 
-source scripts/requireDocker.sh
+source scripts/requireCommand.sh
+
+requireCommand docker
 
 benchmark_version=$(scripts/getBenchmarkVersion.sh)
 horusec_version=$(docker run horuszup/horusec-cli horusec version 2>&1 | grep version | awk '{print $NF}')

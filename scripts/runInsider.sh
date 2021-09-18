@@ -7,6 +7,11 @@ if ! command -v insider &> /dev/null; then
     exit 1
 fi
 
+source scripts/requireCommand.sh
+
+requireCommand curl
+requireCommand jq
+
 benchmark_version=$(scripts/getBenchmarkVersion.sh)
 insider_version=$(insider -version | grep Version | cut -d' ' -f2)
 result_file="results/Benchmark_$benchmark_version-insider-v$insider_version.json"

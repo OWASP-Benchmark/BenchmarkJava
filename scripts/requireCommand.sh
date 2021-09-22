@@ -7,3 +7,4 @@ requireCommand() {
     exit 1
   fi
 }
+

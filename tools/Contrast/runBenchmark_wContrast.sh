@@ -39,10 +39,13 @@ echo "==========================================================================
 cd ../..
 mvn clean package cargo:run -Pdeploywcontrast
 
+benchmark_version=$(scripts/getBenchmarkVersion.sh)
+
 echo
 echo "Copying Contrast report to results directory"
 cd tools/Contrast
-cp ./working/contrast.log ../../results/Benchmark_1.2-Contrast.log
+result_file="../../results/Benchmark_$benchmark_version-Contrast.log"
+cp ./working/contrast.log "$result_file"
 echo
 echo "  5. You can generate a scorecard by running createScorecards.sh in the Benchmark root directory."
 echo

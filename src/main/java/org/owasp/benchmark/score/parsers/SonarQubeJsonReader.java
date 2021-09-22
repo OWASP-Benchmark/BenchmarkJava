@@ -105,7 +105,8 @@ public class SonarQubeJsonReader extends Reader {
             if (filename.contains(BenchmarkScore.TESTCASENAME)) {
                 String testNumber =
                         filename.substring(
-                                BenchmarkScore.TESTCASENAME.length() + 1, filename.length() - 5);
+                                BenchmarkScore.TESTCASENAME.length() + 1,
+                                filename.lastIndexOf('.'));
                 tcr.setNumber(Integer.parseInt(testNumber));
                 String rule = finding.getString("rule");
                 String squid = rule.substring(rule.indexOf(":") + 1);
@@ -153,7 +154,8 @@ public class SonarQubeJsonReader extends Reader {
             if (filename.contains(BenchmarkScore.TESTCASENAME)) {
                 String testNumber =
                         filename.substring(
-                                BenchmarkScore.TESTCASENAME.length() + 1, filename.length() - 5);
+                                BenchmarkScore.TESTCASENAME.length() + 1,
+                                filename.lastIndexOf('.'));
                 tcr.setNumber(Integer.parseInt(testNumber));
                 String secCat = finding.getString("securityCategory");
                 if (secCat == null || secCat.equals("none")) {
@@ -185,12 +187,10 @@ public class SonarQubeJsonReader extends Reader {
      */
     public static int securityCategoryCWELookup(String secCat, String message) {
         // Not sure where to look up all the possible security categories in SonarQube, but the
-        // mappings
-        // seem obvious enough.
+        // mappings seem obvious enough.
 
-        // Given their horrible mapping scheme, we check each message to detect whether their might
-        // be a new
-        // 'message' mapped to an existing CWE (that might be wrong).
+        // Given their horrible mapping scheme, we check each message to detect whether there might
+        // be a new 'message' mapped to an existing CWE (that might be wrong).
         if (!("Make sure that using this pseudorandom number generator is safe here."
                         .equals(message)
                 || "Ensure that string concatenation is required and safe for this SQL query."

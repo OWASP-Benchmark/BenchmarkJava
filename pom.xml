@@ -1095,6 +1095,13 @@
                 </executions>
             </plugin>
 
+            <!-- used by some of the scripts. This forces the plugin to be downloaded, so it doesn't need to when the script runs. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-help-plugin</artifactId>
+                <version>3.2.0</version>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-install-plugin</artifactId>

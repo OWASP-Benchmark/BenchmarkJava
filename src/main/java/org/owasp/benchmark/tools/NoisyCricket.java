@@ -31,7 +31,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.TreeSet;
+import java.util.concurrent.ConcurrentSkipListSet;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -103,7 +103,7 @@ public class NoisyCricket {
     public static void analyze(Path p) throws IOException {
         Element vuln = report.createElement("vulnerability");
         List<String> lines = Files.readAllLines(p, Charset.defaultCharset());
-        Set<Integer> cwelist = new TreeSet<Integer>();
+        Set<Integer> cwelist = new ConcurrentSkipListSet<Integer>();
 
         for (String line : lines) {
             if (checkSQL(line)) {

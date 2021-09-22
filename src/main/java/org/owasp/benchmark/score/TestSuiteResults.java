@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.TimeUnit;
 
 /*
@@ -54,7 +54,7 @@ public class TestSuiteResults {
     public final boolean isCommercial;
     public final ToolType toolType;
     private Map<Integer, List<TestCaseResult>> testCaseResults =
-            new TreeMap<Integer, List<TestCaseResult>>();
+            new ConcurrentSkipListMap<Integer, List<TestCaseResult>>();
 
     // Used to track if this tool has been anonymized
     private boolean anonymous = false;
@@ -111,6 +111,15 @@ public class TestSuiteResults {
      */
     public Set<Integer> keySet() {
         return testCaseResults.keySet();
+    }
+
+    /**
+     * Get the entryset of all the TestCaseResults for this TestSuite.
+     *
+     * @return The EntrySet of results.
+     */
+    public Set<Map.Entry<Integer, List<TestCaseResult>>> entrySet() {
+        return testCaseResults.entrySet();
     }
 
     /**

@@ -42,8 +42,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -205,7 +205,7 @@ public class BenchmarkScore {
     /*
      * The set of all the Tools. Each Tool includes the results for that tool.
      */
-    private static Set<Tool> tools = new TreeSet<Tool>();
+    private static Set<Tool> tools = new ConcurrentSkipListSet<Tool>();
 
     // These Average Category values are computed as a side effect of running
     // generateVulnerabilityScorecards().
@@ -618,7 +618,7 @@ public class BenchmarkScore {
 
         // First, we have to figure out the set of vulnerability types that were scored
         // A set is used here to eliminate duplicate categories across all the results
-        Set<String> catSet = new TreeSet<String>();
+        Set<String> catSet = new ConcurrentSkipListSet<String>();
         for (Tool tool : tools) {
             catSet.addAll(tool.getOverallResults().getCategories());
         }
@@ -752,16 +752,18 @@ public class BenchmarkScore {
     private static void printExtraCWE(
             TestSuiteResults expectedResults, TestSuiteResults actualResults) {
         Set<Integer> expectedCWE = new HashSet<Integer>();
-        for (int i : expectedResults.keySet()) {
-            List<TestCaseResult> list = expectedResults.get(i);
+        for (Map.Entry<Integer, List<TestCaseResult>> expectedResultsEntry :
+                expectedResults.entrySet()) {
+            List<TestCaseResult> list = expectedResultsEntry.getValue();
             for (TestCaseResult t : list) {
                 expectedCWE.add(t.getCWE());
             }
         }
 
         Set<Integer> actualCWE = new HashSet<Integer>();
-        for (int i : actualResults.keySet()) {
-            List<TestCaseResult> list = actualResults.get(i);
+        for (Map.Entry<Integer, List<TestCaseResult>> actualResultsEntry :
+                actualResults.entrySet()) {
+            List<TestCaseResult> list = actualResultsEntry.getValue();
             if (list != null) {
                 for (TestCaseResult t : list) {
                     actualCWE.add(t.getCWE());
@@ -791,8 +793,9 @@ public class BenchmarkScore {
         int totalFP = 0;
         int totalFN = 0;
         int totalTN = 0;
-        for (String category : results.keySet()) {
-            TP_FN_TN_FP_Counts c = results.get(category);
+        for (Map.Entry<String, TP_FN_TN_FP_Counts> resultsEntry : results.entrySet()) {
+            String category = resultsEntry.getKey();
+            TP_FN_TN_FP_Counts c = resultsEntry.getValue();
             int rowTotal = c.tp + c.fn + c.tn + c.fp;
             double precision = (double) c.tp / (double) (c.tp + c.fp);
             // c.tp & c.fp can both be zero, creating a precision of NaN. So set to 0.0.
@@ -857,10 +860,12 @@ public class BenchmarkScore {
      *     this tool.
      */
     private static Map<String, TP_FN_TN_FP_Counts> calculateScores(TestSuiteResults actualResults) {
-        Map<String, TP_FN_TN_FP_Counts> map = new TreeMap<String, TP_FN_TN_FP_Counts>();
+        Map<String, TP_FN_TN_FP_Counts> map =
+                new ConcurrentSkipListMap<String, TP_FN_TN_FP_Counts>();
 
-        for (Integer tn : actualResults.keySet()) {
-            TestCaseResult tcr = actualResults.get(tn).get(0); // only one
+        for (Map.Entry<Integer, List<TestCaseResult>> actualResultsEntry :
+                actualResults.entrySet()) {
+            TestCaseResult tcr = actualResultsEntry.getValue().get(0); // only one
             String cat = CATEGORIES.getById(tcr.getCategory()).getName();
 
             TP_FN_TN_FP_Counts c = map.get(cat);
@@ -1260,10 +1265,11 @@ public class BenchmarkScore {
         }
 
         boolean pass = false;
-        for (int tc : expected.keySet()) {
-            TestCaseResult exp = expected.get(tc).get(0); // always only one!
+        for (Map.Entry<Integer, List<TestCaseResult>> expectedEntry : expected.entrySet()) {
+            TestCaseResult exp = expectedEntry.getValue().get(0); // always only one!
             List<TestCaseResult> act =
-                    rawToolResults.get(tc); // could be lots of results for this test
+                    rawToolResults.get(
+                            expectedEntry.getKey()); // could be lots of results for this test
 
             pass = compare(exp, act, rawToolResults.getToolName());
 
@@ -1830,7 +1836,7 @@ public class BenchmarkScore {
     private static void updateMenus(Set<Tool> tools, Set<String> catSet, File scoreCardDir) {
 
         // Create tool menu
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (Tool tool : tools) {
             if (!(showAveOnlyMode && tool.isCommercial())) {
                 sb.append("<li><a href=\"");
@@ -1856,7 +1862,7 @@ public class BenchmarkScore {
         String toolmenu = sb.toString();
 
         // create vulnerability menu
-        sb = new StringBuffer();
+        sb = new StringBuilder();
         for (String cat : catSet) {
             String filename =
                     TESTSUITE + "_v" + TESTSUITEVERSION + "_Scorecard_for_" + cat.replace(' ', '_');

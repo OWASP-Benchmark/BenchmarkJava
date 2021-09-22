@@ -23,7 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.owasp.benchmark.score.BenchmarkScore;
@@ -181,7 +181,7 @@ public class AppScanSourceReader extends Reader {
      * @return
      */
     private Map<Integer, Set<Integer>> parseAssessments(Node root) {
-        Map<Integer, Set<Integer>> map = new TreeMap<Integer, Set<Integer>>();
+        Map<Integer, Set<Integer>> map = new ConcurrentSkipListMap<Integer, Set<Integer>>();
         Node assess1 = getNamedNode("Assessment", root.getChildNodes());
         Node assess2 = getNamedNode("Assessment", assess1.getChildNodes());
         NodeList afiles = assess2.getChildNodes();
@@ -208,7 +208,7 @@ public class AppScanSourceReader extends Reader {
 
     private Map<Integer, String> parsePool(
             Node root, String poolname, String keyname, String valuename, String prefix) {
-        Map<Integer, String> map = new TreeMap<Integer, String>();
+        Map<Integer, String> map = new ConcurrentSkipListMap<Integer, String>();
         Node parent = getNamedNode(poolname, root.getChildNodes());
         NodeList pool = parent.getChildNodes();
         for (int i = 0; i < pool.getLength(); i++) {

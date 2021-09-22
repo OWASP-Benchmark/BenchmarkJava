@@ -19,7 +19,7 @@ package org.owasp.benchmark.score;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 /*
  * This class holds all the test results for a single tool's scan of a test suite. It contains CategoryResults for
@@ -30,7 +30,7 @@ public class ToolResults {
 
     // A map of the category name to the results for each category for a specific tool.
     private Map<String, CategoryResults> categoryResultsMap =
-            new TreeMap<String, CategoryResults>();
+            new ConcurrentSkipListMap<String, CategoryResults>();
     private double score =
             0; // The overall score for this tool. Autocalculated when TPR or FPR changed.
     private int total =

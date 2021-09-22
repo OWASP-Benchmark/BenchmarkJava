@@ -2,14 +2,7 @@
 
 if [ -f ./seeker-agent.jar ]; then
 
-    echo ""
-    echo "Previous Seeker results in tools/seeker removed"
-    echo ""
-
-  fi
-
   cd ../..
-  chmod 755 target/classes/insecureCmd.sh
   mvn clean package cargo:run -Pdeploywseeker
 
   echo "Download Seeker report to results directory"

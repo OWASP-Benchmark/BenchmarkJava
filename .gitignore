@@ -3,14 +3,15 @@
 .classpath
 .project
 .settings/
+.idea/
+*.iml
+
+data/out.csv
 reports/
+scripts/SonarQubeCredentials.sh
 target/
 testfiles/
 tools/Contrast/contrast.jar
 tools/Contrast/contrast.yaml
 tools/Contrast/working/
 
-.idea/
-*.iml
-
-scripts/SonarQubeCredentials.sh

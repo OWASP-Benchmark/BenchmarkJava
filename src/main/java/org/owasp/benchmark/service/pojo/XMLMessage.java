@@ -21,24 +21,14 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "message")
-public class StringMessage {
-    private String key;
+public class XMLMessage {
     private String msg;
 
-    public StringMessage() {}
+    public XMLMessage() {}
 
-    public StringMessage(String key, String msg) {
-        this.key = key;
+    public XMLMessage(String msg) {
+        //        this.key = key;
         this.msg = msg;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    @XmlElement
-    public void setKey(String key) {
-        this.key = key;
     }
 
     public String getMsg() {

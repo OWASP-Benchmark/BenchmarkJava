@@ -29,7 +29,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
-import org.owasp.benchmark.service.pojo.StringMessage;
+import org.owasp.benchmark.service.pojo.XMLMessage;
 import org.owasp.esapi.ESAPI;
 
 public class DatabaseHelper {
@@ -191,14 +191,9 @@ public class DatabaseHelper {
         out.write("</p>\n</body>\n</html>");
     }
 
-    public static void outputUpdateComplete(String sql, List<StringMessage> resp)
+    public static void outputUpdateComplete(String sql, List<XMLMessage> resp)
             throws java.sql.SQLException, IOException {
-        resp.add(
-                new StringMessage(
-                        "Message",
-                        "Update complete for query: "
-                                + org.owasp.esapi.ESAPI.encoder().encodeForHTML(sql)
-                                + "<br>\n"));
+        resp.add(new XMLMessage("Update complete for query: " + sql + "\n"));
     }
 
     public static void printResults(
@@ -223,75 +218,57 @@ public class DatabaseHelper {
                                 + org.owasp.esapi.ESAPI.encoder().encodeForHTML(sql));
                 return;
             }
+
             ResultSetMetaData rsmd = rs.getMetaData();
-
-            //			printColTypes(rsmd, out);
-            //			out.write("<br>\n");
-
             int numberOfColumns = rsmd.getColumnCount();
-
-            /*			for (int i = 1; i <= numberOfColumns; i++) {
-            				if (i > 1) out.write(",  ");
-            				String columnName = rsmd.getColumnName(i);
-            				out.write(columnName);
-            			}  // end for
-            			out.write("<br>\n");
-            */
             out.write("Your results are:<br>\n");
-            // System.out.println("Your results are:<br>\n");
+
             while (rs.next()) {
                 for (int i = 1; i <= numberOfColumns; i++) {
                     if (i > 1) {
                         out.write(",  ");
-                        // System.out.println(",  ");
                     }
                     String columnValue = rs.getString(i);
                     out.write(ESAPI.encoder().encodeForHTML(columnValue));
-                    // System.out.println(columnValue);
-                } // end for
+                }
                 out.write("<br>\n");
-                // System.out.println("<br>\n");
-            } // end while
+            }
 
         } finally {
             out.write("</p>\n</body>\n</html>");
         }
-    } // end printResults
+    }
 
-    public static void printResults(
-            java.sql.Statement statement, String sql, List<StringMessage> resp)
+    /**
+     * Used by the Web Services XML in/out test cases.
+     *
+     * @param statement
+     * @param sql
+     * @param resp
+     * @throws java.sql.SQLException
+     * @throws IOException
+     */
+    public static void printResults(java.sql.Statement statement, String sql, List<XMLMessage> resp)
             throws java.sql.SQLException, IOException {
-        try {
-            ResultSet rs = statement.getResultSet();
-            if (rs == null) {
-                resp.add(
-                        new StringMessage(
-                                "Message",
-                                "Results set is empty for query: "
-                                        + org.owasp.esapi.ESAPI.encoder().encodeForHTML(sql)));
-                return;
-            }
-            ResultSetMetaData rsmd = rs.getMetaData();
-            int numberOfColumns = rsmd.getColumnCount();
-            resp.add(new StringMessage("Message", "Your results are:<br>\n"));
-            while (rs.next()) {
-                for (int i = 1; i <= numberOfColumns; i++) {
-                    if (i > 1) {
-                        resp.add(new StringMessage("Message", ",  "));
-                        // System.out.println(",  ");
-                    }
-                    String columnValue = rs.getString(i);
-                    resp.add(
-                            new StringMessage(
-                                    "Message", ESAPI.encoder().encodeForHTML(columnValue)));
-                } // end for
-                resp.add(new StringMessage("Message", "<br>\n"));
-            } // end while
 
-        } finally {
-            resp.add(new StringMessage("Message", "</p>\n</body>\n</html>"));
+        ResultSet rs = statement.getResultSet();
+        if (rs == null) {
+            resp.add(new XMLMessage("Results set is empty for query: " + sql + "\n"));
+            return;
         }
-    } // end printResults
+        ResultSetMetaData rsmd = rs.getMetaData();
+        int numberOfColumns = rsmd.getColumnCount();
+        resp.add(new XMLMessage("Your results are:\n"));
+        while (rs.next()) {
+            for (int i = 1; i <= numberOfColumns; i++) {
+                String columnValue = rs.getString(i);
+                if (i == 0) {
+                    resp.add(new XMLMessage(columnValue));
+                } else resp.add(new XMLMessage(",  " + columnValue));
+            }
+            resp.add(new XMLMessage("\n"));
+        }
+    }
 
     public static void printResults(java.sql.ResultSet rs, String sql, HttpServletResponse response)
             throws java.sql.SQLException, IOException {
@@ -309,52 +286,37 @@ public class DatabaseHelper {
             ResultSetMetaData rsmd = rs.getMetaData();
             int numberOfColumns = rsmd.getColumnCount();
             out.write("Your results are:<br>\n");
-            //		    System.out.println("Your results are:<br>\n");
             while (rs.next()) {
                 for (int i = 1; i <= numberOfColumns; i++) {
-                    //		          if (i > 1){ out.write(",  "); System.out.println(",  ");}
                     String columnValue = rs.getString(i);
                     out.write(ESAPI.encoder().encodeForHTML(columnValue));
-                    //		          System.out.println(columnValue);
-                } // end for
+                }
                 out.write("<br>\n");
-                //				System.out.println("<br>\n");
-            } // end while
+            }
 
         } finally {
             out.write("</p>\n</body>\n</html>");
         }
-    } // end printResults
+    }
 
-    public static void printResults(java.sql.ResultSet rs, String sql, List<StringMessage> resp)
+    public static void printResults(java.sql.ResultSet rs, String sql, List<XMLMessage> resp)
             throws java.sql.SQLException, IOException {
-        try {
-            if (rs == null) {
-                resp.add(
-                        new StringMessage(
-                                "Message",
-                                "Results set is empty for query: "
-                                        + org.owasp.esapi.ESAPI.encoder().encodeForHTML(sql)));
-                return;
-            }
-            ResultSetMetaData rsmd = rs.getMetaData();
-            int numberOfColumns = rsmd.getColumnCount();
-            resp.add(new StringMessage("Message", "Your results are:<br>\n"));
-            while (rs.next()) {
-                for (int i = 1; i <= numberOfColumns; i++) {
-                    //		          if (i > 1){ out.write(",  "); System.out.println(",  ");}
-                    String columnValue = rs.getString(i);
-                    resp.add(
-                            new StringMessage(
-                                    "Message", ESAPI.encoder().encodeForHTML(columnValue)));
-                } // end for
-                resp.add(new StringMessage("Message", "<br>\n"));
-            } // end while
 
-        } finally {
-            resp.add(new StringMessage("Message", "</p>\n</body>\n</html>"));
+        if (rs == null) {
+            resp.add(new XMLMessage("Results set is empty for query: " + sql + "\n"));
+            return;
         }
-    } // end printResults
+        ResultSetMetaData rsmd = rs.getMetaData();
+        int numberOfColumns = rsmd.getColumnCount();
+        resp.add(new XMLMessage("Your results are:\n"));
+        while (rs.next()) {
+            for (int i = 1; i <= numberOfColumns; i++) {
+                String columnValue = rs.getString(i);
+                resp.add(new XMLMessage(columnValue));
+            }
+            resp.add(new XMLMessage("\n"));
+        }
+    }
 
     public static void printResults(String query, int[] counts, HttpServletResponse response)
             throws IOException {
@@ -366,55 +328,37 @@ public class DatabaseHelper {
                 if (counts[0] == Statement.SUCCESS_NO_INFO) {
                     out.write(
                             "The SQL query was processed successfully but the number of rows affected is unknown.");
-                    System.out.println(
-                            "The SQL query was processed successfully but the number of rows affected is unknown.");
                 } else if (counts[0] == Statement.EXECUTE_FAILED) {
                     out.write(
                             "The SQL query failed to execute successfully and occurs only if a driver continues to process commands after a command fails");
-                    System.out.println(
-                            "The SQL query failed to execute successfully and occurs only if a driver continues to process commands after a command fails");
                 } else {
                     out.write("The number of affected rows are: " + counts[0]);
-                    System.out.println("The number of affected rows are: " + counts[0]);
                 }
             }
         } finally {
             out.write("</p>\n</body>\n</html>");
         }
-    } // end printResults
+    }
 
-    public static void printResults(String query, int[] counts, List<StringMessage> resp)
+    public static void printResults(String query, int[] counts, List<XMLMessage> resp)
             throws IOException {
-        resp.add(
-                new StringMessage(
-                        "Message", "For query: " + ESAPI.encoder().encodeForHTML(query) + "<br>"));
-        try {
-            if (counts.length > 0) {
-                if (counts[0] == Statement.SUCCESS_NO_INFO) {
-                    resp.add(
-                            new StringMessage(
-                                    "Message",
-                                    "The SQL query was processed successfully but the number of rows affected is unknown."));
-                    System.out.println(
-                            "The SQL query was processed successfully but the number of rows affected is unknown.");
-                } else if (counts[0] == Statement.EXECUTE_FAILED) {
-                    resp.add(
-                            new StringMessage(
-                                    "Message",
-                                    "The SQL query failed to execute successfully and occurs only if a driver continues to process commands after a command fails"));
-                    System.out.println(
-                            "The SQL query failed to execute successfully and occurs only if a driver continues to process commands after a command fails");
-                } else {
-                    resp.add(
-                            new StringMessage(
-                                    "Message", "The number of affected rows are: " + counts[0]));
-                    System.out.println("The number of affected rows are: " + counts[0]);
-                }
+
+        resp.add(new XMLMessage("For query:\n"));
+
+        if (counts.length > 0) {
+            if (counts[0] == Statement.SUCCESS_NO_INFO) {
+                resp.add(
+                        new XMLMessage(
+                                "The SQL query was processed successfully but the number of rows affected is unknown."));
+            } else if (counts[0] == Statement.EXECUTE_FAILED) {
+                resp.add(
+                        new XMLMessage(
+                                "The SQL query failed to execute successfully and occurs only if a driver continues to process commands after a command fails"));
+            } else {
+                resp.add(new XMLMessage("The number of affected rows are: " + counts[0]));
             }
-        } finally {
-            resp.add(new StringMessage("Message", "</p>\n</body>\n</html>"));
         }
-    } // end printResults
+    }
 
     public static void printColTypes(ResultSetMetaData rsmd, PrintWriter out)
             throws java.sql.SQLException {
@@ -422,8 +366,14 @@ public class DatabaseHelper {
         for (int i = 1; i <= columns; i++) {
             int jdbcType = rsmd.getColumnType(i);
             String name = rsmd.getColumnTypeName(i);
-            out.write("Column " + i + " is JDBC type " + jdbcType);
-            out.write(", which the DBMS calls " + name + "<br>\n");
+            out.write(
+                    "Column "
+                            + i
+                            + " is JDBC type "
+                            + jdbcType
+                            + ", which the DBMS calls "
+                            + name
+                            + "<br>\n");
         }
     }
 }

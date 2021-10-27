@@ -158,8 +158,6 @@
                                         ${tomcat.jvmargs}
                                         ${tomcat.jvmargs.debug}
                                     </cargo.start.jvmargs>
-                                    <sonar.organization>kdyck-cb</sonar.organization>
-                                    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
                                 </properties>
                             </configuration>
                         </configuration>
@@ -1228,5 +1226,8 @@
         <tomcat.major.version>8</tomcat.major.version>
         <version.tomcat>8.5.70</version.tomcat>
         <tomcat.url>https://archive.apache.org/dist/tomcat/tomcat-${tomcat.major.version}/v${version.tomcat}/bin/apache-tomcat-${version.tomcat}.zip</tomcat.url>
+        <!-- SonarCloud properties -->
+        <sonar.organization>kdyck-cb</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 </project>

@@ -158,6 +158,8 @@
                                         ${tomcat.jvmargs}
                                         ${tomcat.jvmargs.debug}
                                     </cargo.start.jvmargs>
+                                    <sonar.organization>kdyck-cb</sonar.organization>
+                                    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
                                 </properties>
                             </configuration>
                         </configuration>

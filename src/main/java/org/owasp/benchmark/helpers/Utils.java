@@ -66,24 +66,32 @@ public class Utils {
     // A 'test' directory that target test files are created in so test cases can use them
     public static final String TESTFILES_DIR = USERDIR + "testfiles" + File.separator;
 
-    // This constant is used by one of the sources for Benchmark 1.2, but not in 1.3+
+    // This constant is used by one of the sources for Benchmark 1.2, but not in 1.3+.
+    // It is used to filter out common headers. Whatever is left is considered the custom header
+    // name for header names test cases
     public static final Set<String> commonHeaders =
             new HashSet<>(
                     Arrays.asList(
-                            "host",
-                            "user-agent",
                             "accept",
-                            "accept-language",
                             "accept-encoding",
-                            "content-type",
-                            "x-requested-with",
-                            "referer",
-                            "content-length",
-                            "connection",
-                            "pragma",
+                            "accept-language",
                             "cache-control",
+                            "connection",
+                            "content-length",
+                            "content-type",
+                            "cookie",
+                            "host",
                             "origin",
-                            "cookie"));
+                            "pragma",
+                            "referer",
+                            "sec-ch-ua",
+                            "sec-ch-ua-mobile",
+                            "sec-ch-ua-platform",
+                            "sec-fetch-dest",
+                            "sec-fetch-mode",
+                            "sec-fetch-site",
+                            "user-agent",
+                            "x-requested-with"));
 
     private static final DocumentBuilderFactory safeDocBuilderFactory =
             DocumentBuilderFactory.newInstance();

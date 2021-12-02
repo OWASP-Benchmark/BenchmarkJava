@@ -598,6 +598,113 @@
             </build>
         </profile>
 
+        <profile>
+            <id>deploywdongtai</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>ldap-server</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <ant target="run" antfile="${basedir}/src/config/build.xml">
+                                            <reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+                                        </ant>
+                                    </target>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>database-server</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <ant target="databaseServer" antfile="${basedir}/src/config/build.xml">
+                                            <reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+                                        </ant>
+                                    </target>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>database-init</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <ant target="databaseInit" antfile="${basedir}/src/config/build.xml">
+                                            <reference torefid="maven.compile.classpath" refid="maven.compile.classpath" />
+                                        </ant>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.cargo</groupId>
+                        <artifactId>cargo-maven3-plugin</artifactId>
+                        <configuration>
+
+                            <!-- Container configuration -->
+                            <container>
+                                <timeout>300000</timeout>
+                                <containerId>tomcat${tomcat.major.version}x</containerId>
+                                <zipUrlInstaller>
+                                    <url>${tomcat.url}</url>
+                                </zipUrlInstaller>
+                                <output>${log.directory}/cargo-output.log</output>
+                                <append>false</append>
+                                <log>${log.directory}/cargo.log</log>
+                            </container>
+
+                            <!-- Configuration to use with the container or the deployer -->
+                            <configuration>
+                                <configfiles>
+                                    <configfile>
+                                        <file>${basedir}/src/config/${runenv}/server.xml</file>
+                                        <todir>conf</todir>
+                                        <overwrite>true</overwrite>
+                                    </configfile>
+                                    <configfile>
+                                        <file>${basedir}/src/config/${runenv}/context.xml</file>
+                                        <todir>conf</todir>
+                                        <overwrite>true</overwrite>
+                                    </configfile>
+                                </configfiles>
+                                <home>${project.build.directory}/tomcat${tomcat.major.version}x</home>
+                                <properties>
+                                    <cargo.jvmargs>
+                                        -Xmx8G
+                                        -javaagent:${basedir}/tools/DongTai/dongtai.jar
+                                        -Dproject.create=true
+                                        -Dproject.name=benchmark
+                                    </cargo.jvmargs>
+                                    <cargo.servlet.port>8443</cargo.servlet.port>
+                                    <cargo.protocol>https</cargo.protocol>
+                                    <cargo.tomcat.connector.protocolClass>HTTP/1.1</cargo.tomcat.connector.protocolClass>
+                                    <cargo.tomcat.connector.uriEncoding>ISO-8859-1</cargo.tomcat.connector.uriEncoding>
+                                    <cargo.tomcat.connector.clientAuth>false</cargo.tomcat.connector.clientAuth>
+                                    <cargo.tomcat.connector.sslProtocol>TLS</cargo.tomcat.connector.sslProtocol>
+                                    <cargo.tomcat.connector.keystoreFile>${project.basedir}/.keystore</cargo.tomcat.connector.keystoreFile>
+                                    <cargo.tomcat.connector.keystorePass>changeit</cargo.tomcat.connector.keystorePass>
+                                    <cargo.tomcat.connector.keyAlias>tomcat</cargo.tomcat.connector.keyAlias>
+                                    <cargo.tomcat.httpSecure>true</cargo.tomcat.httpSecure>
+                                </properties>
+                            </configuration>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
     <dependencies>

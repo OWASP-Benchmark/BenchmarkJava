@@ -26,14 +26,14 @@ public class Person {
 
     private long id;
     private String address;
-    private String name;
+    private String firstName;
     private String lastName;
 
     public Person() {}
 
-    public Person(long id, String name, String lastName, String address) {
+    public Person(long id, String firstName, String lastName, String address) {
         this.id = id;
-        this.name = name;
+        this.firstName = firstName;
         this.address = address;
     }
 
@@ -55,13 +55,13 @@ public class Person {
         this.address = address;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
     @XmlElement
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     public String getLastName() {
@@ -79,8 +79,8 @@ public class Person {
                 + id
                 + ", address="
                 + address
-                + ", name="
-                + name
+                + ", firstName="
+                + firstName
                 + ", lastName="
                 + lastName
                 + "]";

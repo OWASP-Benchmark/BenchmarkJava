@@ -50,26 +50,6 @@ public class LDAPManager {
         } catch (NamingException e) {
             System.out.println("Failed to get Directory Context: " + e.getMessage());
         }
-        /*
-            	String dir = Utils.getFileFromClasspath("benchmark.properties", EmbeddedADS.class.getClassLoader()).getParent();
-            	//File workDir = new File(dir + "/../../ldap");
-            	File workDir = new File(dir + "/../../ldap");
-        		// File workDir = new File(System.getProperty("user.dir") +
-        		// "/benchmark/ldap");
-        		workDir.mkdirs();
-
-        		// Create the server
-        		// ads = new EmbeddedADS( workDir );
-        		try {
-        			initDirectoryService(workDir);
-        		} catch (Exception e1) {
-        			// Auto-generated catch block
-        			e1.printStackTrace();
-        		}
-        */
-
-        // LDAPHelper lH = new LDAPHelper();
-
     }
 
     protected Hashtable<Object, Object> createEnv() {
@@ -97,21 +77,10 @@ public class LDAPManager {
             iniDirContext.bind(name, ctx, matchAttrs);
         } catch (NamingException e) {
             if (!e.getMessage().contains("ENTRY_ALREADY_EXISTS")) {
-                System.out.println("Record already exist or an error ocurred: " + e.getMessage());
-            }
-        } finally {
-            if (iniDirContext != null) {
-                /*
-                try {
-                	iniDirContext.close();
-                } catch (NamingException e) {
-                	System.out.println("Error when closing initial context: " + e.getMessage());
-                }
-                */
+                System.out.println("Record already exist or an error occurred: " + e.getMessage());
             }
         }
 
-        //		System.out.println("inserted");
         return true;
     }
 
@@ -153,7 +122,6 @@ public class LDAPManager {
             return true;
         } catch (Exception e) {
             System.out.println("LDAP error search: ");
-            // logger.error(e, e);
             e.printStackTrace();
             return false;
         }
@@ -168,62 +136,5 @@ public class LDAPManager {
 
     public void closeDirContext() throws NamingException {
         if (ctx != null) ctx.close();
-    }
-
-    /**
-     * Main class.
-     *
-     * @param args Not used.
-     */
-    public static void main(String[] args) {
-        /*
-        try {
-
-        	// ads.search(new LDAPPerson("foo","bar","ztretz"));
-        	System.out.println("antes de la busqueda");
-
-        	try {
-
-        		DirContext ctx = ads.getDirContext();
-        		String base = "ou=users,ou=system";
-        		javax.naming.directory.SearchControls sc = new javax.naming.directory.SearchControls();
-        		sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
-        		String filter = "(&(objectclass=person)(uid=" + "*" + "))";
-
-        		javax.naming.NamingEnumeration<javax.naming.directory.SearchResult> results = ctx.search(base, filter,
-        				sc);
-        		while (results.hasMore()) {
-        			javax.naming.directory.SearchResult sr = (javax.naming.directory.SearchResult) results.next();
-        			javax.naming.directory.Attributes attrs = sr.getAttributes();
-
-        			javax.naming.directory.Attribute attr = attrs.get("uid");
-        			if (attr != null) {
-        				// response.getWriter().write("LDAP query results:
-        				// record found " + attr.get() + "<br>");
-        				System.out.println("record found " + attr.get());
-        			}
-        		}
-        	} catch (Exception e) {
-        		e.printStackTrace();
-        	} finally {
-
-        	}
-
-        	System.out.println("despues de la busqueda");
-
-        	// lH.insert(ldapP);
-
-        } catch (Exception e) {
-        	// Ok, we have something wrong going on ...
-        	e.printStackTrace();
-        } finally {
-        	try {
-        		ads.closeDirContext();
-        		ads.stopServer();
-        	} catch (Exception e) {
-        		// Auto-generated catch block
-        		e.printStackTrace();
-        	}
-        }*/
     }
 }

@@ -75,6 +75,7 @@ public class BenchmarkTest01722 extends HttpServlet {
                     org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.query(
                             sql,
                             new org.springframework.jdbc.core.RowMapper<String>() {
+                                @Override
                                 public String mapRow(java.sql.ResultSet rs, int rowNum)
                                         throws java.sql.SQLException {
                                     try {
@@ -89,11 +90,9 @@ public class BenchmarkTest01722 extends HttpServlet {
                             });
             response.getWriter().println("Your results are: ");
 
-            //		System.out.println("Your results are");
             for (String s : results) {
                 response.getWriter()
                         .println(org.owasp.esapi.ESAPI.encoder().encodeForHTML(s) + "<br>");
-                //			System.out.println(s);
             }
         } catch (org.springframework.dao.EmptyResultDataAccessException e) {
             response.getWriter()

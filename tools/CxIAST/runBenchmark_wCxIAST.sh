@@ -19,7 +19,6 @@ if [ -f ./cx-launcher.jar ]; then
   fi
 
   cd ../..
-  chmod 755 target/classes/insecureCmd.sh
   mvn clean package cargo:run -Pdeploywcxiast
 
   echo "Download Checkmarx IAST report to results directory"

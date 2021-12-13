@@ -5,7 +5,7 @@
     <version>1.2</version>
     <packaging>war</packaging>
 
-    <name>OWASP Benchmark Project</name>
+    <name>OWASP Benchmark for Java</name>
     <description>OWASP Benchmark is a Java test suite designed to evaluate the accuracy, coverage, and speed of automated software vulnerability detection tools.</description>
     <url>https://owasp.org/www-project-benchmark/</url>
 
@@ -25,69 +25,9 @@
     </licenses>
 
     <profiles>
-        <profile>
-            <id>crawler</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>${version.exec.maven}</version>
-                        <executions>
-                            <execution>
-                                <phase>validate</phase>
-                                <goals>
-                                    <goal>java</goal>
-                                </goals>
-                                <configuration>
-                                    <mainClass>org.owasp.benchmark.tools.BenchmarkCrawler</mainClass>
-                                    <arguments>
-                                        <argument>${addlArg1}</argument> <!-- -f here -->
-                                        <argument>${addlArg2}</argument> <!-- filename here -->
-                                    </arguments>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>scorecard</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>${version.exec.maven}</version>
-                        <executions>
-                            <execution>
-                                <phase>validate</phase>
-                                <goals>
-                                    <goal>java</goal>
-                                </goals>
-                                <configuration>
-                                    <mainClass>org.owasp.benchmark.score.BenchmarkScore</mainClass>
-                                    <systemProperties>
-                                        <systemProperty>
-                                            <key>java.awt.headless</key>
-                                            <value>true</value>
-                                        </systemProperty>
-                                    </systemProperties>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
 
         <profile>
             <id>findsecbugs</id>
-            <properties>
-                <skipTests>true</skipTests>
-            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -122,9 +62,6 @@
 
         <profile>
             <id>deploy</id>
-            <properties>
-                <skipTests>true</skipTests>
-            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -231,9 +168,6 @@
 
         <profile>
             <id>deploywcontrast</id>
-            <properties>
-                <skipTests>true</skipTests>
-            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -343,7 +277,6 @@
         <profile>
             <id>deploywseeker</id>
             <properties>
-                <skipTests>true</skipTests>
                 <seeker.javaagent>-javaagent:${basedir}/tools/seeker/seeker-agent.jar</seeker.javaagent>
                 <seeker.server.url>-Dseeker.server.url=https://server.example.com:8888</seeker.server.url>
                 <seeker.project.key>-Dseeker.project.key=Benchmark</seeker.project.key>
@@ -454,9 +387,6 @@
 
         <profile>
             <id>deploywcxiast</id>
-            <properties>
-                <skipTests>true</skipTests>
-            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -564,9 +494,6 @@
 
         <profile>
             <id>deploywhcl</id>
-            <properties>
-                <skipTests>true</skipTests>
-            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -671,30 +598,6 @@
             </build>
         </profile>
 
-        <profile>
-            <id>time</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>${version.exec.maven}</version>
-                        <executions>
-                            <execution>
-                                <phase>validate</phase>
-                                <goals>
-                                    <goal>java</goal>
-                                </goals>
-                                <configuration>
-                                    <mainClass>org.owasp.benchmark.score.WriteTime</mainClass>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
     </profiles>
 
     <dependencies>
@@ -709,7 +612,7 @@
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-servlet</artifactId>
-            <version>${version.jersey}</version>
+            <version>1.19.4</version>
         </dependency>
 
         <dependency>
@@ -726,13 +629,6 @@
         </dependency>
 
         <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <!-- latest is: <version>2.7</version>, but 2.7+ requires Java 8 -->
-            <version>2.6</version>
-        </dependency>
-
-        <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
             <version>2.6</version>
@@ -743,21 +639,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>${version.slf4j}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-csv</artifactId>
-            <!-- Latest is: <version>1.8</version>, but 1.7+ requires Java 8 -->
-            <version>1.6</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <!-- <version>3.10</version> is latest, but 3.9+ requires Java 8 -->
-            <version>3.8.1</version>
+            <version>1.7.32</version>
         </dependency>
 
         <dependency>
@@ -902,20 +784,6 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
             <version>${version.hibernate}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>asm</groupId>
-                    <artifactId>asm</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>asm</groupId>
-                    <artifactId>asm-attrs</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>cglib</groupId>
-                    <artifactId>cglib</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -923,19 +791,6 @@
             <artifactId>jdom2</artifactId>
             <version>2.0.6</version>
         </dependency>
-
-        <dependency>
-            <groupId>asm</groupId>
-            <artifactId>asm</artifactId>
-            <version>3.3.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib-nodep</artifactId>
-            <version>3.3.0</version>
-        </dependency>
-        <!-- END Kevin's fix for jar version conflicts -->
 
         <!-- mvn dependency:analyze says this is an unused declared dependency, but its wrong. Get a runtime error if it's not included -->
         <dependency>
@@ -946,34 +801,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jfree</groupId>
-            <artifactId>jcommon</artifactId>
-            <version>1.0.24</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jfree</groupId>
-            <artifactId>jfreechart</artifactId>
-            <!-- <version>1.5.1</version> This is latest version, but requires Java 8. 1.5.0 is last version to support Java 7. -->
-            <version>1.5.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20201115</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>1.10.19</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.owasp.esapi</groupId>
             <artifactId>esapi</artifactId>
-            <version>2.2.3.0</version>
+            <version>2.2.3.1</version>
         </dependency>
 
         <dependency>
@@ -1008,12 +838,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>1.29</version>
-        </dependency>
-
-        <dependency>
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
             <version>1.4.01</version>
@@ -1043,17 +867,26 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-antrun-plugin</artifactId>
-                    <version>1.8</version>
+                    <version>3.0.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.1.1</version>
+                    <version>3.3.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.1.2</version>
+                    <version>3.2.0</version>
+                    <configuration>
+                        <usedDependencies>
+                            <dependency>com.sun.jersey:jersey-servlet</dependency>
+                            <dependency>commons-dbcp:commons-dbcp</dependency>
+                            <dependency>org.hibernate:hibernate-entitymanager</dependency>
+                            <dependency>org.slf4j:slf4j-log4j12</dependency>
+                            <dependency>org.springframework:spring-webmvc</dependency>
+                        </usedDependencies>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -1112,9 +945,6 @@
                                         <!-- guava includes backports for Java 7 compatibility -->
                                         <exclude>com.google.guava:guava</exclude>
                                     </excludes>
-                                    <ignoredScopes>
-                                        <ignoreScope>test</ignoreScope>
-                                    </ignoredScopes>
                                     <message>Dependencies shouldn't require Java 8+.</message>
                                 </enforceBytecodeVersion>
                             </rules>
@@ -1138,6 +968,13 @@
                 </executions>
             </plugin>
 
+            <!-- used by some of the scripts. This forces the plugin to be downloaded, so it doesn't need to when the script runs. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-help-plugin</artifactId>
+                <version>3.2.0</version>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-install-plugin</artifactId>
@@ -1157,7 +994,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>3.1.1</version>
+                <version>3.1.2</version>
             </plugin>
 
             <plugin>
@@ -1181,7 +1018,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>3.3.1</version>
+                <version>3.3.2</version>
                 <configuration>
                     <webXml>${maven.war.webxml}</webXml>
                 </configuration>
@@ -1190,7 +1027,7 @@
             <plugin>
                 <groupId>org.codehaus.cargo</groupId>
                 <artifactId>cargo-maven3-plugin</artifactId>
-                <version>1.9.3</version>
+                <version>1.9.7</version>
             </plugin>
 
             <!-- SpotBugs Static Analysis - the successor to FindBugs -->
@@ -1228,7 +1065,7 @@
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
-                <version>${version.spotless}</version>
+                <version>2.13.0</version>
                 <configuration>
                     <!-- optional: limit format enforcement to just the files changed by this
                         feature branch -->
@@ -1242,7 +1079,7 @@
                             </includes>
                             <excludes>
                                 <exclude>data/**/*.*</exclude>
-                                <exclude>results/**/*.*</exclude>
+                                <exclude>*results/**/*.*</exclude>
                                 <exclude>scorecard/**/*.*</exclude>
                                 <exclude>target/**/*.*</exclude>
                             </excludes>
@@ -1360,7 +1197,6 @@
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
         <failOnMissingWebXml>false</failOnMissingWebXml>
-        <skipTests>false</skipTests>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.war.webxml>${basedir}/src/config/web.xml</maven.war.webxml>
@@ -1383,15 +1219,12 @@
         <version.apache-shared-ldap>0.9.19</version.apache-shared-ldap>
         <version.exec.maven>1.6.0</version.exec.maven>
         <version.hibernate>3.6.10.Final</version.hibernate>
-        <version.jersey>1.19.4</version.jersey>
-        <version.slf4j>1.7.31</version.slf4j>
-        <version.spotbugs.maven>4.2.3</version.spotbugs.maven>
-        <version.spotbugs>4.2.3</version.spotbugs>
-        <version.spotless>2.10.1</version.spotless>
+        <version.spotbugs.maven>4.3.0</version.spotbugs.maven>
+        <version.spotbugs>4.4.1</version.spotbugs>
         <version.springframework>4.3.30.RELEASE</version.springframework>
         <!-- tomcat 8.5 is last version to support Java 7. Tomcat 9+ requires Java 8. -->
         <tomcat.major.version>8</tomcat.major.version>
-        <version.tomcat>8.5.64</version.tomcat>
+        <version.tomcat>8.5.70</version.tomcat>
         <tomcat.url>https://archive.apache.org/dist/tomcat/tomcat-${tomcat.major.version}/v${version.tomcat}/bin/apache-tomcat-${version.tomcat}.zip</tomcat.url>
     </properties>
 </project>

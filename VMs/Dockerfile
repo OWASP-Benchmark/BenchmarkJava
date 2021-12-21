@@ -15,13 +15,13 @@ RUN apt-get install -q -y \
 
 RUN mkdir /owasp
 WORKDIR /owasp
-RUN git clone https://github.com/OWASP/benchmark
-WORKDIR /owasp/benchmark
+RUN git clone https://github.com/OWASP-Benchmark/BenchmarkJava
+WORKDIR /owasp/BenchmarkJava
 RUN mvn clean package cargo:install
 
 RUN useradd -d /home/bench -m -s /bin/bash bench 
 RUN echo bench:bench | chpasswd
 
 RUN chown -R bench /owasp/
-ENV PATH /owasp/benchmark/:$PATH
+ENV PATH /owasp/BenchmarkJava:$PATH
 

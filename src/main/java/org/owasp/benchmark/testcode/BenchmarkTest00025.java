@@ -44,19 +44,14 @@ public class BenchmarkTest00025 extends HttpServlet {
         String param = request.getParameter("BenchmarkTest00025");
         if (param == null) param = "";
 
-        String sql =
-                "SELECT TOP 1 userid from USERS where USERNAME='foo' and PASSWORD='" + param + "'";
+        String sql = "SELECT userid from USERS where USERNAME='foo' and PASSWORD='" + param + "'";
         try {
             // Long results =
             // org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.queryForLong(sql);
             Long results =
                     org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.queryForObject(
                             sql, Long.class);
-            response.getWriter().println("Your results are: ");
-
-            //		System.out.println("your results are");
-            response.getWriter().println(results.toString());
-            //		System.out.println(results);
+            response.getWriter().println("Your results are: " + String.valueOf(results));
         } catch (org.springframework.dao.EmptyResultDataAccessException e) {
             response.getWriter()
                     .println(

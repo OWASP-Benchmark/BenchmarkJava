@@ -57,7 +57,7 @@ jobs:
       - checkout
       - run:
           name: "debug env vars"
-          command: echo $SEMGREP_APP_TOKEN
+          command: echo ${SEMGREP_APP_TOKEN}
       - run:
           name: "Semgrep scan"
           command: semgrep-agent

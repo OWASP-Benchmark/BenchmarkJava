@@ -25,12 +25,12 @@ jobs:
       default_branch:
         type: string
         default: circleci-project-setup
-    environment:
-      SEMGREP_RULES: >- # more at semgrep.dev/explore
-        p/security-audit
-        p/secrets
-        p/owasp-top-ten
-        p/java
+    # environment:
+    #   SEMGREP_RULES: >- # more at semgrep.dev/explore
+    #     p/security-audit
+    #     p/secrets
+    #     p/owasp-top-ten
+    #     p/java
 
       # Scan changed files in PRs, block on new issues only (existing issues ignored)
       # SEMGREP_BASELINE_REF: << parameters.default_branch >>

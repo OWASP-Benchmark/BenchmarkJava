@@ -55,9 +55,9 @@ jobs:
       - image: returntocorp/semgrep-agent:v1
     steps:
       - checkout
-      - run:
-          name: "debug env vars"
-          command: echo ${SEMGREP_APP_TOKEN}
+      # - run:
+      #     name: "debug env vars"
+      #     command: echo ${SEMGREP_APP_TOKEN}
       - run:
           name: "Semgrep scan"
           command: semgrep-agent

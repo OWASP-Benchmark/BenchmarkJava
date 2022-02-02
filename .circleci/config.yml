@@ -31,7 +31,7 @@ jobs:
 
     # Never fail the build due to findings.
     # Instead, just collect findings for semgrep.dev/manage/findings
-      # SEMGREP_AUDIT_ON: unknown
+      SEMGREP_AUDIT_ON: unknown
 
     # Change job timeout (default is 1800 seconds; set to 0 to disable)
     #   SEMGREP_TIMEOUT: 300

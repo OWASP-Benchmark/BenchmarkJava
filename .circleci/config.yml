@@ -12,7 +12,7 @@ jobs:
         default: holdenmcg/BenchmarkJava
       default_branch:
         type: string
-        default: develop
+        default: master
     environment:
       # SEMGREP_RULES: >- # more at semgrep.dev/explore
       #   p/security-audit

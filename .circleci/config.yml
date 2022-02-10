@@ -12,13 +12,13 @@ jobs:
         default: holdenmcg/BenchmarkJava
       default_branch:
         type: string
-        default: circleci-project-setup
+        default: develop
     environment:
       # SEMGREP_RULES: >- # more at semgrep.dev/explore
       #   p/security-audit
 
       # Scan changed files in PRs, block on new issues only (existing issues ignored)
-      # SEMGREP_BASELINE_REF: << parameters.default_branch >>
+      SEMGREP_BASELINE_REF: << parameters.default_branch >>
 
     # == Optional settings in the `environment:` block
 

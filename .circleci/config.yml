@@ -18,7 +18,7 @@ jobs:
       #   p/security-audit
 
       # Scan changed files in PRs, block on new issues only (existing issues ignored)
-      SEMGREP_BASELINE_REF: << parameters.default_branch >>
+       SEMGREP_BASELINE_REF: << parameters.default_branch >>
 
     # == Optional settings in the `environment:` block
 

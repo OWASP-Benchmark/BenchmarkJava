@@ -58,7 +58,6 @@ workflows:
     #             - circleci-project-setup
     jobs:
       - semgrep-scan:
-        filters:
-          branches:
-            only:
-              - main
+          filters:
+            branches:
+              only: main

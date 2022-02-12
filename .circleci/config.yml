@@ -60,4 +60,4 @@ workflows:
       - semgrep-scan:
           filters:
             branches:
-              only: main
+              only: circleci-project-setup

@@ -12,13 +12,13 @@ jobs:
         default: holdenmcg/BenchmarkJava
       default_branch:
         type: string
-        default: circleci-project-setup
+        default: master
     environment:
       # SEMGREP_RULES: >- # more at semgrep.dev/explore
       #   p/security-audit
 
       # Scan changed files in PRs, block on new issues only (existing issues ignored)
-      # SEMGREP_BASELINE_REF: << parameters.default_branch >>
+       SEMGREP_BASELINE_REF: << parameters.default_branch >>
 
     # == Optional settings in the `environment:` block
 
@@ -48,5 +48,16 @@ jobs:
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
   say-hello-workflow:
+    # triggers:
+    #   - schedule:
+    #       # Every day
+    #       cron: "0 0 * * *"
+    #       filters:
+    #         branches:
+    #           only:
+    #             - circleci-project-setup
     jobs:
-      - semgrep-scan
+      - semgrep-scan:
+          filters:
+            branches:
+              only: circleci-project-setup

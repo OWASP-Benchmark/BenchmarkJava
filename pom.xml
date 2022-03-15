@@ -1090,7 +1090,7 @@
                             </includes>
                             <excludes>
                                 <exclude>data/**/*.*</exclude>
-                                <exclude>results/**/*.*</exclude>
+                                <exclude>*results/**/*.*</exclude>
                                 <exclude>target/**/*.*</exclude>
                             </excludes>
                             <eclipseWtp>

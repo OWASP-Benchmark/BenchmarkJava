@@ -47,12 +47,13 @@ public class BenchmarkTest00009 extends HttpServlet {
             String name = (String) names.nextElement();
 
             if (org.owasp.benchmark.helpers.Utils.commonHeaders.contains(name)) {
-                continue;
+                continue; // If standard header, move on to next one
             }
 
             java.util.Enumeration<String> values = request.getHeaders(name);
             if (values != null && values.hasMoreElements()) {
-                param = name;
+                param = name; // Grabs the name of the first non-standard header as the parameter
+                // value
                 break;
             }
         }

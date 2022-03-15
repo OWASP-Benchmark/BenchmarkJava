@@ -638,22 +638,14 @@
         <!-- Have to include early in the pom like this so this version takes precendence over the old version used by the apacheds libs. -->
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.32</version>
+            <artifactId>slf4j-reload4j</artifactId>
+            <version>1.7.36</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.directory.server</groupId>
             <artifactId>apacheds-core</artifactId>
-            <!-- Upgrading to 2.0.0-M24 is an API breaking change. But it might be needed for Java
-                10, because I get this error, that I don't get with Java 8:
-                [java] at org.apache.directory.server.core.DefaultDirectoryService.initialize(DefaultDirectoryService.java:1426)
-                [java] at org.apache.directory.server.core.DefaultDirectoryService.startup(DefaultDirectoryService.java:907)
-                [java] at org.owasp.benchmark.helpers.LDAPServer.initDirectoryService(LDAPServer.java:148)
-                [java] at org.owasp.benchmark.helpers.LDAPServer.<init>(LDAPServer.java:42)
-                [java] at org.owasp.benchmark.helpers.LDAPServer.main(LDAPServer.java:320)
-                [java] Caused by: java.lang.NumberFormatException: multiple points
-                [java] at java.base/jdk.internal.math.FloatingDecimal.readJavaFormatString(FloatingDecimal.java:1914) -->
+            <!-- Upgrading to 2.0.0-M24 is an API breaking change. But it might be needed for Java 10, because I get this error, that I don't get with Java 8: [java] at org.apache.directory.server.core.DefaultDirectoryService.initialize(DefaultDirectoryService.java:1426) [java] at org.apache.directory.server.core.DefaultDirectoryService.startup(DefaultDirectoryService.java:907) [java] at org.owasp.benchmark.helpers.LDAPServer.initDirectoryService(LDAPServer.java:148) [java] at org.owasp.benchmark.helpers.LDAPServer.<init>(LDAPServer.java:42) [java] at org.owasp.benchmark.helpers.LDAPServer.main(LDAPServer.java:320) [java] Caused by: java.lang.NumberFormatException: multiple points [java] at java.base/jdk.internal.math.FloatingDecimal.readJavaFormatString(FloatingDecimal.java:1914) -->
             <version>${version.apacheds}</version>
             <exclusions>
                 <!-- Excluded because its old, and there is a bug in it causing an exception when using it. -->
@@ -757,13 +749,13 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
-            <version>4.4.14</version>
+            <version>4.4.15</version>
         </dependency>
 
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.69</version>
+            <version>1.70</version>
         </dependency>
 
         <!-- Kevin's fix for jar version conflicts. For future Benchmark 1.3 -->
@@ -789,7 +781,7 @@
         <dependency>
             <groupId>org.jdom</groupId>
             <artifactId>jdom2</artifactId>
-            <version>2.0.6</version>
+            <version>2.0.6.1</version>
         </dependency>
 
         <!-- mvn dependency:analyze says this is an unused declared dependency, but its wrong. Get a runtime error if it's not included -->
@@ -906,7 +898,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.9.0</version>
                 <configuration>
                     <fork>true</fork>
                     <meminitial>1000m</meminitial>
@@ -917,18 +909,18 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
-                <version>3.0.0-M1</version>
+                <version>3.0.0-M2</version>
             </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.0.0-M3</version>
+                <version>3.0.0</version>
                 <dependencies>
                     <dependency>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>extra-enforcer-rules</artifactId>
-                        <version>1.3</version>
+                        <version>1.5.1</version>
                     </dependency>
                 </dependencies>
                 <executions>
@@ -984,7 +976,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
-                <version>3.14.0</version>
+                <version>3.15.0</version>
                 <configuration>
                     <linkXref>true</linkXref>
                     <targetJdk>1.7</targetJdk>
@@ -1006,7 +998,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.9.1</version>
+                <version>3.10.0</version>
             </plugin>
 
             <plugin>
@@ -1027,7 +1019,7 @@
             <plugin>
                 <groupId>org.codehaus.cargo</groupId>
                 <artifactId>cargo-maven3-plugin</artifactId>
-                <version>1.9.7</version>
+                <version>1.9.8</version>
             </plugin>
 
             <!-- SpotBugs Static Analysis - the successor to FindBugs -->
@@ -1065,10 +1057,9 @@
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
-                <version>2.13.0</version>
+                <version>2.17.6</version>
                 <configuration>
-                    <!-- optional: limit format enforcement to just the files changed by this
-                        feature branch -->
+                    <!-- optional: limit format enforcement to just the files changed by this feature branch -->
                     <ratchetFrom>origin/master</ratchetFrom>
                     <formats>
                         <!-- you can define as many formats as you want, each is independent -->
@@ -1112,14 +1103,9 @@
 
                         <format>
                             <includes>
-                                <include>**/*.xml</include>
+                                <include>src/config/**/*.xml</include>
+                                <include>pom.xml</include>
                             </includes>
-                            <excludes>
-                                <exclude>data/**/*.*</exclude>
-                                <exclude>results/**/*.*</exclude>
-                                <exclude>scorecard/**/*.*</exclude>
-                                <exclude>target/**/*.*</exclude>
-                            </excludes>
                             <eclipseWtp>
                                 <type>XML</type>
                                 <files>
@@ -1162,12 +1148,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
-                <version>2.3</version>
+                <version>3.1.1</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
-                <version>2.5</version>
+                <version>2.8.1</version>
                 <reportSets>
                     <reportSet>
                         <reports>
@@ -1200,8 +1186,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.war.webxml>${basedir}/src/config/web.xml</maven.war.webxml>
-        <!-- runenv defaults to local here. But scripts can set this to 'remote' to launch remotely
-            accessible Benchmark. e.g., mvn clean package cargo:run -Pdeploy1.2 -Drunenv=remote -->
+        <!-- runenv defaults to local here. But scripts can set this to 'remote' to launch remotely accessible Benchmark. e.g., mvn clean package cargo:run -Pdeploy1.2 -Drunenv=remote -->
         <runenv>local</runenv>
         <tomcat.jvmargs>
             -Xms1G
@@ -1219,8 +1204,8 @@
         <version.apache-shared-ldap>0.9.19</version.apache-shared-ldap>
         <version.exec.maven>1.6.0</version.exec.maven>
         <version.hibernate>3.6.10.Final</version.hibernate>
-        <version.spotbugs.maven>4.3.0</version.spotbugs.maven>
-        <version.spotbugs>4.4.1</version.spotbugs>
+        <version.spotbugs.maven>4.5.3.0</version.spotbugs.maven>
+        <version.spotbugs>4.6.0</version.spotbugs>
         <version.springframework>4.3.30.RELEASE</version.springframework>
         <!-- tomcat 8.5 is last version to support Java 7. Tomcat 9+ requires Java 8. -->
         <tomcat.major.version>8</tomcat.major.version>

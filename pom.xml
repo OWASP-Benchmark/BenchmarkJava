@@ -778,12 +778,6 @@
             <version>${version.hibernate}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.jdom</groupId>
-            <artifactId>jdom2</artifactId>
-            <version>2.0.6.1</version>
-        </dependency>
-
         <!-- mvn dependency:analyze says this is an unused declared dependency, but its wrong. Get a runtime error if it's not included -->
         <dependency>
             <groupId>org.hsqldb</groupId>
@@ -875,7 +869,7 @@
                             <dependency>com.sun.jersey:jersey-servlet</dependency>
                             <dependency>commons-dbcp:commons-dbcp</dependency>
                             <dependency>org.hibernate:hibernate-entitymanager</dependency>
-                            <dependency>org.slf4j:slf4j-log4j12</dependency>
+                            <dependency>org.slf4j:slf4j-reload4j</dependency>
                             <dependency>org.springframework:spring-webmvc</dependency>
                         </usedDependencies>
                     </configuration>

@@ -984,7 +984,7 @@
                 <version>3.16.0</version>
                 <configuration>
                     <linkXref>true</linkXref>
-                    <targetJdk>1.7</targetJdk>
+                    <targetJdk>${project.java.target}</targetJdk>
                 </configuration>
             </plugin>
 
@@ -1140,7 +1140,7 @@
 
                         <!-- apply a specific flavor of google-java-format -->
                         <googleJavaFormat>
-                            <version>1.7</version>
+                            <version>${project.java.target}</version>
                             <style>AOSP</style>
                         </googleJavaFormat>
                     </java>

@@ -21,7 +21,7 @@ assess:
   threshold:
     entries: 100000
   rules:
-    disabled_rules: autocomplete-missing,cache-controls-missing,clickjacking-control-missing,csrf
+    disabled_rules: clickjacking-control-missing,csrf
 protect:
   enable: false
 

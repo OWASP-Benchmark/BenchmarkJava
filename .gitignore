@@ -4,11 +4,12 @@
 .project
 .settings/
 .idea/
+.horusec/
+.scannerwork/
 *.iml
 
 data/out.csv
 reports/
-scripts/SonarQubeCredentials.sh
 target/
 testfiles/
 tools/Contrast/contrast.jar

@@ -18,4 +18,4 @@ jobs:
       image: returntocorp/semgrep
     steps:
     - uses: actions/checkout@v3
-    - run: semgrep ci --sarif --output my-awesome-results.sarif
+    - run: semgrep

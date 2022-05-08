@@ -1,7 +1,11 @@
-#!/usr/bin/ruby
-puts "Calculating"
-first_number  = ARGV[0]#.to_i
-second_number = ARGV[1]#.to_i
-print "Args:",first_number,second_number,"
-"
-print eval(first_number+"+"+second_number)
+class ApplicationController < ActionController::Base
+protect_from_forgery with: :exception
+end
+class UsersController < ApplicationController
+def update
+con = Mysql.new 'localhost', 'user', 'pwd'
+con.query 'UPDATE users set name = ' + params[:name] +
+' where id = ' + params[:id]
+con.close
+end
+end

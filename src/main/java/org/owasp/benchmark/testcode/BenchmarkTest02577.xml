@@ -1,7 +1,0 @@
-<test-metadata>
-    <benchmark-version>1.2</benchmark-version>
-    <category>hash</category>
-    <test-number>02577</test-number>
-    <vulnerability>true</vulnerability>
-    <cwe>328</cwe>
-</test-metadata>

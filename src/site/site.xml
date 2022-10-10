@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="${project.name}" xmlns="https://maven.apache.org/DECORATION/1.8.0"
+    xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://maven.apache.org/DECORATION/1.8.0 https://maven.apache.org/xsd/decoration-1.8.0.xsd">
+    <bannerLeft>
+        <src>/images/owasp.png</src>
+        <href>https://owasp.org/www-project-benchmark/</href>
+    </bannerLeft>
+    <skin>
+        <groupId>org.apache.maven.skins</groupId>
+        <artifactId>maven-fluido-skin</artifactId>
+    </skin>
+    <custom>
+        <fluidoSkin>
+            <topBarEnabled>false</topBarEnabled>
+            <sideBarEnabled>true</sideBarEnabled>
+        </fluidoSkin>
+    </custom>
+    <body>
+        <links>
+            <item name="OWASP Benchmark" href="https://owasp.org/www-project-benchmark/" />
+        </links>
+        <menu ref="reports" />
+    </body>
+</project>
+

@@ -782,14 +782,14 @@
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
-            <!-- <version>2.5.1</version> This is latest version, but requires Java 8. 2.3.6 is last version to support Java 7. -->
+            <!-- <version>2.7.1</version> This is latest version, but requires Java 8. 2.3.6 is last version to support Java 7. -->
             <version>2.3.6</version>
         </dependency>
 
         <dependency>
             <groupId>org.owasp.esapi</groupId>
             <artifactId>esapi</artifactId>
-            <version>2.2.3.1</version>
+            <version>2.3.0.0</version>
         </dependency>
 
         <dependency>
@@ -853,12 +853,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-antrun-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <version>3.1.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>3.4.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -908,7 +908,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
-                <version>3.0.0-M2</version>
+                <version>3.0.0</version>
             </plugin>
 
             <plugin>
@@ -969,13 +969,13 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-install-plugin</artifactId>
-                <version>3.0.0-M1</version>
+                <version>3.0.1</version>
             </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.3.0</version>
             </plugin>
 
             <plugin>
@@ -991,19 +991,26 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.4.1</version>
             </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.3.0</version>
             </plugin>
 
             <plugin>
+                <!-- Note: This uses the maven-fluido-skin version specified next. The skin is referenced in src/site/site.xml. -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>4.0.0-M1</version>
+                <version>4.0.0-M3</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.skins</groupId>
+                <artifactId>maven-fluido-skin</artifactId>
+                <version>1.11.1</version>
             </plugin>
 
             <plugin>
@@ -1075,7 +1082,7 @@
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
-                <version>2.22.8</version>
+                <version>2.24.1</version>
                 <configuration>
                     <!-- optional: limit format enforcement to just the files changed by this feature branch -->
                     <ratchetFrom>origin/master</ratchetFrom>
@@ -1219,8 +1226,8 @@
         <version.apache-shared-ldap>0.9.19</version.apache-shared-ldap>
         <version.exec.maven>1.6.0</version.exec.maven>
         <version.hibernate>3.6.10.Final</version.hibernate>
-        <version.spotbugs.maven>4.7.0.0</version.spotbugs.maven>
-        <version.spotbugs>4.7.0</version.spotbugs>
+        <version.spotbugs.maven>4.7.1.1</version.spotbugs.maven>
+        <version.spotbugs>4.7.2</version.spotbugs>
         <version.springframework>4.3.30.RELEASE</version.springframework>
         <!-- tomcat 8.5 is last version to support Java 7. Tomcat 9+ requires Java 8. -->
         <tomcat.major.version>8</tomcat.major.version>

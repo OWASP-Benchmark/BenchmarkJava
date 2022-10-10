@@ -57,6 +57,7 @@
                     </annotationProcessors>
                     <compilerArgs>
                         <!-- <arg>-Awarns</arg> --> <!-- -Awarns turns type-checking errors into warnings. -->
+                        <arg>-Astubs=${project.basedir}/stubs</arg>
                     </compilerArgs>
                 </configuration>
             </plugin>
@@ -72,35 +73,35 @@
         </profile>
 
         <profile>
-        <id>checkerframework-jdk9orlater</id>
+        <id>checkerframework-jdk8</id>
         <activation>
-            <jdk>[9,)</jdk>
+            <jdk>1.8</jdk>
         </activation>
+        <dependencies>
+            <dependency>
+                <groupId>com.google.errorprone</groupId>
+                <artifactId>javac</artifactId>
+                <version>9+181-r4173-1</version>
+            </dependency>
+        </dependencies>
         <build>
             <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                <fork>true</fork>
-                <compilerArgs combine.children="append">
-                    <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED</arg>
-                    <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</arg>
-                    <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED</arg>
-                    <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED</arg>
-                    <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED</arg>
-                    <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg>
-                    <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</arg>
-                    <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
-                    <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</arg>
-                </compilerArgs>
-                </configuration>
-            </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <fork>true</fork>
+                        <compilerArgs combine.children="append">
+                            <arg>-J-Xbootclasspath/p:${settings.localRepository}/com/google/errorprone/javac/${javac.version}/javac-${javac.version}.jar</arg>
+                        </compilerArgs>
+                    </configuration>
+                </plugin>
             </plugins>
         </build>
         <properties>
             <!-- Needed for animal-sniffer-maven-plugin version 1.19 (version 1.20 is fixed). -->
             <animal.sniffer.skip>true</animal.sniffer.skip>
+            <javac.version>9+181-r4173-1</javac.version>
         </properties>
         </profile>
 

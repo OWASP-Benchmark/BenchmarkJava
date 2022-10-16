@@ -639,6 +639,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-reload4j</artifactId>
+            <!-- version 2.0.3+ requires Java 8 -->
             <version>1.7.36</version>
         </dependency>
 
@@ -827,6 +828,7 @@
         <dependency>
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
+            <!-- version 2.0.2 of this library is actually 1.0.b2, per the message: [WARNING] The artifact xml-apis:xml-apis:jar:2.0.2 has been relocated to xml-apis:xml-apis:jar:1.0.b2 -->
             <version>1.4.01</version>
         </dependency>
 

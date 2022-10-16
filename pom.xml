@@ -789,6 +789,7 @@
         <dependency>
             <groupId>org.owasp.esapi</groupId>
             <artifactId>esapi</artifactId>
+            <!-- <version>2.4.0.0+</version> Is available, but requires Java 8. 2.3.0.0 is last version to support Java 7. -->
             <version>2.3.0.0</version>
         </dependency>
 
@@ -963,7 +964,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-help-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.3.0</version>
             </plugin>
 
             <plugin>
@@ -981,7 +982,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
-                <version>3.17.0</version>
+                <version>3.19.0</version>
                 <configuration>
                     <linkXref>true</linkXref>
                     <targetJdk>${project.java.target}</targetJdk>
@@ -1031,13 +1032,13 @@
             <plugin>
                 <groupId>org.codehaus.cargo</groupId>
                 <artifactId>cargo-maven3-plugin</artifactId>
-                <version>1.9.12</version>
+                <version>1.10.2</version>
             </plugin>
 
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
-                <version>2.11.0</version>
+                <version>2.12.0</version>
             </plugin>
 
             <!-- SpotBugs Static Analysis - the successor to FindBugs -->
@@ -1082,7 +1083,7 @@
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
-                <version>2.24.1</version>
+                <version>2.27.2</version>
                 <configuration>
                     <!-- optional: limit format enforcement to just the files changed by this feature branch -->
                     <ratchetFrom>origin/master</ratchetFrom>
@@ -1225,8 +1226,9 @@
         <version.apacheds>1.5.7</version.apacheds>
         <version.apache-shared-ldap>0.9.19</version.apache-shared-ldap>
         <version.exec.maven>1.6.0</version.exec.maven>
+        <!-- hibernate is up to rev 6+. But 4.0.0. causes this error: symbol: org.hibernate.classic.Session not found -->
         <version.hibernate>3.6.10.Final</version.hibernate>
-        <version.spotbugs.maven>4.7.1.1</version.spotbugs.maven>
+        <version.spotbugs.maven>4.7.2.1</version.spotbugs.maven>
         <version.spotbugs>4.7.2</version.spotbugs>
         <version.springframework>4.3.30.RELEASE</version.springframework>
         <!-- tomcat 8.5 is last version to support Java 7. Tomcat 9+ requires Java 8. -->

@@ -149,7 +149,7 @@ public class DatabaseHelper {
             executeSQLCommand("INSERT INTO SCORE (nick, score) VALUES('foo', 40)");
 
             executeSQLCommand(
-                    "INSERT INTO EMPLOYEE (first_name, last_name, salary) VALUES('foo', 'bar', 100)");
+                    "INSERT INTO EMPLOYEE (first_name, last_name, salary) VALUES('foo', 'bar', 34567)");
             conn.commit();
         } catch (Exception e1) {
             System.out.println("Problem with database init/reset: " + e1.getMessage());

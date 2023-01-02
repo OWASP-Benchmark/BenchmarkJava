@@ -29,11 +29,7 @@ fi
 
 mvn sonar:sonar -Dsonar.projectKey="$sonar_project" -Dsonar.host.url="$sonar_host" -Dsonar.login="$sonar_token"
 
-echo "Waiting for SonarQube CE to finish task"
-
-while [[ "$(curl --silent -u "$sonar_token:" "$sonar_host/api/ce/component?component=$sonar_project" | jq -r '.current.status')" != "SUCCESS" ]]; do
-  sleep 3;
-done
+sleep 300
 
 benchmark_version=$(scripts/getBenchmarkVersion.sh)
 sonarqube_version=$(curl --silent -u "$sonar_token:" "$sonar_host/api/server/version")

@@ -25,14 +25,14 @@ jobs:
         
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       # Get full history for spotless ratchetFrom
       with:
         fetch-depth: 0
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v1
+      uses: github/codeql-action/init@v2
       with:
         languages: ${{ matrix.language }}
         # queries: ./path/to/local/query, your-org/your-repo/queries@main
@@ -44,4 +44,12 @@ jobs:
       run: mvn -DskipTests=true install
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v1
+      uses: github/codeql-action/analyze@v2
+      with:
+        output: codeql-sarif-${{ matrix.language }}.sarif
+
+    - name: Upload SARIF file
+      uses: actions/upload-artifact@v2
+      with:
+        name: codeql-sarif-${{ matrix.language }}
+        path: codeql-sarif-${{ matrix.language }}.sarif

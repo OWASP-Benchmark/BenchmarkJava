@@ -881,7 +881,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>3.0.0-M7</version>
+                    <version>3.0.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -912,18 +912,18 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.1.1</version>
             </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.2.1</version>
+                <version>3.3.0</version>
                 <dependencies>
                     <dependency>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>extra-enforcer-rules</artifactId>
-                        <version>1.5.1</version>
+                        <version>1.6.2</version>
                     </dependency>
                 </dependencies>
                 <executions>
@@ -973,7 +973,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-install-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.1.1</version>
             </plugin>
 
             <plugin>
@@ -986,10 +986,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
                 <version>3.20.0</version>
-                <configuration>
-                    <linkXref>true</linkXref>
-                    <targetJdk>${project.java.target}</targetJdk>
-                </configuration>
             </plugin>
 
             <plugin>
@@ -1001,14 +997,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.3.1</version>
             </plugin>
 
             <plugin>
                 <!-- Note: This uses the maven-fluido-skin version specified next. The skin is referenced in src/site/site.xml. -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>4.0.0-M5</version>
+                <version>4.0.0-M7</version>
                 <dependencies>
                     <!-- Explicitly declare these dependencies so the versions plugin and library bots will flag available updates. The fluido-skin plugin is referenced in src/site/site.xml using the same fluido version property. -->
                     <dependency>
@@ -1022,7 +1018,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M9</version>
+                <version>3.0.0</version>
             </plugin>
 
             <plugin>
@@ -1232,10 +1228,10 @@
         <version.apacheds>1.5.7</version.apacheds>
         <version.apache-shared-ldap>0.9.19</version.apache-shared-ldap>
         <version.exec.maven>1.6.0</version.exec.maven>
-        <version.fluido>2.0.0-M3</version.fluido>
+        <version.fluido>2.0.0-M6</version.fluido>
         <!-- hibernate is up to rev 6+. But 4.0.0. causes this error: symbol: org.hibernate.classic.Session not found -->
         <version.hibernate>3.6.10.Final</version.hibernate>
-        <version.spotbugs.maven>4.7.3.2</version.spotbugs.maven>
+        <version.spotbugs.maven>4.7.3.4</version.spotbugs.maven>
         <version.spotbugs>4.7.3</version.spotbugs>
         <version.springframework>4.3.30.RELEASE</version.springframework>
         <!-- tomcat 8.5 is last version to support Java 7. Tomcat 9+ requires Java 8. -->
@@ -1243,4 +1239,5 @@
         <version.tomcat>8.5.84</version.tomcat>
         <tomcat.url>https://archive.apache.org/dist/tomcat/tomcat-${tomcat.major.version}/v${version.tomcat}/bin/apache-tomcat-${version.tomcat}.zip</tomcat.url>
     </properties>
+
 </project>

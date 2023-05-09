@@ -639,8 +639,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-reload4j</artifactId>
-            <!-- version 2.0.3+ requires Java 8 -->
-            <version>1.7.36</version>
+            <version>2.0.7</version>
         </dependency>
 
         <dependency>
@@ -741,17 +740,16 @@
             <version>${version.apache-shared-ldap}</version>
         </dependency>
 
-        <!-- v5.2 of these two httpcomponents libs require Java 8 -->
         <dependency>
             <groupId>org.apache.httpcomponents.client5</groupId>
             <artifactId>httpclient5</artifactId>
-            <version>5.1.4</version>
+            <version>5.2.1</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.httpcomponents.core5</groupId>
             <artifactId>httpcore5</artifactId>
-            <version>5.1.5</version>
+            <version>5.2.1</version>
         </dependency>
 
         <dependency>
@@ -784,15 +782,14 @@
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
-            <!-- <version>2.7.1</version> 2.6.0+ requires Java 11. 2.3.6 is last version to support Java 7. 2.5.x versions support Java 8 -->
-            <version>2.3.6</version>
+            <!-- <version>2.7.1</version> 2.6.0+ requires Java 11. -->
+            <version>2.5.2</version>
         </dependency>
 
         <dependency>
             <groupId>org.owasp.esapi</groupId>
             <artifactId>esapi</artifactId>
-            <!-- <version>2.4.0.0+</version> Is available, but requires Java 8. 2.3.0.0 is last version to support Java 7. -->
-            <version>2.3.0.0</version>
+            <version>2.5.2.0</version>
         </dependency>
 
         <dependency>
@@ -936,11 +933,7 @@
                             <rules>
                                 <enforceBytecodeVersion>
                                     <maxJdkVersion>${project.java.target}</maxJdkVersion>
-                                    <excludes>
-                                        <!-- guava includes backports for Java 7 compatibility -->
-                                        <exclude>com.google.guava:guava</exclude>
-                                    </excludes>
-                                    <message>Dependencies shouldn't require Java 8+.</message>
+                                    <message>Dependencies shouldn't require Java 9+.</message>
                                 </enforceBytecodeVersion>
                             </rules>
                             <fail>warn</fail>
@@ -955,7 +948,7 @@
                             <rules>
                                 <requireJavaVersion>
                                     <version>${project.java.target}</version>
-                                    <message>Benchmark is currently written to support Java 7 and 8.</message>
+                                    <message>Benchmark is currently written to support Java 8+.</message>
                                 </requireJavaVersion>
                             </rules>
                         </configuration>
@@ -1150,7 +1143,7 @@
 
                         <!-- apply a specific flavor of google-java-format -->
                         <googleJavaFormat>
-                            <version>${project.java.target}</version>
+                            <version>1.7</version>
                             <style>AOSP</style>
                         </googleJavaFormat>
                     </java>
@@ -1208,7 +1201,7 @@
     <properties>
         <failOnMissingWebXml>false</failOnMissingWebXml>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.java.target>1.7</project.java.target>
+        <project.java.target>1.8</project.java.target>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.war.webxml>${basedir}/src/config/web.xml</maven.war.webxml>
         <!-- runenv defaults to local here. But scripts can set this to 'remote' to launch remotely accessible Benchmark. e.g., mvn clean package cargo:run -Pdeploy1.2 -Drunenv=remote -->
@@ -1233,10 +1226,11 @@
         <version.hibernate>3.6.10.Final</version.hibernate>
         <version.spotbugs.maven>4.7.3.4</version.spotbugs.maven>
         <version.spotbugs>4.7.3</version.spotbugs>
-        <version.springframework>4.3.30.RELEASE</version.springframework>
-        <!-- tomcat 8.5 is last version to support Java 7. Tomcat 9+ requires Java 8. -->
-        <tomcat.major.version>8</tomcat.major.version>
-        <version.tomcat>8.5.84</version.tomcat>
+        <!-- Spring 6.x requires Java 17 -->
+        <version.springframework>5.3.27</version.springframework>
+        <!-- Tomcat 10 moves from Java EE to Jakarta EE, moving packages javax.* to jakarta.* - code changes likely required to address this change. -->
+        <tomcat.major.version>9</tomcat.major.version>
+        <version.tomcat>9.0.74</version.tomcat>
         <tomcat.url>https://archive.apache.org/dist/tomcat/tomcat-${tomcat.major.version}/v${version.tomcat}/bin/apache-tomcat-${version.tomcat}.zip</tomcat.url>
     </properties>
 

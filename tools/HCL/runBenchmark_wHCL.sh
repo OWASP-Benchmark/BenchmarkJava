@@ -2,11 +2,11 @@
 
 if [ -f ./secagent.jar ]; then
 
-  if [ -d ./working ]; then
+  if [ -d ./HCL-IAST.hcl ]; then
 
-    rm -r ./working/HCL-IAST.hcl
+    rm ./HCL-IAST.hcl
     echo ""
-    echo "Previous  results in /working removed"
+    echo "Previous  results removed"
     echo ""
 
   fi
@@ -17,7 +17,7 @@ if [ -f ./secagent.jar ]; then
   echo "Copying report to results directory"
   benchmark_version=$(scripts/getBenchmarkVersion.sh)
   result_file="results/Benchmark_$benchmark_version-HCL-IAST.hcl"
-  cp tools/HCL/working/HCL-IAST.hcl "$result_file"
+  cp tools/HCL/HCL-IAST.hcl "$result_file"
   cd tools/HCL
 
 else 

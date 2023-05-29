@@ -1,8 +1,8 @@
 @ECHO OFF
 IF EXIST .\secagent.jar (
-  IF EXIST .\working (
+  IF EXIST .\HCL-IAST.hcl (
 
-        RMDIR /S /Q .\working
+        DEL .\HCL-IAST.hcl
 
         ECHO.
         ECHO Previous results have been removed
@@ -19,7 +19,7 @@ IF EXIST .\secagent.jar (
 
     ECHO Copying HCL reports to results directory
 
-    COPY tools\HCL\working\HCL-IAST.hcl results\Benchmark_HCL-IAST.hcl
+    COPY tools\HCL\HCL-IAST.hcl results\Benchmark_HCL-IAST.hcl
 
     CD tools\HCL
 

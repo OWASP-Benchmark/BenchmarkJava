@@ -574,11 +574,12 @@
                                         <overwrite>true</overwrite>
                                     </configfile>
                                 </configfiles>
+                                <home>${project.build.directory}/tomcat${tomcat.major.version}x</home>
                                 <properties>
                                     <cargo.jvmargs>
                                         -Xmx8G
                                         -javaagent:${basedir}/tools/HCL/secagent.jar=agent_path=${basedir}/tools/HCL/secagent.jar
-                                        -Dsecagent.log=${basedir}/tools/HCL/working/HCL-IAST.hcl
+                                        -Dsecagent.log=${basedir}/tools/HCL/HCL-IAST.hcl
                                     </cargo.jvmargs>
                                     <cargo.servlet.port>8443</cargo.servlet.port>
                                     <cargo.protocol>https</cargo.protocol>

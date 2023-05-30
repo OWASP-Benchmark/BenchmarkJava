@@ -12,7 +12,7 @@ if [ -f ./secagent.jar ]; then
   fi
 
   cd ../..
-  mvn clean package cargo:run -Pdeploy
+  mvn clean package cargo:run -Pdeploywhcl -Drunenv=remote
 
   echo "Copying report to results directory"
   benchmark_version=$(scripts/getBenchmarkVersion.sh)

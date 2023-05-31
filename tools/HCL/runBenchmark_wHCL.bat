@@ -15,7 +15,7 @@ IF EXIST .\secagent.jar (
     ECHO When it asks "Terminate batch job (Y/N)?" Enter N, so script will complete and copy results to /results directory.
     ECHO.
 
-    CALL mvn clean package cargo:run -Pdeploywhcl
+    CALL mvn clean package cargo:run -Pdeploywhcl -Drunenv=remote
 
     ECHO Copying HCL reports to results directory
 

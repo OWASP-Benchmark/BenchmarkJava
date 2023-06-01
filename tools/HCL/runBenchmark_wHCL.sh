@@ -6,7 +6,7 @@ if [ -f ./secagent.jar ]; then
 
     rm ./HCL-IAST.hcl
     echo ""
-    echo "Previous  results removed"
+    echo "Previous results have been removed"
     echo ""
 
   fi

@@ -698,6 +698,13 @@
             <version>${version.apacheds}</version>
         </dependency>
 
+        <!-- Use version 1.9.2 of commons-beanutils as entry point -->
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.9.2</version>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.directory.server</groupId>
             <artifactId>apacheds-protocol-shared</artifactId>
@@ -904,6 +911,8 @@
                     <fork>true</fork>
                     <meminitial>1000m</meminitial>
                     <maxmem>2000m</maxmem>
+                    <source>7</source>
+                    <target>7</target>
                 </configuration>
             </plugin>
 

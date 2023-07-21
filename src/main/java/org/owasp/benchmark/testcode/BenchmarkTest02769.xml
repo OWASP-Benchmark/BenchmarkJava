@@ -1,0 +1,7 @@
+<test-metadata>
+    <benchmark-version>1.2</benchmark-version>
+    <category>deserialization</category>
+    <test-number>02769</test-number>
+    <vulnerability>false</vulnerability>
+    <cwe>502</cwe>
+</test-metadata>

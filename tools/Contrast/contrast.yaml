@@ -13,6 +13,7 @@ agent:
     standalone_app_name: owasp-benchmark
   logger:
     level: debug
+    roll_daily: true
 server:
   name: owasp-server
   environment: development

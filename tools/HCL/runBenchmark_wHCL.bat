@@ -1,8 +1,8 @@
 @ECHO OFF
 IF EXIST .\secagent.jar (
-  IF EXIST .\working (
+  IF EXIST .\HCL-IAST.hcl (
 
-        RMDIR /S /Q .\working
+        DEL .\HCL-IAST.hcl
 
         ECHO.
         ECHO Previous results have been removed
@@ -15,11 +15,11 @@ IF EXIST .\secagent.jar (
     ECHO When it asks "Terminate batch job (Y/N)?" Enter N, so script will complete and copy results to /results directory.
     ECHO.
 
-    CALL mvn clean package cargo:run -Pdeploywhcl
+    CALL mvn clean package cargo:run -Pdeploywhcl -Drunenv=remote
 
     ECHO Copying HCL reports to results directory
 
-    COPY tools\HCL\working\HCL-IAST.hcl results\Benchmark_HCL-IAST.hcl
+    COPY tools\HCL\HCL-IAST.hcl results\Benchmark_HCL-IAST.hcl
 
     CD tools\HCL
 

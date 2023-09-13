@@ -33,7 +33,6 @@ import org.owasp.benchmark.service.pojo.XMLMessage;
 import org.owasp.esapi.ESAPI;
 
 public class DatabaseHelper {
-    private static Statement stmt;
     private static Connection conn;
     public static org.springframework.jdbc.core.JdbcTemplate JDBCtemplate;
     public static org.owasp.benchmark.helpers.HibernateUtil hibernateUtil =
@@ -120,13 +119,11 @@ public class DatabaseHelper {
         if (conn == null) {
             getSqlConnection();
         }
-
-        if (stmt == null) {
-            try {
-                stmt = conn.createStatement();
-            } catch (SQLException e) {
-                System.out.println("Problem with database init.");
-            }
+        Statement stmt = null;
+        try {
+            stmt = conn.createStatement();
+        } catch (SQLException e) {
+            System.out.println("Problem with database init.");
         }
 
         return stmt;
@@ -172,9 +169,7 @@ public class DatabaseHelper {
     }
 
     public static void executeSQLCommand(String sql) throws Exception {
-        if (stmt == null) {
-            getSqlStatement();
-        }
+        Statement stmt = getSqlStatement();
         stmt.executeUpdate(sql);
     }
 

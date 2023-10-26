@@ -16,7 +16,7 @@ if $(find contrast.jar -mmin +1440); then
   echo "Using Contrast agent downloaded in past day"
 else
   echo "Fetching the latest Contrast agent"
-  curl -o contrast.jar -L "https://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.contrastsecurity&a=contrast-agent&v=LATEST"
+  export VERSION=$(echo "$(curl --fail --silent "https://search.maven.org/solrsearch/select?q=g:"com.contrastsecurity"&a:"contrast-agent"&rows=20&wt=json" | jq -r '.response.docs[0].latestVersion')") && Curl --silent https://repo1.maven.org/maven2/com/contrastsecurity/contrast-agent/${VERSION}/contrast-agent-${VERSION}.jar -o contrast-agent-${VERSION}.jar
 fi
 
 if [ -d ./working ]; then

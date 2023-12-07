@@ -749,13 +749,13 @@
         <dependency>
             <groupId>org.apache.httpcomponents.client5</groupId>
             <artifactId>httpclient5</artifactId>
-            <version>5.2.2</version>
+            <version>5.3</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.httpcomponents.core5</groupId>
             <artifactId>httpcore5</artifactId>
-            <version>5.2.3</version>
+            <version>5.2.4</version>
         </dependency>
 
         <dependency>
@@ -795,7 +795,7 @@
         <dependency>
             <groupId>org.owasp.esapi</groupId>
             <artifactId>esapi</artifactId>
-            <version>2.5.3.0</version>
+            <version>2.5.3.1</version>
         </dependency>
 
         <dependency>
@@ -1032,7 +1032,7 @@
             <plugin>
                 <groupId>org.codehaus.cargo</groupId>
                 <artifactId>cargo-maven3-plugin</artifactId>
-                <version>1.10.10</version>
+                <version>1.10.11</version>
             </plugin>
 
             <plugin>
@@ -1230,8 +1230,8 @@
         <version.fluido>2.0.0-M8</version.fluido>
         <!-- hibernate is up to rev 6+. But 4.0.0. causes this error: symbol: org.hibernate.classic.Session not found -->
         <version.hibernate>3.6.10.Final</version.hibernate>
-        <version.spotbugs.maven>4.8.1.0</version.spotbugs.maven>
-        <version.spotbugs>4.8.1</version.spotbugs>
+        <version.spotbugs.maven>4.8.2.0</version.spotbugs.maven>
+        <version.spotbugs>4.8.2</version.spotbugs>
         <!-- Spring 6.x requires Java 17 -->
         <version.springframework>5.3.31</version.springframework>
         <!-- Tomcat 10 moves from Java EE to Jakarta EE, moving packages javax.* to jakarta.* - code changes likely required to address this change. -->

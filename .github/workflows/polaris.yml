@@ -1,0 +1,34 @@
+name: CI-Polaris
+on:
+  push:
+    branches: [ polaris ]
+  pull_request:
+    branches: [ polaris ] 
+jobs:
+  polaris-scan:
+    runs-on: [ ubuntu-latest ]
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v3
+
+      - name: clean code
+        run: mvn clean
+
+      - name: Build code
+        run: mvn -DskipTests -DskipITs install
+
+      - name: set env
+        run: export DETECT_DETECTOR_SEARCH_DEPTH=5
+        run: export DETECT_DETECTOR_SEARCH_CONTINUE=TRUE
+ 
+      - name: Polaris Full Scan
+        if: ${{ github.event_name != 'pull_request' }}
+        uses: synopsys-sig/synopsys-action@v1.5.0
+        with:
+          polaris_serverUrl: ${{ secrets.POLARIS_SERVERURL }}
+          polaris_accessToken: ${{ secrets.POLARIS_ACCESSTOKEN }}
+          polaris_application_name: "firstMode"
+          polaris_project_name: "Benchmark Java"
+          polaris_assessment_types: "SCA,SAST"
+          ### Uncomment below configuration if Synopsys Bridge diagnostic files needs to be uploaded
+          # include_diagnostics: true

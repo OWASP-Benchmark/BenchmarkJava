@@ -22,6 +22,10 @@ jobs:
       run: mvn spotless:check
     - name: Run unit tests
       run: mvn test
+    - name: Set up JDK 11 for Endor Scan
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
     - name: Endor Labs Scan
       uses: endorlabs/github-action@v1.1.2
       with:

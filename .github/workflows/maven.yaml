@@ -26,6 +26,7 @@ jobs:
       uses: actions/setup-java@v2
       with:
         java-version: '11'
+        distribution: 'zulu'
     - name: Endor Labs Scan
       uses: endorlabs/github-action@v1.1.2
       with:

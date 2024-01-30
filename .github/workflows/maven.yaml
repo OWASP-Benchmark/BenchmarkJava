@@ -1,9 +1,11 @@
 name: Java CI with Maven
 
-on: [push, pull_request]
+on: [push, pull_request, workflow_dispatch]
 
 jobs:
   build:
+    permissions:
+      id-token: write
 
     runs-on: ubuntu-latest
 
@@ -20,4 +22,12 @@ jobs:
       run: mvn spotless:check
     - name: Run unit tests
       run: mvn test
-
+    - name: Endor Labs Scan
+      uses: endorlabs/github-action@v1.1.2
+      with:
+          namespace: 'david-learn'
+          scan_summary_output_type: 'json'
+          pr: false
+          scan_secrets: true
+          scan_dependencies: true
+          enable_github_action_token: true

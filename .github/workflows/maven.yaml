@@ -1,11 +1,20 @@
 name: Java CI with Maven
 
-on: [push, pull_request, workflow_dispatch]
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
     permissions:
-      id-token: write
+      security-events: write # Used to upload Sarif artifact to GitHub
+      contents: read # Used to check out a private repository
+      actions: read # Required for private repositories to upload Sarif files. GitHub Advanced Security licenses are required.
+      id-token: write # Used for keyless authentication with Endor Labs
+      issues: write # Required to automatically comment on PRs for new policy violations
+      pull-requests: write # Required to automatically comment on PRs for new policy violations
 
     runs-on: ubuntu-latest
 
@@ -13,26 +22,52 @@ jobs:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
+
     - name: Set up JDK 8
       uses: actions/setup-java@v4
       with:
         java-version: '8'
         distribution: 'zulu'
+
     - name: Run Spotless check
       run: mvn spotless:check
+
     - name: Run unit tests
       run: mvn test
+
     - name: Set up JDK 11 for Endor Scan
       uses: actions/setup-java@v2
       with:
         java-version: '11'
         distribution: 'zulu'
-    - name: Endor Labs Scan
+
+
+    - name: Endor Labs PR Scan
+      if: github.event_name == 'pull_request'
       uses: endorlabs/github-action@v1.1.2
       with:
           namespace: 'david-learn'
           scan_summary_output_type: 'json'
+          pr: true
+          scan_secrets: true
+          scan_dependencies: true
+          enable_pr_comments: env.ENDORCTL_PR
+          enable_github_action_token: true
+      
+    - name: Endor Labs Release Scan
+      if: github.event_name == 'push'
+      uses: endorlabs/github-action@v1.1.2
+      with:
+          namespace: 'david-learn'
+          scan_summary_output_type: 'table'
           pr: false
           scan_secrets: true
           scan_dependencies: true
           enable_github_action_token: true
+          # sarif_file: 'findings.sarif'
+
+    # - name: Upload findings to github
+    #   uses: github/codeql-action/upload-sarif@9885f86fab4879632b7e44514f19148225dfbdcd
+    #   with:
+    #     sarif_file: 'findings.sarif'
+

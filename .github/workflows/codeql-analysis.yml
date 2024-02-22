@@ -5,10 +5,34 @@ env:
 
 on:
   push:
-    branches: [ master ]
+    branches: ["main", "feature/*"]
+    paths-ignore:
+      - "**/*.md"
+      - "**/*.txt"
+      - "**/*.json"
+      - "**/*.jsonc"
+      - "**/*.bicep"
+      - ".circleci/*.yml"
+      - "**/*.yaml"
+      - "**/*.spec.ts"
+      - "**/*-e2e"
+      - "Tests/**"
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [ master ]
+    branches: ["main", "feature/*"]
+    paths-ignore:
+      - "**/*.md"
+      - "**/*.txt"
+      - "**/*.json"
+      - "**/*.jsonc"
+      - "**/*.bicep"
+      - ".circleci/*.yml"
+      - "**/*.yaml"
+      - "**/*.spec.ts"
+      - "**/*-e2e"
+      - "Tests/**"   
+  schedule:
+    - cron: '0 2 * * 0'  # Runs at 2:00 AM UTC every Sunday
   workflow_dispatch:
 
 jobs:

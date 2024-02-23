@@ -64,9 +64,9 @@ jobs:
           scan_secrets: true
           scan_dependencies: true
           enable_github_action_token: true
-          # sarif_file: 'findings.sarif'
+          sarif_file: 'findings.sarif'
 
-    # - name: Upload findings to github
-    #   uses: github/codeql-action/upload-sarif
-    #   with:
-    #     sarif_file: 'findings.sarif'
+    - name: Upload findings to github
+      uses: github/codeql-action/upload-sarif
+      with:
+        sarif_file: 'findings.sarif'

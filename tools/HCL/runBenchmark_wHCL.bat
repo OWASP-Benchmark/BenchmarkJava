@@ -11,17 +11,7 @@ IF EXIST .\secagent.jar (
 
     CD ..\..
 
-    @REM ECHO After Crawl is Complete, hit Ctrl-C to stop Benchmark Tomcat instance.
-    @REM ECHO When it asks "Terminate batch job (Y/N)?" Enter N, so script will complete and copy results to /results directory.
-    @REM ECHO.
-
     CALL mvn clean package cargo:run -Pdeploywhcl -Drunenv=remote
-
-    @REM ECHO Copying HCL reports to results directory
-
-    @REM COPY tools\HCL\HCL-IAST.hcl results\Benchmark_HCL-IAST.hcl
-
-    @REM CD tools\HCL
 
 ) ELSE (
     ECHO HCL is a commercial product, so you need a licensed version of HCL in order to run it on the Benchmark. If you have access to HCL, download the HCL Agent for Java ^(secagent.jar^), put it into the /tools/HCL folder, and then rerun this script. Please contact HCL at https://www.hcl.com/.

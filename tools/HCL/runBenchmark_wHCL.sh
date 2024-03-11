@@ -2,9 +2,9 @@
 
 if [ -f ./secagent.jar ]; then
 
-  if [ -d ./HCL-IAST.hcl ]; then
+  if [ -d ../../results/HCL-IAST.hcl ]; then
 
-    rm ./HCL-IAST.hcl
+    rm ../../results/HCL-IAST.hcl
     echo ""
     echo "Previous results have been removed"
     echo ""
@@ -13,12 +13,6 @@ if [ -f ./secagent.jar ]; then
 
   cd ../..
   mvn clean package cargo:run -Pdeploywhcl -Drunenv=remote
-
-  echo "Copying report to results directory"
-  benchmark_version=$(scripts/getBenchmarkVersion.sh)
-  result_file="results/Benchmark_$benchmark_version-HCL-IAST.hcl"
-  cp tools/HCL/HCL-IAST.hcl "$result_file"
-  cd tools/HCL
 
 else 
 

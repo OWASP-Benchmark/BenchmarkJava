@@ -1222,6 +1222,6 @@ But it might be needed for Java 10, because I get this error, that I don't get w
 		<!-- tomcat 8.5 is last version to support Java 7. Tomcat 9+ requires Java 8. -->
 		<tomcat.major.version>8</tomcat.major.version>
 		<version.tomcat>8.5.56</version.tomcat>
-		<tomcat.url>http://archive.apache.org/dist/tomcat/tomcat-${tomcat.major.version}/v${version.tomcat}/bin/apache-tomcat-${version.tomcat}.zip</tomcat.url>
+		<tomcat.url>https://archive.apache.org/dist/tomcat/tomcat-${tomcat.major.version}/v${version.tomcat}/bin/apache-tomcat-${version.tomcat}.zip</tomcat.url>
 	</properties>
 </project>

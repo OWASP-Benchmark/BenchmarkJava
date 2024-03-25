@@ -35,8 +35,8 @@ public class BenchmarkTest01476 extends HttpServlet {
         doPost(request, response);
     }
 
-    @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
+    
+    public void test(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
 

@@ -30,7 +30,7 @@ fi
 echo
 echo "Starting Benchmark application server with Contrast agent"
 echo "  1. Verify that the output shows \"Starting JVM\"."
-echo "  2. If the output contains \"Continuing without Contrast...\" the credentials in contrast.yaml are most likely incorrect or missing."
+echo "  2. If the output contains \"Contrast not enabled. Check log for details -\" the credentials in contrast.yaml are most likely incorrect or missing."
 echo "  3. Once the Benchmark server is fully started, open another terminal window and run the runCrawler.sh script from the Benchmark root directory."
 echo "  4. When the crawler finishes (takes a minute or two), hit CTRL+C in this window to stop the server and write the Contrast results to the /results folder."
 echo

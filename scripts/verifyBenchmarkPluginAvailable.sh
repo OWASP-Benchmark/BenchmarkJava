@@ -1,5 +1,5 @@
 # Verify the benchmarkutils plugin is installed. And if not, explain how to install it
-mvn -Djava.awt.headless=true -Dplugin=org.owasp:benchmarkutils-maven-plugin help:describe 2>&1 >/dev/null
+mvn -Dplugin=org.owasp:benchmarkutils-maven-plugin help:describe 2>&1 >/dev/null
 
 if [ $? -ne 0 ]
 then

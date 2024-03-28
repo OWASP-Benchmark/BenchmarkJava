@@ -11,5 +11,6 @@
 
 
 # This then runs the codeql scan:
-../../tools/codeql-home/codeql/codeql database analyze owasp-benchmark java-code-scanning.qls --format=sarifv2.1.0 --output=results/Benchmark_1.2-codeql_java-code-scanning_qls.sarif
+benchmark_version=$(scripts/getBenchmarkVersion.sh)
+../../tools/codeql-home/codeql/codeql database analyze owasp-benchmark java-code-scanning.qls --format=sarifv2.1.0 --output=results/Benchmark_$benchmark_version-codeql_java-code-scanning_qls.sarif
 

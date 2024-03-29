@@ -18,6 +18,6 @@ jobs:
         distribution: 'zulu'
     - name: Run Spotless check
       run: mvn spotless:check
-    - name: Run unit tests
-      run: mvn test
+    - name: Create WAR
+      run: mvn package
 

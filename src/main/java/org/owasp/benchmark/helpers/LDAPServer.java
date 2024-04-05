@@ -1,84 +1,107 @@
-/**
- * OWASP Benchmark Project
+/*-
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.  The
+ * ASF licenses this file to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the
+ * License.  You may obtain a copy of the License at
  *
- * <p>This file is part of the Open Web Application Security Project (OWASP) Benchmark Project For
- * details, please see <a
- * href="https://owasp.org/www-project-benchmark/">https://owasp.org/www-project-benchmark/</a>.
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * <p>The OWASP Benchmark is free software: you can redistribute it and/or modify it under the terms
- * of the GNU General Public License as published by the Free Software Foundation, version 2.
- *
- * <p>The OWASP Benchmark is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License for more details
- *
- * @author Juan GaMa
- * @created 2015
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
  */
+
 package org.owasp.benchmark.helpers;
 
 import java.io.File;
-import java.util.HashSet;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
-import org.apache.directory.server.constants.ServerDNConstants;
-import org.apache.directory.server.core.DefaultDirectoryService;
-import org.apache.directory.server.core.DirectoryService;
-import org.apache.directory.server.core.partition.Partition;
+import java.util.Map;
+import org.apache.commons.io.FileUtils;
+import org.apache.directory.api.ldap.model.entry.Entry;
+import org.apache.directory.api.ldap.model.exception.LdapException;
+import org.apache.directory.api.ldap.model.schema.registries.DefaultSchema;
+import org.apache.directory.api.ldap.model.schema.registries.Schema;
+import org.apache.directory.api.ldap.schema.loader.JarLdifSchemaLoader;
+import org.apache.directory.api.ldap.schema.loader.LdifSchemaLoader;
+import org.apache.directory.server.core.api.CoreSession;
+import org.apache.directory.server.core.api.DirectoryService;
+import org.apache.directory.server.core.factory.DefaultDirectoryServiceFactory;
+import org.apache.directory.server.core.factory.JdbmPartitionFactory;
 import org.apache.directory.server.core.partition.impl.btree.jdbm.JdbmIndex;
 import org.apache.directory.server.core.partition.impl.btree.jdbm.JdbmPartition;
-import org.apache.directory.server.core.partition.ldif.LdifPartition;
-import org.apache.directory.server.core.schema.SchemaPartition;
 import org.apache.directory.server.ldap.LdapServer;
 import org.apache.directory.server.protocol.shared.transport.TcpTransport;
 import org.apache.directory.server.xdbm.Index;
-import org.apache.directory.shared.ldap.entry.ServerEntry;
-import org.apache.directory.shared.ldap.name.DN;
-import org.apache.directory.shared.ldap.schema.SchemaManager;
-import org.apache.directory.shared.ldap.schema.ldif.extractor.SchemaLdifExtractor;
-import org.apache.directory.shared.ldap.schema.ldif.extractor.impl.DefaultSchemaLdifExtractor;
-import org.apache.directory.shared.ldap.schema.loader.ldif.LdifSchemaLoader;
-import org.apache.directory.shared.ldap.schema.manager.impl.DefaultSchemaManager;
-import org.apache.directory.shared.ldap.schema.registries.SchemaLoader;
+import org.apache.directory.server.xdbm.IndexNotFoundException;
 
+/** Call init() to start the server and destroy() to shut it down. */
 public class LDAPServer {
-    /** The directory service */
-    private DirectoryService service;
+    // API References:
+    // https://nightlies.apache.org/directory/apacheds/2.0.0.AM27/apidocs/
+    // https://nightlies.apache.org/directory/api/2.2.3/
 
-    /** The LDAP server */
-    private LdapServer server;
+    private static String BASE_PARTITION_NAME = "mydomain";
+    private static String BASE_DOMAIN = "org";
+    private static String BASE_STRUCTURE = "dc=" + BASE_PARTITION_NAME + ",dc=" + BASE_DOMAIN;
+
+    private static int LDAP_SERVER_PORT = 10389;
+    private static int BASE_CACHE_SIZE = 1000;
+    private static List<String> ATTR_NAMES_TO_INDEX = new ArrayList<String>(Arrays.asList("uid"));
+
+    private DirectoryService _directoryService;
+    private LdapServer _ldapServer;
+    private JdbmPartition _basePartition;
+    private boolean _deleteInstanceDirectoryOnStartup = true;
+    private boolean _deleteInstanceDirectoryOnShutdown = true;
+
+    public String getBasePartitionName() {
+        return BASE_PARTITION_NAME;
+    }
+
+    public String getBaseStructure() {
+        return BASE_STRUCTURE;
+    }
+
+    public int getBaseCacheSize() {
+        return BASE_CACHE_SIZE;
+    }
+
+    public int getLdapServerPort() {
+        return LDAP_SERVER_PORT;
+    }
+
+    public List<String> getAttrNamesToIndex() {
+        return ATTR_NAMES_TO_INDEX;
+    }
+
+    protected void addSchemaExtensions() throws LdapException, IOException {
+        // override to add custom attributes to the schema
+    }
 
     public LDAPServer() {
-        String dir =
-                Utils.getFileFromClasspath(
-                                "benchmark.properties", LDAPManager.class.getClassLoader())
-                        .getParent();
-        File workDir = new File(dir + "/../ldap");
-        workDir.mkdirs();
-
-        // Create the server
+        // BEGIN HACK
         try {
-            initDirectoryService(workDir);
-        } catch (Exception e) {
-            System.out.println("Error creating LDAP Server: " + e.getMessage());
-        }
+            String dir =
+                    Utils.getFileFromClasspath(
+                                    "benchmark.properties", LDAPServer.class.getClassLoader())
+                            .getParent();
+            File workDir = new File(dir + "/../ldap");
+            workDir.mkdirs();
+            System.setProperty("workingDiretory", workDir.getPath());
 
-        // Read an entry
-        // Entry result = null;
-        try {
-            // result =
-            service.getAdminSession().lookup(new DN("dc=apache,dc=org"));
+            init();
         } catch (Exception e) {
-            System.out.println("Error creating LDAP Server: " + e.getMessage());
-        }
-
-        // And print it if available
-        //		System.out.println("Found entry : " + result);
-
-        // optionally we can start a server too
-        try {
-            startServer();
-        } catch (Exception e) {
-            System.out.println("Error creating LDAP Server: " + e.getMessage());
+            System.out.println("Error initializing LDAP Server: " + e.getMessage());
+            e.printStackTrace();
         }
 
         LDAPManager emd = new LDAPManager();
@@ -102,247 +125,251 @@ public class LDAPServer {
         ldapP.setAddress("Whe home is #678");
 
         emd.insert(ldapP);
+        // END HACK
     }
 
-    /**
-     * Initialize the server. It creates the partition, adds the index, and injects the context
-     * entries for the created partitions.
-     *
-     * @param workDir the directory to be used for storing the data
-     * @throws Exception if there were some problems while initializing the system
-     */
-    private void initDirectoryService(File workDir) {
-        // Initialize the LDAP service
-        try {
-            service = new DefaultDirectoryService();
-        } catch (Exception e1) {
-            System.out.println("Error creating DefaultDirectoryService. " + e1.getMessage());
-            e1.printStackTrace();
-        }
-        service.setWorkingDirectory(workDir);
-
-        // first load the schema
-        initSchemaPartition();
-
-        // then the system partition
-        // this is a MANDATORY partition
-        Partition systemPartition = null;
-        try {
-            systemPartition = addPartition("system", ServerDNConstants.SYSTEM_DN);
-        } catch (Exception e1) {
-            System.out.println("Error addPartition system. " + e1.getMessage());
-            e1.printStackTrace();
-        }
-        service.setSystemPartition(systemPartition);
-
-        // Disable the ChangeLog system
-        service.getChangeLog().setEnabled(false);
-        service.setDenormalizeOpAttrsEnabled(true);
-
-        // Now we can create as many partitions as we need
-        // Create some new partitions named 'foo', 'bar' and 'apache'.
-        Partition fooPartition = null;
-        try {
-            fooPartition = addPartition("foo", "dc=foo,dc=com");
-        } catch (Exception e1) {
-            System.out.println("Error addPartition foo. " + e1.getMessage());
-            e1.printStackTrace();
-        }
-
-        Partition barPartition = null;
-        try {
-            barPartition = addPartition("bar", "dc=bar,dc=com");
-        } catch (Exception e1) {
-            System.out.println("Error addPartition bar. " + e1.getMessage());
-            e1.printStackTrace();
-        }
-
-        Partition apachePartition = null;
-        try {
-            apachePartition = addPartition("apache", "dc=apache,dc=org");
-        } catch (Exception e1) {
-            System.out.println("Error addPartition apache. " + e1.getMessage());
-            e1.printStackTrace();
-        }
-
-        // Index some attributes on the apache partition
-        addIndex(apachePartition, "objectClass", "ou", "uid");
-        try {
-            // And start the service
-            service.startup();
-        } catch (Exception e) {
-            System.out.println("Error at LDAP startup: " + e.getMessage());
-            e.printStackTrace();
-        }
-
-        // Inject the foo root entry if it does not already exist
-        try {
-            service.getAdminSession().lookup(fooPartition.getSuffixDn());
-        } catch (Exception lnnfe) {
-            try {
-                DN dnFoo = new DN("dc=foo,dc=com");
-                ServerEntry entryFoo = service.newEntry(dnFoo);
-                entryFoo.add("objectClass", "top", "domain", "extensibleObject");
-                entryFoo.add("dc", "foo");
-                service.getAdminSession().add(entryFoo);
-            } catch (Exception e) {
-                System.out.println("Error creating new DN.");
-                e.printStackTrace();
+    public void init() throws Exception {
+        if (getDirectoryService() == null) {
+            if (getDeleteInstanceDirectoryOnStartup()) {
+                deleteDirectory(getGuessedInstanceDirectory());
             }
+
+            DefaultDirectoryServiceFactory serviceFactory = new DefaultDirectoryServiceFactory();
+            serviceFactory.init(getDirectoryServiceName());
+            setDirectoryService(serviceFactory.getDirectoryService());
+
+            getDirectoryService().getChangeLog().setEnabled(false);
+            getDirectoryService().setDenormalizeOpAttrsEnabled(true);
+
+            createBasePartition();
+
+            getDirectoryService().startup();
+
+            createRootEntry();
         }
 
-        // Inject the bar root entry
+        if (getLdapServer() == null) {
+            setLdapServer(new LdapServer());
+            getLdapServer().setDirectoryService(getDirectoryService());
+            getLdapServer().setTransports(new TcpTransport(getLdapServerPort()));
+            getLdapServer().start();
+        }
+    }
+
+    public void destroy() throws Exception {
+        File instanceDirectory = getDirectoryService().getInstanceLayout().getInstanceDirectory();
+        getLdapServer().stop();
+        getDirectoryService().shutdown();
+        setLdapServer(null);
+        setDirectoryService(null);
+        if (getDeleteInstanceDirectoryOnShutdown()) {
+            deleteDirectory(instanceDirectory);
+        }
+    }
+
+    public String getDirectoryServiceName() {
+        return getBasePartitionName() + "DirectoryService";
+    }
+
+    private static void deleteDirectory(File path) throws IOException {
+        FileUtils.deleteDirectory(path);
+    }
+
+    protected void createBasePartition() throws Exception {
+        JdbmPartitionFactory jdbmPartitionFactory = new JdbmPartitionFactory();
+        setBasePartition(
+                jdbmPartitionFactory.createPartition(
+                        getDirectoryService().getSchemaManager(),
+                        getDirectoryService().getDnFactory(),
+                        getBasePartitionName(),
+                        getBaseStructure(),
+                        getBaseCacheSize(),
+                        getBasePartitionPath()));
+        addSchemaExtensions();
+        createBaseIndices();
+        getDirectoryService().addPartition(getBasePartition());
+    }
+
+    protected void createBaseIndices() throws Exception {
+        //
+        // Default indices, that can be seen with getSystemIndexMap() and
+        // getUserIndexMap(), are minimal.  There are no user indices by
+        // default and the default system indices are:
+        //
+        // apacheOneAlias, entryCSN, apacheSubAlias, apacheAlias,
+        // objectClass, apachePresence, apacheRdn, administrativeRole
+        //
+        for (String attrName : getAttrNamesToIndex()) {
+            getBasePartition().addIndex(createIndexObjectForAttr(attrName));
+        }
+    }
+
+    protected JdbmIndex<?> createIndexObjectForAttr(String attrName, boolean withReverse)
+            throws LdapException {
+        String oid = getOidByAttributeName(attrName);
+        if (oid == null) {
+            throw new RuntimeException("OID could not be found for attr " + attrName);
+        }
+        return new JdbmIndex(oid, withReverse);
+    }
+
+    protected JdbmIndex<?> createIndexObjectForAttr(String attrName) throws LdapException {
+        return createIndexObjectForAttr(attrName, false);
+    }
+
+    protected void createRootEntry() throws LdapException {
+        Entry entry =
+                getDirectoryService()
+                        .newEntry(getDirectoryService().getDnFactory().create(getBaseStructure()));
+        entry.add("objectClass", "top", "domain", "extensibleObject");
+        entry.add("dc", getBasePartitionName());
+        CoreSession session = getDirectoryService().getAdminSession();
         try {
-            service.getAdminSession().lookup(barPartition.getSuffixDn());
-        } catch (Exception lnnfe) {
-            try {
-                DN dnBar = new DN("dc=bar,dc=com");
-                ServerEntry entryBar = service.newEntry(dnBar);
-                entryBar.add("objectClass", "top", "domain", "extensibleObject");
-                entryBar.add("dc", "bar");
-                service.getAdminSession().add(entryBar);
-            } catch (Exception e) {
-                System.out.println("Error creating new DN.");
-                e.printStackTrace();
-            }
+            session.add(entry);
+        } finally {
+            session.unbind();
         }
+    }
 
-        // Inject the apache root entry
-        try {
-            if (!service.getAdminSession().exists(apachePartition.getSuffixDn())) {
-                try {
-                    DN dnApache = new DN("dc=Apache,dc=Org");
-                    ServerEntry entryApache = service.newEntry(dnApache);
-                    entryApache.add("objectClass", "top", "domain", "extensibleObject");
-                    entryApache.add("dc", "Apache");
-                    service.getAdminSession().add(entryApache);
-                } catch (Exception e) {
-                    System.out.println("Error creating new DN.");
-                    e.printStackTrace();
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("Error when checking if partition exists.");
-            e.printStackTrace();
+    /** @return A map where the key is the attribute name the value is the oid. */
+    public Map<String, String> getSystemIndexMap() throws IndexNotFoundException {
+        Map<String, String> result = new LinkedHashMap<>();
+        Iterator<String> it = getBasePartition().getSystemIndices();
+        while (it.hasNext()) {
+            String oid = it.next();
+            Index<?, String> index =
+                    getBasePartition()
+                            .getSystemIndex(
+                                    getDirectoryService().getSchemaManager().getAttributeType(oid));
+            result.put(index.getAttribute().getName(), index.getAttributeId());
         }
+        return result;
+    }
+
+    /** @return A map where the key is the attribute name the value is the oid. */
+    public Map<String, String> getUserIndexMap() throws IndexNotFoundException {
+        Map<String, String> result = new LinkedHashMap<>();
+        Iterator<String> it = getBasePartition().getUserIndices();
+        while (it.hasNext()) {
+            String oid = it.next();
+            Index<?, String> index =
+                    getBasePartition()
+                            .getUserIndex(
+                                    getDirectoryService().getSchemaManager().getAttributeType(oid));
+            result.put(index.getAttribute().getName(), index.getAttributeId());
+        }
+        return result;
+    }
+
+    public File getPartitionsDirectory() {
+        return getDirectoryService().getInstanceLayout().getPartitionsDirectory();
+    }
+
+    public File getBasePartitionPath() {
+        return new File(getPartitionsDirectory(), getBasePartitionName());
+    }
+
+    /** Used at init time to clear out the likely instance directory before anything is created. */
+    public File getGuessedInstanceDirectory() {
+        // See source code for DefaultDirectoryServiceFactory
+        // buildInstanceDirectory.  ApacheDS looks at the workingDirectory
+        // system property first and then defers to the java.io.tmpdir
+        // system property.
+        final String property = System.getProperty("workingDirectory");
+        return new File(
+                property != null
+                        ? property
+                        : System.getProperty("java.io.tmpdir")
+                                + File.separator
+                                + "server-work-"
+                                + getDirectoryServiceName());
+    }
+
+    public String getOidByAttributeName(String attrName) throws LdapException {
+        return getDirectoryService()
+                .getSchemaManager()
+                .getAttributeTypeRegistry()
+                .getOidByName(attrName);
     }
 
     /**
-     * initialize the schema manager and add the schema partition to diectory service
+     * Add additional schemas to the directory server. This takes a path to the schema directory and
+     * uses the LdifSchemaLoader.
      *
-     * @throws Exception if the schema LDIF files are not found on the classpath
+     * @param schemaLocation The path to the directory containing the "ou=schema" directory for an
+     *     additional schema
+     * @param schemaName The name of the schema
+     * @return true if the schemas have been loaded and the registries is consistent
      */
-    private void initSchemaPartition() {
-        SchemaPartition schemaPartition = service.getSchemaService().getSchemaPartition();
-
-        // Init the LdifPartition
-        LdifPartition ldifPartition = new LdifPartition();
-        String workingDirectory = service.getWorkingDirectory().getPath();
-        ldifPartition.setWorkingDirectory(workingDirectory + "/schema");
-
-        // Extract the schema on disk (a brand new one) and load the registries
-        File schemaRepository = new File(workingDirectory, "schema");
-        File wd = new File(workingDirectory);
-        SchemaLdifExtractor extractor = new DefaultSchemaLdifExtractor(wd);
-        try {
-            extractor.extractOrCopy(true);
-            // System.out.println("is Extracted: " + extractor.isExtracted());
-        } catch (Exception e) {
-            System.out.println("ERROR: parsing LDAP schema");
-            e.printStackTrace();
-        }
-
-        schemaPartition.setWrappedPartition(ldifPartition);
-        try {
-            SchemaLoader loader = new LdifSchemaLoader(schemaRepository);
-            SchemaManager schemaManager = new DefaultSchemaManager(loader);
-            service.setSchemaManager(schemaManager);
-
-            // We have to load the schema now, otherwise we won't be able
-            // to initialize the Partitions, as we won't be able to parse
-            // and normalize their suffix DN
-            schemaManager.loadAllEnabled();
-            schemaPartition.setSchemaManager(schemaManager);
-
-            List<Throwable> errors = schemaManager.getErrors();
-
-            if (errors.size() != 0) {
-                throw new Exception("Schema load failed : " + errors);
-            }
-        } catch (Exception e) {
-            System.out.println("ERROR: loading LDAP schema");
-            e.printStackTrace();
-        }
+    public boolean addSchemaFromPath(File schemaLocation, String schemaName)
+            throws LdapException, IOException {
+        LdifSchemaLoader schemaLoader = new LdifSchemaLoader(schemaLocation);
+        DefaultSchema schema = new DefaultSchema(schemaLoader, schemaName);
+        return getDirectoryService().getSchemaManager().load(schema);
     }
 
     /**
-     * Add a new partition to the server
+     * Add additional schemas to the directory server. This uses JarLdifSchemaLoader, which will
+     * search for the "ou=schema" directory within "/schema" on the classpath. If packaging the
+     * schema as part of a jar using Gradle or Maven, you'd probably want to put your "ou=schema"
+     * directory in src/main/resources/schema.
      *
-     * @param partitionId The partition Id
-     * @param partitionDn The partition DN
-     * @return The newly added partition
-     * @throws Exception If the partition can't be added
+     * <p>It's also required that a META-INF/apacheds-schema.index be present in your classpath that
+     * lists each LDIF file in your schema directory.
+     *
+     * @param schemaName The name of the schema
+     * @return true if the schemas have been loaded and the registries is consistent
      */
-    private Partition addPartition(String partitionId, String partitionDn) throws Exception {
-        // Create a new partition named 'foo'.
-        JdbmPartition partition = new JdbmPartition();
-        partition.setId(partitionId);
-        partition.setPartitionDir(new File(service.getWorkingDirectory(), partitionId));
-        partition.setSuffix(partitionDn);
-        service.addPartition(partition);
-
-        return partition;
+    public boolean addSchemaFromClasspath(String schemaName) throws LdapException, IOException {
+        // To debug if your apacheds-schema.index isn't found:
+        // Enumeration<URL> indexes =
+        // getClass().getClassLoader().getResources("META-INF/apacheds-schema.index");
+        JarLdifSchemaLoader schemaLoader = new JarLdifSchemaLoader();
+        Schema schema = schemaLoader.getSchema(schemaName);
+        return schema != null && getDirectoryService().getSchemaManager().load(schema);
     }
 
-    /**
-     * Add a new set of index on the given attributes
-     *
-     * @param partition The partition on which we want to add index
-     * @param attrs The list of attributes to index
-     */
-    private void addIndex(Partition partition, String... attrs) {
-        // Index some attributes on the apache partition
-        HashSet<Index<?, ServerEntry, Long>> indexedAttributes =
-                new HashSet<Index<?, ServerEntry, Long>>();
-
-        for (String attribute : attrs) {
-            indexedAttributes.add(new JdbmIndex<String, ServerEntry>(attribute));
-        }
-
-        ((JdbmPartition) partition).setIndexedAttributes(indexedAttributes);
+    public DirectoryService getDirectoryService() {
+        return _directoryService;
     }
 
-    /**
-     * starts the LdapServer
-     *
-     * @throws Exception
-     */
-    public void startServer() throws Exception {
-        server = new LdapServer();
-        int serverPort = 10389;
-        server.setTransports(new TcpTransport(serverPort));
-        server.setDirectoryService(service);
-        server.start();
+    public void setDirectoryService(DirectoryService directoryService) {
+        this._directoryService = directoryService;
     }
 
-    public void stopServer() throws Exception {
-        if (server != null) {
-            server.stop();
-            if (server.getDirectoryService() != null) {
-                server.getDirectoryService().shutdown();
-            }
-        }
+    public LdapServer getLdapServer() {
+        return _ldapServer;
     }
 
-    /**
-     * Main class.
-     *
-     * @param args Not used.
-     * @throws Exception
-     */
-    public static void main(String[] args) throws Exception {
-        // LDAPServer ldap =
+    public void setLdapServer(LdapServer ldapServer) {
+        this._ldapServer = ldapServer;
+    }
+
+    public JdbmPartition getBasePartition() {
+        return _basePartition;
+    }
+
+    public void setBasePartition(JdbmPartition basePartition) {
+        this._basePartition = basePartition;
+    }
+
+    public boolean getDeleteInstanceDirectoryOnStartup() {
+        return _deleteInstanceDirectoryOnStartup;
+    }
+
+    public void setDeleteInstanceDirectoryOnStartup(boolean deleteInstanceDirectoryOnStartup) {
+        this._deleteInstanceDirectoryOnStartup = deleteInstanceDirectoryOnStartup;
+    }
+
+    public boolean getDeleteInstanceDirectoryOnShutdown() {
+        return _deleteInstanceDirectoryOnShutdown;
+    }
+
+    public void setDeleteInstanceDirectoryOnShutdown(boolean deleteInstanceDirectoryOnShutdown) {
+        this._deleteInstanceDirectoryOnShutdown = deleteInstanceDirectoryOnShutdown;
+    }
+
+    public static void main(String[] args) {
         new LDAPServer();
-        // ldap.stopServer();
     }
 }

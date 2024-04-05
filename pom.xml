@@ -56,7 +56,7 @@
                                 <plugin>
                                     <groupId>com.h3xstream.findsecbugs</groupId>
                                     <artifactId>findsecbugs-plugin</artifactId>
-                                    <version>1.12.0</version>
+                                    <version>1.13.0</version>
                                 </plugin>
                             </plugins>
                         </configuration>
@@ -624,7 +624,7 @@
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.16.0</version>
+            <version>1.16.1</version>
         </dependency>
 
         <!-- mvn dependency:analyze says this is an unused declared dependency, but its wrong. Get this runtime error if it's not included: Caused by: org.springframework.beans.factory.CannotLoadBeanClassException: Cannot find class [org.apache.commons.dbcp.BasicDataSource] for bean with name 'dataSource' defined in class path resource [context.xml]; nested exception is java.lang.ClassNotFoundException: org.apache.commons.dbcp.BasicDataSource -->
@@ -632,6 +632,12 @@
             <groupId>commons-dbcp</groupId>
             <artifactId>commons-dbcp</artifactId>
             <version>1.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.14.0</version>
         </dependency>
 
         <dependency>
@@ -645,31 +651,42 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-reload4j</artifactId>
-            <version>2.0.9</version>
+            <version>2.0.12</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.directory.api</groupId>
+            <artifactId>api-ldap-model</artifactId>
+            <version>${version.apache.api-ldap}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.directory.api</groupId>
+            <artifactId>api-ldap-schema-data</artifactId>
+            <version>${version.apache.api-ldap}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.directory.server</groupId>
             <artifactId>apacheds-core</artifactId>
-            <!-- Upgrading to 2.0.0-M24 is an API breaking change. But it might be needed for Java 10, because I get this error, that I don't get with Java 8: [java] at org.apache.directory.server.core.DefaultDirectoryService.initialize(DefaultDirectoryService.java:1426) [java] at org.apache.directory.server.core.DefaultDirectoryService.startup(DefaultDirectoryService.java:907) [java] at org.owasp.benchmark.helpers.LDAPServer.initDirectoryService(LDAPServer.java:148) [java] at org.owasp.benchmark.helpers.LDAPServer.<init>(LDAPServer.java:42) [java] at org.owasp.benchmark.helpers.LDAPServer.main(LDAPServer.java:320) [java] Caused by: java.lang.NumberFormatException: multiple points [java] at java.base/jdk.internal.math.FloatingDecimal.readJavaFormatString(FloatingDecimal.java:1914) -->
             <version>${version.apacheds}</version>
-            <exclusions>
-                <!-- Excluded because its old, and there is a bug in it causing an exception when using it. -->
-                <exclusion>
-                    <groupId>bouncycastle</groupId>
-                    <artifactId>bcprov-jdk15</artifactId>
-                </exclusion>
-                <!-- Excluded because it conflicts with esapi's dependency, which is newer -->
-                <exclusion>
-                    <groupId>commons-collections</groupId>
-                    <artifactId>commons-collections</artifactId>
-                </exclusion>
-            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.directory.server</groupId>
+            <artifactId>apacheds-core-annotations</artifactId>
+            <version>${version.apacheds}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.directory.server</groupId>
             <artifactId>apacheds-core-api</artifactId>
+            <version>${version.apacheds}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.directory.server</groupId>
+            <artifactId>apacheds-core-avl</artifactId>
             <version>${version.apacheds}</version>
         </dependency>
 
@@ -681,13 +698,25 @@
 
         <dependency>
             <groupId>org.apache.directory.server</groupId>
+            <artifactId>apacheds-core-jndi</artifactId>
+            <version>${version.apacheds}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.directory.server</groupId>
+            <artifactId>apacheds-interceptor-kerberos</artifactId>
+            <version>${version.apacheds}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.directory.server</groupId>
             <artifactId>apacheds-jdbm-partition</artifactId>
             <version>${version.apacheds}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.directory.server</groupId>
-            <artifactId>apacheds-jdbm-store</artifactId>
+            <artifactId>apacheds-kerberos-codec</artifactId>
             <version>${version.apacheds}</version>
         </dependency>
 
@@ -711,45 +740,32 @@
 
         <dependency>
             <groupId>org.apache.directory.server</groupId>
-            <artifactId>apacheds-xdbm-base</artifactId>
+            <artifactId>apacheds-server-annotations</artifactId>
             <version>${version.apacheds}</version>
         </dependency>
 
         <dependency>
-            <groupId>org.apache.directory.shared</groupId>
-            <artifactId>shared-ldap</artifactId>
-            <version>${version.apache-shared-ldap}</version>
-            <exclusions>
-                <!-- Excluded because it conflicts with esapi's dependency, which is newer -->
-                <exclusion>
-                    <groupId>commons-collections</groupId>
-                    <artifactId>commons-collections</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.apache.directory.server</groupId>
+            <artifactId>apacheds-server-jndi</artifactId>
+            <version>${version.apacheds}</version>
         </dependency>
 
         <dependency>
-            <groupId>org.apache.directory.shared</groupId>
-            <artifactId>shared-ldap-schema</artifactId>
-            <version>${version.apache-shared-ldap}</version>
+            <groupId>org.apache.directory.server</groupId>
+            <artifactId>apacheds-test-framework</artifactId>
+            <version>${version.apacheds}</version>
         </dependency>
 
         <dependency>
-            <groupId>org.apache.directory.shared</groupId>
-            <artifactId>shared-ldap-schema-loader</artifactId>
-            <version>${version.apache-shared-ldap}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.directory.shared</groupId>
-            <artifactId>shared-ldap-schema-manager</artifactId>
-            <version>${version.apache-shared-ldap}</version>
+            <groupId>org.apache.directory.server</groupId>
+            <artifactId>apacheds-xdbm-partition</artifactId>
+            <version>${version.apacheds}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.httpcomponents.client5</groupId>
             <artifactId>httpclient5</artifactId>
-            <version>5.3</version>
+            <version>5.3.1</version>
         </dependency>
 
         <dependency>
@@ -865,7 +881,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.6.0</version>
+                    <version>3.7.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -904,11 +920,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.12.1</version>
+                <version>3.13.0</version>
                 <configuration>
                     <fork>true</fork>
                     <meminitial>1000m</meminitial>
                     <maxmem>2000m</maxmem>
+                    <release>${java.target}</release>
                 </configuration>
             </plugin>
 
@@ -926,7 +943,7 @@
                     <dependency>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>extra-enforcer-rules</artifactId>
-                        <version>1.7.0</version>
+                        <version>1.8.0</version>
                     </dependency>
                 </dependencies>
                 <executions>
@@ -938,7 +955,7 @@
                         <configuration>
                             <rules>
                                 <enforceBytecodeVersion>
-                                    <maxJdkVersion>${project.java.target}</maxJdkVersion>
+                                    <maxJdkVersion>${java.target}</maxJdkVersion>
                                     <message>Dependencies shouldn't require Java 9+.</message>
                                 </enforceBytecodeVersion>
                             </rules>
@@ -953,7 +970,7 @@
                         <configuration>
                             <rules>
                                 <requireJavaVersion>
-                                    <version>${project.java.target}</version>
+                                    <version>${java.target}</version>
                                     <message>Benchmark is currently written to support Java 8+.</message>
                                 </requireJavaVersion>
                             </rules>
@@ -978,7 +995,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
-                <version>3.3.1</version>
+                <version>3.3.2</version>
             </plugin>
 
             <plugin>
@@ -1017,7 +1034,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.2.3</version>
+                <version>3.2.5</version>
             </plugin>
 
             <plugin>
@@ -1032,7 +1049,7 @@
             <plugin>
                 <groupId>org.codehaus.cargo</groupId>
                 <artifactId>cargo-maven3-plugin</artifactId>
-                <version>1.10.11</version>
+                <version>1.10.12</version>
             </plugin>
 
             <plugin>
@@ -1065,7 +1082,7 @@
                 <groupId>com.h3xstream.findsecbugs</groupId>
                 <artifactId>findsecbugs-plugin</artifactId>
                 <!-- You MUST update the plugin version used in findsecbugs profile, so these versions match. You can't define/use a versions.findsecbugs property because it breaks the naming of the findsecbugs results file. -->
-                <version>1.12.0</version>
+                <version>1.13.0</version>
             </plugin>
 
             <plugin>
@@ -1207,8 +1224,8 @@
     <properties>
         <failOnMissingWebXml>false</failOnMissingWebXml>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.java.target>1.8</project.java.target>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.target>8</java.target>
         <maven.war.webxml>${basedir}/src/config/web.xml</maven.war.webxml>
         <!-- runenv defaults to local here. But scripts can set this to 'remote' to launch remotely accessible Benchmark. e.g., mvn clean package cargo:run -Pdeploy1.2 -Drunenv=remote -->
         <runenv>local</runenv>
@@ -1224,19 +1241,18 @@
         </tomcat.jvmargs.debug>
         <log.directory>${project.build.directory}/log</log.directory>
 
-        <version.apacheds>1.5.7</version.apacheds>
-        <version.apache-shared-ldap>0.9.19</version.apache-shared-ldap>
-        <version.exec.maven>1.6.0</version.exec.maven>
+        <version.apache.api-ldap>2.1.5</version.apache.api-ldap>
+        <version.apacheds>2.0.0.AM27</version.apacheds>
         <version.fluido>2.0.0-M8</version.fluido>
         <!-- hibernate is up to rev 6+. But 4.0.0. causes this error: symbol: org.hibernate.classic.Session not found -->
         <version.hibernate>3.6.10.Final</version.hibernate>
-        <version.spotbugs.maven>4.8.2.0</version.spotbugs.maven>
+        <version.spotbugs.maven>4.8.3.1</version.spotbugs.maven>
         <version.spotbugs>4.8.3</version.spotbugs>
         <!-- Spring 6.x requires Java 17 -->
-        <version.springframework>5.3.31</version.springframework>
+        <version.springframework>5.3.33</version.springframework>
         <!-- Tomcat 10 moves from Java EE to Jakarta EE, moving packages javax.* to jakarta.* - code changes likely required to address this change. -->
         <tomcat.major.version>9</tomcat.major.version>
-        <version.tomcat>9.0.84</version.tomcat>
+        <version.tomcat>9.0.85</version.tomcat>
         <tomcat.url>https://archive.apache.org/dist/tomcat/tomcat-${tomcat.major.version}/v${version.tomcat}/bin/apache-tomcat-${version.tomcat}.zip</tomcat.url>
     </properties>
 

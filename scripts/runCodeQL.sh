@@ -9,7 +9,6 @@
 ## For Xcode command line, run: xcode-select -p 1>/dev/null;echo $?   - If this returns 0, its installed, if 2, its not installed.
 ## For Rosetta 2, run: lsbom -f /Library/Apple/System/Library/Receipts/com.apple.pkg.RosettaUpdateAuto.bom - And if it returns a list of files, it's installed.
 
-
 # This then runs the codeql scan:
 benchmark_version=$(scripts/getBenchmarkVersion.sh)
 ../../tools/codeql-home/codeql/codeql database analyze owasp-benchmark java-code-scanning.qls --format=sarifv2.1.0 --output=results/Benchmark_$benchmark_version-codeql_java-code-scanning_qls.sarif

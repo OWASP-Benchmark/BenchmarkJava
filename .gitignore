@@ -1,4 +1,5 @@
 .DS_Store
+.dccache
 .java-version
 .classpath
 .project
@@ -7,11 +8,13 @@
 *.iml
 
 data/out.csv
+owasp-benchmark/
 reports/
+.scannerwork/
 scripts/SonarQubeCredentials.sh
+src/main/resources/benchmark.properties
 target/
 testfiles/
 tools/Contrast/contrast.jar
 tools/Contrast/contrast.yaml
 tools/Contrast/working/
-

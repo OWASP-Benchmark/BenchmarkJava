@@ -99,7 +99,7 @@ while (((page - 1) * elements_per_request < hotspot_count)); do
 done
 echo "Writing end results json content";
 cp resdump.json "${result_file}";
-echo "Done, please go ahead an generate the scorecard";
-## cleanup the two files generated to record results, if want them for debug, you can comment the following line
+echo "Done, please go ahead and generate the scorecard";
+## cleanup the two files generated to record results, if you want them for debug purposes, comment out the following line
 rm resdump.json buffdump.json;
 

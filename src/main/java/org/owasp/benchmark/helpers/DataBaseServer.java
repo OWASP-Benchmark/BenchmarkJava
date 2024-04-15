@@ -27,15 +27,15 @@ import org.owasp.benchmark.service.pojo.Person;
 import org.owasp.benchmark.service.pojo.XMLMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class DataBaseServer {
 
-    @RequestMapping(value = "/resetdb", method = RequestMethod.GET)
+    @GetMapping(value = "/resetdb")
     public ResponseEntity<List<XMLMessage>> getOtherOrder(
             @RequestBody Person model, HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -44,7 +44,7 @@ public class DataBaseServer {
         return new ResponseEntity<List<XMLMessage>>(resp, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/testdb", method = RequestMethod.POST)
+    @PostMapping(value = "/testdb")
     public ResponseEntity<List<XMLMessage>> createOrder2(
             @RequestBody Person model, HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -53,7 +53,7 @@ public class DataBaseServer {
         return new ResponseEntity<List<XMLMessage>>(resp, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/getall", method = RequestMethod.GET)
+    @GetMapping(value = "/getall")
     public ResponseEntity<List<XMLMessage>> getAll(
             HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

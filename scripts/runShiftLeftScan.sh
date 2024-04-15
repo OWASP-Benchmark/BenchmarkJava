@@ -6,6 +6,8 @@ source scripts/requireCommand.sh
 
 requireCommand docker
 
+docker pull docker.io/shiftleft/scan:latest
+
 benchmark_version=$(scripts/getBenchmarkVersion.sh)
 shiflteft_version="2.0.4" # it's not (yet) possible to get the release version so we just assume it
 result_file="results/Benchmark_$benchmark_version-ShiftLeftScan-v$shiflteft_version.json"

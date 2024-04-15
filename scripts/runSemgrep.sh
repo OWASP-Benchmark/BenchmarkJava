@@ -10,7 +10,7 @@ docker pull docker.io/semgrep/semgrep
 
 benchmark_version=$(scripts/getBenchmarkVersion.sh)
 semgrep_version=$(docker run --rm semgrep/semgrep semgrep --version)
-result_file="/src/results/Benchmark_$benchmark_version-Semgrep-v$semgrep_version.json"
+result_file="/src/results/Benchmark_$benchmark_version-Semgrep-v$semgrep_version.sarif"
 
-docker run --rm -v "${PWD}:/src" semgrep/semgrep semgrep --config p/security-audit -q --json -o "$result_file" . > /dev/null
+docker run --rm -v "${PWD}:/src" semgrep/semgrep semgrep --config p/security-audit -q --sarif -o "$result_file" . > /dev/null
 

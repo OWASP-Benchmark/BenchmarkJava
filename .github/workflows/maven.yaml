@@ -32,7 +32,7 @@ jobs:
       with:
         polaris_serverUrl: ${{ secrets.POLARIS_SERVERURL }}
         polaris_accessToken: ${{ secrets.POLARIS_ACCESSTOKEN }}
-        polaris_application_name: "firstMode"
+        polaris_application_name: "UK-App"
         polaris_project_name: "Benchmark Java"
         polaris_assessment_types: "SCA,SAST"
           ### Uncomment below configuration if Synopsys Bridge diagnostic files needs to be uploaded

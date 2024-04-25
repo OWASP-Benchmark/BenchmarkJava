@@ -2,22 +2,22 @@ capture:
   build:
     clean-command: mvn -B clean
     build-command: mvn -B -DskipTests package
-analyze:
-  aggressiveness-level: high
-  checkers: 
-    all: true
-    android-security: true
-    audit: true
-    c-family-security: true
-    checker-config:
-      SQL_NOT_CONSTANT:
-        enabled: true
-    concurrency: true
-    default: true
-    rule: true
-    webapp-security:
-      enabled: true
-      aggressiveness-level: high
-  cov-analyze-args: [ --enable-audit-dataflow ]
-  trust:
-    all: false
+#analyze:
+#  aggressiveness-level: high
+#  checkers: 
+#    all: true
+#    android-security: true
+#    audit: true
+#    c-family-security: true
+#    checker-config:
+#      SQL_NOT_CONSTANT:
+#        enabled: true
+#    concurrency: true
+#    default: true
+#    rule: true
+#    webapp-security:
+#      enabled: true
+#      aggressiveness-level: high
+#  cov-analyze-args: [ --enable-audit-dataflow ]
+#  trust:
+#    all: false

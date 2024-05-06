@@ -29,6 +29,6 @@ jobs:
     - name: Advance Security Policy as Code
       uses: advanced-security/policy-as-code@v2.7.2
       with:
-        # The local (within the workspace) or repository
+        policy: "adrienpessu-octodemo/security-office"
         policy-path: policies.yml
       

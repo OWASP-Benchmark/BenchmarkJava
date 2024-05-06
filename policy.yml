@@ -1,0 +1,4 @@
+codescanning:
+  conditions:
+    ids:
+      - "*/sql-injection"

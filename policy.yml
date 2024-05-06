@@ -1,4 +1,4 @@
 codescanning:
   conditions:
     ids:
-      - "*/sql-injection"
+      - "java/sql-injection"

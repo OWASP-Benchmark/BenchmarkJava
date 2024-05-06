@@ -1,0 +1,34 @@
+name: "Policy-as-code"
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ master ]
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      content: read
+      security_events: read
+      # pull request summaries
+      pull-requests: write
+
+        
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      # Get full history for spotless ratchetFrom
+      with:
+        fetch-depth: 0
+
+    # Compliance
+    - name: Advance Security Policy as Code
+      uses: advanced-security/policy-as-code@v2.7.2
+      with:
+        # The local (within the workspace) or repository
+        policy-path: policies.yml
+      

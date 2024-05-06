@@ -1,4 +1,6 @@
 codescanning:
+  remediate:
+    all: 7
   conditions:
     ids:
       - "java/sql-injection"

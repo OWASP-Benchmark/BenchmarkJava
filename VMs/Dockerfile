@@ -5,8 +5,8 @@ MAINTAINER "Dave Wichers dave.wichers@owasp.org"
 RUN apt-get update
 RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install tzdata
 RUN apt-get install -q -y \
-     openjdk-8-jre-headless \
-     openjdk-8-jdk \
+     openjdk-11-jre-headless \
+     openjdk-11-jdk \
      git \
      maven \
      wget \

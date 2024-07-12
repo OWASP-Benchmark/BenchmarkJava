@@ -272,6 +272,10 @@
                                     <cargo.tomcat.connector.keyAlias>tomcat</cargo.tomcat.connector.keyAlias>
                                     <cargo.tomcat.httpSecure>true</cargo.tomcat.httpSecure>
                                 </properties>
+                                <properties>
+                                    <sonar.organization>bimske</sonar.organization>
+                                    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+                                </properties>
                             </configuration>
                         </configuration>
                     </plugin>

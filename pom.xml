@@ -1239,7 +1239,7 @@
         </tomcat.jvmargs.debug>
         <log.directory>${project.build.directory}/log</log.directory>
 
-        <version.apache.api-ldap>2.1.6</version.apache.api-ldap>
+        <version.apache.api-ldap>2.1.7</version.apache.api-ldap>
         <version.apacheds>2.0.0.AM27</version.apacheds>
         <version.fluido>2.0.0-M8</version.fluido>
         <!-- hibernate is up to rev 6+. But 4.0.0. causes this error: symbol: org.hibernate.classic.Session not found -->

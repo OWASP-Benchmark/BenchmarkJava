@@ -46,7 +46,7 @@ jobs:
       uses: github/codeql-action/analyze@v3
       
     - name: Upload Output
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ matrix.language }} SARIF
         path: ${{ runner.workspace }}/results/*.sarif

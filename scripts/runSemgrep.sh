@@ -6,7 +6,7 @@ source scripts/requireCommand.sh
 
 requireCommand docker
 
-docker pull docker.io/semgrep/semgrep
+docker pull semgrep/semgrep
 
 benchmark_version=$(scripts/getBenchmarkVersion.sh)
 semgrep_version=$(docker run --rm semgrep/semgrep semgrep --version)

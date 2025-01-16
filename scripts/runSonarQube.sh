@@ -20,7 +20,7 @@ sonar_host="http://localhost:$sonar_port"
 sonar_project="benchmark"
 sonar_user="admin"
 sonar_default_password="admin"
-sonar_password="password"
+sonar_password="PasswordWithNumb3rsAndSpecialCharacters!"
 
 echo "Creating temporary SonarQube instance"
 

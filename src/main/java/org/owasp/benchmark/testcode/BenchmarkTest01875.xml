@@ -1,7 +1,0 @@
-<test-metadata>
-    <benchmark-version>1.2</benchmark-version>
-    <category>trustbound</category>
-    <test-number>01875</test-number>
-    <vulnerability>true</vulnerability>
-    <cwe>501</cwe>
-</test-metadata>

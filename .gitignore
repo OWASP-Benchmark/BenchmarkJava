@@ -6,12 +6,12 @@
 .settings/
 .idea/
 *.iml
+.scannerwork/
 
 data/out.csv
 owasp-benchmark/
 reports/
-.scannerwork/
-scripts/SonarQubeCredentials.sh
+src.zip
 src/main/resources/benchmark.properties
 target/
 testfiles/

@@ -1,7 +1,0 @@
-<test-metadata>
-    <benchmark-version>1.2</benchmark-version>
-    <category>xpathi</category>
-    <test-number>01736</test-number>
-    <vulnerability>true</vulnerability>
-    <cwe>643</cwe>
-</test-metadata>

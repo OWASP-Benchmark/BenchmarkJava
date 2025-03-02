@@ -1,10 +1,12 @@
 package org.owasp.benchmark.report.sonarqube;
 
+import static java.lang.String.join;
+import static java.nio.charset.Charset.defaultCharset;
+import static org.apache.commons.io.FileUtils.writeStringToFile;
+import static org.apache.commons.io.IOUtils.readLines;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.owasp.benchmark.report.sonarqube.dto.SonarQubeResult;
-
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -15,11 +17,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
-
-import static java.lang.String.join;
-import static java.nio.charset.Charset.defaultCharset;
-import static org.apache.commons.io.FileUtils.writeStringToFile;
-import static org.apache.commons.io.IOUtils.readLines;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.owasp.benchmark.report.sonarqube.dto.SonarQubeResult;
 
 public class SonarReport {
     private static final String SONAR_USER = "admin";
@@ -30,9 +29,8 @@ public class SonarReport {
 
     private static final int PAGE_SIZE = 500;
 
-    private static final String sonarAuth = Base64.getEncoder()
-        .encodeToString((SONAR_USER + ":" + SONAR_PASSWORD)
-            .getBytes());
+    private static final String sonarAuth =
+            Base64.getEncoder().encodeToString((SONAR_USER + ":" + SONAR_PASSWORD).getBytes());
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -42,19 +40,19 @@ public class SonarReport {
         List<String> hotspots = new ArrayList<>();
 
         forAllPagesAt(
-            "issues/search?componentKeys=" + SONAR_PROJECT + "&types=VULNERABILITY&&rules=" + allJavaRules,
-            (result -> issues.addAll(result.issues))
-        );
+                "issues/search?componentKeys="
+                        + SONAR_PROJECT
+                        + "&types=VULNERABILITY&&rules="
+                        + allJavaRules,
+                (result -> issues.addAll(result.issues)));
         forAllPagesAt(
-            "hotspots/search?projectKey=" + SONAR_PROJECT,
-            (result -> hotspots.addAll(result.hotspots))
-        );
+                "hotspots/search?projectKey=" + SONAR_PROJECT,
+                (result -> hotspots.addAll(result.hotspots)));
 
         writeStringToFile(
-            new File("results/" + resultFilename() + ".json"),
-            formattedJson(issues, hotspots),
-            defaultCharset()
-        );
+                new File("results/" + resultFilename() + ".json"),
+                formattedJson(issues, hotspots),
+                defaultCharset());
     }
 
     private static String resultFilename() throws Exception {
@@ -62,35 +60,36 @@ public class SonarReport {
     }
 
     private static String benchmarkVersion() throws Exception {
-        return DocumentBuilderFactory
-            .newInstance()
-            .newDocumentBuilder()
-            .parse(new File("pom.xml"))
-            .getElementsByTagName("version")
-            .item(0)
-            .getTextContent();
+        return DocumentBuilderFactory.newInstance()
+                .newDocumentBuilder()
+                .parse(new File("pom.xml"))
+                .getElementsByTagName("version")
+                .item(0)
+                .getTextContent();
     }
 
     private static Set<String> allJavaRules() throws IOException {
         Set<String> javaRuleIds = new HashSet<>();
 
-        forAllPagesAt("rules/search", (result) -> result
-            .rules
-            .stream().filter(rule -> rule.ruleId.startsWith("java:"))
-            .forEach(rule -> javaRuleIds.add(rule.ruleId)));
+        forAllPagesAt(
+                "rules/search",
+                (result) ->
+                        result.rules.stream()
+                                .filter(rule -> rule.ruleId.startsWith("java:"))
+                                .forEach(rule -> javaRuleIds.add(rule.ruleId)));
 
         return javaRuleIds;
     }
 
-    private static void forAllPagesAt(String apiPath, Consumer<SonarQubeResult> pageHandlerCallback) throws IOException {
+    private static void forAllPagesAt(String apiPath, Consumer<SonarQubeResult> pageHandlerCallback)
+            throws IOException {
         int pages;
         int page = 1;
 
         do {
-            SonarQubeResult result = objectMapper.readValue(
-                apiCall(apiPath + pagingSuffix(page, apiPath)),
-                SonarQubeResult.class
-            );
+            SonarQubeResult result =
+                    objectMapper.readValue(
+                            apiCall(apiPath + pagingSuffix(page, apiPath)), SonarQubeResult.class);
 
             pages = (result.paging.resultCount / PAGE_SIZE) + 1;
 
@@ -114,11 +113,17 @@ public class SonarReport {
         return join("\n", readLines(connection.getInputStream(), defaultCharset()));
     }
 
-    private static String formattedJson(List<String> issues, List<String> hotspots) throws JsonProcessingException {
-        String sb = "{\"issues\":[" + join(",", issues) + "],\"hotspots\":[" + join(",", hotspots) + "]}";
+    private static String formattedJson(List<String> issues, List<String> hotspots)
+            throws JsonProcessingException {
+        String sb =
+                "{\"issues\":["
+                        + join(",", issues)
+                        + "],\"hotspots\":["
+                        + join(",", hotspots)
+                        + "]}";
 
         return objectMapper
-            .writerWithDefaultPrettyPrinter()
-            .writeValueAsString(objectMapper.readValue(sb, Object.class));
+                .writerWithDefaultPrettyPrinter()
+                .writeValueAsString(objectMapper.readValue(sb, Object.class));
     }
 }

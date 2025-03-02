@@ -5,14 +5,11 @@ import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *  <a href="https://stackoverflow.com/a/24085100">Credits to Roy Truelove</a>
- */
+/** <a href="https://stackoverflow.com/a/24085100">Credits to Roy Truelove</a> */
 public class KeepAsJsonDeserializer extends JsonDeserializer<List<String>> {
 
     @Override

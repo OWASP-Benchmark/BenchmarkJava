@@ -1247,7 +1247,7 @@
         <version.spotbugs.maven>4.9.2.0</version.spotbugs.maven>
         <version.spotbugs>4.9.2</version.spotbugs>
         <!-- Spring 6.x requires Java 17 -->
-        <version.springframework>5.3.39</version.springframework>
+        <version.springframework>6.2.4</version.springframework>
         <!-- Tomcat 10 moves from Java EE to Jakarta EE, moving packages javax.* to jakarta.* - code changes likely required to address this change. -->
         <tomcat.major.version>9</tomcat.major.version>
         <version.tomcat>9.0.97</version.tomcat>

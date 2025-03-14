@@ -29,10 +29,10 @@ sonar_user="admin"
 sonar_default_password="admin"
 sonar_password="P4ssword!!!!"
 
-echo "Creating temporary SonarQube instance..."
+docker pull sonarqube
+docker pull sonarsource/sonar-scanner-cli
 
-#docker pull sonarqube
-#docker pull sonarsource/sonar-scanner-cli
+echo "Creating temporary SonarQube instance..."
 
 # start local sonarqube
 docker run --rm -d --name "$container_name" -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true -p "$sonar_external_port:$sonar_internal_port" sonarqube
@@ -44,6 +44,7 @@ while [[ "$(curl --connect-timeout 5 --max-time 5 --retry 60 --retry-delay 0 --r
   sleep 3
 done
 
+echo ""
 echo "Waiting for SonarQube to become ready..."
 
 while [[ "$(curl --silent "$sonar_host/api/system/status" | jq -r '.status')" != "UP" ]]; do
@@ -51,6 +52,7 @@ while [[ "$(curl --silent "$sonar_host/api/system/status" | jq -r '.status')" !=
   sleep 3
 done
 
+echo ""
 echo "SonarQube ready. Setting up instance..."
 
 # change default password
@@ -82,15 +84,11 @@ while [[ "$(curl --silent -u "$sonar_token:" "$sonar_host/api/ce/component?compo
   sleep 3
 done
 
+echo ""
 echo "Generating report..."
 
-benchmark_version=$(scripts/getBenchmarkVersion.sh)
-sonarqube_version=$(curl --silent -u "$sonar_token:" "$sonar_host/api/server/version")
-result_file="results/Benchmark_$benchmark_version-sonarqube-v$sonarqube_version.json"
+mvn exec:java -Dexec.mainClass="org.owasp.benchmark.report.sonarqube.SonarReport"
 
-sonar-report --sonarurl "$sonar_host" --sonarcomponent="$sonar_project" --sonarusername "$sonar_user" --sonarpassword 'P4ssword!!!!' --allbugs --no-rules-in-report --save-report-json "$result_file"
-
-echo "Result file written to $result_file"
 echo "Shutting down SonarQube..."
 
-docker stop "$container_name"
+#docker stop "$container_name"

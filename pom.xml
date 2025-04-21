@@ -56,7 +56,7 @@
                                 <plugin>
                                     <groupId>com.h3xstream.findsecbugs</groupId>
                                     <artifactId>findsecbugs-plugin</artifactId>
-                                    <version>1.13.0</version>
+                                    <version>1.14.0</version>
                                 </plugin>
                             </plugins>
                         </configuration>
@@ -1086,7 +1086,7 @@
                 <groupId>com.h3xstream.findsecbugs</groupId>
                 <artifactId>findsecbugs-plugin</artifactId>
                 <!-- You MUST update the plugin version used in findsecbugs profile, so these versions match. You can't define/use a versions.findsecbugs property because it breaks the naming of the findsecbugs results file. -->
-                <version>1.13.0</version>
+                <version>1.14.0</version>
             </plugin>
 
             <plugin>

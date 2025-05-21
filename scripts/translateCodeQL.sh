@@ -4,8 +4,8 @@
 # NOTE: This tool requires Java 11+
 
 # You have to download the rulepacks now. This does this.
-../tools/codeql-home/codeql/codeql pack download codeql/java-queries
+../../tools/codeql-home/codeql/codeql pack download codeql/java-queries
 
 # This translates the current app, and builds up the rules databases. This only has to be run once after each code change.
-../tools/codeql-home/codeql/codeql database create owasp-benchmark --language=java --overwrite --command="mvn clean package"
+../../tools/codeql-home/codeql/codeql database create owasp-benchmark --language=java --overwrite --command="mvn clean package"
 

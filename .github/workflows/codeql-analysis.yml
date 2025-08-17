@@ -27,7 +27,7 @@ jobs:
         
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       # Get full history for spotless ratchetFrom
       with:
         fetch-depth: 0

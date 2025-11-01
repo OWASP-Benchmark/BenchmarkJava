@@ -9,7 +9,7 @@
 ## For Rosetta 2, run: lsbom -f /Library/Apple/System/Library/Receipts/com.apple.pkg.RosettaUpdateAuto.bom - And if it returns a list of files, it's installed.
 
 # This then runs the CodeQL scan:
-## The following CodeQL query is a big complex. I had to raise an issue with the CodeQL team to figure out how to do this.
+## The following CodeQL query is a bit complex. I had to raise an issue with the CodeQL team to figure out how to do this.
 ## The issue raised and the answer that documents this query is here: https://github.com/github/codeql/issues/18518#issuecomment-2730684184
 benchmark_version=$(scripts/getBenchmarkVersion.sh)
 ../../tools/codeql-home/codeql/codeql database analyze owasp-benchmark codeql/java-queries:codeql-suites/java-security-extended.qls --format=sarifv2.1.0 --output=results/Benchmark_1.2-codeql_java-security-extended.sarif -j0 --download

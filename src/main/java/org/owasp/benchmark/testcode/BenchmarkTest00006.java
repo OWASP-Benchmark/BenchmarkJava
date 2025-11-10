@@ -29,6 +29,21 @@ public class BenchmarkTest00006 extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Sanitizes input to prevent command injection attacks.
+     * Removes or escapes special shell characters.
+     * @param input The input string to sanitize
+     * @return Sanitized string safe for use in shell commands
+     */
+    private String sanitizeInput(String input) {
+        if (input == null) {
+            return "";
+        }
+        // Remove dangerous shell characters that could be used for command injection
+        // Keep only alphanumeric characters, spaces, and a few safe punctuation marks
+        return input.replaceAll("[^a-zA-Z0-9\\s.,-_@]", "");
+    }
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -49,17 +64,23 @@ public class BenchmarkTest00006 extends HttpServlet {
         // URL Decode the header value since req.getHeader() doesn't. Unlike req.getParameter().
         param = java.net.URLDecoder.decode(param, "UTF-8");
 
+        // Sanitize input to prevent command injection
+        // Remove or escape special shell characters
+        param = sanitizeInput(param);
+
         java.util.List<String> argList = new java.util.ArrayList<String>();
 
         String osName = System.getProperty("os.name");
         if (osName.indexOf("Windows") != -1) {
             argList.add("cmd.exe");
             argList.add("/c");
+            argList.add("echo");
+            argList.add(param);
         } else {
             argList.add("sh");
             argList.add("-c");
+            argList.add("echo \"" + param.replace("\"", "\\\"") + "\"");
         }
-        argList.add("echo " + param);
 
         ProcessBuilder pb = new ProcessBuilder();
 

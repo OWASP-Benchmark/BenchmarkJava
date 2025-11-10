@@ -60,7 +60,10 @@ public class BenchmarkTest00017 extends HttpServlet {
         Runtime r = Runtime.getRuntime();
 
         try {
-            Process p = r.exec(cmd + param);
+            // Fix: Use exec with array to prevent command injection
+            // This prevents shell interpretation of special characters
+            String[] cmdArray = {cmd, param};
+            Process p = r.exec(cmdArray);
             org.owasp.benchmark.helpers.Utils.printOSCommandResults(p, response);
         } catch (IOException e) {
             System.out.println("Problem executing cmdi - TestCase");

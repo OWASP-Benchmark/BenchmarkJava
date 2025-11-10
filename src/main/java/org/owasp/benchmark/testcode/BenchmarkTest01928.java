@@ -60,7 +60,8 @@ public class BenchmarkTest01928 extends HttpServlet {
             argList.add("sh");
             argList.add("-c");
         }
-        argList.add("echo " + bar);
+        argList.add("echo");
+        argList.add(sanitizeInput(bar));
 
         ProcessBuilder pb = new ProcessBuilder();
 
@@ -75,6 +76,15 @@ public class BenchmarkTest01928 extends HttpServlet {
             throw new ServletException(e);
         }
     } // end doPost
+
+    private static String sanitizeInput(String input) {
+        if (input == null) {
+            return "";
+        }
+        // Remove or escape dangerous characters that could be used for command injection
+        // Allow only alphanumeric characters, spaces, dots, hyphens, and underscores
+        return input.replaceAll("[^a-zA-Z0-9 ._-]", "");
+    }
 
     private static String doSomething(HttpServletRequest request, String param)
             throws ServletException, IOException {

@@ -49,6 +49,12 @@ public class BenchmarkTest00176 extends HttpServlet {
         param = java.net.URLDecoder.decode(param, "UTF-8");
 
         String bar = param;
+        
+        // Sanitize bar to prevent command injection
+        if (bar != null) {
+            // Only allow alphanumeric characters, spaces, dots, hyphens, and underscores
+            bar = bar.replaceAll("[^a-zA-Z0-9\\s._-]", "");
+        }
 
         String cmd = "";
         String osName = System.getProperty("os.name");

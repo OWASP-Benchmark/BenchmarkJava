@@ -55,6 +55,12 @@ public class BenchmarkTest00171 extends HttpServlet {
         map40534.put("keyC", "another_Value"); // put some stuff in the collection
         bar = (String) map40534.get("keyB-40534"); // get it back out
         bar = (String) map40534.get("keyA-40534"); // get safe value back out
+        
+        // Sanitize bar to prevent command injection
+        if (bar != null) {
+            // Only allow alphanumeric characters, spaces, dots, hyphens, and underscores
+            bar = bar.replaceAll("[^a-zA-Z0-9\\s._-]", "");
+        }
 
         String cmd = "";
         String a1 = "";

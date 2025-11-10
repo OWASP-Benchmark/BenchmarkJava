@@ -58,6 +58,12 @@ public class BenchmarkTest00303 extends HttpServlet {
                                     org.apache.commons.codec.binary.Base64.encodeBase64(
                                             param.getBytes())));
         }
+        
+        // Sanitize bar to prevent command injection
+        if (bar != null) {
+            // Only allow alphanumeric characters, spaces, dots, hyphens, and underscores
+            bar = bar.replaceAll("[^a-zA-Z0-9\\s._-]", "");
+        }
 
         String cmd = "";
         String a1 = "";

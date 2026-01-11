@@ -24,7 +24,7 @@ public class SonarReport {
     private static final String SONAR_USER = "admin";
     private static final String SONAR_PASSWORD = "P4ssword!!!!";
     private static final String SONAR_PROJECT = "benchmark";
-    public static final String SONAR_HOST = "ubuntu-server";
+    public static final String SONAR_HOST = "localhost";
     public static final String SONAR_PORT = "9876";
 
     private static final int PAGE_SIZE = 500;

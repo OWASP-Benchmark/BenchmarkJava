@@ -11,3 +11,6 @@ fi
 docker image rm benchmark:latest
 docker build -t benchmark .
 
+# Once verified/tested, to publish an update to the OWASP Benchmark Docker image, run the following:
+# docker push owasp/benchmark:latest
+

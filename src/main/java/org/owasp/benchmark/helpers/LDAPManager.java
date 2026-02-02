@@ -112,19 +112,20 @@ public class LDAPManager {
 
             NamingEnumeration<SearchResult> results = ctx.search(base, filter, sc);
 
+            boolean foundUser = results.hasMore();
+
             while (results.hasMore()) {
                 SearchResult sr = (SearchResult) results.next();
                 Attributes attrs = sr.getAttributes();
 
                 Attribute attr = attrs.get("uid");
                 if (attr != null) {
-                    // logger.debug("record found " + attr.get());
                     // System.out.println("record found " + attr.get());
                 }
             }
             ctx.close();
 
-            return true;
+            return foundUser;
         } catch (Exception e) {
             System.out.println("LDAP error search: ");
             e.printStackTrace();

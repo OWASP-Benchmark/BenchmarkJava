@@ -236,8 +236,6 @@ public class Utils {
 
         try {
             // read the output from the command
-            // System.out.println("Here is the standard output of the
-            // command:\n");
             out.write("Here is the standard output of the command:<br>");
             String s = null;
             while ((s = stdInput.readLine()) != null) {
@@ -246,8 +244,6 @@ public class Utils {
             }
 
             // read any errors from the attempted command
-            // System.out.println("Here is the standard error of the command (if
-            // any):\n");
             out.write("<br>Here is the std err of the command (if any):<br>");
             while ((s = stdError.readLine()) != null) {
                 out.write(ESAPI.encoder().encodeForHTML(s));

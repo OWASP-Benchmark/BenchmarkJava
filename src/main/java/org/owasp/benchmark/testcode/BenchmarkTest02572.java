@@ -96,12 +96,18 @@ public class BenchmarkTest02572 extends HttpServlet {
                             .println(
                                     "LDAP query results:<br>"
                                             + "Record found with name "
-                                            + attr.get()
-                                            + "<br>"
-                                            + "Address: "
-                                            + attr2.get()
+                                            + org.owasp
+                                                    .esapi
+                                                    .ESAPI
+                                                    .encoder()
+                                                    .encodeForHTML(attr.get().toString())
+                                            + "<br>Address: "
+                                            + org.owasp
+                                                    .esapi
+                                                    .ESAPI
+                                                    .encoder()
+                                                    .encodeForHTML(attr2.get().toString())
                                             + "<br>");
-                    // System.out.println("record found " + attr.get());
                     found = true;
                 }
             }

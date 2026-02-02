@@ -54,7 +54,6 @@ public class BenchmarkTest00044 extends HttpServlet {
             javax.naming.directory.SearchControls sc = new javax.naming.directory.SearchControls();
             sc.setSearchScope(javax.naming.directory.SearchControls.SUBTREE_SCOPE);
             String filter = "(&(objectclass=person)(uid=" + param + "))";
-            // System.out.println("Filter " + filter);
             boolean found = false;
             javax.naming.NamingEnumeration<javax.naming.directory.SearchResult> results =
                     ctx.search(base, filter, sc);
@@ -70,12 +69,18 @@ public class BenchmarkTest00044 extends HttpServlet {
                             .println(
                                     "LDAP query results:<br>"
                                             + "Record found with name "
-                                            + attr.get()
-                                            + "<br>"
-                                            + "Address: "
-                                            + attr2.get()
+                                            + org.owasp
+                                                    .esapi
+                                                    .ESAPI
+                                                    .encoder()
+                                                    .encodeForHTML(attr.get().toString())
+                                            + "<br>Address: "
+                                            + org.owasp
+                                                    .esapi
+                                                    .ESAPI
+                                                    .encoder()
+                                                    .encodeForHTML(attr2.get().toString())
                                             + "<br>");
-                    // System.out.println("record found " + attr.get());
                     found = true;
                 }
             }

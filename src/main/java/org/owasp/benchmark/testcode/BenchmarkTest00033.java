@@ -54,7 +54,6 @@ public class BenchmarkTest00033 extends HttpServlet {
                     org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.queryForRowSet(sql);
             response.getWriter().println("Your results are: ");
 
-            //		System.out.println("Your results are");
             while (results.next()) {
                 response.getWriter()
                         .println(
@@ -64,7 +63,6 @@ public class BenchmarkTest00033 extends HttpServlet {
                                                 .encoder()
                                                 .encodeForHTML(results.getString("USERNAME"))
                                         + " ");
-                //			System.out.println(results.getString("USERNAME"));
             }
         } catch (org.springframework.dao.EmptyResultDataAccessException e) {
             response.getWriter()

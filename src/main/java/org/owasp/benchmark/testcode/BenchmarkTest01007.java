@@ -37,6 +37,7 @@ public class BenchmarkTest01007 extends HttpServlet {
                 new javax.servlet.http.Cookie("BenchmarkTest01007", "bar");
         userCookie.setMaxAge(60 * 3); // Store cookie for 3 minutes
         userCookie.setSecure(true);
+        userCookie.setHttpOnly(true);
         userCookie.setPath(request.getRequestURI());
         userCookie.setDomain(new java.net.URL(request.getRequestURL().toString()).getHost());
         response.addCookie(userCookie);
@@ -71,10 +72,8 @@ public class BenchmarkTest01007 extends HttpServlet {
                     org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.queryForMap(sql);
             response.getWriter().println("Your results are: ");
 
-            //		System.out.println("Your results are");
             response.getWriter()
                     .println(org.owasp.esapi.ESAPI.encoder().encodeForHTML(results.toString()));
-            //		System.out.println(results.toString());
         } catch (org.springframework.dao.EmptyResultDataAccessException e) {
             response.getWriter()
                     .println(

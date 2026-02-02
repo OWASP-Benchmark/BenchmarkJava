@@ -53,10 +53,8 @@ public class BenchmarkTest02183 extends HttpServlet {
                             sql, new Object[] {}, String.class);
             response.getWriter().println("Your results are: ");
 
-            //		System.out.println("Your results are");
             response.getWriter()
                     .println(org.owasp.esapi.ESAPI.encoder().encodeForHTML(results.toString()));
-            //		System.out.println(results.toString());
         } catch (org.springframework.dao.EmptyResultDataAccessException e) {
             response.getWriter()
                     .println(

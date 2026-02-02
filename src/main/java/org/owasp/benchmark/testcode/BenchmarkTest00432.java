@@ -56,19 +56,17 @@ public class BenchmarkTest00432 extends HttpServlet {
         }
 
         String sql = "SELECT * from USERS where USERNAME='foo' and PASSWORD='" + bar + "'";
+
         try {
             java.util.List<java.util.Map<String, Object>> list =
                     org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.queryForList(sql);
             response.getWriter().println("Your results are: <br>");
-
-            //		System.out.println("Your results are");
 
             for (Object o : list) {
                 response.getWriter()
                         .println(
                                 org.owasp.esapi.ESAPI.encoder().encodeForHTML(o.toString())
                                         + "<br>");
-                //			System.out.println(o.toString());
             }
         } catch (org.springframework.dao.EmptyResultDataAccessException e) {
             response.getWriter()
@@ -78,7 +76,6 @@ public class BenchmarkTest00432 extends HttpServlet {
         } catch (org.springframework.dao.DataAccessException e) {
             if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
                 response.getWriter().println("Error processing request.");
-                return;
             } else throw new ServletException(e);
         }
     }

@@ -37,6 +37,7 @@ public class BenchmarkTest00947 extends HttpServlet {
                 new javax.servlet.http.Cookie("BenchmarkTest00947", "Ms+Bar");
         userCookie.setMaxAge(60 * 3); // Store cookie for 3 minutes
         userCookie.setSecure(true);
+        userCookie.setHttpOnly(true);
         userCookie.setPath(request.getRequestURI());
         userCookie.setDomain(new java.net.URL(request.getRequestURL().toString()).getHost());
         response.addCookie(userCookie);
@@ -73,7 +74,6 @@ public class BenchmarkTest00947 extends HttpServlet {
             sc.setSearchScope(javax.naming.directory.SearchControls.SUBTREE_SCOPE);
             String filter = "(&(objectclass=person))(|(uid=" + bar + ")(street={0}))";
             Object[] filters = new Object[] {"The streetz 4 Ms bar"};
-            // System.out.println("Filter " + filter);
             boolean found = false;
             javax.naming.NamingEnumeration<javax.naming.directory.SearchResult> results =
                     ctx.search(base, filter, filters, sc);
@@ -89,12 +89,18 @@ public class BenchmarkTest00947 extends HttpServlet {
                             .println(
                                     "LDAP query results:<br>"
                                             + "Record found with name "
-                                            + attr.get()
-                                            + "<br>"
-                                            + "Address: "
-                                            + attr2.get()
+                                            + org.owasp
+                                                    .esapi
+                                                    .ESAPI
+                                                    .encoder()
+                                                    .encodeForHTML(attr.get().toString())
+                                            + "<br>Address: "
+                                            + org.owasp
+                                                    .esapi
+                                                    .ESAPI
+                                                    .encoder()
+                                                    .encodeForHTML(attr2.get().toString())
                                             + "<br>");
-                    // System.out.println("record found " + attr.get());
                     found = true;
                 }
             }

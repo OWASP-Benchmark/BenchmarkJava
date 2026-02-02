@@ -73,10 +73,8 @@ public class BenchmarkTest00598 extends HttpServlet {
                     org.owasp.benchmark.helpers.DatabaseHelper.JDBCtemplate.queryForMap(sql);
             response.getWriter().println("Your results are: ");
 
-            //		System.out.println("Your results are");
             response.getWriter()
                     .println(org.owasp.esapi.ESAPI.encoder().encodeForHTML(results.toString()));
-            //		System.out.println(results.toString());
         } catch (org.springframework.dao.EmptyResultDataAccessException e) {
             response.getWriter()
                     .println(

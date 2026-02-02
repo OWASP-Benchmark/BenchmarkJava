@@ -38,6 +38,7 @@ public class BenchmarkTest01000 extends HttpServlet {
                         "BenchmarkTest01000", "verifyUserPassword%28%27foo%27%2C%27bar%27%29");
         userCookie.setMaxAge(60 * 3); // Store cookie for 3 minutes
         userCookie.setSecure(true);
+        userCookie.setHttpOnly(true);
         userCookie.setPath(request.getRequestURI());
         userCookie.setDomain(new java.net.URL(request.getRequestURL().toString()).getHost());
         response.addCookie(userCookie);
@@ -81,7 +82,6 @@ public class BenchmarkTest01000 extends HttpServlet {
         } catch (java.sql.SQLException e) {
             if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
                 response.getWriter().println("Error processing request.");
-                return;
             } else throw new ServletException(e);
         }
     } // end doPost

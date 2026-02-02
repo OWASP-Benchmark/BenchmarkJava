@@ -37,6 +37,7 @@ public class BenchmarkTest00975 extends HttpServlet {
                 new javax.servlet.http.Cookie("BenchmarkTest00975", "whatever");
         userCookie.setMaxAge(60 * 3); // Store cookie for 3 minutes
         userCookie.setSecure(true);
+        userCookie.setHttpOnly(true);
         userCookie.setPath(request.getRequestURI());
         userCookie.setDomain(new java.net.URL(request.getRequestURL().toString()).getHost());
         response.addCookie(userCookie);

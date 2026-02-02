@@ -37,6 +37,7 @@ public class BenchmarkTest01003 extends HttpServlet {
                 new javax.servlet.http.Cookie("BenchmarkTest01003", "bar");
         userCookie.setMaxAge(60 * 3); // Store cookie for 3 minutes
         userCookie.setSecure(true);
+        userCookie.setHttpOnly(true);
         userCookie.setPath(request.getRequestURI());
         userCookie.setDomain(new java.net.URL(request.getRequestURL().toString()).getHost());
         response.addCookie(userCookie);
@@ -77,7 +78,6 @@ public class BenchmarkTest01003 extends HttpServlet {
         } catch (java.sql.SQLException e) {
             if (org.owasp.benchmark.helpers.DatabaseHelper.hideSQLErrors) {
                 response.getWriter().println("Error processing request.");
-                return;
             } else throw new ServletException(e);
         }
     } // end doPost

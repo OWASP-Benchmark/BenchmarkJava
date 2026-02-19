@@ -623,7 +623,7 @@
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
-            <version>2.3.9</version>
+            <version>4.0.6</version>
         </dependency>
 
         <!-- mvn dependency:analyze says this is an unused declared dependency, but its wrong. I think the webapp needs it somehow. -->

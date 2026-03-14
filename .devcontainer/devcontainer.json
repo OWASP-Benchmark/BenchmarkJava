@@ -1,7 +1,0 @@
-{
-  // Name
-  "name": "Benchmark GitHub Codespace Config",
-
-  "postCreateCommand": "sdk install java 17.0.18-amzn"
-}
-

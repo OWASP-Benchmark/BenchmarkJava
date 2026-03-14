@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- this is the context.xml file for Tomcat -->
-<Context>
-    <ResourceLink global="jdbc/ApplicationContext_BenchmarkDB" name="jdbc/BenchmarkDB" type="javax.sql.DataSource" />
-    <CookieProcessor sameSiteCookies="strict" />
-</Context>
-

@@ -1,0 +1,12 @@
+# .aikido.yml
+exclude:
+  - "src/main/resources/**"
+  - "src/main/webapp/**"
+  - "helpers/**"
+  - "scripts/**"
+  - "scorecard/**"
+  - "results/**"
+  - "doc/**"
+  - "src/main/java/org/owasp/benchmark/helpers/**"
+  - "src/main/java/org/owasp/benchmark/service/**"
+  - "src/main/java/org/owasp/benchmark/report/**"

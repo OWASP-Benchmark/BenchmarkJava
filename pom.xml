@@ -1251,7 +1251,6 @@
         <tomcat.jvmargs.debug>
             -Xdebug
             -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5050
-            -Xnoagent
             -Djava.compiler=NONE
         </tomcat.jvmargs.debug>
         <log.directory>${project.build.directory}/log</log.directory>

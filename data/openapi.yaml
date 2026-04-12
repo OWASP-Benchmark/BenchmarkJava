@@ -6,8 +6,8 @@ info:
   contact:
     email: dave.wichers@owasp.org
   license:
-    name: GNU GPL 2.0
-    url: https://choosealicense.com/licenses/gpl-2.0/
+    name: GNU GPL 3.0
+    url: https://choosealicense.com/licenses/gpl-3.0/
   version: "1.2"
 servers:
 - url: https://localhost:8443/benchmark

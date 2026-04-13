@@ -75,7 +75,7 @@ docker run --env SONAR_SCANNER_OPTS=-Xmx4g --rm -v ~/.m2:/root/.m2 -v "$(pwd)":"
   -Dsonar.host.url="$sonar_docker_host" \
   -Dsonar.login="$sonar_token" \
   -Dsonar.sources="src" \
-  -Dsonar.exclusions="results/**,scorecard/**,scripts/**,tools/**,VMs/**"
+  -Dsonar.exclusions="results/**,scorecard/**,scripts/**,tools/**,VMs/**,**/*.js"
 
 echo "Waiting for SonarQube CE to finish task..."
 

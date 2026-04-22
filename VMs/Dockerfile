@@ -1,5 +1,5 @@
 # This dockerfile builds a container that pulls down and runs the latest version of BenchmarkJava
-FROM ubuntu:22.04
+FROM ubuntu:latest
 LABEL org.opencontainers.image.authors="Dave Wichers dave.wichers@owasp.org"
 
 RUN apt-get update \

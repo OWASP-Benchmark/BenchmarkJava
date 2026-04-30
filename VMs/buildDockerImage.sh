@@ -1,16 +1,28 @@
-# Pull in latest version of ubuntu. This builds an image using the OS native to this platform.
-docker pull ubuntu:latest
-# Remove any ubuntu:<none> image if it was left behind by a new version of ubuntu:latest being pulled
-i=$(docker images | grep "ubuntu" | grep "<none" | awk '{print $3}')
-if [ "$i" ]
-then
-  docker rmi $i
+#!/usr/bin/env bash
+set -euo pipefail
+
+IMAGE="owasp/benchmark"
+TAG="latest"
+PLATFORMS="linux/amd64,linux/arm64"
+BUILDER_NAME="benchmark-multiarch"
+
+# Create (or re-use) a buildx builder that supports multi-platform builds.
+if ! docker buildx inspect "$BUILDER_NAME" >/dev/null 2>&1; then
+  echo "Creating buildx builder: $BUILDER_NAME"
+  docker buildx create --name "$BUILDER_NAME" --use
+else
+  docker buildx use "$BUILDER_NAME"
 fi
 
-# Since Docker doesn't auto delete anything, just like for the Ubuntu update, delete any existing benchmark:latest image before building a new one
-docker image rm benchmark:latest
-docker build -t benchmark .
+# Build and push a multi-architecture image in one step.
+# --push is required because multi-arch manifest lists cannot be loaded into
+# the local daemon. The image is pushed directly to Docker Hub.
+echo "Building ${IMAGE}:${TAG} for ${PLATFORMS} ..."
+docker buildx build \
+  --platform "$PLATFORMS" \
+  --tag "${IMAGE}:${TAG}" \
+  --push \
+  .
 
-# Once verified/tested, to publish an update to the OWASP Benchmark Docker image, run the following:
-# docker push owasp/benchmark:latest
+echo "Done. Published ${IMAGE}:${TAG} for ${PLATFORMS}."
 

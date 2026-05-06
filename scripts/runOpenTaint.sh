@@ -9,7 +9,7 @@ requireCommand docker
 docker pull ghcr.io/seqra/opentaint
 
 benchmark_version=$(scripts/getBenchmarkVersion.sh 2>/dev/null | tail -1)
-opentaint_version=$(docker run --rm ghcr.io/seqra/opentaint opentaint --version | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' || docker run --rm ghcr.io/seqra/opentaint opentaint --version | awk '{print $NF}')
+opentaint_version=$(docker run --rm ghcr.io/seqra/opentaint opentaint --version | awk '{print $NF}')
 result_file="/project/results/Benchmark_$benchmark_version-OpenTaint-$opentaint_version.sarif"
 
 docker run --rm -v $(pwd):/project \

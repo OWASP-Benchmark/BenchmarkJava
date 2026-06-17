@@ -14,10 +14,10 @@ $(document).ready(function() {
 });
 
 function dispatchToSubmit(event) {
-    const id = event.target.id;
-    const button = document.getElementById(id);
-    const methodName = button.getAttribute('method');
-    const testcase = button.getAttribute('testcase');
+    var id = event.target.id;
+    var button = document.getElementById(id);
+    var methodName = button.getAttribute('method');
+    var testcase = button.getAttribute('testcase');
     switch (methodName) {
         case 'submitHeaderForm':
           submitHeaderForm(testcase);
@@ -41,12 +41,12 @@ function dispatchToSubmit(event) {
 
 // Generate custom cookie in browser for testing purposes
 function setCookie(event) {
-    const id = event.target.id;
-    const button = document.getElementById(id);
-    const testcase = button.getAttribute('testcase');
-    const cvalue = document.getElementById(testcase + 'A').value;
+    var id = event.target.id;
+    var button = document.getElementById(id);
+    var testcase = button.getAttribute('testcase');
+    var cvalue = document.getElementById(testcase + 'A').value;
 
-    const formVar = "#Form" + testcase;
+    var formVar = "#Form" + testcase;
     var URL = $(formVar).attr("action");
 
     Cookies.set(testcase, cvalue, {
@@ -63,10 +63,10 @@ function replaceAll(str, find, replace) {
 }
 
 function submitHeaderForm(testcase) {
-    const formVar = "#Form" + testcase;
-    const suffix = "-Unsafe";
+    var formVar = "#Form" + testcase;
+    var suffix = "-Unsafe";
     var rawtestcase = testcase;
-    if (testcase.endsWith(suffix)) rawtestcase = testcase.substring(0, testcase.length - suffix.length);
+    if (testcase.indexOf(suffix, testcase.length - suffix.length) !== -1) rawtestcase = testcase.substring(0, testcase.length - suffix.length);
     var formData = $(formVar).serialize();
     var URL = $(formVar).attr("action");
     var text = $(formVar + " input[id=" + rawtestcase + "]").val();
@@ -77,8 +77,8 @@ function submitHeaderForm(testcase) {
     xhr.setRequestHeader( rawtestcase, text );
 
     xhr.onreadystatechange = function () {
-        if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
-            if (URL.includes("xss")) {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            if (URL.indexOf("xss") !== -1) {
                 $("#code").html(stripHTML(xhr.responseText));
            } else { $("#code").text(decodeEscapeSequence(stripHTML(xhr.responseText))); }
         } else {
@@ -89,10 +89,10 @@ function submitHeaderForm(testcase) {
 }
 
 function submitHeaderNamesForm(testcase) {
-    const formVar = "#Form" + testcase;
-    const suffix = "-Unsafe";
+    var formVar = "#Form" + testcase;
+    var suffix = "-Unsafe";
     var rawtestcase = testcase;
-    if (testcase.endsWith(suffix)) rawtestcase = testcase.substring(0, testcase.length - suffix.length);
+    if (testcase.indexOf(suffix, testcase.length - suffix.length) !== -1) rawtestcase = testcase.substring(0, testcase.length - suffix.length);
     var formData = $(formVar).serialize();
     var URL = $(formVar).attr("action");
     var text = $(formVar + " input[id=" + rawtestcase + "]").val();
@@ -103,7 +103,7 @@ function submitHeaderNamesForm(testcase) {
     xhr.setRequestHeader( text, rawtestcase );
 
     xhr.onreadystatechange = function () {
-        if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+        if (xhr.readyState == 4 && xhr.status == 200) {
             $("#code").text(decodeEscapeSequence(stripHTML(xhr.responseText)));
         } else {
             $("#code").text("Error " + xhr.status + " " + xhr.statusText + " occurred.");
@@ -113,10 +113,10 @@ function submitHeaderNamesForm(testcase) {
 }
 
 function submitParameterNamesForm(testcase) {
-    const formVar = "#Form" + testcase;
-    const suffix = "-Unsafe";
+    var formVar = "#Form" + testcase;
+    var suffix = "-Unsafe";
     var rawtestcase = testcase;
-    if (testcase.endsWith(suffix)) rawtestcase = testcase.substring(0, testcase.length - suffix.length);
+    if (testcase.indexOf(suffix, testcase.length - suffix.length) !== -1) rawtestcase = testcase.substring(0, testcase.length - suffix.length);
     var text = $(formVar + " input[id=" + rawtestcase + "]").val();
 
     // This block not in submitFormAttack() - why?
@@ -135,8 +135,8 @@ function submitParameterNamesForm(testcase) {
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
     xhr.onreadystatechange = function () {
-        if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
-            if (URL.includes("xss")) {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            if (URL.indexOf("xss") !== -1) {
                 $("#code").html(xhr.responseText);
            } else { $("#code").text(decodeEscapeSequence(xhr.responseText)); }
         } else {
@@ -161,14 +161,14 @@ function stripHTML(xmlResponse) {
     if (pIndex > 0) {
         result = xmlResponse.substring(pIndex + 4, xmlResponse.length);
     }
-    result = result.replaceAll("<br>", "\n"); // Replace all <br>'s with carriage returns'
+    result = replaceAll(result, "<br>", "\n"); // Replace all <br>'s with carriage returns'
 
     return result;
 }
 
 // XML Ajax Method
 function submitXMLwAjax(testcase) {
-    const formVar = "#Form" + testcase;
+    var formVar = "#Form" + testcase;
     var URL = $(formVar).attr("action");
     var dataF = "<person>";
     $(formVar + " input[type=text]").each(function() {
@@ -193,9 +193,11 @@ function submitXMLwAjax(testcase) {
 
 function getXMLMsgValues(xmlResponse) {
     // Crude: Rips out XML content we don't want to display in the browser'
-    var result = xmlResponse.replaceAll('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>', "");
-    result = result.replaceAll("<xMLMessages>","").replaceAll("</xMLMessages>","").replaceAll("<message><msg>","");
-    result = result.replaceAll("</msg></message>","\n");
+    var result = replaceAll(xmlResponse, '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>', "");
+    result = replaceAll(result, "<xMLMessages>", "");
+    result = replaceAll(result, "</xMLMessages>", "");
+    result = replaceAll(result, "<message><msg>", "");
+    result = replaceAll(result, "</msg></message>", "\n");
 
     return result;
 }
@@ -222,7 +224,7 @@ function getXMLMsgValues(xmlResponse) {
 
 function submitJSONwAjax(testcase) {
 
-    const formVar = "#Form" + testcase;    
+    var formVar = "#Form" + testcase;
     var dataF = $(formVar).serializeFormJSON();
     var URL = $(formVar).attr("action");
 
@@ -242,10 +244,10 @@ function submitJSONwAjax(testcase) {
 function getJsonMsgValues(jsonResponse) {
     var result = "";
     JSON.parse(jsonResponse).forEach(function (msg) {
-        const prefix = '{"msg":"';
+        var prefix = '{"msg":"';
         var msgString = JSON.stringify(msg); // e.g., {"msg":"Here is the standard output of the command:"}
         // FIXME: This is a hack. There has to be a better/more native way in JavaScript
-        msgString = msgString.substring(prefix.length, msgString.length - 2).replaceAll("\\n", "\n");
+        msgString = replaceAll(msgString.substring(prefix.length, msgString.length - 2), "\\n", "\n");
         result += msgString + "\n";
     });
     

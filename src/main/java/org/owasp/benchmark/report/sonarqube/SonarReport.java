@@ -35,16 +35,19 @@ public class SonarReport {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public static void main(String[] args) throws Exception {
-        String allJavaRules = String.join(",", allJavaRules());
+        Set<String> allJavaRules = allJavaRules();
         List<String> issues = new ArrayList<>();
         List<String> hotspots = new ArrayList<>();
 
-        forAllPagesAt(
-                "issues/search?componentKeys="
-                        + SONAR_PROJECT
-                        + "&types=VULNERABILITY&&rules="
-                        + allJavaRules,
-                (result -> issues.addAll(result.issues)));
+        for (String rule : allJavaRules) {
+            forAllPagesAt(
+                    "issues/search?componentKeys="
+                            + SONAR_PROJECT
+                            + "&types=VULNERABILITY&rules="
+                            + rule,
+                    (result -> issues.addAll(result.issues)));
+        }
+
         forAllPagesAt(
                 "hotspots/search?projectKey=" + SONAR_PROJECT,
                 (result -> hotspots.addAll(result.hotspots)));
@@ -91,7 +94,9 @@ public class SonarReport {
                     objectMapper.readValue(
                             apiCall(apiPath + pagingSuffix(page, apiPath)), SonarQubeResult.class);
 
-            pages = (result.paging.resultCount / PAGE_SIZE) + 1;
+            pages =
+                    (result.paging.resultCount / PAGE_SIZE)
+                            + (result.paging.resultCount % PAGE_SIZE == 0 ? 0 : 1);
 
             pageHandlerCallback.accept(result);
 
@@ -109,6 +114,11 @@ public class SonarReport {
         connection.setRequestMethod("GET");
         connection.setDoOutput(true);
         connection.setRequestProperty("Authorization", "Basic " + sonarAuth);
+
+        int status = connection.getResponseCode();
+        if (status != 200) {
+            throw new IOException("SonarQube API returned HTTP " + status + " for " + apiPath);
+        }
 
         return join("\n", readLines(connection.getInputStream(), defaultCharset()));
     }

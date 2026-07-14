@@ -2,43 +2,44 @@
 FROM ubuntu:latest
 LABEL org.opencontainers.image.authors="Dave Wichers dave.wichers@owasp.org"
 
-RUN apt-get update
-RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install tzdata
-RUN apt-get install -q -y \
-     openjdk-17-jre-headless \
-     openjdk-17-jdk \
-     git \
-     maven \
-     wget \
-     iputils-ping \
-     && apt-get clean
+RUN apt-get update \
+    && DEBIAN_FRONTEND="noninteractive" apt-get -y install tzdata \
+    && apt-get install -q -y \
+       openjdk-17-jre-headless \
+       openjdk-17-jdk \
+       git \
+       maven \
+       wget \
+       iputils-ping \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir /owasp
 WORKDIR /owasp
 
 # Download, build, install Benchmark Utilities required by crawler and scorecard generation
-RUN git clone https://github.com/OWASP-Benchmark/BenchmarkUtils.git
-WORKDIR /owasp/BenchmarkUtils
-RUN mvn install
+RUN git clone https://github.com/OWASP-Benchmark/BenchmarkUtils.git \
+    && cd BenchmarkUtils \
+    && mvn install
 
 # Download, build BenchmarkJava
-WORKDIR /owasp
-RUN git clone https://github.com/OWASP-Benchmark/BenchmarkJava
+RUN git clone https://github.com/OWASP-Benchmark/BenchmarkJava \
+    && git config --global --add safe.directory /owasp/BenchmarkJava \
+    && cd BenchmarkJava \
+    && mvn clean package cargo:install
 
-# Workaround for security fix for CVE-2022-24765
-RUN git config --global --add safe.directory /owasp/BenchmarkJava
-
-WORKDIR /owasp/BenchmarkJava
-RUN mvn clean package cargo:install
-
-RUN useradd -d /home/bench -m -s /bin/bash bench 
-RUN echo bench:bench | chpasswd
+RUN useradd -d /home/bench -m -s /bin/bash bench \
+    && echo bench:bench | chpasswd
 
 RUN chown -R bench /owasp/
 ENV PATH=/owasp/BenchmarkJava:$PATH
 
-# start up Benchmark once, for 60 seconds, then kill it, so the additional dependencies required to run it are downloaded/cached in the image as well.
-# exit 0 is required to return a 'success' code, otherwise the timeout returns a failure code, causing the Docker build to fail.
+# Start up Benchmark once for 60 seconds then kill it, so additional runtime
+# dependencies are downloaded and cached in the image.
+# exit 0 prevents the timeout return code from failing the Docker build.
 WORKDIR /owasp/BenchmarkJava
 RUN timeout 60 ./runBenchmark.sh; exit 0
+
+EXPOSE 8443
+CMD ["./runBenchmark.sh"]
 

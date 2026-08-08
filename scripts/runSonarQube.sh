@@ -13,11 +13,6 @@ requireCommand curl
 requireCommand docker
 requireCommand jq
 
-if ! command -v "sonar-report" &> /dev/null; then
-  echo "sonar-report is required. Please install it via https://github.com/soprasteria/sonar-report and then try again."
-  exit 1
-fi
-
 # Check for install/updates at https://github.com/SonarSource/sonarqube
 
 container_name="sonarqube-benchmark"
@@ -91,4 +86,4 @@ mvn exec:java -Dexec.mainClass="org.owasp.benchmark.report.sonarqube.SonarReport
 
 echo "Shutting down SonarQube..."
 
-#docker stop "$container_name"
+docker stop "$container_name"

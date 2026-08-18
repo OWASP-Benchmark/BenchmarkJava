@@ -667,9 +667,10 @@
         </dependency>
 
         <dependency>
+        <!-- NOTE: Do NOT upgrade this library until the Apache team fixes issue: https://issues.apache.org/jira/browse/DIRAPI-433 -->
             <groupId>org.apache.directory.api</groupId>
             <artifactId>api-ldap-model</artifactId>
-            <version>2.1.8</version>
+            <version>2.1.7</version>
         </dependency>
 
         <dependency>
@@ -1266,8 +1267,8 @@
         <version.springframework>5.3.39</version.springframework>
         <!-- Tomcat 10 moves from Java EE to Jakarta EE, moving packages javax.* to jakarta.* - code changes likely required to address this change. -->
         <tomcat.major.version>9</tomcat.major.version>
-        <version.tomcat>9.0.115</version.tomcat>
-        <tomcat.url>https://archive.apache.org/dist/tomcat/tomcat-${tomcat.major.version}/v${version.tomcat}/bin/apache-tomcat-${version.tomcat}.zip</tomcat.url>
+        <version.tomcat>9.0.120</version.tomcat>
+        <tomcat.url>https://downloads.apache.org/tomcat/tomcat-${tomcat.major.version}/v${version.tomcat}/bin/apache-tomcat-${version.tomcat}.zip</tomcat.url>
     </properties>
 
 </project>

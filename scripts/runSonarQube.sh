@@ -83,6 +83,7 @@ done
 echo ""
 echo "Generating report..."
 
+mvn compile
 mvn exec:java -Dexec.mainClass="org.owasp.benchmark.report.sonarqube.SonarReport"
 
 echo "Shutting down SonarQube..."

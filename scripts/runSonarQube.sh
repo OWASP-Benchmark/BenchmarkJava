@@ -64,11 +64,12 @@ echo "Starting scan... (might take some time!)"
 container_ip=$(docker inspect "$container_name" | jq -r '.[0].NetworkSettings.Networks.bridge.IPAddress' )
 sonar_docker_host="http://$container_ip:$sonar_internal_port"
 
-docker run --env SONAR_SCANNER_OPTS=-Xmx4g --rm -v ~/.m2:/root/.m2 -v "$(pwd)":"$(pwd)" -w "$(pwd)" sonarsource/sonar-scanner-cli \
+docker run --env SONAR_SCANNER_OPTS=-Xmx4g --rm -v ~/.m2:/root/.m2 -v "$(pwd)":/benchmark -w "/benchmark" sonarsource/sonar-scanner-cli \
+  -Dsonar.projectBaseDir="/benchmark" \
   -Dsonar.java.binaries="target" \
   -Dsonar.projectKey="$sonar_project" \
   -Dsonar.host.url="$sonar_docker_host" \
-  -Dsonar.login="$sonar_token" \
+  -Dsonar.token="$sonar_token" \
   -Dsonar.sources="src" \
   -Dsonar.exclusions="results/**,scorecard/**,scripts/**,tools/**,VMs/**,**/*.js"
 
@@ -82,6 +83,7 @@ done
 echo ""
 echo "Generating report..."
 
+mvn compile
 mvn exec:java -Dexec.mainClass="org.owasp.benchmark.report.sonarqube.SonarReport"
 
 echo "Shutting down SonarQube..."

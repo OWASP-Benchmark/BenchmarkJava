@@ -2739,3 +2739,4 @@ BenchmarkTest02737,sqli,false,89
 BenchmarkTest02738,sqli,false,89
 BenchmarkTest02739,sqli,false,89
 BenchmarkTest02740,sqli,false,89
+BenchmarkTest02741,sqli,true,89

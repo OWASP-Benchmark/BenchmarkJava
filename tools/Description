@@ -1,0 +1,1 @@
+*OWASP Benchmark is a runnable Java web app to test your security tools fairly. It checks how fast and accurately SAST, DAST, and IAST tools detect vulnerabilities using real apps and real, exploitable flaws for fair results.*

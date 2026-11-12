@@ -1,0 +1,66 @@
+# ------------------------------------------------------------------
+# INACTIVE BY DEFAULT -- manual trigger only (workflow_dispatch).
+#
+# This workflow builds and publishes a multi-architecture Docker image
+# (linux/amd64 + linux/arm64) to Docker Hub.
+#
+# TO ACTIVATE:
+#   1. Add two repository secrets (Settings > Secrets and variables > Actions):
+#        DOCKERHUB_USERNAME  - your Docker Hub username
+#        DOCKERHUB_TOKEN     - a Docker Hub access token (not your password)
+#   2. Optionally add automatic triggers by uncommenting the lines below:
+#        push:
+#          branches: [master]
+#          paths: ['VMs/Dockerfile']
+#        release:
+#          types: [published]
+#
+# Until you do both steps, this workflow does nothing on its own.
+# ------------------------------------------------------------------
+
+name: Docker Publish
+
+on:
+  workflow_dispatch:
+  # Uncomment the triggers below when ready to automate:
+  # push:
+  #   branches: [master]
+  #   paths: ['VMs/Dockerfile']
+  # release:
+  #   types: [published]
+
+env:
+  IMAGE_NAME: owasp/benchmark
+  PLATFORMS: linux/amd64,linux/arm64
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU (multi-arch emulation)
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push multi-arch image
+        uses: docker/build-push-action@v6
+        with:
+          context: VMs
+          file: VMs/Dockerfile
+          platforms: ${{ env.PLATFORMS }}
+          push: true
+          tags: ${{ env.IMAGE_NAME }}:latest

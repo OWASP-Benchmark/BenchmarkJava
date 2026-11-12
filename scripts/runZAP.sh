@@ -5,7 +5,7 @@
 # - start a temporary OWASP ZAP daemon in docker
 # - discover the test cases (traditional spider, optionally AJAX spider and/or the Benchmark crawler)
 # - active scan them with the scan rules that map to the CWEs the Benchmark expects a DAST tool to find
-# - write a traditional-JSON report into results/java/
+# - write a traditional-JSON report into results/
 # - shut the ZAP container and the Benchmark web app back down (ZAP stays up with --keep-zap)
 #
 # Check for install/updates at https://github.com/zaproxy/zaproxy
@@ -41,7 +41,7 @@ context_regex="https://$benchmark_host:$benchmark_port/benchmark/.*"
 # 22 pathtraver, 78 cmdi, 79 xss, 89 sqli, 90 ldapi, 614 securecookie, 643 xpathi
 target_cwes="22 78 79 89 90 614 643"
 
-results_dir="results/java"
+results_dir="results"
 crawler_file="data/benchmark-crawler-http.xml"
 zap_crawler_file="target/benchmark-crawler-zap.xml"
 

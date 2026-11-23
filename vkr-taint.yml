@@ -1,0 +1,15 @@
+# DeltaTaint configuration of OWASP BenchmarkJava (a servlet war).
+version: 1
+project:
+  root: .
+  gateway-config: auto
+services: auto
+shared: auto
+taint:
+  sinks: [cwe-89, cwe-79, cwe-78, cwe-22]
+  sources: auto
+  discovery: annotations
+analysis:
+  context: 1-call
+gate:
+  fail-on: none

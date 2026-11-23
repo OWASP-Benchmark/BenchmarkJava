@@ -1,0 +1,46 @@
+# DeltaTaint (GlankS21/web-project@v1) on OWASP BenchmarkJava, scored against expectedresults-1.2.csv.
+name: DeltaTaint
+
+on:
+  push:
+    branches: [deltataint-scan]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write   # SARIF upload to code scanning
+  actions: read
+
+jobs:
+  taint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Build the war
+        run: mvn -B -ntp -DskipTests -Dspotless.check.skip=true package
+
+      - id: taint
+        uses: GlankS21/web-project@v1
+        with:
+          config: vkr-taint.yml
+          gate: 'false'
+          heap: 12g
+
+      - name: Score against the expected results
+        if: always()
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/benchmark_score.py" \
+            https://raw.githubusercontent.com/GlankS21/web-project/v1/analysis/experiments/public/benchmark_score.py
+          report="$RUNNER_TEMP/vkr-out/vkr-taint-report.json"
+          [ -f "$report" ] || { echo "no report"; exit 0; }
+          { echo '## OWASP Benchmark score'; echo '```'
+            python3 "$RUNNER_TEMP/benchmark_score.py" "$report" expectedresults-1.2.csv
+            echo '```'; } | tee -a "$GITHUB_STEP_SUMMARY"

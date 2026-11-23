@@ -25,7 +25,7 @@ jobs:
           cache: maven
 
       - name: Build the war
-        run: mvn -B -ntp -DskipTests -Dspotless.check.skip=true package
+        run: mvn -B -ntp -DskipTests -Dspotless.skip=true package
 
       - id: taint
         uses: GlankS21/web-project@v1.1.0

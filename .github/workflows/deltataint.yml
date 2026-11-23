@@ -28,7 +28,7 @@ jobs:
         run: mvn -B -ntp -DskipTests -Dspotless.check.skip=true package
 
       - id: taint
-        uses: GlankS21/web-project@v1
+        uses: GlankS21/web-project@v1.1.0
         with:
           config: vkr-taint.yml
           gate: 'false'
@@ -38,7 +38,7 @@ jobs:
         if: always()
         run: |
           curl -fsSL -o "$RUNNER_TEMP/benchmark_score.py" \
-            https://raw.githubusercontent.com/GlankS21/web-project/v1/analysis/experiments/public/benchmark_score.py
+            https://raw.githubusercontent.com/GlankS21/web-project/v1.1.0/analysis/experiments/public/benchmark_score.py
           report="$RUNNER_TEMP/vkr-out/vkr-taint-report.json"
           [ -f "$report" ] || { echo "no report"; exit 0; }
           { echo '## OWASP Benchmark score'; echo '```'
